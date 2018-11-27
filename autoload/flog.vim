@@ -45,6 +45,11 @@ function! flog#get_fugitive_workdir() abort
   return l:tree
 endfunction
 
+function! flog#get_fugitive_git_command() abort
+  let l:git_command = flog#get_state().fugitive_buffer.repo().git_command()
+  return l:git_command
+endfunction
+
 " }}}
 
 " Argument handling {{{
@@ -85,7 +90,9 @@ endfunction
 " Log command management {{{
 
 function! flog#build_log_command() abort
-  return 'git log --graph ' . flog#get_state().additional_args
+  let l:command = flog#get_fugitive_git_command()
+  let l:command .= ' log --graph '
+  return l:command . flog#get_state().additional_args
 endfunction
 
 " }}}
