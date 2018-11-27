@@ -189,7 +189,7 @@ function! flog#populate_graph_buffer() abort
 endfunction
 
 function! flog#graph_buffer_settings() abort
-  exec 'cd ' . flog#get_fugitive_workdir()
+  exec 'lcd ' . flog#get_fugitive_workdir()
   set filetype=floggraph
 endfunction
 
