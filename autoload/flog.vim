@@ -41,6 +41,12 @@ function! flog#get_fugitive_git_command() abort
   return l:git_command
 endfunction
 
+function! flog#trigger_fugitive_git_detection() abort
+  let b:git_dir = flog#get_state().fugitive_buffer.repo().dir()
+  let l:workdir = flog#get_fugitive_workdir()
+  call FugitiveDetect(l:workdir)
+endfunction
+
 " }}}
 
 " Argument handling {{{
@@ -205,6 +211,7 @@ endfunction
 
 function! flog#initialize_graph_buffer(state) abort
   call flog#set_buffer_state(a:state)
+  call flog#trigger_fugitive_git_detection()
   call flog#graph_buffer_settings()
   call flog#populate_graph_buffer()
 endfunction
