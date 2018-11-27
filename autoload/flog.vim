@@ -91,7 +91,7 @@ endfunction
 
 function! flog#build_log_command() abort
   let l:command = flog#get_fugitive_git_command()
-  let l:command .= ' log --graph '
+  let l:command .= ' log --graph --no-color --decorate=full '
   return l:command . flog#get_state().additional_args
 endfunction
 
