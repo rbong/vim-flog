@@ -214,6 +214,8 @@ endfunction
 function! flog#populate_graph_buffer() abort
   let l:state = flog#get_state()
 
+  let l:cursor_pos = line('.')
+
   let l:command = flog#build_log_command()
   let l:output = flog#shell_command(l:command)
   let l:commits = flog#parse_log_output(l:output)
@@ -222,6 +224,8 @@ function! flog#populate_graph_buffer() abort
 
   let l:state.previous_log_command = l:command
   let l:state.commits = l:commits
+
+  exec l:cursor_pos
 endfunction
 
 function! flog#graph_buffer_settings() abort
