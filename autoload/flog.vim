@@ -4,6 +4,9 @@ let g:flog_instance_counter = 0
 let g:flog_format_start = '__FSTART__'
 let g:flog_format_separator = '__FSEP__'
 let g:flog_format_end = '__FEND__'
+" used to delineate which part of the log to display to the user
+let g:flog_display_commit_start = '__DSTART__'
+let g:flog_display_commit_end = '__DEND__'
 " information about specifiers for use with --pretty=format:*
 let g:flog_format_specifiers = {
       \ 'short_commit_hash': '%h',
@@ -80,7 +83,8 @@ endfunction
 
 function! flog#parse_args(args) abort
   return {
-        \ 'additional_args': join(a:args, ' ')
+        \ 'additional_args': join(a:args, ' '),
+        \ 'format': '%ai [%h] {%an}%d %s'
         \ }
 endfunction
 
@@ -91,6 +95,7 @@ endfunction
 function! flog#get_initial_state(parsed_args) abort
   return {
         \ 'additional_args': a:parsed_args.additional_args,
+        \ 'format': a:parsed_args.format,
         \ 'instance': flog#instance(),
         \ 'fugitive_buffer': flog#get_initial_fugitive_buffer(),
         \ 'graph_window_name': v:null,
@@ -114,34 +119,54 @@ endfunction
 " Log command management {{{
 
 function! flog#create_log_format() abort
+  let l:state = flog#get_state()
+
+  " start format
   let l:format = 'format:'
   let l:format .= g:flog_format_start
 
+  " add data specifiers
   let l:tokens = []
   for l:specifier in g:flog_log_data_format_specifiers
     let l:tokens += [g:flog_format_specifiers[l:specifier]]
   endfor
   let l:format .= join(l:tokens, g:flog_format_separator)
 
+  " add display specifiers
+  let l:format .= g:flog_format_separator . g:flog_display_commit_start
+  let l:format .= l:state.format
+  let l:format .= g:flog_display_commit_end
+
+  " end format
   let l:format .= g:flog_format_end
-  return l:format
+  " perform string formatting to avoid shell interpolation
+  return string(l:format)
 endfunction
 
 function! flog#parse_log_commit(raw_commit) abort
+  " trim past the start of the format
   let l:trimmed_commit = substitute(a:raw_commit, '.*' . g:flog_format_start, '', '')
 
   if l:trimmed_commit ==# a:raw_commit
     throw g:flog_missing_commit_start
   endif
 
+  " separate the commit string
   let l:split_commit = split(l:trimmed_commit, g:flog_format_separator, 1)
+
   let l:commit = {}
 
+  " capture each data specifier and store it
   for l:i in range(len(g:flog_log_data_format_specifiers))
     let l:specifier = g:flog_log_data_format_specifiers[l:i]
     let l:data = l:split_commit[l:i]
     let l:commit[l:specifier] = l:data
   endfor
+
+  " capture display information
+  let l:display_pattern = '^\(.*\)' . g:flog_format_start . '.*' 
+  let l:display_pattern .= g:flog_display_commit_start . '\(.*\)' . g:flog_display_commit_end
+  let l:commit.display = split(substitute(a:raw_commit, l:display_pattern, '\1\2', ''), "\n")
 
   return l:commit
 endfunction
@@ -151,7 +176,7 @@ function! flog#parse_log_output(output) abort
     throw g:flog_no_log_output
   endif
 
-  let l:raw_commits = split(join(a:output, ''), g:flog_format_end)
+  let l:raw_commits = split(join(a:output, "\n"), g:flog_format_end)
 
   if len(l:raw_commits) == 0
     throw g:flog_no_commits
@@ -171,6 +196,17 @@ function! flog#build_log_command() abort
   return l:command . ' ' . flog#get_state().additional_args
 endfunction
 
+function! flog#display_log_commits(commits) abort
+  let l:state = flog#get_state()
+
+  let l:display_lines = []
+  for l:commit in a:commits
+    let l:display_lines += l:commit.display
+  endfor
+
+  call append(0, l:display_lines)
+endfunction
+
 " }}}
 
 " Buffer management {{{
@@ -182,7 +218,7 @@ function! flog#populate_graph_buffer() abort
   let l:output = flog#shell_command(l:command)
   let l:commits = flog#parse_log_output(l:output)
 
-  call append(0, l:output)
+  call flog#display_log_commits(l:commits)
 
   let l:state.previous_log_command = l:command
   let l:state.commits = l:commits
