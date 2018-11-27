@@ -10,18 +10,12 @@ let g:flog_display_commit_end = '__DEND__'
 " information about specifiers for use with --pretty=format:*
 let g:flog_format_specifiers = {
       \ 'short_commit_hash': '%h',
-      \ 'author_name': '%an',
-      \ 'author_relative_date': '%ar',
       \ 'ref_names_unwrapped': '%D',
-      \ 'subject': '%s',
       \ }
 " the specifiers to use to retrieve data
 let g:flog_log_data_format_specifiers = [
       \ 'ref_names_unwrapped',
       \ 'short_commit_hash',
-      \ 'author_name',
-      \ 'author_relative_date',
-      \ 'subject',
       \ ]
 
 " Errors {{{
