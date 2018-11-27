@@ -196,36 +196,42 @@ function! flog#build_log_command() abort
   return l:command . ' ' . flog#get_state().additional_args
 endfunction
 
-function! flog#display_log_commits(commits) abort
-  let l:state = flog#get_state()
-
+function! flog#get_log_display(commits) abort
   let l:display_lines = []
   for l:commit in a:commits
     let l:display_lines += l:commit.display
   endfor
 
-  call append(0, l:display_lines)
+  return l:display_lines
 endfunction
 
 " }}}
 
 " Buffer management {{{
 
+function! flog#modify_graph_buffer_contents(content) abort
+  let l:cursor_pos = line('.')
+
+  silent setlocal modifiable
+  silent setlocal noreadonly
+  1,$ d
+  call append(0, a:content)
+  call flog#graph_buffer_settings()
+
+  exec l:cursor_pos
+endfunction
+
 function! flog#populate_graph_buffer() abort
   let l:state = flog#get_state()
-
-  let l:cursor_pos = line('.')
 
   let l:command = flog#build_log_command()
   let l:output = flog#shell_command(l:command)
   let l:commits = flog#parse_log_output(l:output)
 
-  call flog#display_log_commits(l:commits)
+  call flog#modify_graph_buffer_contents(flog#get_log_display(l:commits))
 
   let l:state.previous_log_command = l:command
   let l:state.commits = l:commits
-
-  exec l:cursor_pos
 endfunction
 
 function! flog#graph_buffer_settings() abort
