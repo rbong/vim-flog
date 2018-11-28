@@ -29,6 +29,11 @@ if !hasmapto('<Plug>Flogtoggleall')
 endif
 nnoremap <buffer> <silent> <Plug>Flogtoggleall :Flogtoggleall<CR>
 
+if !hasmapto('<Plug>Flogupdate')
+  map <buffer> u <Plug>Flogupdate
+endif
+nnoremap <buffer> <silent> <Plug>Flogupdate :Flogupdate<CR>
+
 if !hasmapto('<Plug>Flogquit')
   map <buffer> ZZ <Plug>Flogquit
 endif
@@ -44,6 +49,8 @@ command! -buffer -count Flognextcommit call flog#next_commit() | call flog#open_
 command! -buffer -count Flogprevcommit call flog#previous_commit() | call flog#open_commit('<mods> Gsplit')
 
 command! -buffer Flogtoggleall call flog#toggle_all_refs_option()
+
+command! -buffer Flogupdate call flog#populate_graph_buffer()
 
 command! -buffer Flogquit call flog#quit()
 
