@@ -293,6 +293,12 @@ function! flog#initialize_graph_buffer(state) abort
   call flog#populate_graph_buffer()
 endfunction
 
+function! flog#toggle_all_refs_option() abort
+  let l:state = flog#get_state()
+  let l:state.all = l:state.all ? v:false : v:true
+  call flog#populate_graph_buffer()
+endfunction
+
 " }}}
 
 " Commit buffer {{{
