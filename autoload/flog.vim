@@ -69,7 +69,8 @@ function! flog#get_initial_state(parsed_args) abort
         \ 'instance': flog#instance(),
         \ 'fugitive_buffer': flog#get_initial_fugitive_buffer(),
         \ 'graph_window_name': v:null,
-        \ 'previous_log_command': v:null
+        \ 'previous_log_command': v:null,
+        \ 'commit_buffer': v:null,
         \ }
 endfunction
 
@@ -264,8 +265,38 @@ function! flog#commit_buffer_settings() abort
 endfunction
 
 function! flog#initialize_commit_buffer(state) abort
+  let a:state.commit_buffer = bufnr('%')
   call flog#set_buffer_state(a:state)
   call flog#commit_buffer_settings()
+  wincmd p
+endfunction
+
+function! flog#close_commit_buffer() abort
+  let l:state = flog#get_state()
+
+  " commit buffer is not open
+  if l:state.commit_buffer == v:null
+    return
+  endif
+
+  let l:commit_buffer = l:state.commit_buffer
+  let l:commit_window = bufwinnr(l:commit_buffer)
+
+  " commit buffer has been closed by user
+  if l:commit_window < 0
+    return
+  endif
+
+  " get the previous buffer to switch back to it after closing
+  let l:prev_buffer = bufnr('%')
+  exec l:commit_window . 'windo bdelete'
+
+  " go back to the previous window
+  if l:prev_buffer != l:commit_buffer && bufnr('%') != l:prev_buffer
+    wincmd p
+  endif
+
+  return
 endfunction
 
 " }}}
@@ -276,6 +307,7 @@ endfunction
 
 function! flog#open_commit(command) abort
   let l:state = flog#get_state()
+  call flog#close_commit_buffer()
   exec a:command . ' ' . flog#get_commit_data(line('.')).short_commit_hash
   call flog#initialize_commit_buffer(l:state)
 endfunction
