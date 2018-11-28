@@ -64,12 +64,15 @@ function! flog#parse_args(args) abort
   " defaults
   let l:additional_args = ''
   let l:format = '%ai [%h] {%an}%d %s'
+  let l:all = v:false
 
   for l:arg in a:args
     if l:arg =~# '^format='
       let l:format = flog#parse_arg_opt(l:arg)
     elseif arg =~# '^additional_args='
       let l:additional_args = flog#parse_arg_opt(l:arg)
+    elseif arg ==# 'all'
+      let l:all = v:true
     else
       echoerr 'error parsing argument ' . l:arg
       throw g:flog_unsupported_argument
@@ -79,6 +82,7 @@ function! flog#parse_args(args) abort
   return {
         \ 'additional_args': l:additional_args,
         \ 'format': l:format,
+        \ 'all': l:all,
         \ }
 endfunction
 
@@ -90,6 +94,7 @@ function! flog#get_initial_state(parsed_args) abort
   return {
         \ 'additional_args': a:parsed_args.additional_args,
         \ 'format': a:parsed_args.format,
+        \ 'all': a:parsed_args.all,
         \ 'instance': flog#instance(),
         \ 'fugitive_buffer': flog#get_initial_fugitive_buffer(),
         \ 'graph_window_name': v:null,
@@ -186,9 +191,15 @@ function! flog#parse_log_output(output) abort
 endfunction
 
 function! flog#build_log_command() abort
+  let l:state = flog#get_state()
+
   let l:command = flog#get_fugitive_git_command()
   let l:command .= ' log --graph --no-color'
   let l:command .= ' --pretty=' . flog#create_log_format()
+  if l:state.all
+    let l:command .= ' --all'
+  endif
+
   return l:command . ' ' . flog#get_state().additional_args
 endfunction
 
