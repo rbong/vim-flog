@@ -177,7 +177,46 @@ endfunction
 
 " }}}
 
+" Commit operations {{{
+
+function! flog#get_commit_data(line) abort
+  let l:state = flog#get_state()
+  let l:current_line = 0
+  let l:found_commit = v:null
+
+  for l:commit in l:state.commits
+    let l:len = len(l:commit.display)
+    if l:current_line + l:len >= a:line
+      let l:found_commit = l:commit
+      break
+    endif
+    let l:current_line += l:len
+  endfor
+
+  return l:found_commit
+endfunction
+
+function! flog#search_for_commit(flags) abort
+  let l:count = v:count1
+  while l:count > 0
+    let l:count -= 1
+    call search('^[|\/\\ ]*\zs\*', a:flags)
+  endwhile
+endfunction
+
+function! flog#next_commit() abort
+  call flog#search_for_commit('W')
+endfunction
+
+function! flog#previous_commit() abort
+  call flog#search_for_commit('Wb')
+endfunction
+
+" }}}
+
 " Buffer management {{{
+
+" Graph buffer {{{
 
 function! flog#modify_graph_buffer_contents(content) abort
   let l:cursor_pos = line('.')
@@ -218,7 +257,28 @@ endfunction
 
 " }}}
 
+" Commit buffer {{{
+
+function! flog#commit_buffer_settings() abort
+  silent doautocmd User FlogCommitSetup
+endfunction
+
+function! flog#initialize_commit_buffer(state) abort
+  call flog#set_buffer_state(a:state)
+  call flog#commit_buffer_settings()
+endfunction
+
+" }}}
+
+" }}}
+
 " Layout management {{{
+
+function! flog#open_commit(command) abort
+  let l:state = flog#get_state()
+  exec a:command . ' ' . flog#get_commit_data(line('.')).short_commit_hash
+  call flog#initialize_commit_buffer(l:state)
+endfunction
 
 function! flog#open_graph(state) abort
   let l:window_name = 'flog-' . a:state.instance
@@ -238,6 +298,10 @@ function! flog#open(args) abort
   let l:initial_state = flog#get_initial_state(l:parsed_args)
 
   call flog#open_graph(l:initial_state)
+endfunction
+
+function! flog#quit() abort
+  tabclose
 endfunction
 
 " }}}
