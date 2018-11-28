@@ -71,6 +71,7 @@ function! flog#parse_args(args) abort
     elseif arg =~# '^additional_args='
       let l:additional_args = flog#parse_arg_opt(l:arg)
     else
+      echoerr 'error parsing argument ' . l:arg
       throw g:flog_unsupported_argument
     endif
   endfor
@@ -142,6 +143,7 @@ function! flog#parse_log_commit(raw_commit) abort
   let l:trimmed_commit = substitute(a:raw_commit, '.*' . g:flog_format_start, '', '')
 
   if l:trimmed_commit ==# a:raw_commit
+    echoerr 'error parsing commit ' . a:raw_commit
     throw g:flog_missing_commit_start
   endif
 
