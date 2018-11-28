@@ -51,10 +51,33 @@ endfunction
 
 " Argument handling {{{
 
+function! flog#parse_arg_opt(arg) abort
+  let l:opt = matchstr(a:arg, '=\zs.*')
+  " parse opt as a string
+  if l:opt =~# '^[\'"]'
+    let l:opt = eval(l:opt)
+  endif
+  return l:opt
+endfunction
+
 function! flog#parse_args(args) abort
+  " defaults
+  let l:additional_args = ''
+  let l:format = '%ai [%h] {%an}%d %s'
+
+  for l:arg in a:args
+    if l:arg =~# '^format='
+      let l:format = flog#parse_arg_opt(l:arg)
+    elseif arg =~# '^additional_args='
+      let l:additional_args = flog#parse_arg_opt(l:arg)
+    else
+      throw g:flog_unsupported_argument
+    endif
+  endfor
+
   return {
-        \ 'additional_args': join(a:args, ' '),
-        \ 'format': '%ai [%h] {%an}%d %s'
+        \ 'additional_args': l:additional_args,
+        \ 'format': l:format,
         \ }
 endfunction
 
