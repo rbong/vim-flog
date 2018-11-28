@@ -226,6 +226,7 @@ function! flog#modify_graph_buffer_contents(content) abort
   silent setlocal noreadonly
   1,$ d
   call append(0, a:content)
+  $,$ d
   call flog#graph_buffer_settings()
 
   exec l:cursor_pos
