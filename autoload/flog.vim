@@ -234,20 +234,27 @@ function! flog#get_commit_data(line) abort
   return l:state.line_commits[a:line - 1]
 endfunction
 
-function! flog#search_for_commit(flags) abort
-  let l:count = v:count1
-  while l:count > 0
-    let l:count -= 1
-    call search('^' . g:flog_graph_branch_pattern . '*\zs\*', a:flags)
-  endwhile
+function! flog#jump_commits(commits) abort
+  let l:state = flog#get_state()
+
+  let l:current_commit = flog#get_commit_data(line('.'))
+
+  let l:index = index(l:state.commits, l:current_commit) + a:commits
+  let l:index = min([max([l:index, 0]), len(l:state.commits)])
+
+  let l:line = index(l:state.line_commits, l:state.commits[l:index]) + 1
+
+  if l:line >= 0
+    exec l:line
+  endif
 endfunction
 
 function! flog#next_commit() abort
-  call flog#search_for_commit('W')
+  call flog#jump_commits(v:count1)
 endfunction
 
 function! flog#previous_commit() abort
-  call flog#search_for_commit('Wb')
+  call flog#jump_commits(-v:count1)
 endfunction
 
 " }}}
