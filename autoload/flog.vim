@@ -167,8 +167,10 @@ function! flog#parse_log_commit(raw_commit) abort
 
   " capture display information
   let l:display_pattern = '^\(.*\)' . g:flog_format_start . '.*' 
-  let l:display_pattern .= g:flog_display_commit_start . '\(.*\)' . g:flog_display_commit_end
-  let l:commit.display = split(substitute(a:raw_commit, l:display_pattern, '\1\2', ''), "\n")
+  let l:display_pattern .= g:flog_display_commit_start . '\(.*\)' . g:flog_display_commit_end . '.*'
+  let l:display_pattern .= g:flog_format_end . '\(.*\)'
+  let l:display = substitute(a:raw_commit, l:display_pattern, '\1\2\3', '')
+  let l:commit.display = split(l:display, "\n")
 
   return l:commit
 endfunction
@@ -178,7 +180,10 @@ function! flog#parse_log_output(output) abort
     throw g:flog_no_log_output
   endif
 
-  let l:raw_commits = split(join(a:output, "\n"), g:flog_format_end)
+  let l:flog_commit_end = g:flog_format_end . '\(\n' . g:flog_graph_branch_pattern . '\+\n\)\?\zs'
+  let l:raw_commits = split(join(a:output, "\n"), l:flog_commit_end)
+
+  let g:raw_commits = l:raw_commits
 
   if len(l:raw_commits) == 0
     throw g:flog_no_commits
@@ -244,7 +249,7 @@ function! flog#search_for_commit(flags) abort
   let l:count = v:count1
   while l:count > 0
     let l:count -= 1
-    call search('^[|\/\\ ]*\zs\*', a:flags)
+    call search('^' . g:flog_graph_branch_pattern . '*\zs\*', a:flags)
   endwhile
 endfunction
 

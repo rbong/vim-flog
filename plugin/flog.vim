@@ -18,6 +18,8 @@ let g:flog_log_data_format_specifiers = [
       \ 'short_commit_hash',
       \ ]
 
+let g:flog_graph_branch_pattern = '[|\/\\ ]'
+
 " Errors {{{
 
 let g:flog_missing_state = 'flog: could not find state'
