@@ -10,10 +10,10 @@ silent setlocal nomodifiable
 
 " Bindings {{{
 
-if !hasmapto('<Plug>Flogvsplitright')
-  map <buffer> <CR> <Plug>Flogvsplitright
+if !hasmapto('<Plug>Flogvsplitcommitright')
+  map <buffer> <CR> <Plug>Flogvsplitcommitright
 endif
-nnoremap <buffer> <silent> <Plug>Flogvsplitright :vertical belowright Flogsplit<CR>
+nnoremap <buffer> <silent> <Plug>Flogvsplitcommitright :vertical belowright Flogsplitcommit<CR>
 
 if !hasmapto('<Plug>Flogvnextcommitright')
   map <buffer> <C-N> <Plug>Flogvnextcommitright
@@ -43,7 +43,7 @@ nnoremap <buffer> <silent> <Plug>Flogquit :Flogquit<CR>
 
 " Commands {{{
 
-command! -buffer Flogsplit call flog#open_commit('<mods> Gsplit')
+command! -buffer Flogsplitcommit call flog#open_commit('<mods> Gsplit')
 
 command! -buffer -count Flognextcommit call flog#next_commit() | call flog#open_commit('<mods> Gsplit')
 command! -buffer -count Flogprevcommit call flog#previous_commit() | call flog#open_commit('<mods> Gsplit')
