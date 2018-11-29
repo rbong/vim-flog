@@ -376,7 +376,13 @@ function! flog#open(args) abort
 endfunction
 
 function! flog#quit() abort
-  tabclose
+  let l:flog_tab = tabpagenr()
+  let l:tabs = tabpagenr('$')
+  call flog#close_commit_buffer()
+  quit
+  if l:tabs > tabpagenr('$') && l:flog_tab == tabpagenr()
+    tabprev
+  endif
 endfunction
 
 " }}}
