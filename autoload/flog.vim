@@ -53,10 +53,6 @@ endfunction
 
 function! flog#parse_arg_opt(arg) abort
   let l:opt = matchstr(a:arg, '=\zs.*')
-  " parse opt as a string
-  if l:opt =~# '^[\'"]'
-    let l:opt = eval(l:opt)
-  endif
   return l:opt
 endfunction
 
