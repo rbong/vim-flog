@@ -95,18 +95,13 @@ endfunction
 " State management {{{
 
 function! flog#get_initial_state(parsed_args) abort
-  return {
-        \ 'additional_args': a:parsed_args.additional_args,
-        \ 'format': a:parsed_args.format,
-        \ 'all': a:parsed_args.all,
-        \ 'open_cmd': a:parsed_args.open_cmd,
-        \ 'path': a:parsed_args.path,
+  return extend(copy(a:parsed_args), {
         \ 'instance': flog#instance(),
         \ 'fugitive_buffer': flog#get_initial_fugitive_buffer(),
         \ 'graph_window_name': v:null,
         \ 'previous_log_command': v:null,
         \ 'commit_buffer': v:null,
-        \ }
+        \ })
 endfunction
 
 function! flog#set_buffer_state(state) abort
