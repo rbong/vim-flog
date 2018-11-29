@@ -70,9 +70,9 @@ function! flog#parse_args(args) abort
   for l:arg in a:args
     if l:arg =~# '^format='
       let l:format = flog#parse_arg_opt(l:arg)
-    elseif arg =~# '^additional_args='
+    elseif l:arg =~# '^additional_args='
       let l:additional_args = flog#parse_arg_opt(l:arg)
-    elseif arg ==# 'all'
+    elseif l:arg ==# 'all'
       let l:all = v:true
     elseif l:arg =~# '^open_cmd='
       let l:open_cmd = flog#parse_arg_opt(l:arg)
