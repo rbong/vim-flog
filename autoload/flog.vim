@@ -58,10 +58,11 @@ endfunction
 
 function! flog#parse_args(args) abort
   " defaults
-  let l:additional_args = ''
+  let l:additional_args = v:null
   let l:format = '%ai [%h] {%an}%d %s'
   let l:all = v:false
   let l:open_cmd = 'tabedit'
+  let l:path = v:null
 
   for l:arg in a:args
     if l:arg =~# '^format='
@@ -72,6 +73,8 @@ function! flog#parse_args(args) abort
       let l:all = v:true
     elseif l:arg =~# '^open_cmd='
       let l:open_cmd = flog#parse_arg_opt(l:arg)
+    elseif l:arg =~# '^path='
+      let l:path = flog#parse_arg_opt(l:arg)
     else
       echoerr 'error parsing argument ' . l:arg
       throw g:flog_unsupported_argument
@@ -83,6 +86,7 @@ function! flog#parse_args(args) abort
         \ 'format': l:format,
         \ 'all': l:all,
         \ 'open_cmd': l:open_cmd,
+        \ 'path': l:path
         \ }
 endfunction
 
@@ -96,6 +100,7 @@ function! flog#get_initial_state(parsed_args) abort
         \ 'format': a:parsed_args.format,
         \ 'all': a:parsed_args.all,
         \ 'open_cmd': a:parsed_args.open_cmd,
+        \ 'path': a:parsed_args.path,
         \ 'instance': flog#instance(),
         \ 'fugitive_buffer': flog#get_initial_fugitive_buffer(),
         \ 'graph_window_name': v:null,
@@ -200,8 +205,14 @@ function! flog#build_log_command() abort
   if l:state.all
     let l:command .= ' --all'
   endif
+  if l:state.additional_args
+    let l:command .= ' ' . l:state.additional_args
+  endif
+  if l:state.path
+    let l:command .= ' ' . l:state.path
+  endif
 
-  return l:command . ' ' . flog#get_state().additional_args
+  return l:command
 endfunction
 
 function! flog#get_log_display(commits) abort
