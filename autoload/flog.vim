@@ -101,6 +101,7 @@ function! flog#get_initial_state(parsed_args) abort
         \ 'graph_window_name': v:null,
         \ 'previous_log_command': v:null,
         \ 'commit_buffer': v:null,
+        \ 'line_commits': [],
         \ })
 endfunction
 
@@ -230,19 +231,7 @@ endfunction
 
 function! flog#get_commit_data(line) abort
   let l:state = flog#get_state()
-  let l:current_line = 0
-  let l:found_commit = v:null
-
-  for l:commit in l:state.commits
-    let l:len = len(l:commit.display)
-    if l:current_line + l:len >= a:line
-      let l:found_commit = l:commit
-      break
-    endif
-    let l:current_line += l:len
-  endfor
-
-  return l:found_commit
+  return l:state.line_commits[a:line - 1]
 endfunction
 
 function! flog#search_for_commit(flags) abort
@@ -268,6 +257,8 @@ endfunction
 " Graph buffer {{{
 
 function! flog#modify_graph_buffer_contents(content) abort
+  let l:state = flog#get_state()
+
   let l:cursor_pos = line('.')
 
   silent setlocal modifiable
@@ -278,6 +269,20 @@ function! flog#modify_graph_buffer_contents(content) abort
   call flog#graph_buffer_settings()
 
   exec l:cursor_pos
+  let l:state.line_commits = []
+endfunction
+
+function! flog#set_graph_buffer_commits(commits) abort
+  let l:state = flog#get_state()
+
+  call flog#modify_graph_buffer_contents(flog#get_log_display(a:commits))
+
+  let l:state.line_commits = []
+  for l:commit in a:commits
+    for l:i in range(len(l:commit.display))
+      let l:state.line_commits += [l:commit]
+    endfor
+  endfor
 endfunction
 
 function! flog#populate_graph_buffer() abort
@@ -287,7 +292,7 @@ function! flog#populate_graph_buffer() abort
   let l:output = flog#shell_command(l:command)
   let l:commits = flog#parse_log_output(l:output)
 
-  call flog#modify_graph_buffer_contents(flog#get_log_display(l:commits))
+  call flog#set_graph_buffer_commits(l:commits)
 
   let l:state.previous_log_command = l:command
   let l:state.commits = l:commits
