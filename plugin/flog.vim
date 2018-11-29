@@ -32,6 +32,7 @@ let g:flog_unsupported_argument = 'flog: unrecognized argument'
 " Commands {{{
 
 command! -nargs=* Flog call flog#open([<f-args>])
+command! -nargs=* Flogsplit call flog#open(['open_cmd=<mods> split', <f-args>])
 
 " }}}
 

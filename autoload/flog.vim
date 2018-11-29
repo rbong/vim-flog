@@ -65,6 +65,7 @@ function! flog#parse_args(args) abort
   let l:additional_args = ''
   let l:format = '%ai [%h] {%an}%d %s'
   let l:all = v:false
+  let l:open_cmd = 'tabedit'
 
   for l:arg in a:args
     if l:arg =~# '^format='
@@ -73,6 +74,8 @@ function! flog#parse_args(args) abort
       let l:additional_args = flog#parse_arg_opt(l:arg)
     elseif arg ==# 'all'
       let l:all = v:true
+    elseif l:arg =~# '^open_cmd='
+      let l:open_cmd = flog#parse_arg_opt(l:arg)
     else
       echoerr 'error parsing argument ' . l:arg
       throw g:flog_unsupported_argument
@@ -83,6 +86,7 @@ function! flog#parse_args(args) abort
         \ 'additional_args': l:additional_args,
         \ 'format': l:format,
         \ 'all': l:all,
+        \ 'open_cmd': l:open_cmd,
         \ }
 endfunction
 
@@ -95,6 +99,7 @@ function! flog#get_initial_state(parsed_args) abort
         \ 'additional_args': a:parsed_args.additional_args,
         \ 'format': a:parsed_args.format,
         \ 'all': a:parsed_args.all,
+        \ 'open_cmd': a:parsed_args.open_cmd,
         \ 'instance': flog#instance(),
         \ 'fugitive_buffer': flog#get_initial_fugitive_buffer(),
         \ 'graph_window_name': v:null,
@@ -357,7 +362,7 @@ endfunction
 
 function! flog#open_graph(state) abort
   let l:window_name = 'flog-' . a:state.instance
-  exec 'tabedit ' . l:window_name
+  exec a:state.open_cmd . ' ' . l:window_name
 
   let a:state.graph_window_name = l:window_name
 
