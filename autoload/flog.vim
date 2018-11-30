@@ -338,7 +338,15 @@ function! flog#initialize_commit_buffer(state) abort
   wincmd p
 endfunction
 
-function! flog#close_commit_buffer() abort
+" }}}
+
+" }}}
+
+" Layout management {{{
+
+" Commit layout management {{{
+
+function! flog#close_commit() abort
   let l:state = flog#get_state()
 
   " commit buffer is not open
@@ -366,18 +374,16 @@ function! flog#close_commit_buffer() abort
   return
 endfunction
 
-" }}}
-
-" }}}
-
-" Layout management {{{
-
 function! flog#open_commit(command) abort
   let l:state = flog#get_state()
-  call flog#close_commit_buffer()
+  call flog#close_commit()
   exec a:command . ' ' . flog#get_commit_data(line('.')).short_commit_hash
   call flog#initialize_commit_buffer(l:state)
 endfunction
+
+" }}}
+
+" Graph layout management {{{
 
 function! flog#open_graph(state) abort
   let l:window_name = 'flog-' . a:state.instance
@@ -402,12 +408,16 @@ endfunction
 function! flog#quit() abort
   let l:flog_tab = tabpagenr()
   let l:tabs = tabpagenr('$')
-  call flog#close_commit_buffer()
+  call flog#close_commit()
   quit
   if l:tabs > tabpagenr('$') && l:flog_tab == tabpagenr()
     tabprev
   endif
 endfunction
+
+" }}}
+
+" }}}
 
 " }}}
 
