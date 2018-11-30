@@ -100,7 +100,7 @@ function! flog#get_initial_state(parsed_args) abort
         \ 'fugitive_buffer': flog#get_initial_fugitive_buffer(),
         \ 'graph_window_name': v:null,
         \ 'previous_log_command': v:null,
-        \ 'commit_buffer': v:null,
+        \ 'preview_buffer': v:null,
         \ 'line_commits': [],
         \ })
 endfunction
@@ -325,16 +325,16 @@ endfunction
 
 " }}}
 
-" Commit buffer {{{
+" Preview buffer {{{
 
-function! flog#commit_buffer_settings() abort
-  silent doautocmd User FlogCommitSetup
+function! flog#preview_buffer_settings() abort
+  silent doautocmd User FlogPreviewSetup
 endfunction
 
-function! flog#initialize_commit_buffer(state) abort
-  let a:state.commit_buffer = bufnr('%')
+function! flog#initialize_preview_buffer(state) abort
+  let a:state.preview_buffer = bufnr('%')
   call flog#set_buffer_state(a:state)
-  call flog#commit_buffer_settings()
+  call flog#preview_buffer_settings()
   wincmd p
 endfunction
 
@@ -344,30 +344,30 @@ endfunction
 
 " Layout management {{{
 
-" Commit layout management {{{
+" Preview layout management {{{
 
-function! flog#close_commit() abort
+function! flog#close_preview() abort
   let l:state = flog#get_state()
 
-  " commit buffer is not open
-  if l:state.commit_buffer == v:null
+  " preview buffer is not open
+  if l:state.preview_buffer == v:null
     return
   endif
 
-  let l:commit_buffer = l:state.commit_buffer
-  let l:commit_window = bufwinnr(l:commit_buffer)
+  let l:preview_buffer = l:state.preview_buffer
+  let l:preview_window = bufwinnr(l:preview_buffer)
 
-  " commit buffer has been closed by user
-  if l:commit_window < 0
+  " preview buffer has been closed by user
+  if l:preview_window < 0
     return
   endif
 
   " get the previous buffer to switch back to it after closing
   let l:prev_buffer = bufnr('%')
-  exec l:commit_window . 'windo bdelete'
+  exec l:preview_window . 'windo bdelete'
 
   " go back to the previous window
-  if l:prev_buffer != l:commit_buffer && bufnr('%') != l:prev_buffer
+  if l:prev_buffer != l:preview_buffer && bufnr('%') != l:prev_buffer
     wincmd p
   endif
 
@@ -376,9 +376,9 @@ endfunction
 
 function! flog#open_commit(command) abort
   let l:state = flog#get_state()
-  call flog#close_commit()
+  call flog#close_preview()
   exec a:command . ' ' . flog#get_commit_data(line('.')).short_commit_hash
-  call flog#initialize_commit_buffer(l:state)
+  call flog#initialize_preview_buffer(l:state)
 endfunction
 
 " }}}
@@ -408,7 +408,7 @@ endfunction
 function! flog#quit() abort
   let l:flog_tab = tabpagenr()
   let l:tabs = tabpagenr('$')
-  call flog#close_commit()
+  call flog#close_preview()
   quit
   if l:tabs > tabpagenr('$') && l:flog_tab == tabpagenr()
     tabprev
