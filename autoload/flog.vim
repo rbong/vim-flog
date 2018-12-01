@@ -331,11 +331,14 @@ function! flog#preview_buffer_settings() abort
   silent doautocmd User FlogPreviewSetup
 endfunction
 
+function! flog#commit_preview_buffer_settings() abort
+  silent doautocmd User FlogCommitPreviewSetup
+endfunction
+
 function! flog#initialize_preview_buffer(state) abort
   let a:state.preview_file = expand('%:p')
   call flog#set_buffer_state(a:state)
   call flog#preview_buffer_settings()
-  wincmd p
 endfunction
 
 " }}}
@@ -380,6 +383,8 @@ function! flog#open_commit(command) abort
   call flog#close_preview()
   exec a:command . ' ' . flog#get_commit_data(line('.')).short_commit_hash
   call flog#initialize_preview_buffer(l:state)
+  call flog#commit_preview_buffer_settings()
+  wincmd p
 endfunction
 
 " }}}
