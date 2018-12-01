@@ -94,13 +94,14 @@ endfunction
 
 " State management {{{
 
-function! flog#get_initial_state(parsed_args) abort
+function! flog#get_initial_state(parsed_args, original_file) abort
   return extend(copy(a:parsed_args), {
         \ 'instance': flog#instance(),
         \ 'fugitive_buffer': flog#get_initial_fugitive_buffer(),
+        \ 'original_file': a:original_file,
         \ 'graph_window_name': v:null,
-        \ 'previous_log_command': v:null,
         \ 'preview_name': v:null,
+        \ 'previous_log_command': v:null,
         \ 'line_commits': [],
         \ })
 endfunction
@@ -421,8 +422,10 @@ function! flog#open(args) abort
     throw g:flog_not_a_fugitive_buffer
   endif
 
+  let l:original_file = expand('%:p')
+
   let l:parsed_args = flog#parse_args(a:args)
-  let l:initial_state = flog#get_initial_state(l:parsed_args)
+  let l:initial_state = flog#get_initial_state(l:parsed_args, l:original_file)
 
   call flog#open_graph(l:initial_state)
 endfunction
