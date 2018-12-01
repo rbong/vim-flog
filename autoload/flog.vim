@@ -99,8 +99,8 @@ function! flog#get_initial_state(parsed_args, original_file) abort
         \ 'instance': flog#instance(),
         \ 'fugitive_buffer': flog#get_initial_fugitive_buffer(),
         \ 'original_file': a:original_file,
-        \ 'graph_window_name': v:null,
-        \ 'preview_name': v:null,
+        \ 'graph_window_id': v:null,
+        \ 'preview_window_id': v:null,
         \ 'previous_log_command': v:null,
         \ 'line_commits': [],
         \ })
@@ -337,7 +337,7 @@ function! flog#commit_preview_buffer_settings() abort
 endfunction
 
 function! flog#initialize_preview_buffer(state) abort
-  let a:state.preview_name = expand('%:p')
+  let a:state.preview_window_id = win_getid()
   call flog#set_buffer_state(a:state)
   call flog#preview_buffer_settings()
 endfunction
@@ -352,35 +352,27 @@ endfunction
 
 function! flog#close_preview() abort
   let l:state = flog#get_state()
+  let l:previous_window_id = win_getid()
 
   " preview buffer is not open
-  if l:state.preview_name == v:null
-    return
-  endif
-
-  let l:preview_buffer = bufnr(l:state.preview_name)
-  let l:preview_window = bufwinnr(l:preview_buffer)
-
-  " preview buffer has been closed by user
-  if l:preview_window < 0
+  if win_id2tabwin(l:state.preview_window_id) == [0, 0]
     return
   endif
 
   " get the previous buffer to switch back to it after closing
-  let l:previous_buffer = bufnr('%')
-  exec l:preview_window . 'windo bdelete'
-  let l:state.preview_name = v:null
+  call win_gotoid(l:state.preview_window_id)
+  bdelete
+  let l:state.preview_window_id = v:null
 
   " go back to the previous window
-  if l:previous_buffer != l:preview_buffer && bufnr('%') != l:previous_buffer
-    wincmd p
-  endif
+  call win_gotoid(l:previous_window_id)
 
   return
 endfunction
 
 function! flog#preview(command, ...) abort
   let l:keep_focus = exists('a:0') ? a:0 : v:false
+  let l:previous_window_id = win_getid()
   let l:state = flog#get_state()
 
   call flog#close_preview()
@@ -388,19 +380,20 @@ function! flog#preview(command, ...) abort
   call flog#initialize_preview_buffer(l:state)
 
   if !l:keep_focus
-    wincmd p
+    call win_gotoid(l:previous_window_id)
   endif
 endfunction
 
 function! flog#preview_commit(open_cmd, ...) abort
   let l:keep_focus = exists('a:0') ? a:0 : v:false
+  let l:previous_window_id = win_getid()
 
   let l:hash = flog#get_commit_data(line('.')).short_commit_hash
   call flog#preview(a:open_cmd . ' ' . l:hash, v:true)
   call flog#commit_preview_buffer_settings()
 
   if !l:keep_focus
-    wincmd p
+    call win_gotoid(l:previous_window_id)
   endif
 endfunction
 
@@ -412,7 +405,7 @@ function! flog#open_graph(state) abort
   let l:window_name = 'flog-' . a:state.instance
   exec a:state.open_cmd . ' ' . l:window_name
 
-  let a:state.graph_window_name = l:window_name
+  let a:state.graph_window_id = win_getid()
 
   call flog#initialize_graph_buffer(a:state)
 endfunction
