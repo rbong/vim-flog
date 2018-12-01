@@ -100,7 +100,7 @@ function! flog#get_initial_state(parsed_args) abort
         \ 'fugitive_buffer': flog#get_initial_fugitive_buffer(),
         \ 'graph_window_name': v:null,
         \ 'previous_log_command': v:null,
-        \ 'preview_file': v:null,
+        \ 'preview_name': v:null,
         \ 'line_commits': [],
         \ })
 endfunction
@@ -336,7 +336,7 @@ function! flog#commit_preview_buffer_settings() abort
 endfunction
 
 function! flog#initialize_preview_buffer(state) abort
-  let a:state.preview_file = expand('%:p')
+  let a:state.preview_name = expand('%:p')
   call flog#set_buffer_state(a:state)
   call flog#preview_buffer_settings()
 endfunction
@@ -353,11 +353,11 @@ function! flog#close_preview() abort
   let l:state = flog#get_state()
 
   " preview buffer is not open
-  if l:state.preview_file == v:null
+  if l:state.preview_name == v:null
     return
   endif
 
-  let l:preview_buffer = bufnr(l:state.preview_file)
+  let l:preview_buffer = bufnr(l:state.preview_name)
   let l:preview_window = bufwinnr(l:preview_buffer)
 
   " preview buffer has been closed by user
@@ -368,7 +368,7 @@ function! flog#close_preview() abort
   " get the previous buffer to switch back to it after closing
   let l:previous_buffer = bufnr('%')
   exec l:preview_window . 'windo bdelete'
-  let l:state.preview_file = v:null
+  let l:state.preview_name = v:null
 
   " go back to the previous window
   if l:previous_buffer != l:preview_buffer && bufnr('%') != l:previous_buffer
