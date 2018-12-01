@@ -100,7 +100,7 @@ function! flog#get_initial_state(parsed_args, original_file) abort
         \ 'fugitive_buffer': flog#get_initial_fugitive_buffer(),
         \ 'original_file': a:original_file,
         \ 'graph_window_id': v:null,
-        \ 'preview_window_id': v:null,
+        \ 'preview_window_ids': [],
         \ 'previous_log_command': v:null,
         \ 'line_commits': [],
         \ })
@@ -337,7 +337,7 @@ function! flog#commit_preview_buffer_settings() abort
 endfunction
 
 function! flog#initialize_preview_buffer(state) abort
-  let a:state.preview_window_id = win_getid()
+  let a:state.preview_window_ids += [win_getid()]
   call flog#set_buffer_state(a:state)
   call flog#preview_buffer_settings()
 endfunction
@@ -354,15 +354,18 @@ function! flog#close_preview() abort
   let l:state = flog#get_state()
   let l:previous_window_id = win_getid()
 
-  " preview buffer is not open
-  if win_id2tabwin(l:state.preview_window_id) == [0, 0]
-    return
-  endif
+  for l:preview_window_id in l:state.preview_window_ids
+    " preview buffer is not open
+    if win_id2tabwin(l:preview_window_id) == [0, 0]
+      continue
+    endif
 
-  " get the previous buffer to switch back to it after closing
-  call win_gotoid(l:state.preview_window_id)
-  bdelete
-  let l:state.preview_window_id = v:null
+    " get the previous buffer to switch back to it after closing
+    call win_gotoid(l:preview_window_id)
+    bdelete
+  endfor
+
+  let l:state.preview_window_ids = []
 
   " go back to the previous window
   call win_gotoid(l:previous_window_id)
