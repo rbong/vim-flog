@@ -41,10 +41,10 @@ nnoremap <buffer> <silent> <Plug>Flogquit :Flogquit<CR>
 
 " Commands {{{
 
-command! -buffer Flogsplitcommit call flog#open_commit('<mods> Gsplit')
+command! -buffer Flogsplitcommit call flog#preview_commit('<mods> Gsplit')
 
-command! -buffer -count Flognextcommit call flog#next_commit() | call flog#open_commit('<mods> Gsplit')
-command! -buffer -count Flogprevcommit call flog#previous_commit() | call flog#open_commit('<mods> Gsplit')
+command! -buffer -count Flognextcommit call flog#next_commit() | call flog#preview_commit('<mods> Gsplit')
+command! -buffer -count Flogprevcommit call flog#previous_commit() | call flog#preview_commit('<mods> Gsplit')
 
 command! -buffer Flogtoggleall call flog#toggle_all_refs_option()
 

@@ -378,13 +378,29 @@ function! flog#close_preview() abort
   return
 endfunction
 
-function! flog#open_commit(command) abort
+function! flog#preview(command, ...) abort
+  let l:stay = exists('a:0') ? a:0 : v:false
   let l:state = flog#get_state()
+
   call flog#close_preview()
-  exec a:command . ' ' . flog#get_commit_data(line('.')).short_commit_hash
+  exec a:command
   call flog#initialize_preview_buffer(l:state)
+
+  if !l:stay
+    wincmd p
+  endif
+endfunction
+
+function! flog#preview_commit(open_cmd, ...) abort
+  let l:stay = exists('a:0') ? a:0 : v:false
+
+  let l:hash = flog#get_commit_data(line('.')).short_commit_hash
+  call flog#preview(a:open_cmd . ' ' . l:hash, v:true)
   call flog#commit_preview_buffer_settings()
-  wincmd p
+
+  if !l:stay
+    wincmd p
+  endif
 endfunction
 
 " }}}
