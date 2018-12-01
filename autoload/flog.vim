@@ -363,12 +363,12 @@ function! flog#close_preview() abort
   endif
 
   " get the previous buffer to switch back to it after closing
-  let l:prev_buffer = bufnr('%')
+  let l:previous_buffer = bufnr('%')
   exec l:preview_window . 'windo bdelete'
   let l:state.preview_file = v:null
 
   " go back to the previous window
-  if l:prev_buffer != l:preview_buffer && bufnr('%') != l:prev_buffer
+  if l:previous_buffer != l:preview_buffer && bufnr('%') != l:previous_buffer
     wincmd p
   endif
 
