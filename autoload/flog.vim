@@ -64,9 +64,17 @@ endfunction
 
 " Argument handling {{{
 
+" Argument parsing {{{
+
 function! flog#parse_arg_opt(arg) abort
   let l:opt = matchstr(a:arg, '=\zs.*')
   return l:opt
+endfunction
+
+function! flog#parse_path_opt(arg) abort
+  let l:paths = split(flog#parse_arg_opt(a:arg), '[^\\]\zs ')
+  call map(l:paths, 'fnameescape(fnamemodify(substitute(v:val, "\\\\ ", " ", ""), ":p"))')
+  return join(l:paths, ' ')
 endfunction
 
 function! flog#parse_args(args) abort
@@ -87,7 +95,7 @@ function! flog#parse_args(args) abort
     elseif l:arg =~# '^-open-cmd='
       let l:open_cmd = flog#parse_arg_opt(l:arg)
     elseif l:arg =~# '^-path='
-      let l:path = flog#parse_arg_opt(l:arg)
+      let l:path = flog#parse_path_opt(l:arg)
     else
       echoerr 'error parsing argument ' . l:arg
       throw g:flog_unsupported_argument
@@ -101,6 +109,35 @@ function! flog#parse_args(args) abort
         \ 'open_cmd': l:open_cmd,
         \ 'path': l:path
         \ }
+endfunction
+
+" }}}
+
+" Argument completion {{{
+
+function! flog#split_completable_arg(arg) abort
+  let l:start_pattern = '^\([^=]*=\)\?'
+  let l:start = matchstr(a:arg, l:start_pattern)
+  let l:rest = matchstr(a:arg, l:start_pattern . '\zs.*')
+
+  " split on space, but only when it is not prefixed by an escaped backslash
+  let l:split = split(l:rest, '\(\\\)\@<!\\ ', v:true)
+
+
+  let l:trimmed = l:split[:-2]
+
+  if l:split != []
+    let l:last = l:split[-1]
+  else
+    let l:last = ''
+  endif
+
+  let l:lead = l:start . join(l:trimmed, '\ ')
+  if len(l:trimmed) > 0
+    let l:lead .= '\ '
+  endif
+
+  return [l:lead, l:last]
 endfunction
 
 function! flog#complete_format(arg_lead) abort
@@ -127,20 +164,34 @@ endfunction
 
 function! flog#complete_open_cmd(arg_lead) abort
   " get the lead without the last command
-  let l:arg_pattern = '^\([^=]*=\)\?'
-  let l:arg = matchstr(a:arg_lead, l:arg_pattern)
-  let l:cmds = join(split(matchstr(a:arg_lead, l:arg_pattern . '\zs.*'), ' ')[:-2])
-  let l:lead = l:arg . l:cmds
-  if len(l:cmds) > 0
-    let l:lead .= ' '
-  endif
+  let [l:lead, l:last] = flog#split_completable_arg(a:arg_lead)
 
-  " build the list of possible patterns
-  let l:patterns = []
-  let l:patterns += map(copy(g:flog_open_cmd_modifiers), 'l:lead . v:val')
-  let l:patterns += map(copy(g:flog_open_cmds), 'l:lead . v:val')
+  " build the list of possible completions
+  let l:completions = []
+  let l:completions += map(copy(g:flog_open_cmd_modifiers), 'l:lead . v:val')
+  let l:completions += map(copy(g:flog_open_cmds), 'l:lead . v:val')
 
-  return "\n" . join(l:patterns, "\n")
+  return "\n" . join(l:completions, "\n")
+endfunction
+
+function! flog#complete_path(arg_lead) abort
+  let [l:lead, l:last] = flog#split_completable_arg(a:arg_lead)
+
+  " remove trailing backslashes to prevent evaluation errors
+  let l:trimmed_last = substitute(l:last, '\\*$', '', '')
+  try
+    " double unescape spaces to deal with argument and filename interpolation
+    let l:last_path = substitute(l:trimmed_last, '\\\\\\ ', ' ', '')
+  catch /E114:/
+    " invalid trailing escape sequence
+    return ''
+  endtry
+  let l:files = getcompletion(l:last_path, 'file')
+
+  " build the completion and re-apply escape sequences
+  let l:completions = map(l:files, "l:lead . substitute(v:val, ' ', '\\\\\\\\\\\\ ', '')")
+
+  return "\n" . join(l:completions, "\n")
 endfunction
 
 function! flog#complete(arg_lead, cmd_line, cursor_pos) abort
@@ -150,9 +201,13 @@ function! flog#complete(arg_lead, cmd_line, cursor_pos) abort
     return flog#complete_format(a:arg_lead)
   elseif a:arg_lead =~# '^-open-cmd='
     return flog#complete_open_cmd(a:arg_lead)
+  elseif a:arg_lead =~# '^-path='
+    return flog#complete_path(a:arg_lead)
   endif
   return g:flog_default_completion
 endfunction
+
+" }}}
 
 " }}}
 
@@ -262,6 +317,15 @@ function! flog#parse_log_output(output) abort
   return l:commits
 endfunction
 
+function! flog#build_log_paths() abort
+  let l:state = flog#get_state()
+  if l:state.path == v:null
+    return ''
+  endif
+  let l:paths = map(split(l:state.path, '[^\\]\zs '), 'fnamemodify(v:val, ":.")')
+  return ' -- ' . join(l:paths, ' ')
+endfunction
+
 function! flog#build_log_command() abort
   let l:state = flog#get_state()
 
@@ -274,9 +338,7 @@ function! flog#build_log_command() abort
   if l:state.additional_args != v:null
     let l:command .= ' ' . l:state.additional_args
   endif
-  if l:state.path != v:null
-    let l:command .= ' -- ' . l:state.path
-  endif
+  let l:command .= flog#build_log_paths()
 
   return l:command
 endfunction
