@@ -78,15 +78,15 @@ function! flog#parse_args(args) abort
   let l:path = v:null
 
   for l:arg in a:args
-    if l:arg =~# '^format='
+    if l:arg =~# '^-format='
       let l:format = flog#parse_arg_opt(l:arg)
-    elseif l:arg =~# '^additional_args='
+    elseif l:arg =~# '^-additional-args='
       let l:additional_args = flog#parse_arg_opt(l:arg)
-    elseif l:arg ==# 'all'
+    elseif l:arg ==# '-all'
       let l:all = v:true
-    elseif l:arg =~# '^open_cmd='
+    elseif l:arg =~# '^-open-cmd='
       let l:open_cmd = flog#parse_arg_opt(l:arg)
-    elseif l:arg =~# '^path='
+    elseif l:arg =~# '^-path='
       let l:path = flog#parse_arg_opt(l:arg)
     else
       echoerr 'error parsing argument ' . l:arg
