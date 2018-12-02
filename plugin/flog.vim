@@ -1,5 +1,6 @@
 let g:flog_instance_counter = 0
 
+" used to determine parts of the output window are graph lines
 let g:flog_graph_branch_pattern = '[|\/\\ ]'
 
 " Log command build data {{{
