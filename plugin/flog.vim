@@ -1,5 +1,9 @@
 let g:flog_instance_counter = 0
 
+let g:flog_graph_branch_pattern = '[|\/\\ ]'
+
+" Log command build data {{{
+
 " used to delineate format specifiers used to retrieve commit data
 let g:flog_format_start = '__FSTART__'
 let g:flog_format_separator = '__FSEP__'
@@ -18,7 +22,7 @@ let g:flog_log_data_format_specifiers = [
       \ 'short_commit_hash',
       \ ]
 
-let g:flog_graph_branch_pattern = '[|\/\\ ]'
+" }}}
 
 " Format specifier patterns {{{
 
