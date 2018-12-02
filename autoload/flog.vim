@@ -271,11 +271,11 @@ function! flog#build_log_command() abort
   if l:state.all
     let l:command .= ' --all'
   endif
-  if l:state.additional_args
+  if l:state.additional_args != v:null
     let l:command .= ' ' . l:state.additional_args
   endif
-  if l:state.path
-    let l:command .= ' ' . l:state.path
+  if l:state.path != v:null
+    let l:command .= ' -- ' . l:state.path
   endif
 
   return l:command
