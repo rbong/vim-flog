@@ -103,6 +103,37 @@ function! flog#parse_args(args) abort
         \ }
 endfunction
 
+function! flog#complete_format(arg_lead) abort
+  " build patterns
+  let l:completable_pattern = g:flog_eat_specifier_pattern
+        \ . '\zs%' . g:flog_completable_partial_pattern . '\?$'
+  let l:noncompletable_pattern = g:flog_eat_specifier_pattern
+        \ . '\zs%' . g:flog_noncompletable_partial_pattern . '$'
+
+  " test the arg lead
+  if a:arg_lead =~# l:noncompletable_pattern
+    " format ends with an incompletable pattern
+    return ''
+  elseif a:arg_lead =~# l:completable_pattern
+    " format ends with a completable pattern
+    let l:lead = substitute(a:arg_lead, l:completable_pattern, '', '')
+    let l:completions = map(copy(g:flog_completion_specifiers), 'l:lead . v:val')
+    return "\n" . join(l:completions, "\n")
+  else
+    " format does not end with any special atom
+    return a:arg_lead . '%'
+  endif
+endfunction
+
+function! flog#complete(arg_lead, cmd_line, cursor_pos) abort
+  if a:arg_lead ==# ''
+    return g:flog_default_completion
+  elseif a:arg_lead =~# '^-format='
+    return flog#complete_format(a:arg_lead)
+  endif
+  return g:flog_default_completion
+endfunction
+
 " }}}
 
 " State management {{{

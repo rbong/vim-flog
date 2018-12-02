@@ -20,6 +20,109 @@ let g:flog_log_data_format_specifiers = [
 
 let g:flog_graph_branch_pattern = '[|\/\\ ]'
 
+" Format specifier patterns {{{
+
+let g:flog_eat_specifier_pattern = '^\(%.\|[^%]\)*'
+let g:flog_specifier_partial_char = '[acgGC(]' 
+let g:flog_specifier_partial_hex = 'x[0-9]\?'
+let g:flog_specifier_partial_bracket_start = '\([Cw<>]\|<|\|>>\|><\)'
+let g:flog_specifier_partial_bracket = '\(\([Cw<>]\|<|\|>>\|><\)(\|(trailers:\)[^\)]*'
+let g:flog_long_specifiers = [
+      \ 'Cred',
+      \ 'Cgreen',
+      \ 'Cblue',
+      \ 'Creset',
+      \ '(trailers:',
+      \ '(trailers)',
+      \ ]
+let long_specifiers = []
+for specifier in g:flog_long_specifiers
+  for i in range(1, len(specifier) - 2)
+    let long_specifiers += [specifier[:i]]
+  endfor
+endfor
+let g:flog_specifier_partial_long = '\(' . join(long_specifiers, '\|') . '\)'
+unlet! long_specifiers specifier
+let g:flog_completable_partials = [
+      \ g:flog_specifier_partial_char,
+      \ g:flog_specifier_partial_bracket_start,
+      \ g:flog_specifier_partial_long,
+      \ ]
+let g:flog_noncompletable_partials = [
+      \ g:flog_specifier_partial_hex,
+      \ g:flog_specifier_partial_bracket,
+      \ ]
+let g:flog_completable_partial_pattern = '\(' . join(g:flog_completable_partials, '\|') . '\)'
+let g:flog_noncompletable_partial_pattern = '\(' . join(g:flog_noncompletable_partials, '\|') . '\)'
+
+let g:flog_default_completion = "\n-all \n-format=\n-open-cmd=\n-path=\n-additional-args="
+let g:flog_completion_specifiers = [
+      \ '%H',
+      \ '%h',
+      \ '%T',
+      \ '%t',
+      \ '%P',
+      \ '%p',
+      \ '%an',
+      \ '%aN',
+      \ '%ae',
+      \ '%aE',
+      \ '%ad',
+      \ '%aD',
+      \ '%ar',
+      \ '%at',
+      \ '%ai',
+      \ '%aI',
+      \ '%cn',
+      \ '%cN',
+      \ '%ce',
+      \ '%cE',
+      \ '%cd',
+      \ '%cD',
+      \ '%cr',
+      \ '%ct',
+      \ '%ci',
+      \ '%cI',
+      \ '%d',
+      \ '%D',
+      \ '%e',
+      \ '%s',
+      \ '%f',
+      \ '%b',
+      \ '%B',
+      \ '%N',
+      \ '%GG',
+      \ '%G?',
+      \ '%GS',
+      \ '%GK',
+      \ '%gD',
+      \ '%gd',
+      \ '%gn',
+      \ '%gN',
+      \ '%ge',
+      \ '%gE',
+      \ '%gs',
+      \ '%Cred',
+      \ '%Cgreen',
+      \ '%Cblue',
+      \ '%Creset',
+      \ '%C(',
+      \ '%m',
+      \ '%n',
+      \ '%%',
+      \ '%x00',
+      \ '%w(',
+      \ '%<(',
+      \ '%<|(',
+      \ '%>(',
+      \ '%>>(',
+      \ '%><(',
+      \ '%(trailers:',
+      \ '%(trailers)',
+      \ ]
+
+" }}}
+
 " Errors {{{
 
 let g:flog_missing_state = 'flog: could not find state'
@@ -33,8 +136,8 @@ let g:flog_unsupported_argument = 'flog: unrecognized argument'
 
 " Commands {{{
 
-command! -nargs=* Flog call flog#open([<f-args>])
-command! -nargs=* Flogsplit call flog#open(['-open-cmd=<mods> split', <f-args>])
+command! -complete=custom,flog#complete -nargs=* Flog call flog#open([<f-args>])
+command! -complete=custom,flog#complete -nargs=* Flogsplit call flog#open(['-open-cmd=<mods> split', <f-args>])
 
 " }}}
 
