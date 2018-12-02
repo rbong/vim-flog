@@ -3,6 +3,34 @@ let g:flog_instance_counter = 0
 " used to determine parts of the output window are graph lines
 let g:flog_graph_branch_pattern = '[|\/\\ ]'
 
+" Open command data {{{
+
+let g:flog_open_cmds = [
+      \ 'edit',
+      \ 'split',
+      \ 'vsplit',
+      \ 'new',
+      \ 'vnew',
+      \ 'tabedit',
+      \ 'tabnew',
+      \ ]
+
+let g:flog_open_cmd_modifiers = [
+      \ 'aboveleft',
+      \ 'belowright',
+      \ 'botright',
+      \ 'confirm',
+      \ 'leftabove',
+      \ 'rightbelow',
+      \ 'silent',
+      \ 'tab',
+      \ 'topleft',
+      \ 'verbose',
+      \ 'vertical',
+      \ ]
+
+" }}}
+
 " Log command build data {{{
 
 " used to delineate format specifiers used to retrieve commit data

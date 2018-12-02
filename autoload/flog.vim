@@ -125,11 +125,31 @@ function! flog#complete_format(arg_lead) abort
   endif
 endfunction
 
+function! flog#complete_open_cmd(arg_lead) abort
+  " get the lead without the last command
+  let l:arg_pattern = '^\([^=]*=\)\?'
+  let l:arg = matchstr(a:arg_lead, l:arg_pattern)
+  let l:cmds = join(split(matchstr(a:arg_lead, l:arg_pattern . '\zs.*'), ' ')[:-2])
+  let l:lead = l:arg . l:cmds
+  if len(l:cmds) > 0
+    let l:lead .= ' '
+  endif
+
+  " build the list of possible patterns
+  let l:patterns = []
+  let l:patterns += map(copy(g:flog_open_cmd_modifiers), 'l:lead . v:val')
+  let l:patterns += map(copy(g:flog_open_cmds), 'l:lead . v:val')
+
+  return "\n" . join(l:patterns, "\n")
+endfunction
+
 function! flog#complete(arg_lead, cmd_line, cursor_pos) abort
   if a:arg_lead ==# ''
     return g:flog_default_completion
   elseif a:arg_lead =~# '^-format='
     return flog#complete_format(a:arg_lead)
+  elseif a:arg_lead =~# '^-open-cmd='
+    return flog#complete_open_cmd(a:arg_lead)
   endif
   return g:flog_default_completion
 endfunction
