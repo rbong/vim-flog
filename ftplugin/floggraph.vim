@@ -52,6 +52,8 @@ command! -buffer Flogupdate call flog#populate_graph_buffer()
 
 command! -buffer Flogquit call flog#quit()
 
+command! -buffer -range -bang -complete=custom,flog#complete_git -nargs=* Floggit call flog#git('<mods>', '<bang>', <q-args>)
+
 " }}}
 
 " vim: set et sw=2 ts=2 fdm=marker:

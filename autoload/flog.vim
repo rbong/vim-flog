@@ -140,6 +140,35 @@ function! flog#split_completable_arg(arg) abort
   return [l:lead, l:last]
 endfunction
 
+function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
+  let l:line = line('.')
+  let l:firstline = line("'<")
+  let l:lastline = line("'>")
+
+  if (l:line != l:firstline && l:line != l:lastline) || l:firstline == l:lastline
+    " complete for only the current line
+    let l:commit = flog#get_commit_data(line('.'))
+    let l:completions = [l:commit.short_commit_hash] + l:commit.ref_name_list
+  else
+    " complete for a range
+    let l:first_commit = flog#get_commit_data(l:firstline)
+    let l:last_commit = flog#get_commit_data(l:lastline)
+    let l:completions = [l:first_commit.short_commit_hash, l:last_commit.short_commit_hash]
+          \ + l:first_commit.ref_name_list + l:last_commit.ref_name_list
+  endif
+
+  return "\n" . join(l:completions, "\n")
+endfunction
+
+function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
+  if len(split(a:cmd_line, ' ', v:true)) <= 2
+    return "\n" . join(g:flog_git_commands, "\n")
+  endif
+  let l:completions = flog#complete_line(a:arg_lead, a:cmd_line, a:cursor_pos)
+  let l:completions .= "\n" . join(getcompletion(a:arg_lead, 'file'), "\n")
+  return l:completions
+endfunction
+
 function! flog#complete_format(arg_lead) abort
   " build patterns
   let l:completable_pattern = g:flog_eat_specifier_pattern
@@ -285,6 +314,8 @@ function! flog#parse_log_commit(raw_commit) abort
     let l:data = l:split_commit[l:i]
     let l:commit[l:specifier] = l:data
   endfor
+
+  let l:commit.ref_name_list = split(l:commit.ref_names_unwrapped, ' -> \|, \|tag: ')
 
   " capture display information
   let l:display_pattern = '^\(.*\)' . g:flog_format_start . '.*' 
@@ -568,6 +599,19 @@ function! flog#quit() abort
 endfunction
 
 " }}}
+
+" }}}
+
+" User commands {{{
+
+function! flog#git(mods, bang, cmd) abort
+  if a:bang ==# '!'
+    call flog#preview(a:mods . ' split | Git! ' . a:cmd)
+  else
+    exec a:mods . ' Git' . ' ' a:cmd
+  endif
+  call flog#populate_graph_buffer()
+endfunction
 
 " }}}
 
