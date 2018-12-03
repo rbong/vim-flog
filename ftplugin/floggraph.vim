@@ -27,6 +27,11 @@ if !hasmapto('<Plug>Flogtoggleall')
 endif
 nnoremap <buffer> <silent> <Plug>Flogtoggleall :Flogtoggleall<CR>
 
+if !hasmapto('<Plug>Flogtogglebisect')
+  map <buffer> gb <Plug>Flogtogglebisect
+endif
+nnoremap <buffer> <silent> <Plug>Flogtogglebisect :Flogtogglebisect<CR>
+
 if !hasmapto('<Plug>Flogupdate')
   map <buffer> u <Plug>Flogupdate
 endif
@@ -47,6 +52,8 @@ command! -buffer -count Flognextcommit call flog#next_commit() | call flog#previ
 command! -buffer -count Flogprevcommit call flog#previous_commit() | call flog#preview_commit('<mods> Gsplit')
 
 command! -buffer Flogtoggleall call flog#toggle_all_refs_option()
+
+command! -buffer Flogtogglebisect call flog#toggle_bisect_refs_option()
 
 command! -buffer Flogupdate call flog#populate_graph_buffer()
 

@@ -82,6 +82,7 @@ function! flog#parse_args(args) abort
   let l:additional_args = v:null
   let l:format = '%ai [%h] {%an}%d %s'
   let l:all = v:false
+  let l:bisect = v:false
   let l:open_cmd = 'tabedit'
   let l:path = v:null
 
@@ -92,6 +93,8 @@ function! flog#parse_args(args) abort
       let l:additional_args = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-all'
       let l:all = v:true
+    elseif l:arg ==# '-bisect'
+      let l:bisect = v:true
     elseif l:arg =~# '^-open-cmd='
       let l:open_cmd = flog#parse_arg_opt(l:arg)
     elseif l:arg =~# '^-path='
@@ -106,6 +109,7 @@ function! flog#parse_args(args) abort
         \ 'additional_args': l:additional_args,
         \ 'format': l:format,
         \ 'all': l:all,
+        \ 'bisect': l:bisect,
         \ 'open_cmd': l:open_cmd,
         \ 'path': l:path
         \ }
@@ -366,6 +370,9 @@ function! flog#build_log_command() abort
   if l:state.all
     let l:command .= ' --all'
   endif
+  if l:state.bisect
+    let l:command .= ' --bisect'
+  endif
   if l:state.additional_args != v:null
     let l:command .= ' ' . l:state.additional_args
   endif
@@ -478,6 +485,12 @@ endfunction
 function! flog#toggle_all_refs_option() abort
   let l:state = flog#get_state()
   let l:state.all = l:state.all ? v:false : v:true
+  call flog#populate_graph_buffer()
+endfunction
+
+function! flog#toggle_bisect_refs_option() abort
+  let l:state = flog#get_state()
+  let l:state.bisect = l:state.bisect ? v:false : v:true
   call flog#populate_graph_buffer()
 endfunction
 

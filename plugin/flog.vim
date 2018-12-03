@@ -88,7 +88,7 @@ let g:flog_noncompletable_partials = [
 let g:flog_completable_partial_pattern = '\(' . join(g:flog_completable_partials, '\|') . '\)'
 let g:flog_noncompletable_partial_pattern = '\(' . join(g:flog_noncompletable_partials, '\|') . '\)'
 
-let g:flog_default_completion = "\n-all \n-format=\n-open-cmd=\n-path=\n-additional-args="
+let g:flog_default_completion = "\n-all \n-bisect \n-format=\n-open-cmd=\n-path=\n-additional-args="
 let g:flog_completion_specifiers = [
       \ '%H',
       \ '%h',
