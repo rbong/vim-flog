@@ -37,10 +37,16 @@ if !hasmapto('<Plug>Flogupdate')
 endif
 nnoremap <buffer> <silent> <Plug>Flogupdate :Flogupdate<CR>
 
+if !hasmapto('<Plug>Floggit')
+  map <buffer> git <Plug>Floggit
+endif
+nnoremap <buffer> <silent> <Plug>Floggit :Floggit
+vnoremap <buffer> <silent> <Plug>Floggit :Floggit
+
 if !hasmapto('<Plug>Flogquit')
   map <buffer> ZZ <Plug>Flogquit
 endif
-nnoremap <buffer> <silent> <Plug>Flogquit :Flogquit<CR>
+nnoremap <buffer> <Plug>Flogquit :Flogquit<CR>
 
 " }}}
 
