@@ -30,7 +30,7 @@ nnoremap <buffer> <silent> <Plug>Flogtoggleall :call flog#toggle_all_refs_option
 if !hasmapto('<Plug>Flogtogglebisect')
   map <buffer> gb <Plug>Flogtogglebisect
 endif
-nnoremap <buffer> <silent> <Plug>Flogtogglebisect :call flog#toggle_bisect_refs_option()<CR>
+nnoremap <buffer> <silent> <Plug>Flogtogglebisect :call flog#toggle_bisect_option()<CR>
 
 if !hasmapto('<Plug>Flogupdate')
   map <buffer> u <Plug>Flogupdate

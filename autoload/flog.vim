@@ -488,7 +488,7 @@ function! flog#toggle_all_refs_option() abort
   call flog#populate_graph_buffer()
 endfunction
 
-function! flog#toggle_bisect_refs_option() abort
+function! flog#toggle_bisect_option() abort
   let l:state = flog#get_state()
   let l:state.bisect = l:state.bisect ? v:false : v:true
   call flog#populate_graph_buffer()
