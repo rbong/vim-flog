@@ -19,23 +19,23 @@ endif
 if !hasmapto('<Plug>Flogvprevcommitright')
   map <buffer> <C-P> <Plug>Flogvprevcommitright
 endif
-nnoremap <buffer> <silent> <Plug>Flogvnextcommitright :<C-U>vertical belowright Flognextcommit<CR>
-nnoremap <buffer> <silent> <Plug>Flogvprevcommitright :<C-U>vertical belowright Flogprevcommit<CR>
+nnoremap <buffer> <silent> <Plug>Flogvnextcommitright :<C-U>call flog#next_commit() \| call flog#preview_commit('vertical belowright Gsplit')<CR>
+nnoremap <buffer> <silent> <Plug>Flogvprevcommitright :<C-U>call flog#previous_commit() \| call flog#preview_commit('vertical belowright Gsplit')<CR>
 
 if !hasmapto('<Plug>Flogtoggleall')
   map <buffer> a <Plug>Flogtoggleall
 endif
-nnoremap <buffer> <silent> <Plug>Flogtoggleall :Flogtoggleall<CR>
+nnoremap <buffer> <silent> <Plug>Flogtoggleall :call flog#toggle_all_refs_option()<CR>
 
 if !hasmapto('<Plug>Flogtogglebisect')
   map <buffer> gb <Plug>Flogtogglebisect
 endif
-nnoremap <buffer> <silent> <Plug>Flogtogglebisect :Flogtogglebisect<CR>
+nnoremap <buffer> <silent> <Plug>Flogtogglebisect :call flog#toggle_bisect_refs_option()<CR>
 
 if !hasmapto('<Plug>Flogupdate')
   map <buffer> u <Plug>Flogupdate
 endif
-nnoremap <buffer> <silent> <Plug>Flogupdate :Flogupdate<CR>
+nnoremap <buffer> <silent> <Plug>Flogupdate :call flog#populate_graph_buffer()<CR>
 
 if !hasmapto('<Plug>Floggit')
   map <buffer> git <Plug>Floggit
@@ -46,24 +46,13 @@ vnoremap <buffer> <silent> <Plug>Floggit :Floggit
 if !hasmapto('<Plug>Flogquit')
   map <buffer> ZZ <Plug>Flogquit
 endif
-nnoremap <buffer> <Plug>Flogquit :Flogquit<CR>
+nnoremap <buffer> <Plug>Flogquit :call flog#quit()<CR>
 
 " }}}
 
 " Commands {{{
 
 command! -buffer Flogsplitcommit call flog#preview_commit('<mods> Gsplit')
-
-command! -buffer -count Flognextcommit call flog#next_commit() | call flog#preview_commit('<mods> Gsplit')
-command! -buffer -count Flogprevcommit call flog#previous_commit() | call flog#preview_commit('<mods> Gsplit')
-
-command! -buffer Flogtoggleall call flog#toggle_all_refs_option()
-
-command! -buffer Flogtogglebisect call flog#toggle_bisect_refs_option()
-
-command! -buffer Flogupdate call flog#populate_graph_buffer()
-
-command! -buffer Flogquit call flog#quit()
 
 command! -buffer -range -bang -complete=custom,flog#complete_git -nargs=* Floggit call flog#git('<mods>', '<bang>', <q-args>)
 
