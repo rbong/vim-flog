@@ -159,6 +159,7 @@ function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
     let l:last_commit = flog#get_commit_data(l:lastline)
     let l:completions = [l:first_commit.short_commit_hash, l:last_commit.short_commit_hash]
           \ + l:first_commit.ref_name_list + l:last_commit.ref_name_list
+          \ + [l:last_commit.short_commit_hash . '..' . l:first_commit.short_commit_hash]
   endif
 
   return "\n" . join(l:completions, "\n")
