@@ -72,9 +72,7 @@ function! flog#parse_arg_opt(arg) abort
 endfunction
 
 function! flog#parse_path_opt(arg) abort
-  let l:paths = split(flog#parse_arg_opt(a:arg), '[^\\]\zs ')
-  call map(l:paths, 'fnameescape(fnamemodify(substitute(v:val, "\\\\ ", " ", ""), ":p"))')
-  return join(l:paths, ' ')
+  return [fnameescape(fnamemodify(flog#parse_arg_opt(a:arg), ':p'))]
 endfunction
 
 function! flog#parse_args(args) abort
@@ -84,7 +82,7 @@ function! flog#parse_args(args) abort
   let l:all = v:false
   let l:bisect = v:false
   let l:open_cmd = 'tabedit'
-  let l:path = v:null
+  let l:path = []
 
   for l:arg in a:args
     if l:arg =~# '^-format='
@@ -98,7 +96,7 @@ function! flog#parse_args(args) abort
     elseif l:arg =~# '^-open-cmd='
       let l:open_cmd = flog#parse_arg_opt(l:arg)
     elseif l:arg =~# '^-path='
-      let l:path = flog#parse_path_opt(l:arg)
+      let l:path += flog#parse_path_opt(l:arg)
     else
       echoerr 'error parsing argument ' . l:arg
       throw g:flog_unsupported_argument
@@ -119,14 +117,18 @@ endfunction
 
 " Argument completion {{{
 
-function! flog#split_completable_arg(arg) abort
+function! flog#split_single_completable_arg(arg) abort
   let l:start_pattern = '^\([^=]*=\)\?'
   let l:start = matchstr(a:arg, l:start_pattern)
   let l:rest = matchstr(a:arg, l:start_pattern . '\zs.*')
 
-  " split on space, but only when it is not prefixed by an escaped backslash
-  let l:split = split(l:rest, '\(\\\)\@<!\\ ', v:true)
+  return [l:start, l:rest]
+endfunction
 
+function! flog#split_completable_arg(arg) abort
+  let [l:start, l:rest ] = flog#split_single_completable_arg(a:arg)
+
+  let l:split = split(l:rest, '\\ ', v:true)
 
   let l:trimmed = l:split[:-2]
 
@@ -209,21 +211,21 @@ function! flog#complete_open_cmd(arg_lead) abort
 endfunction
 
 function! flog#complete_path(arg_lead) abort
-  let [l:lead, l:last] = flog#split_completable_arg(a:arg_lead)
+  let [l:lead, l:path] = flog#split_single_completable_arg(a:arg_lead)
 
   " remove trailing backslashes to prevent evaluation errors
-  let l:trimmed_last = substitute(l:last, '\\*$', '', '')
+  let l:path = substitute(l:path, '\\*$', '', '')
   try
-    " double unescape spaces to deal with argument and filename interpolation
-    let l:last_path = substitute(l:trimmed_last, '\\\\\\ ', ' ', '')
+    " unescape spaces to deal with argument interpolation
+    let l:path = substitute(l:path, '\\ ', ' ', '')
   catch /E114:/
     " invalid trailing escape sequence
     return ''
   endtry
-  let l:files = getcompletion(l:last_path, 'file')
+  let l:files = getcompletion(l:path, 'file')
 
   " build the completion and re-apply escape sequences
-  let l:completions = map(l:files, "l:lead . substitute(v:val, ' ', '\\\\\\\\\\\\ ', '')")
+  let l:completions = map(l:files, "l:lead . substitute(v:val, ' ', '\\\\ ', '')")
 
   return "\n" . join(l:completions, "\n")
 endfunction
@@ -355,10 +357,10 @@ endfunction
 
 function! flog#build_log_paths() abort
   let l:state = flog#get_state()
-  if l:state.path == v:null
+  if len(l:state.path) == 0
     return ''
   endif
-  let l:paths = map(split(l:state.path, '[^\\]\zs '), 'fnamemodify(v:val, ":.")')
+  let l:paths = map(l:state.path, 'fnamemodify(v:val, ":.")')
   return ' -- ' . join(l:paths, ' ')
 endfunction
 
