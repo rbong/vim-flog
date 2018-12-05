@@ -24,7 +24,12 @@ endfunction
 " Shell interface {{{
 
 function! flog#shell_command(command) abort
-  return split(system(a:command), '\n')
+  let l:output = system(a:command)
+  if v:shell_error
+    echoerr l:output
+    throw g:flog_shell_error
+  endif
+  return split(l:output, '\n')
 endfunction
 
 " }}}

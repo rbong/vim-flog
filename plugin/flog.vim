@@ -162,6 +162,7 @@ let g:flog_completion_specifiers = [
 
 " Errors {{{
 
+let g:flog_shell_error = 'flog: encountered shell error'
 let g:flog_missing_state = 'flog: could not find state'
 let g:flog_not_a_fugitive_buffer = 'flog: not a fugitive buffer'
 let g:flog_no_log_output = 'flog: error parsing commits: no git output'
