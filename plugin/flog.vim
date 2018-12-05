@@ -55,7 +55,7 @@ let g:flog_log_data_format_specifiers = [
 
 " }}}
 
-" Format specifier patterns {{{
+" Format specifier data {{{
 
 function! s:LongSpecifierPattern()
   let l:long_specifiers = []
