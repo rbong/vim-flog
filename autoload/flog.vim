@@ -320,7 +320,7 @@ function! flog#create_log_format() abort
   " end format
   let l:format .= g:flog_format_end
   " perform string formatting to avoid shell interpolation
-  return string(l:format)
+  return shellescape(l:format)
 endfunction
 
 function! flog#parse_log_commit(raw_commit) abort
