@@ -1,8 +1,5 @@
 let g:flog_instance_counter = 0
 
-" used to determine parts of the output window are graph lines
-let g:flog_graph_branch_pattern = '[|\/\\ ]'
-
 let g:flog_default_completion = "\n-all \n-bisect \n-format=\n-open-cmd=\n-rev=\n-path=\n-raw-args="
 
 " Open command data {{{

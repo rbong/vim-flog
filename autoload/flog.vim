@@ -361,8 +361,12 @@ function! flog#parse_log_output(output) abort
     throw g:flog_no_log_output
   endif
 
-  let l:flog_commit_end = g:flog_format_end . '\(\n' . g:flog_graph_branch_pattern . '\+\n\)\?\zs'
-  let l:raw_commits = split(join(a:output, "\n"), l:flog_commit_end)
+  let l:commit_split_pattern =
+        \ '\(\n\|^\)\zs\ze\(.\(\n\|' . g:flog_format_start . '\)\@<!\)\{-}'
+        \ . g:flog_format_start
+  let l:raw_commits = split(join(a:output, "\n"), l:commit_split_pattern)
+
+  let g:c = l:raw_commits
 
   let g:raw_commits = l:raw_commits
 
