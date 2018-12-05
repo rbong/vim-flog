@@ -1,0 +1,98 @@
+*flog.txt*  A branch viewer for fugitive
+
+Author:  Roger Bongers <https://github.com/rbong>
+License: Same terms as Vim itself (see |license|)
+
+INTRODUCTION                                    *flog*
+
+Flog is a lightweight branch viewer for vim. Flog provides a wrapper to "git
+log --graph" that can be run from any git repository. It provides several
+helpful commands and bindings to interact with the graph. Flog integrates with
+|fugitive|. See "git log --help" and |fugitive| for more details.
+
+COMMANDS                                        *flog-commands*
+
+                                                *flog-:Flog*
+:Flog
+
+  Open the log graph in a new tab. This command can be run from any file in a
+  git repository. Any |fugitive-commands| can be run from the buffer. The
+  following options are supported:
+
+  -all                  Enable the "--all" argument by default.
+  -bisect               Enable the "--bisect" argument by default.
+  -open-cmd=<cmd>       The command to use to open the window containing the
+                        graph. Must give initial focus to the window. Defaults
+                        to |tabedit|.
+  -format=<format>      A format specifier to pass to "--pretty=format:".
+                        Multiline formats are supported.
+  -rev=<rev>            The git revision to pass to the log command.
+  -path=<path>          A path to pass to the log command. This option can be
+                        specified multiple times for multiple paths.
+  -raw-args=<args>      Additional args to pass to "git log --graph". No args
+                        passed in using this option are guaranteed to work.
+
+:Flogsplit                                      *flog-:Flogsplit*
+
+  Open the log graph in a split. Supports |<mods>|. Behaves the same as
+  |:Flog| otherwise.
+
+:Flogsplitcommit                                *flog-:Flogsplitcommit*
+
+  Open a commit under the cursor using |:Gsplit| in a |flog-preview-window|.
+  Can only be run in the |:Flog| window.
+
+:Floggit                                        *flog-:Floggit*
+
+  Open a git command in a |flog-preview-window|. File completion is available
+  from this command, as well as completion for the commits and refs under the
+  cursor. Completion applies to the first and last lines of the currently or
+  previously selected range if the cursor is on the first or last line of the
+  range. Completion is also available for the "commit range" (not to be
+  confused with the visual selection range, ex. "COMMIT1..COMMIT2"). This
+  command can only be run in the |:Flog| window.
+
+MAPPINGS                                        *flog-mappings*
+
+All mappings are available only from the |:Flog| window.
+
+a                                               *flog-a*
+
+Toggle the "--all" argument.
+
+gb                                              *flog-gb*
+
+toggle the "--bisect" argument.
+
+u                                               *flog-u*
+
+Update the graph window.
+
+<CR>                                            *flog-<CR>*
+
+Open the commit under the cursor in a preview window.
+
+<C-N>                                           *flog-CTRL-N*
+
+Jump to the next commit and open it in a preview window. Accepts a count.
+
+<C-P>                                           *flog-CTRL-P*
+
+Jump to the previous commit and open it in a preview window. Accepts a count.
+
+git                                             *flog-git*
+
+Enter in the characters ":Floggit" from normal or visual mode in order to
+quickly begin a |:Floggit| command.
+
+ZZ                                              *flog-ZZ*
+
+Quit Flog.
+
+PREVIEW WINDOWS                                 *flog-preview-window*
+
+To view more information from the graph, you can open "Flog preview windows".
+Opening a command in Flog preview windows closes any previously opened preview
+windows. Flog preview windows will be closed when quitting Flog.
+
+ vim:tw=78:ts=8:ft=help
