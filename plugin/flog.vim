@@ -3,6 +3,8 @@ let g:flog_instance_counter = 0
 " used to determine parts of the output window are graph lines
 let g:flog_graph_branch_pattern = '[|\/\\ ]'
 
+let g:flog_default_completion = "\n-all \n-bisect \n-format=\n-open-cmd=\n-path=\n-additional-args="
+
 " Open command data {{{
 
 let g:flog_open_cmds = [
@@ -55,10 +57,20 @@ let g:flog_log_data_format_specifiers = [
 
 " Format specifier patterns {{{
 
+function! s:LongSpecifierPattern()
+  let l:long_specifiers = []
+  for l:specifier in g:flog_long_specifiers
+    for i in range(1, len(l:specifier) - 2)
+      let l:long_specifiers += [specifier[:i]]
+    endfor
+  endfor
+  return '\(' . join(l:long_specifiers, '\|') . '\)'
+endfunction
+
 let g:flog_eat_specifier_pattern = '^\(%.\|[^%]\)*'
 let g:flog_specifier_partial_char = '[acgGC(]' 
-let g:flog_specifier_partial_hex = 'x[0-9]\?'
-let g:flog_specifier_partial_bracket_start = '\([Cw<>]\|<|\|>>\|><\)'
+let g:flog_specifier_hex_start = 'x[0-9]\?'
+let g:flog_specifier_bracket_start = '\([Cw<>]\|<|\|>>\|><\)'
 let g:flog_specifier_partial_bracket = '\(\([Cw<>]\|<|\|>>\|><\)(\|(trailers:\)[^\)]*'
 let g:flog_long_specifiers = [
       \ 'Cred',
@@ -68,27 +80,19 @@ let g:flog_long_specifiers = [
       \ '(trailers:',
       \ '(trailers)',
       \ ]
-let long_specifiers = []
-for specifier in g:flog_long_specifiers
-  for i in range(1, len(specifier) - 2)
-    let long_specifiers += [specifier[:i]]
-  endfor
-endfor
-let g:flog_specifier_partial_long = '\(' . join(long_specifiers, '\|') . '\)'
-unlet! long_specifiers specifier
+let g:flog_specifier_long_pattern = s:LongSpecifierPattern()
 let g:flog_completable_partials = [
       \ g:flog_specifier_partial_char,
-      \ g:flog_specifier_partial_bracket_start,
-      \ g:flog_specifier_partial_long,
+      \ g:flog_specifier_bracket_start,
+      \ g:flog_specifier_long_pattern,
       \ ]
 let g:flog_noncompletable_partials = [
-      \ g:flog_specifier_partial_hex,
+      \ g:flog_specifier_hex_start,
       \ g:flog_specifier_partial_bracket,
       \ ]
-let g:flog_completable_partial_pattern = '\(' . join(g:flog_completable_partials, '\|') . '\)'
-let g:flog_noncompletable_partial_pattern = '\(' . join(g:flog_noncompletable_partials, '\|') . '\)'
+let g:flog_completable_specifier_pattern = '\(' . join(g:flog_completable_partials, '\|') . '\)'
+let g:flog_noncompletable_specifier_pattern = '\(' . join(g:flog_noncompletable_partials, '\|') . '\)'
 
-let g:flog_default_completion = "\n-all \n-bisect \n-format=\n-open-cmd=\n-path=\n-additional-args="
 let g:flog_completion_specifiers = [
       \ '%H',
       \ '%h',

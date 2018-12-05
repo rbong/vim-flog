@@ -179,9 +179,9 @@ endfunction
 function! flog#complete_format(arg_lead) abort
   " build patterns
   let l:completable_pattern = g:flog_eat_specifier_pattern
-        \ . '\zs%' . g:flog_completable_partial_pattern . '\?$'
+        \ . '\zs%' . g:flog_completable_specifier_pattern . '\?$'
   let l:noncompletable_pattern = g:flog_eat_specifier_pattern
-        \ . '\zs%' . g:flog_noncompletable_partial_pattern . '$'
+        \ . '\zs%' . g:flog_noncompletable_specifier_pattern . '$'
 
   " test the arg lead
   if a:arg_lead =~# l:noncompletable_pattern
