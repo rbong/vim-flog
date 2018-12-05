@@ -23,7 +23,7 @@ Toggle viewing all branches with `a`.
 Toggle bisect mode with `gb`.
 Quit with `ZZ`.
 
-Run `:Git` commands in a split next to the graph using `:Floggit`.
+Run `:Git` commands in a split next to the graph using `:Floggit!`.
 Command line completion is provided to do any git command with the commits and refs under the cursor.
 
 ## Getting Help
