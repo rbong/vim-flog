@@ -226,10 +226,7 @@ function! flog#complete_rev(arg_lead) abort
   let [l:lead, l:last] = flog#split_single_completable_arg(a:arg_lead)
   let l:cmd = fugitive#buffer().repo().git_command()
         \ . ' rev-parse --symbolic --branches --tags --remotes'
-  let l:revs = split(system(l:cmd), "\n") +  ['HEAD', 'FETCH_HEAD', 'MERGE_HEAD', 'ORIG_HEAD']
-  if v:shell_error
-    throw v:shell_error
-  endif
+  let l:revs = flog#shell_command(l:cmd) +  ['HEAD', 'FETCH_HEAD', 'MERGE_HEAD', 'ORIG_HEAD']
   return "\n" . join(map(l:revs, 'l:lead . v:val'), "\n")
 endfunction
 
