@@ -77,7 +77,7 @@ endfunction
 
 function! flog#parse_args(args) abort
   " defaults
-  let l:additional_args = v:null
+  let l:raw_args = v:null
   let l:format = '%ai [%h] {%an}%d %s'
   let l:all = v:false
   let l:bisect = v:false
@@ -88,8 +88,8 @@ function! flog#parse_args(args) abort
   for l:arg in a:args
     if l:arg =~# '^-format='
       let l:format = flog#parse_arg_opt(l:arg)
-    elseif l:arg =~# '^-additional-args='
-      let l:additional_args = flog#parse_arg_opt(l:arg)
+    elseif l:arg =~# '^-raw-args='
+      let l:raw_args = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-all'
       let l:all = v:true
     elseif l:arg ==# '-bisect'
@@ -107,7 +107,7 @@ function! flog#parse_args(args) abort
   endfor
 
   return {
-        \ 'additional_args': l:additional_args,
+        \ 'raw_args': l:raw_args,
         \ 'format': l:format,
         \ 'all': l:all,
         \ 'bisect': l:bisect,
@@ -396,8 +396,8 @@ function! flog#build_log_command() abort
   if l:state.bisect
     let l:command .= ' --bisect'
   endif
-  if l:state.additional_args != v:null
-    let l:command .= ' ' . l:state.additional_args
+  if l:state.raw_args != v:null
+    let l:command .= ' ' . l:state.raw_args
   endif
   if l:state.rev != v:null
     let l:command .= ' ' . l:state.rev
