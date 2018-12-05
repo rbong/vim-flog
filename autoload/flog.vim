@@ -82,6 +82,7 @@ function! flog#parse_args(args) abort
   let l:all = v:false
   let l:bisect = v:false
   let l:open_cmd = 'tabedit'
+  let l:rev = v:null
   let l:path = []
 
   for l:arg in a:args
@@ -95,6 +96,8 @@ function! flog#parse_args(args) abort
       let l:bisect = v:true
     elseif l:arg =~# '^-open-cmd='
       let l:open_cmd = flog#parse_arg_opt(l:arg)
+    elseif l:arg =~# '^-rev='
+      let l:rev = flog#parse_arg_opt(l:arg)
     elseif l:arg =~# '^-path='
       let l:path += flog#parse_path_opt(l:arg)
     else
@@ -109,7 +112,8 @@ function! flog#parse_args(args) abort
         \ 'all': l:all,
         \ 'bisect': l:bisect,
         \ 'open_cmd': l:open_cmd,
-        \ 'path': l:path
+        \ 'rev': l:rev,
+        \ 'path': l:path,
         \ }
 endfunction
 
@@ -210,6 +214,20 @@ function! flog#complete_open_cmd(arg_lead) abort
   return "\n" . join(l:completions, "\n")
 endfunction
 
+function! flog#complete_rev(arg_lead) abort
+  if !flog#is_fugitive_buffer()
+    return ''
+  endif
+  let [l:lead, l:last] = flog#split_single_completable_arg(a:arg_lead)
+  let l:cmd = fugitive#buffer().repo().git_command()
+        \ . ' rev-parse --symbolic --branches --tags --remotes'
+  let l:revs = split(system(l:cmd), "\n") +  ['HEAD', 'FETCH_HEAD', 'MERGE_HEAD', 'ORIG_HEAD']
+  if v:shell_error
+    throw v:shell_error
+  endif
+  return "\n" . join(map(l:revs, 'l:lead . v:val'), "\n")
+endfunction
+
 function! flog#complete_path(arg_lead) abort
   let [l:lead, l:path] = flog#split_single_completable_arg(a:arg_lead)
 
@@ -237,6 +255,8 @@ function! flog#complete(arg_lead, cmd_line, cursor_pos) abort
     return flog#complete_format(a:arg_lead)
   elseif a:arg_lead =~# '^-open-cmd='
     return flog#complete_open_cmd(a:arg_lead)
+  elseif a:arg_lead =~# '^-rev='
+    return flog#complete_rev(a:arg_lead)
   elseif a:arg_lead =~# '^-path='
     return flog#complete_path(a:arg_lead)
   endif
@@ -378,6 +398,9 @@ function! flog#build_log_command() abort
   endif
   if l:state.additional_args != v:null
     let l:command .= ' ' . l:state.additional_args
+  endif
+  if l:state.rev != v:null
+    let l:command .= ' ' . l:state.rev
   endif
   let l:command .= flog#build_log_paths()
 
