@@ -38,29 +38,29 @@ endfunction
 
 function! flog#is_fugitive_buffer() abort
   try
-    call fugitive#buffer()
-  catch /not a Fugitive buffer/
+    call fugitive#repo()
+  catch /not a Git repository/
     return v:false
   endtry
   return v:true
 endfunction
 
-function! flog#get_initial_fugitive_buffer() abort
-  return fugitive#buffer()
+function! flog#get_initial_fugitive_repo() abort
+  return fugitive#repo()
 endfunction
 
 function! flog#get_fugitive_workdir() abort
-  let l:tree = flog#get_state().fugitive_buffer.repo().tree()
+  let l:tree = flog#get_state().fugitive_repo.tree()
   return l:tree
 endfunction
 
 function! flog#get_fugitive_git_command() abort
-  let l:git_command = flog#get_state().fugitive_buffer.repo().git_command()
+  let l:git_command = flog#get_state().fugitive_repo.git_command()
   return l:git_command
 endfunction
 
 function! flog#trigger_fugitive_git_detection() abort
-  let b:git_dir = flog#get_state().fugitive_buffer.repo().dir()
+  let b:git_dir = flog#get_state().fugitive_repo.dir()
   let l:workdir = flog#get_fugitive_workdir()
   call FugitiveDetect(l:workdir)
 endfunction
@@ -224,7 +224,7 @@ function! flog#complete_rev(arg_lead) abort
     return ''
   endif
   let [l:lead, l:last] = flog#split_single_completable_arg(a:arg_lead)
-  let l:cmd = fugitive#buffer().repo().git_command()
+  let l:cmd = fugitive#repo().git_command()
         \ . ' rev-parse --symbolic --branches --tags --remotes'
   let l:revs = flog#shell_command(l:cmd) +  ['HEAD', 'FETCH_HEAD', 'MERGE_HEAD', 'ORIG_HEAD']
   return "\n" . join(map(l:revs, 'l:lead . v:val'), "\n")
@@ -274,7 +274,7 @@ endfunction
 function! flog#get_initial_state(parsed_args, original_file) abort
   return extend(copy(a:parsed_args), {
         \ 'instance': flog#instance(),
-        \ 'fugitive_buffer': flog#get_initial_fugitive_buffer(),
+        \ 'fugitive_repo': flog#get_initial_fugitive_repo(),
         \ 'original_file': a:original_file,
         \ 'graph_window_id': v:null,
         \ 'preview_window_ids': [],
