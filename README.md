@@ -8,6 +8,8 @@ Flog is a lightweight and powerful git branch viewer that integrates with
 ## Installation
 
 Using [Plug](https://github.com/junegunn/vim-plug), add `Plug 'rbong/vim-flog'` to your `.vimrc`.
+See `:help plug-example` for more information.
+You must also install [fugitive](https://github.com/tpope/vim-fugitive).
 If you do not use plug, see your plugin manager of choice's documentation.
 
 ## Using Flog
