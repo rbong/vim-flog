@@ -36,16 +36,16 @@ highlight default link flogRefHead   Special
 " these syntax regex match all possible graph characters
 " they will match one vertical column of graph characters from left to right ignoring whitespace
 " this makes all graph characters in a column highlighted in the same way
-syntax match flogGraphEdge9 /_\?\(|\|-\(-\|\.\)\|\/|\?\|\\\|\*\|+\|=\)\s\?/ nextgroup=flogGraphEdge0,flogCommit skipwhite
-syntax match flogGraphEdge8 /_\?\(|\|-\(-\|\.\)\|\/|\?\|\\\|\*\|+\|=\)\s\?/ nextgroup=flogGraphEdge9,flogCommit skipwhite
-syntax match flogGraphEdge7 /_\?\(|\|-\(-\|\.\)\|\/|\?\|\\\|\*\|+\|=\)\s\?/ nextgroup=flogGraphEdge8,flogCommit skipwhite
-syntax match flogGraphEdge6 /_\?\(|\|-\(-\|\.\)\|\/|\?\|\\\|\*\|+\|=\)\s\?/ nextgroup=flogGraphEdge7,flogCommit skipwhite
-syntax match flogGraphEdge5 /_\?\(|\|-\(-\|\.\)\|\/|\?\|\\\|\*\|+\|=\)\s\?/ nextgroup=flogGraphEdge6,flogCommit skipwhite
-syntax match flogGraphEdge4 /_\?\(|\|-\(-\|\.\)\|\/|\?\|\\\|\*\|+\|=\)\s\?/ nextgroup=flogGraphEdge5,flogCommit skipwhite
-syntax match flogGraphEdge3 /_\?\(|\|-\(-\|\.\)\|\/|\?\|\\\|\*\|+\|=\)\s\?/ nextgroup=flogGraphEdge4,flogCommit skipwhite
-syntax match flogGraphEdge2 /_\?\(|\|-\(-\|\.\)\|\/|\?\|\\\|\*\|+\|=\)\s\?/ nextgroup=flogGraphEdge3,flogCommit skipwhite
-syntax match flogGraphEdge1 /_\?\(|\|-\(-\|\.\)\|\/|\?\|\\\|\*\|+\|=\)\s\?/ nextgroup=flogGraphEdge2,flogCommit skipwhite
-syntax match flogGraphEdge0 /_\?\(|\|-\(-\|\.\)\|\/|\?\|\\\|\*\|+\|=\)\s\?/ nextgroup=flogGraphEdge1,flogCommit skipwhite
+syntax match flogGraphEdge9 /_\?\(-[-.]\|\/|\?\|[|/?\\*+=]\)\s\?/ nextgroup=flogGraphEdge0,flogCommit skipwhite
+syntax match flogGraphEdge8 /_\?\(-[-.]\|\/|\?\|[|/?\\*+=]\)\s\?/ nextgroup=flogGraphEdge9,flogCommit skipwhite
+syntax match flogGraphEdge7 /_\?\(-[-.]\|\/|\?\|[|/?\\*+=]\)\s\?/ nextgroup=flogGraphEdge8,flogCommit skipwhite
+syntax match flogGraphEdge6 /_\?\(-[-.]\|\/|\?\|[|/?\\*+=]\)\s\?/ nextgroup=flogGraphEdge7,flogCommit skipwhite
+syntax match flogGraphEdge5 /_\?\(-[-.]\|\/|\?\|[|/?\\*+=]\)\s\?/ nextgroup=flogGraphEdge6,flogCommit skipwhite
+syntax match flogGraphEdge4 /_\?\(-[-.]\|\/|\?\|[|/?\\*+=]\)\s\?/ nextgroup=flogGraphEdge5,flogCommit skipwhite
+syntax match flogGraphEdge3 /_\?\(-[-.]\|\/|\?\|[|/?\\*+=]\)\s\?/ nextgroup=flogGraphEdge4,flogCommit skipwhite
+syntax match flogGraphEdge2 /_\?\(-[-.]\|\/|\?\|[|/?\\*+=]\)\s\?/ nextgroup=flogGraphEdge3,flogCommit skipwhite
+syntax match flogGraphEdge1 /_\?\(-[-.]\|\/|\?\|[|/?\\*+=]\)\s\?/ nextgroup=flogGraphEdge2,flogCommit skipwhite
+syntax match flogGraphEdge0 /_\?\(-[-.]\|\/|\?\|[|/?\\*+=]\)\s\?/ nextgroup=flogGraphEdge1,flogCommit skipwhite
 syntax match flogGraphEdgeH /_/ contained containedin=flogGraphEdge0,flogGraphEdge1,flogGraphEdge2,flogGraphEdge3,flogGraphEdge4,flogGraphEdge5,flogGraphEdge6,flogGraphEdge7,flogGraphEdge8,flogGraphEdge9
 
 highlight default link flogGraphEdge0 Delimiter
