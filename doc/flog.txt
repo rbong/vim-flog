@@ -103,4 +103,28 @@ To view more information from the graph, you can open "Flog preview windows".
 Opening a command in Flog preview windows closes any previously opened preview
 windows. Flog preview windows will be closed when quitting Flog.
 
+ADVANCED USAGE                                  *flog-advanced-usage*
+
+Flog keeps an open API in order to allow you to customize it to suit your git
+workflow.
+
+The best way to discover how to use the API is by reading it:
+https://github.com/rbong/vim-flog/blob/master/autoload/flog.vim
+
+Example: to add a diff command to Flog, add the following to your |.vimrc|.
+>
+  function! Flogdiff(mods) abort
+      let l:path = fnameescape(flog#get_state().path[0])
+      let l:commit = flog#get_commit_data(line('.')).short_commit_hash
+      call flog#preview(a:mods . ' split ' . l:path . ' | Gvdiff ' . l:commit)
+  endfunction
+
+  augroup flog
+      autocmd FileType floggraph command! -buffer -nargs=0 Flogdiff call Flogdiff('<mods>')
+  augroup END
+<
+
+By running ":Flogdiff" in the Flog graph window, you can now see a diff of the
+file passed in with the "-path=" option against the commit under the cursor.
+
  vim:tw=78:ts=8:ft=help
