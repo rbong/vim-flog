@@ -7,10 +7,10 @@ let b:current_syntax = 'floggraph'
 " Commit {{{
 
 syntax match flogCommit /.*/
-syntax match flogHash   /\[[0-9a-f]\+\]/ contained containedin=flogCommit
-syntax match flogAuthor /{.\+}/          contained containedin=flogCommit
-syntax match flogRef    /(.\+)/          contained containedin=flogCommit
-syntax match flogDate   /\d\{4}-\d\d-\d\d \d\d:\d\d:\d\d [+-][0-9]\{4}/ contained containedin=flogCommit
+syntax match flogHash   contained containedin=flogCommit /\[[0-9a-f]\+\]/
+syntax match flogAuthor contained containedin=flogCommit /{.\+}/
+syntax match flogRef    contained containedin=flogCommit /(.\+)/
+syntax match flogDate   contained containedin=flogCommit /\d\{4}-\d\d-\d\d \d\d:\d\d:\d\d [+-][0-9]\{4}/
 
 highlight default link flogHash   Statement
 highlight default link flogAuthor String
@@ -19,9 +19,9 @@ highlight default link flogDate   Number
 
 " Ref {{{
 
-syntax match flogRefTag    /tags\/\zs.\{-}\ze\(, \|)\)/ contained containedin=flogRef
-syntax match flogRefRemote /remotes\/\zs.\{-}\ze\(, \|)\)/ contained containedin=flogRef
-syntax match flogRefHead   /HEAD/ contained containedin=flogRef
+syntax match flogRefTag    contained containedin=flogRef /tags\/\zs.\{-}\ze\(, \|)\)/
+syntax match flogRefRemote contained containedin=flogRef /remotes\/\zs.\{-}\ze\(, \|)\)/
+syntax match flogRefHead   contained containedin=flogRef /HEAD/
 
 highlight default link flogRefTag    String
 highlight default link flogRefRemote Statement
