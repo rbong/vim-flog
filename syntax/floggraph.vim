@@ -10,7 +10,7 @@ syntax match flogCommit /.*/
 syntax match flogHash   contained containedin=flogCommit /\[[0-9a-f]\+\]/
 syntax match flogAuthor contained containedin=flogCommit /{.\+}/
 syntax match flogRef    contained containedin=flogCommit /(.\+)/
-syntax match flogDate   contained containedin=flogCommit /\d\{4}-\d\d-\d\d \d\d:\d\d:\d\d [+-][0-9]\{4}/
+syntax match flogDate   contained containedin=flogCommit /\d\{4}-\d\d-\d\d \d\d:\d\d\(:\d\d [+-][0-9]\{4}\)\?/
 
 highlight default link flogHash   Statement
 highlight default link flogAuthor String
