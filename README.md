@@ -30,8 +30,11 @@ Command line completion is provided to do any git command with the commits and r
 
 ## Getting Help
 
-Please see [fugitive](https://github.com/tpope/vim-fugitive),
-`man git-log`, [the issue tracker](https://github.com/rbong/issues), and `:help flog`.
+If you have questions, requests, or bugs, see
+[the issue tracker](https://github.com/rbong/issues) and `:help flog`.
+
+Please see [fugitive](https://github.com/tpope/vim-fugitive) for help with Fugitive commands.
+See `man git-log` for any problems specific to `git log`.
 
 ## Contributing
 
