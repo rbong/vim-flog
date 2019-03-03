@@ -564,7 +564,7 @@ function! flog#close_preview() abort
 
     " get the previous buffer to switch back to it after closing
     call win_gotoid(l:preview_window_id)
-    bdelete
+    close
   endfor
 
   let l:state.preview_window_ids = []
