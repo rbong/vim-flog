@@ -26,6 +26,8 @@ COMMANDS                                        *flog-commands*
                         to |tabedit|.
   -format=<format>      A format specifier to pass to "--pretty=format:".
                         Multiline formats are supported.
+  -date=<date>          The date format to pass to "--date=". Currently,
+                        "short" and "iso8601" are supported.
   -rev=<rev>            The git revision to pass to the log command.
   -path=<path>          A path to pass to the log command. This option can be
                         specified multiple times for multiple paths.

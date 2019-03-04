@@ -83,7 +83,8 @@ endfunction
 function! flog#parse_args(args) abort
   " defaults
   let l:raw_args = v:null
-  let l:format = '%ai [%h] {%an}%d %s'
+  let l:format = '%ad [%h] {%an}%d %s'
+  let l:date = 'iso8601'
   let l:all = v:false
   let l:bisect = v:false
   let l:open_cmd = 'tabedit'
@@ -93,6 +94,8 @@ function! flog#parse_args(args) abort
   for l:arg in a:args
     if l:arg =~# '^-format='
       let l:format = flog#parse_arg_opt(l:arg)
+    elseif l:arg =~# '^-date='
+      let l:date = flog#parse_arg_opt(l:arg)
     elseif l:arg =~# '^-raw-args='
       let l:raw_args = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-all'
@@ -114,6 +117,7 @@ function! flog#parse_args(args) abort
   return {
         \ 'raw_args': l:raw_args,
         \ 'format': l:format,
+        \ 'date': l:date,
         \ 'all': l:all,
         \ 'bisect': l:bisect,
         \ 'open_cmd': l:open_cmd,
@@ -207,6 +211,12 @@ function! flog#complete_format(arg_lead) abort
   endif
 endfunction
 
+function! flog#complete_date(arg_lead) abort
+  let [l:lead, l:path] = flog#split_single_completable_arg(a:arg_lead)
+  let l:completions = map(copy(g:flog_date_formats), 'l:lead . v:val')
+  return "\n" . join(l:completions, "\n")
+endfunction
+
 function! flog#complete_open_cmd(arg_lead) abort
   " get the lead without the last command
   let [l:lead, l:last] = flog#split_completable_arg(a:arg_lead)
@@ -255,6 +265,8 @@ function! flog#complete(arg_lead, cmd_line, cursor_pos) abort
     return g:flog_default_completion
   elseif a:arg_lead =~# '^-format='
     return flog#complete_format(a:arg_lead)
+  elseif a:arg_lead =~# '^-date='
+    return flog#complete_date(a:arg_lead)
   elseif a:arg_lead =~# '^-open-cmd='
     return flog#complete_open_cmd(a:arg_lead)
   elseif a:arg_lead =~# '^-rev='
@@ -396,6 +408,7 @@ function! flog#build_log_command() abort
   let l:command = flog#get_fugitive_git_command()
   let l:command .= ' log --graph --no-color'
   let l:command .= ' --pretty=' . flog#create_log_format()
+  let l:command .= ' --date=' . shellescape(l:state.date)
   if l:state.all
     let l:command .= ' --all'
   endif

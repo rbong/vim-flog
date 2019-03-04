@@ -1,6 +1,11 @@
 let g:flog_instance_counter = 0
 
-let g:flog_default_completion = "\n-all \n-bisect \n-format=\n-open-cmd=\n-rev=\n-path=\n-raw-args="
+let g:flog_default_completion = "\n-all \n-bisect \n-date=\n-format=\n-open-cmd=\n-rev=\n-path=\n-raw-args="
+
+let g:flog_date_formats = [
+      \ 'iso8601', 
+      \ 'short',
+      \ ]
 
 " Open command data {{{
 
