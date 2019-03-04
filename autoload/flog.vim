@@ -437,7 +437,7 @@ function! flog#jump_commits(commits) abort
   let l:current_commit = flog#get_commit_data(line('.'))
 
   let l:index = index(l:state.commits, l:current_commit) + a:commits
-  let l:index = min([max([l:index, 0]), len(l:state.commits)])
+  let l:index = min([max([l:index, 0]), len(l:state.commits) - 1])
 
   let l:line = index(l:state.line_commits, l:state.commits[l:index]) + 1
 
