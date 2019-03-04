@@ -7,7 +7,7 @@ let g:flog_date_formats = [
       \ 'short',
       \ ]
 
-" Open command data {{{
+" Open command arg data {{{
 
 let g:flog_open_cmds = [
       \ 'edit',
