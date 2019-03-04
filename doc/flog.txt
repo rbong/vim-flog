@@ -98,6 +98,16 @@ ZZ                                              *flog-ZZ*
 
 Quit Flog.
 
+OPTIONS                                         *flog-options*
+
+g:flog_default_format                           *flog-g:flog_default_format*
+
+The default value for the |:Flog| option "-format".
+
+g:flog_default_date_format                      *flog-g:flog_default_date_format*
+
+The default value for the |:Flog| option "-date".
+
 PREVIEW WINDOWS                                 *flog-preview-window*
 
 To view more information from the graph, you can open "Flog preview windows".
