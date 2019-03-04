@@ -77,7 +77,7 @@ function! flog#parse_arg_opt(arg) abort
 endfunction
 
 function! flog#parse_path_opt(arg) abort
-  return [fnameescape(fnamemodify(flog#parse_arg_opt(a:arg), ':p'))]
+  return [fnameescape(fnamemodify(expand(flog#parse_arg_opt(a:arg)), ':p'))]
 endfunction
 
 function! flog#parse_args(args) abort
