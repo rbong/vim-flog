@@ -74,7 +74,7 @@ gb                                              *flog-gb*
 
 Toggle the "--bisect" argument.
 
-gb                                              *flog-gm*
+gm                                              *flog-gm*
 
 Toggle the "--no-merges" argument.
 
