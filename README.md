@@ -23,6 +23,7 @@ Jump between commits with `<C-N>` and `<C-P>`.
 Refresh the graph with `u`.
 Toggle viewing all branches with `a`.
 Toggle bisect mode with `gb`.
+Toggle displaying no merges with `gm`.
 Quit with `ZZ`.
 
 Run `:Git` commands in a split next to the graph using `:Floggit!`.
