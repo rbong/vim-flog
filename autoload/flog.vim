@@ -699,7 +699,16 @@ function! flog#git(mods, bang, cmd) abort
   if a:bang ==# '!'
     call flog#preview(a:mods . ' split | Git! ' . a:cmd)
   else
+    let l:previous_window_id = win_getid()
     exec a:mods . ' Git' . ' ' a:cmd
+    " neovim does not immediately return to the previous window
+    if has('nvim')
+      let l:command_window_id = win_getid()
+      call win_gotoid(l:previous_window_id)
+      call flog#populate_graph_buffer()
+      call win_gotoid(l:command_window_id)
+      return
+    endif
   endif
   call flog#populate_graph_buffer()
 endfunction
