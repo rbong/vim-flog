@@ -72,7 +72,7 @@ Toggle the "--all" argument.
 
 gb                                              *flog-gb*
 
-toggle the "--bisect" argument.
+Toggle the "--bisect" argument.
 
 gb                                              *flog-gm*
 
