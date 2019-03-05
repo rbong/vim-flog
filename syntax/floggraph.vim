@@ -36,7 +36,7 @@ highlight default link flogRefHead   Special
 " these syntax regex match all possible graph characters
 " they will match one vertical column of graph characters from left to right ignoring whitespace
 " this makes all graph characters in a column highlighted in the same way
-syntax match flogGraphEdge9 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge0,flogCommit skipwhite
+syntax match flogGraphEdge9 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge1,flogCommit skipwhite
 syntax match flogGraphEdge8 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge9,flogCommit skipwhite
 syntax match flogGraphEdge7 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge8,flogCommit skipwhite
 syntax match flogGraphEdge6 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge7,flogCommit skipwhite
@@ -45,10 +45,7 @@ syntax match flogGraphEdge4 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge5,flogCommit
 syntax match flogGraphEdge3 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge4,flogCommit skipwhite
 syntax match flogGraphEdge2 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge3,flogCommit skipwhite
 syntax match flogGraphEdge1 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge2,flogCommit skipwhite
-syntax match flogGraphEdge0 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge1,flogCommit skipwhite
-syntax match flogGraphEdgeH /_\|\/\ze|/ contained containedin=flogGraphEdge0,flogGraphEdge1,flogGraphEdge2,flogGraphEdge3,flogGraphEdge4,flogGraphEdge5,flogGraphEdge6,flogGraphEdge7,flogGraphEdge8,flogGraphEdge9
-
-highlight default link flogGraphEdge0 Delimiter
+syntax match flogGraphEdgeH /_\|\/\ze|/ contained containedin=flogGraphEdge1,flogGraphEdge2,flogGraphEdge3,flogGraphEdge4,flogGraphEdge5,flogGraphEdge6,flogGraphEdge7,flogGraphEdge8,flogGraphEdge9
 
 if &background ==# 'dark'
   highlight default flogGraphEdge1 ctermfg=magenta     guifg=green1
