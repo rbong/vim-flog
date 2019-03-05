@@ -509,6 +509,25 @@ function! flog#set_graph_buffer_commits(commits) abort
   endfor
 endfunction
 
+function! flog#set_graph_buffer_title() abort
+  let l:state = flog#get_state()
+
+  let l:title = 'flog-' . l:state.instance
+  if l:state.all
+    let l:title .= ' [all]'
+  endif
+  if l:state.bisect
+    let l:title .= ' [bisect]'
+  endif
+  if l:state.no_merges
+    let l:title .= ' [no_merges]'
+  endif
+
+  exec 'file '. l:title
+
+  return l:title
+endfunction
+
 function! flog#populate_graph_buffer() abort
   let l:state = flog#get_state()
 
@@ -517,6 +536,7 @@ function! flog#populate_graph_buffer() abort
   let l:commits = flog#parse_log_output(l:output)
 
   call flog#set_graph_buffer_commits(l:commits)
+  call flog#set_graph_buffer_title()
 
   let l:state.previous_log_command = l:command
   let l:state.commits = l:commits
@@ -638,8 +658,8 @@ endfunction
 " Graph layout management {{{
 
 function! flog#open_graph(state) abort
-  let l:window_name = 'flog-' . a:state.instance
-  exec a:state.open_cmd . ' ' . l:window_name
+  let l:window_name = 'flog-' . a:state.instance . ' [uninitialized]'
+  silent exec a:state.open_cmd . ' ' . l:window_name
 
   let a:state.graph_window_id = win_getid()
 
