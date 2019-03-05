@@ -523,7 +523,7 @@ function! flog#set_graph_buffer_title() abort
     let l:title .= ' [no_merges]'
   endif
 
-  exec 'file '. l:title
+  exec 'silent file '. l:title
 
   return l:title
 endfunction
