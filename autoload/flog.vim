@@ -374,7 +374,7 @@ endfunction
 
 function! flog#parse_log_output(output) abort
   if len(a:output) == 0
-    throw g:flog_no_log_output
+    return []
   endif
 
   let l:commit_split_pattern =
