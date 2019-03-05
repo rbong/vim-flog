@@ -1,6 +1,6 @@
 let g:flog_instance_counter = 0
 
-let g:flog_default_completion = "\n-all \n-bisect \n-date=\n-format=\n-open-cmd=\n-rev=\n-path=\n-raw-args="
+let g:flog_default_completion = "\n-all \n-bisect \n-date=\n-format=\n-no-merges\n-open-cmd=\n-path=\n-raw-args=\n-rev="
 
 let g:flog_date_formats = [
       \ 'iso8601', 

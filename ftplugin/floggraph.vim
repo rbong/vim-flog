@@ -32,6 +32,11 @@ if !hasmapto('<Plug>Flogtogglebisect')
 endif
 nnoremap <buffer> <silent> <Plug>Flogtogglebisect :call flog#toggle_bisect_option()<CR>
 
+if !hasmapto('<Plug>Flogtogglenomerges')
+  map <buffer> gm <Plug>Flogtogglenomerges
+endif
+nnoremap <buffer> <silent> <Plug>Flogtogglenomerges :call flog#toggle_no_merges_option()<CR>
+
 if !hasmapto('<Plug>Flogupdate')
   map <buffer> u <Plug>Flogupdate
 endif

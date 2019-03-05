@@ -87,6 +87,7 @@ function! flog#parse_args(args) abort
   let l:date = g:flog_default_date_format
   let l:all = v:false
   let l:bisect = v:false
+  let l:no_merges = v:false
   let l:open_cmd = 'tabedit'
   let l:rev = v:null
   let l:path = []
@@ -102,6 +103,8 @@ function! flog#parse_args(args) abort
       let l:all = v:true
     elseif l:arg ==# '-bisect'
       let l:bisect = v:true
+    elseif l:arg ==# '-no-merges'
+      let l:no_merges = v:true
     elseif l:arg =~# '^-open-cmd='
       let l:open_cmd = flog#parse_arg_opt(l:arg)
     elseif l:arg =~# '^-rev='
@@ -120,6 +123,7 @@ function! flog#parse_args(args) abort
         \ 'date': l:date,
         \ 'all': l:all,
         \ 'bisect': l:bisect,
+        \ 'no_merges': l:no_merges,
         \ 'open_cmd': l:open_cmd,
         \ 'rev': l:rev,
         \ 'path': l:path,
@@ -415,6 +419,9 @@ function! flog#build_log_command() abort
   if l:state.bisect
     let l:command .= ' --bisect'
   endif
+  if l:state.no_merges
+    let l:command .= ' --no-merges'
+  endif
   if l:state.raw_args != v:null
     let l:command .= ' ' . l:state.raw_args
   endif
@@ -536,6 +543,12 @@ endfunction
 function! flog#toggle_bisect_option() abort
   let l:state = flog#get_state()
   let l:state.bisect = l:state.bisect ? v:false : v:true
+  call flog#populate_graph_buffer()
+endfunction
+
+function! flog#toggle_no_merges_option() abort
+  let l:state = flog#get_state()
+  let l:state.no_merges = l:state.no_merges ? v:false : v:true
   call flog#populate_graph_buffer()
 endfunction
 

@@ -21,6 +21,7 @@ COMMANDS                                        *flog-commands*
 
   -all                  Enable the "--all" argument by default.
   -bisect               Enable the "--bisect" argument by default.
+  -no-merges            Enable the "--no-merges" argument by default.
   -open-cmd=<cmd>       The command to use to open the window containing the
                         graph. Must give initial focus to the window. Defaults
                         to |tabedit|.
@@ -72,6 +73,10 @@ Toggle the "--all" argument.
 gb                                              *flog-gb*
 
 toggle the "--bisect" argument.
+
+gb                                              *flog-gm*
+
+Toggle the "--no-merges" argument.
 
 u                                               *flog-u*
 
