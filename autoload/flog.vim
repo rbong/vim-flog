@@ -705,6 +705,7 @@ function! flog#git(mods, bang, cmd) abort
     if has('nvim')
       let l:command_window_id = win_getid()
       call win_gotoid(l:previous_window_id)
+      redraw!
       call flog#populate_graph_buffer()
       call win_gotoid(l:command_window_id)
       return
