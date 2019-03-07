@@ -48,6 +48,12 @@ endif
 nnoremap <buffer> <silent> <Plug>Floggit :Floggit
 vnoremap <buffer> <silent> <Plug>Floggit :Floggit
 
+if !hasmapto('<Plug>Flogyank')
+  map <buffer> y<C-G> <Plug>Flogyank
+endif
+nnoremap <buffer><silent> <Plug>Flogyank :call flog#copy_commits()<CR>
+vnoremap <buffer><silent> <Plug>Flogyank :call flog#copy_commits(1)<CR>
+
 if !hasmapto('<Plug>Flogquit')
   map <buffer> ZZ <Plug>Flogquit
 endif

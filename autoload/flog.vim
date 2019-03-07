@@ -478,6 +478,27 @@ function! flog#previous_commit() abort
   call flog#jump_commits(-v:count1)
 endfunction
 
+function! flog#copy_commits(...) range abort
+  let l:by_line = exists('a:0') ? a:0 : v:false
+  let l:state = flog#get_state()
+
+  let l:first_commit = flog#get_commit_data(a:firstline)
+  let l:first_index = index(l:state.commits, l:first_commit)
+  if l:by_line
+    let l:last_commit = flog#get_commit_data(a:lastline)
+    let l:last_index = index(l:state.commits, l:last_commit)
+  elseif a:lastline > 0
+    let l:last_index = l:first_index + a:lastline - a:firstline
+  else
+    let l:last_index = l:first_index
+  endif
+
+  let l:commits = l:state.commits[l:first_index : l:last_index]
+  let l:commits = map(l:commits, 'v:val.short_commit_hash')
+
+  return setreg(v:register, join(l:commits, ' '))
+endfunction
+
 " }}}
 
 " Buffer management {{{

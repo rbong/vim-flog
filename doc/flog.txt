@@ -99,6 +99,11 @@ git                                             *flog-git*
 Enter in the characters ":Floggit" from normal or visual mode in order to
 quickly begin a |:Floggit| command.
 
+y<C-G>                                          *flog-y<C-G>*
+
+Copy the short commit hash under the current line to a register. Accepts a
+count.
+
 ZZ                                              *flog-ZZ*
 
 Quit Flog.
