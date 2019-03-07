@@ -45,7 +45,11 @@ syntax match flogGraphEdge4 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge5,flogCommit
 syntax match flogGraphEdge3 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge4,flogCommit skipwhite
 syntax match flogGraphEdge2 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge3,flogCommit skipwhite
 syntax match flogGraphEdge1 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge2,flogCommit skipwhite
-syntax match flogGraphEdgeH /_\|\/\ze|/ contained containedin=flogGraphEdge1,flogGraphEdge2,flogGraphEdge3,flogGraphEdge4,flogGraphEdge5,flogGraphEdge6,flogGraphEdge7,flogGraphEdge8,flogGraphEdge9
+
+syntax cluster flogGraphEdge contains=flogGraphEdge1,flogGraphEdge2,flogGraphEdge3,flogGraphEdge4,flogGraphEdge5,flogGraphEdge6,flogGraphEdge7,flogGraphEdge8,flogGraphEdge9
+
+syntax match flogGraphCrossing /_\|\/\ze|/ contained containedin=@flogGraphEdge
+syntax match flogGraphCommit /\*/ contained containedin=@flogGraphEdge
 
 if &background ==# 'dark'
   highlight default flogGraphEdge1 ctermfg=magenta     guifg=green1
