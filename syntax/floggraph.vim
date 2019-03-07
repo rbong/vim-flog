@@ -4,6 +4,10 @@ endif
 
 let b:current_syntax = 'floggraph'
 
+if get(g:, 'flog_use_ansi_esc')
+  finish
+endif
+
 " Commit {{{
 
 syntax match flogCommit /.*/

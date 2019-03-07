@@ -83,7 +83,7 @@ endfunction
 function! flog#parse_args(args) abort
   " defaults
   let l:raw_args = v:null
-  let l:format = get(g:, 'flog_default_format', '%ad [%h] {%an}%d %s')
+  let l:format = get(g:, 'flog_default_format', '%Cblue%ad%Creset %C(yellow)[%h]%Creset %Cgreen{%an}%Creset%Cred%d%Creset %s')
   let l:date = get(g:, 'flog_default_date_format', 'iso8601')
   let l:all = v:false
   let l:bisect = v:false
@@ -296,6 +296,7 @@ function! flog#get_initial_state(parsed_args, original_file) abort
         \ 'preview_window_ids': [],
         \ 'previous_log_command': v:null,
         \ 'line_commits': [],
+        \ 'ansi_esc_called': v:false,
         \ })
 endfunction
 
@@ -428,6 +429,9 @@ function! flog#build_log_command() abort
   if l:state.rev != v:null
     let l:command .= ' ' . l:state.rev
   endif
+  if get(g:, 'flog_use_ansi_esc')
+    let l:command .= ' --color'
+  endif
   let l:command .= flog#build_log_paths()
 
   return l:command
@@ -528,6 +532,18 @@ function! flog#set_graph_buffer_title() abort
   return l:title
 endfunction
 
+function! flog#set_graph_buffer_color() abort
+  if get(g:, 'flog_use_ansi_esc')
+    let l:state = flog#get_state()
+    if !l:state.ansi_esc_called
+      AnsiEsc
+      let l:state.ansi_esc_called = 1
+    else
+      AnsiEsc!
+    endif
+  endif
+endfunction
+
 function! flog#populate_graph_buffer() abort
   let l:state = flog#get_state()
 
@@ -537,6 +553,7 @@ function! flog#populate_graph_buffer() abort
 
   call flog#set_graph_buffer_commits(l:commits)
   call flog#set_graph_buffer_title()
+  call flog#set_graph_buffer_color()
 
   let l:state.previous_log_command = l:command
   let l:state.commits = l:commits

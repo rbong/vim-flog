@@ -113,6 +113,14 @@ g:flog_default_date_format                      *flog-g:flog_default_date_format
 
 The default value for the |:Flog| option "-date".
 
+g:flog_use_ansi_esc                             *flog-g:flog_use_ansi_esc*
+
+By default, Flog uses limited regex syntax highlighting. This option enables
+terminal coloring using the AnsiEsc script.
+
+For more details, help and installation, see AnsiEsc:
+<https://github.com/vim-scripts/AnsiEsc.vim>
+
 PREVIEW WINDOWS                                 *flog-preview-window*
 
 To view more information from the graph, you can open "Flog preview windows".
