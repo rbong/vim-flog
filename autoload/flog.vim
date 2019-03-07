@@ -83,8 +83,8 @@ endfunction
 function! flog#parse_args(args) abort
   " defaults
   let l:raw_args = v:null
-  let l:format = g:flog_default_format
-  let l:date = g:flog_default_date_format
+  let l:format = get(g:, 'flog_default_format', '%ad [%h] {%an}%d %s')
+  let l:date = get(g:, 'flog_default_date_format', 'iso8601')
   let l:all = v:false
   let l:bisect = v:false
   let l:no_merges = v:false

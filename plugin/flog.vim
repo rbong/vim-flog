@@ -7,18 +7,6 @@ let g:flog_date_formats = [
       \ 'short',
       \ ]
 
-" Argument defaults {{{
-
-if !exists('g:flog_default_date_format')
-  let g:flog_default_date_format = 'iso8601'
-endif
-
-if !exists('g:flog_default_format')
-  let g:flog_default_format = '%ad [%h] {%an}%d %s'
-endif
-
-" }}}
-
 " Open command arg data {{{
 
 let g:flog_open_cmds = [
