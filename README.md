@@ -26,6 +26,8 @@ Toggle bisect mode with `gb`.
 Toggle displaying no merges with `gm`.
 Quit with `ZZ`.
 
+If you forget these bindings, press `g?` at any time to get help.
+
 Run `:Git` commands in a split next to the graph using `:Floggit!`.
 Command line completion is provided to do any git command with the commits and refs under the cursor.
 
