@@ -19,8 +19,8 @@ endif
 if !hasmapto('<Plug>Flogvprevcommitright')
   map <buffer> <C-P> <Plug>Flogvprevcommitright
 endif
-nnoremap <buffer> <silent> <Plug>Flogvnextcommitright :<C-U>call flog#next_commit() \| call flog#preview_commit('vertical belowright Gsplit')<CR>
-nnoremap <buffer> <silent> <Plug>Flogvprevcommitright :<C-U>call flog#previous_commit() \| call flog#preview_commit('vertical belowright Gsplit')<CR>
+nnoremap <buffer> <silent> <Plug>Flogvnextcommitright :<C-U>call flog#next_commit() \| vertical belowright Flogsplitcommit<CR>
+nnoremap <buffer> <silent> <Plug>Flogvprevcommitright :<C-U>call flog#previous_commit() \| vertical belowright Flogsplitcommit<CR>
 
 if !hasmapto('<Plug>Flogtoggleall')
   map <buffer> a <Plug>Flogtoggleall
