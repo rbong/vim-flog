@@ -32,7 +32,7 @@ Command line completion is provided to do any git command with the commits and r
 ## Getting Help
 
 If you have questions, requests, or bugs, see
-[the issue tracker](https://github.com/rbong/issues) and `:help flog`.
+[the issue tracker](https://github.com/rbong/vim-flog/issues) and `:help flog`.
 
 Please see [fugitive](https://github.com/tpope/vim-fugitive) for help with Fugitive commands.
 See `man git-log` for any problems specific to `git log`.
