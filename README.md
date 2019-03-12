@@ -37,7 +37,7 @@ If you have questions, requests, or bugs, see
 [the issue tracker](https://github.com/rbong/vim-flog/issues) and `:help flog`.
 
 Please see [fugitive](https://github.com/tpope/vim-fugitive) for help with Fugitive commands.
-See `man git-log` for any problems specific to `git log`.
+See `git log --help` for any problems specific to `git log`.
 
 ## Contributing
 
