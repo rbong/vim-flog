@@ -108,6 +108,10 @@ ZZ                                              *flog-ZZ*
 
 Quit Flog.
 
+g?                                              *flog-g?*
+
+Jump to this list of mappings in help.
+
 OPTIONS                                         *flog-options*
 
 g:flog_default_format                           *flog-g:flog_default_format*

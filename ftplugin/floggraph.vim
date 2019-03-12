@@ -59,6 +59,11 @@ if !hasmapto('<Plug>Flogquit')
 endif
 nnoremap <buffer> <Plug>Flogquit :call flog#quit()<CR>
 
+if !hasmapto('<Plug>Floghelp')
+  map <buffer> g? <Plug>Floghelp
+endif
+nnoremap <buffer> <Plug>Floghelp :help flog-mappings<CR>
+
 " }}}
 
 " Commands {{{
