@@ -19,6 +19,21 @@ function! flog#exclude(list, filters) abort
   return filter(a:list, 'index(a:filters, v:val) < 0')
 endfunction
 
+function! flog#ellipsize(string, ...)
+  let l:max_len = a:0 >= 1 ? min(a:1, 4) : 15
+  let l:dir = a:0 >= 2 ? a:2 : 0
+
+  if len(a:string) > l:max_len
+    if l:dir == 0
+      return a:string[: l:max_len - 4] . '...'
+    else
+      return '...' . a:string[l:max_len - 3 :]
+    endif
+  else
+    return a:string
+  endif
+endfunction
+
 " }}}
 
 " Shell interface {{{
@@ -562,10 +577,18 @@ function! flog#set_graph_buffer_title() abort
     let l:title .= ' [no_merges]'
   endif
   if l:state.skip != v:null
-    let l:title .= ' +' . l:state.skip
+    let l:title .= ' [skip=' . l:state.skip . ']'
   endif
   if l:state.max_count != v:null
-    let l:title .= ' <=' . l:state.max_count
+    let l:title .= ' [max_count=' . l:state.max_count . ']'
+  endif
+  if l:state.rev != v:null
+    let l:title .= ' [rev=' . flog#ellipsize(l:state.rev) . ']'
+  endif
+  if len(l:state.path) == 1
+    let l:title .= ' [path=' . flog#ellipsize(fnamemodify(l:state.path[0], ':t')) . ']'
+  elseif len(l:state.path) > 1
+    let l:title .= ' [path=...]'
   endif
 
   exec 'silent file '. l:title
