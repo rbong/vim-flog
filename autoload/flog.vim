@@ -88,6 +88,8 @@ function! flog#parse_args(args) abort
   let l:all = v:false
   let l:bisect = v:false
   let l:no_merges = v:false
+  let l:skip = v:null
+  let l:max_count = v:null
   let l:open_cmd = 'tabedit'
   let l:rev = v:null
   let l:path = []
@@ -105,6 +107,10 @@ function! flog#parse_args(args) abort
       let l:bisect = v:true
     elseif l:arg ==# '-no-merges'
       let l:no_merges = v:true
+    elseif l:arg =~# '^-skip=\d\+'
+      let l:skip = flog#parse_arg_opt(l:arg)
+    elseif l:arg =~# '^-max-count=\d\+'
+      let l:max_count = flog#parse_arg_opt(l:arg)
     elseif l:arg =~# '^-open-cmd='
       let l:open_cmd = flog#parse_arg_opt(l:arg)
     elseif l:arg =~# '^-rev='
@@ -124,6 +130,8 @@ function! flog#parse_args(args) abort
         \ 'all': l:all,
         \ 'bisect': l:bisect,
         \ 'no_merges': l:no_merges,
+        \ 'skip': l:skip,
+        \ 'max_count': l:max_count,
         \ 'open_cmd': l:open_cmd,
         \ 'rev': l:rev,
         \ 'path': l:path,
@@ -423,6 +431,12 @@ function! flog#build_log_command() abort
   if l:state.no_merges
     let l:command .= ' --no-merges'
   endif
+  if l:state.skip != v:null
+    let l:command .= ' --skip=' . shellescape(l:state.skip)
+  endif
+  if l:state.max_count != v:null
+    let l:command .= ' --max-count=' . shellescape(l:state.max_count)
+  endif
   if l:state.raw_args != v:null
     let l:command .= ' ' . l:state.raw_args
   endif
@@ -546,6 +560,12 @@ function! flog#set_graph_buffer_title() abort
   endif
   if l:state.no_merges
     let l:title .= ' [no_merges]'
+  endif
+  if l:state.skip != v:null
+    let l:title .= ' +' . l:state.skip
+  endif
+  if l:state.max_count != v:null
+    let l:title .= ' <=' . l:state.max_count
   endif
 
   exec 'silent file '. l:title
