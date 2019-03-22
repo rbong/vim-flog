@@ -61,7 +61,7 @@ COMMANDS                                        *flog-commands*
 
   This command can only be run in the |:Flog| window.
 
-:Floggit!                                       *flog-:Floggit*
+:Floggit!                                       *flog-:Floggit!*
 
   Same as |:Floggit|, but opens the git command in a preview window. Supports
   modifiers.
