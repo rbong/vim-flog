@@ -32,58 +32,60 @@ if !g:flog_has_shown_deprecated_mapping_spelling_warning
 endif
 
 if !hasmapto('<Plug>FlogVsplitcommitright')
-  map <buffer> <CR> <Plug>FlogVsplitcommitright
+  nmap <buffer> <CR> <Plug>FlogVsplitcommitright
 endif
 nnoremap <buffer> <silent> <Plug>FlogVsplitcommitright :vertical belowright Flogsplitcommit<CR>
 
 if !hasmapto('<Plug>FlogVnextcommitright')
-  map <buffer> <C-N> <Plug>FlogVnextcommitright
+  nmap <buffer> <C-N> <Plug>FlogVnextcommitright
 endif
 if !hasmapto('<Plug>FlogVprevcommitright')
-  map <buffer> <C-P> <Plug>FlogVprevcommitright
+  nmap <buffer> <C-P> <Plug>FlogVprevcommitright
 endif
 nnoremap <buffer> <silent> <Plug>FlogVnextcommitright :<C-U>call flog#next_commit() \| vertical belowright Flogsplitcommit<CR>
 nnoremap <buffer> <silent> <Plug>FlogVprevcommitright :<C-U>call flog#previous_commit() \| vertical belowright Flogsplitcommit<CR>
 
 if !hasmapto('<Plug>FlogToggleall')
-  map <buffer> a <Plug>FlogToggleall
+  nmap <buffer> a <Plug>FlogToggleall
 endif
 nnoremap <buffer> <silent> <Plug>FlogToggleall :call flog#toggle_all_refs_option()<CR>
 
 if !hasmapto('<Plug>FlogTogglebisect')
-  map <buffer> gb <Plug>FlogTogglebisect
+  nmap <buffer> gb <Plug>FlogTogglebisect
 endif
 nnoremap <buffer> <silent> <Plug>FlogTogglebisect :call flog#toggle_bisect_option()<CR>
 
 if !hasmapto('<Plug>FlogTogglenomerges')
-  map <buffer> gm <Plug>FlogTogglenomerges
+  nmap <buffer> gm <Plug>FlogTogglenomerges
 endif
 nnoremap <buffer> <silent> <Plug>FlogTogglenomerges :call flog#toggle_no_merges_option()<CR>
 
 if !hasmapto('<Plug>FlogUpdate')
-  map <buffer> u <Plug>FlogUpdate
+  nmap <buffer> u <Plug>FlogUpdate
 endif
 nnoremap <buffer> <silent> <Plug>FlogUpdate :call flog#populate_graph_buffer()<CR>
 
 if !hasmapto('<Plug>FlogGit')
-  map <buffer> git <Plug>FlogGit
+  nmap <buffer> git <Plug>FlogGit
+  vmap <buffer> git <Plug>FlogGit
 endif
 nnoremap <buffer> <silent> <Plug>FlogGit :Floggit
 vnoremap <buffer> <silent> <Plug>FlogGit :Floggit
 
 if !hasmapto('<Plug>FlogYank')
-  map <buffer> y<C-G> <Plug>FlogYank
+  nmap <buffer> y<C-G> <Plug>FlogYank
+  vmap <buffer> y<C-G> <Plug>FlogYank
 endif
 nnoremap <buffer><silent> <Plug>FlogYank :call flog#copy_commits()<CR>
 vnoremap <buffer><silent> <Plug>FlogYank :call flog#copy_commits(1)<CR>
 
 if !hasmapto('<Plug>FlogQuit')
-  map <buffer> ZZ <Plug>FlogQuit
+  nmap <buffer> ZZ <Plug>FlogQuit
 endif
 nnoremap <buffer> <Plug>FlogQuit :call flog#quit()<CR>
 
 if !hasmapto('<Plug>FlogHelp')
-  map <buffer> g? <Plug>FlogHelp
+  nmap <buffer> g? <Plug>FlogHelp
 endif
 nnoremap <buffer> <Plug>FlogHelp :help flog-mappings<CR>
 
