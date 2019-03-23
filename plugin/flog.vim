@@ -7,6 +7,8 @@ let g:flog_date_formats = [
       \ 'short',
       \ ]
 
+let g:flog_has_shown_deprecated_mapping_spelling_warning = 0
+
 " Open command arg data {{{
 
 let g:flog_open_cmds = [

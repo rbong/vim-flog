@@ -8,61 +8,84 @@ silent setlocal nomodifiable
 
 " Bindings {{{
 
-if !hasmapto('<Plug>Flogvsplitcommitright')
-  map <buffer> <CR> <Plug>Flogvsplitcommitright
+if !g:flog_has_shown_deprecated_mapping_spelling_warning
+  for flog_deprecated_mapping in [
+        \ '<Plug>Floggit',
+        \ '<Plug>Floghelp',
+        \ '<Plug>Flogquit',
+        \ '<Plug>Flogtoggleall',
+        \ '<Plug>Flogtogglebisect',
+        \ '<Plug>Flogtogglenomerges',
+        \ '<Plug>Flogupdate',
+        \ '<Plug>Flogvnextcommitright',
+        \ '<Plug>Flogvprevcommitright',
+        \ '<Plug>Flogvsplitcommitright',
+        \ '<Plug>Flogyank',
+        \ ]
+    if hasmapto(flog_deprecated_mapping)
+      echoerr 'Waring: using deprecated mapping ' . flog_deprecated_mapping
+      echoerr 'Please capitalize flog mappings in the following way: <Plug>Flogmapping to <Plug>FlogMapping'
+      let g:flog_has_shown_deprecated_mapping_spelling_warning = 1
+      break
+    endif
+  endfor
 endif
-nnoremap <buffer> <silent> <Plug>Flogvsplitcommitright :vertical belowright Flogsplitcommit<CR>
 
-if !hasmapto('<Plug>Flogvnextcommitright')
-  map <buffer> <C-N> <Plug>Flogvnextcommitright
+if !hasmapto('<Plug>FlogVsplitcommitright')
+  map <buffer> <CR> <Plug>FlogVsplitcommitright
 endif
-if !hasmapto('<Plug>Flogvprevcommitright')
-  map <buffer> <C-P> <Plug>Flogvprevcommitright
-endif
-nnoremap <buffer> <silent> <Plug>Flogvnextcommitright :<C-U>call flog#next_commit() \| vertical belowright Flogsplitcommit<CR>
-nnoremap <buffer> <silent> <Plug>Flogvprevcommitright :<C-U>call flog#previous_commit() \| vertical belowright Flogsplitcommit<CR>
+nnoremap <buffer> <silent> <Plug>FlogVsplitcommitright :vertical belowright Flogsplitcommit<CR>
 
-if !hasmapto('<Plug>Flogtoggleall')
-  map <buffer> a <Plug>Flogtoggleall
+if !hasmapto('<Plug>FlogVnextcommitright')
+  map <buffer> <C-N> <Plug>FlogVnextcommitright
 endif
-nnoremap <buffer> <silent> <Plug>Flogtoggleall :call flog#toggle_all_refs_option()<CR>
+if !hasmapto('<Plug>FlogVprevcommitright')
+  map <buffer> <C-P> <Plug>FlogVprevcommitright
+endif
+nnoremap <buffer> <silent> <Plug>FlogVnextcommitright :<C-U>call flog#next_commit() \| vertical belowright Flogsplitcommit<CR>
+nnoremap <buffer> <silent> <Plug>FlogVprevcommitright :<C-U>call flog#previous_commit() \| vertical belowright Flogsplitcommit<CR>
 
-if !hasmapto('<Plug>Flogtogglebisect')
-  map <buffer> gb <Plug>Flogtogglebisect
+if !hasmapto('<Plug>FlogToggleall')
+  map <buffer> a <Plug>FlogToggleall
 endif
-nnoremap <buffer> <silent> <Plug>Flogtogglebisect :call flog#toggle_bisect_option()<CR>
+nnoremap <buffer> <silent> <Plug>FlogToggleall :call flog#toggle_all_refs_option()<CR>
 
-if !hasmapto('<Plug>Flogtogglenomerges')
-  map <buffer> gm <Plug>Flogtogglenomerges
+if !hasmapto('<Plug>FlogTogglebisect')
+  map <buffer> gb <Plug>FlogTogglebisect
 endif
-nnoremap <buffer> <silent> <Plug>Flogtogglenomerges :call flog#toggle_no_merges_option()<CR>
+nnoremap <buffer> <silent> <Plug>FlogTogglebisect :call flog#toggle_bisect_option()<CR>
 
-if !hasmapto('<Plug>Flogupdate')
-  map <buffer> u <Plug>Flogupdate
+if !hasmapto('<Plug>FlogTogglenomerges')
+  map <buffer> gm <Plug>FlogTogglenomerges
 endif
-nnoremap <buffer> <silent> <Plug>Flogupdate :call flog#populate_graph_buffer()<CR>
+nnoremap <buffer> <silent> <Plug>FlogTogglenomerges :call flog#toggle_no_merges_option()<CR>
 
-if !hasmapto('<Plug>Floggit')
-  map <buffer> git <Plug>Floggit
+if !hasmapto('<Plug>FlogUpdate')
+  map <buffer> u <Plug>FlogUpdate
 endif
-nnoremap <buffer> <silent> <Plug>Floggit :Floggit
-vnoremap <buffer> <silent> <Plug>Floggit :Floggit
+nnoremap <buffer> <silent> <Plug>FlogUpdate :call flog#populate_graph_buffer()<CR>
 
-if !hasmapto('<Plug>Flogyank')
-  map <buffer> y<C-G> <Plug>Flogyank
+if !hasmapto('<Plug>FlogGit')
+  map <buffer> git <Plug>FlogGit
 endif
-nnoremap <buffer><silent> <Plug>Flogyank :call flog#copy_commits()<CR>
-vnoremap <buffer><silent> <Plug>Flogyank :call flog#copy_commits(1)<CR>
+nnoremap <buffer> <silent> <Plug>FlogGit :Floggit
+vnoremap <buffer> <silent> <Plug>FlogGit :Floggit
 
-if !hasmapto('<Plug>Flogquit')
-  map <buffer> ZZ <Plug>Flogquit
+if !hasmapto('<Plug>FlogYank')
+  map <buffer> y<C-G> <Plug>FlogYank
 endif
-nnoremap <buffer> <Plug>Flogquit :call flog#quit()<CR>
+nnoremap <buffer><silent> <Plug>FlogYank :call flog#copy_commits()<CR>
+vnoremap <buffer><silent> <Plug>FlogYank :call flog#copy_commits(1)<CR>
 
-if !hasmapto('<Plug>Floghelp')
-  map <buffer> g? <Plug>Floghelp
+if !hasmapto('<Plug>FlogQuit')
+  map <buffer> ZZ <Plug>FlogQuit
 endif
-nnoremap <buffer> <Plug>Floghelp :help flog-mappings<CR>
+nnoremap <buffer> <Plug>FlogQuit :call flog#quit()<CR>
+
+if !hasmapto('<Plug>FlogHelp')
+  map <buffer> g? <Plug>FlogHelp
+endif
+nnoremap <buffer> <Plug>FlogHelp :help flog-mappings<CR>
 
 " }}}
 
