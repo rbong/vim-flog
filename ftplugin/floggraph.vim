@@ -76,8 +76,8 @@ if !hasmapto('<Plug>FlogYank')
   nmap <buffer> y<C-G> <Plug>FlogYank
   vmap <buffer> y<C-G> <Plug>FlogYank
 endif
-nnoremap <buffer><silent> <Plug>FlogYank :call flog#copy_commits()<CR>
-vnoremap <buffer><silent> <Plug>FlogYank :call flog#copy_commits(1)<CR>
+nnoremap <buffer> <silent> <Plug>FlogYank :call flog#copy_commits()<CR>
+vnoremap <buffer> <silent> <Plug>FlogYank :call flog#copy_commits(1)<CR>
 
 if !hasmapto('<Plug>FlogQuit')
   nmap <buffer> ZZ <Plug>FlogQuit
