@@ -95,7 +95,7 @@ nnoremap <buffer> <Plug>FlogHelp :help flog-mappings<CR>
 
 command! -buffer Flogsplitcommit call flog#preview_commit('<mods> Gsplit')
 
-command! -buffer -range -bang -complete=custom,flog#complete_git -nargs=* Floggit call flog#git('<mods>', '<bang>', <q-args>)
+command! -buffer -range -bang -complete=customlist,flog#complete_git -nargs=* Floggit call flog#git('<mods>', '<bang>', <q-args>)
 
 " }}}
 

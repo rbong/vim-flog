@@ -1,6 +1,18 @@
 let g:flog_instance_counter = 0
 
-let g:flog_default_completion = "\n-all \n-bisect \n-date=\n-format=\n-no-merges\n-skip=\n-max-count=\n-open-cmd=\n-path=\n-raw-args=\n-rev="
+let g:flog_default_completion = [
+      \ '-all ',
+      \ '-bisect ',
+      \ '-date=',
+      \ '-format=',
+      \ '-no-merges',
+      \ '-skip=',
+      \ '-max-count=',
+      \ '-open-cmd=',
+      \ '-path=',
+      \ '-raw-args=',
+      \ '-rev='
+      \ ]
 
 let g:flog_date_formats = [
       \ 'iso8601', 
@@ -314,8 +326,8 @@ let g:flog_git_commands = [
 
 " Commands {{{
 
-command! -complete=custom,flog#complete -nargs=* Flog call flog#open([<f-args>])
-command! -complete=custom,flog#complete -nargs=* Flogsplit call flog#open(['-open-cmd=<mods> split', <f-args>])
+command! -complete=customlist,flog#complete -nargs=* Flog call flog#open([<f-args>])
+command! -complete=customlist,flog#complete -nargs=* Flogsplit call flog#open(['-open-cmd=<mods> split', <f-args>])
 
 " }}}
 
