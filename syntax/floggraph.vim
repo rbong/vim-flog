@@ -14,7 +14,7 @@ syntax match flogCommit /.*/
 syntax match flogHash   contained containedin=flogCommit /\s\zs\[[0-9a-f]\+\]/
 syntax match flogAuthor contained containedin=flogCommit /\s\zs{[^}].*}/
 syntax match flogRef    contained containedin=flogCommit /\s\zs([^)].*)/
-syntax match flogDate   contained containedin=flogCommit /\s\d\{4}-\d\d-\d\d\( \d\d:\d\d\(:\d\d\( [+-][0-9]\{4}\)\?\)\?\)\?/
+syntax match flogDate   contained containedin=flogCommit /\v\s\d{4}-\d\d-\d\d( \d\d:\d\d(:\d\d( [+-][0-9]{4})?)?)?/
 
 highlight default link flogHash   Statement
 highlight default link flogAuthor String
@@ -23,8 +23,8 @@ highlight default link flogDate   Number
 
 " Ref {{{
 
-syntax match flogRefTag    contained containedin=flogRef /tags\/\zs.\{-}\ze\(, \|)\)/
-syntax match flogRefRemote contained containedin=flogRef /remotes\/\zs.\{-}\ze\(, \|)\)/
+syntax match flogRefTag    contained containedin=flogRef /\vtags\/\zs.{-}\ze(, |)\)/
+syntax match flogRefRemote contained containedin=flogRef /\vremotes\/\zs.{-}\ze(, |)\)/
 syntax match flogRefHead   contained containedin=flogRef /HEAD/
 
 highlight default link flogRefTag    String
