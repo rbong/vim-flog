@@ -1,7 +1,5 @@
 let g:flog_instance_counter = 0
 
-let g:flog_has_shown_deprecated_mapping_spelling_warning = 0
-
 " Open command arg data {{{
 
 let g:flog_open_cmds = [
@@ -188,6 +186,12 @@ let g:flog_not_a_fugitive_buffer = 'flog: not a fugitive buffer'
 let g:flog_no_commits = 'flog: error parsing commits: no commits found'
 let g:flog_missing_commit_start = 'flog: error parsing commits: could not find start of commit'
 let g:flog_unsupported_argument = 'flog: unrecognized argument'
+
+" }}}
+
+" Deprecation warnings {{{
+
+let g:flog_has_shown_deprecated_mapping_spelling_warning = 0
 
 " }}}
 
