@@ -1,24 +1,5 @@
 let g:flog_instance_counter = 0
 
-let g:flog_default_completion = [
-      \ '-all ',
-      \ '-bisect ',
-      \ '-date=',
-      \ '-format=',
-      \ '-no-merges',
-      \ '-skip=',
-      \ '-max-count=',
-      \ '-open-cmd=',
-      \ '-path=',
-      \ '-raw-args=',
-      \ '-rev='
-      \ ]
-
-let g:flog_date_formats = [
-      \ 'iso8601', 
-      \ 'short',
-      \ ]
-
 let g:flog_has_shown_deprecated_mapping_spelling_warning = 0
 
 " Open command arg data {{{
@@ -70,6 +51,27 @@ let g:flog_log_data_format_specifiers = [
       \ ]
 
 " }}}
+
+" Completion data {{{
+
+let g:flog_default_completion = [
+      \ '-all ',
+      \ '-bisect ',
+      \ '-date=',
+      \ '-format=',
+      \ '-no-merges',
+      \ '-skip=',
+      \ '-max-count=',
+      \ '-open-cmd=',
+      \ '-path=',
+      \ '-raw-args=',
+      \ '-rev='
+      \ ]
+
+let g:flog_date_formats = [
+      \ 'iso8601', 
+      \ 'short',
+      \ ]
 
 " Format specifier data {{{
 
@@ -173,6 +175,8 @@ let g:flog_completion_specifiers = [
       \ '%(trailers:',
       \ '%(trailers)',
       \ ]
+
+" }}}
 
 " }}}
 
