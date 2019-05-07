@@ -1,4 +1,8 @@
+" Global state {{{
+
 let g:flog_instance_counter = 0
+
+" }}}
 
 " Open command arg data {{{
 
