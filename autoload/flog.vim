@@ -438,6 +438,10 @@ function! flog#parse_log_output(output) abort
 
   let l:commits = []
   for l:raw_commit in l:raw_commits
+    if l:raw_commit ==# "...\n"
+      " Skip "..." lines when using e.g. "-G" with "--graph".
+      continue
+    endif
     let l:commits += [flog#parse_log_commit(l:raw_commit)]
   endfor
   return l:commits
