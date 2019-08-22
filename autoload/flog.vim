@@ -251,8 +251,6 @@ function! flog#complete_format(arg_lead) abort
     " format ends with a completable pattern
     let l:lead = substitute(a:arg_lead, l:completable_pattern, '', '')
     let l:completions = map(copy(g:flog_completion_specifiers), 'l:lead . v:val')
-    let g:arg_lead = a:arg_lead
-    let g:completions = l:completions
     return flog#filter_completions(a:arg_lead, copy(l:completions))
   else
     " format does not end with any special atom
@@ -427,10 +425,6 @@ function! flog#parse_log_output(output) abort
         \ '\(\n\|^\)\zs\ze\(.\(\n\|' . g:flog_format_start . '\)\@<!\)\{-}'
         \ . g:flog_format_start
   let l:raw_commits = split(join(a:output, "\n"), l:commit_split_pattern)
-
-  let g:c = l:raw_commits
-
-  let g:raw_commits = l:raw_commits
 
   if len(l:raw_commits) == 0
     throw g:flog_no_commits
