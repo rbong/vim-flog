@@ -387,9 +387,9 @@ function! flog#parse_log_commit(raw_commit) abort
   " trim past the start of the format
   let l:trimmed_commit = substitute(a:raw_commit, '.*' . g:flog_format_start, '', '')
 
+  " start of the commit not found
   if l:trimmed_commit ==# a:raw_commit
-    echoerr 'error parsing commit ' . a:raw_commit
-    throw g:flog_missing_commit_start
+    return {}
   endif
 
   " separate the commit string
@@ -431,9 +431,32 @@ function! flog#parse_log_output(output) abort
   endif
 
   let l:commits = []
+  let l:parsing_start = v:true
+  let l:start_overflow = []
+
   for l:raw_commit in l:raw_commits
-    let l:commits += [flog#parse_log_commit(l:raw_commit)]
+    let l:parsed_commit = flog#parse_log_commit(l:raw_commit)
+
+    if l:parsed_commit == {}
+      " Group non-commit lines at the start of output with the first commit
+      " See https://github.com/rbong/vim-flog/pull/14
+      if l:parsing_start
+        let l:start_overflow += split(l:raw_commit, "\n")
+        continue
+      else
+        echoerr 'error parsing commit ' . l:raw_commit
+        throw g:flog_missing_commit_start
+      endif
+    elseif l:start_overflow != []
+      let l:parsed_commit.display = l:start_overflow + l:parsed_commit.display
+      let l:start_overflow = []
+    endif
+
+    let l:commits += [l:parsed_commit]
+
+    let l:parsing_start = v:false
   endfor
+
   return l:commits
 endfunction
 
