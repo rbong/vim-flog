@@ -393,7 +393,7 @@ function! flog#parse_log_commit(raw_commit) abort
   endif
 
   " separate the commit string
-  let l:split_commit = split(l:trimmed_commit, g:flog_format_separator, 1)
+  let l:split_commit = split(l:trimmed_commit, g:flog_format_separator, v:true)
 
   let l:commit = {}
 
