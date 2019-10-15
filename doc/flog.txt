@@ -108,6 +108,7 @@ y<C-G>                                          *flog-y<C-G>*
 Copy the short commit hash under the current line to a register. Accepts a
 count.
 
+gq                                              *flog-gq*
 ZZ                                              *flog-ZZ*
 
 Quit Flog.

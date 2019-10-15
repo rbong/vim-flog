@@ -81,6 +81,7 @@ vnoremap <buffer> <silent> <Plug>FlogYank :call flog#copy_commits(1)<CR>
 
 if !hasmapto('<Plug>FlogQuit')
   nmap <buffer> ZZ <Plug>FlogQuit
+  nmap <buffer> gq <Plug>FlogQuit
 endif
 nnoremap <buffer> <Plug>FlogQuit :call flog#quit()<CR>
 
