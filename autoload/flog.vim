@@ -817,7 +817,7 @@ endfunction
 
 function! flog#git(mods, bang, cmd) abort
   if a:bang ==# '!'
-    call flog#preview(a:mods . ' split | Git! ' . a:cmd)
+    call flog#preview(a:mods . ' Git! ' . a:cmd)
     if has('nvim')
       redraw!
     endif
