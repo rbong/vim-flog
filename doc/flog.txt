@@ -63,8 +63,7 @@ COMMANDS                                        *flog-commands*
 
 :Floggit!                                       *flog-:Floggit!*
 
-  Same as |:Floggit|, but opens the git command in a preview window. Supports
-  modifiers.
+  Same as |:Floggit|, but uses |:Git!|. In neovim, this is always used.
 
 MAPPINGS                                        *flog-mappings*
 
