@@ -69,8 +69,8 @@ if !hasmapto('<Plug>FlogGit')
   nmap <buffer> git <Plug>FlogGit
   vmap <buffer> git <Plug>FlogGit
 endif
-nnoremap <buffer> <silent> <Plug>FlogGit :Floggit
-vnoremap <buffer> <silent> <Plug>FlogGit :Floggit
+nnoremap <buffer> <Plug>FlogGit :Floggit
+vnoremap <buffer> <Plug>FlogGit :Floggit
 
 if !hasmapto('<Plug>FlogYank')
   nmap <buffer> y<C-G> <Plug>FlogYank
