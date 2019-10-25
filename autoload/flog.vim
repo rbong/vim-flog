@@ -816,8 +816,14 @@ endfunction
 " User commands {{{
 
 function! flog#git(mods, bang, cmd) abort
+  if has('nvim')
+    " cannot repopulate graph buffer in nvim without its own window
+    let l:bang = '!'
+  else
+    let l:bang = a:bang
+  endif
   let l:previous_window_id = win_getid()
-  call flog#preview(a:mods . ' Git' . a:bang . ' ' . a:cmd)
+  call flog#preview(a:mods . ' Git' . l:bang . ' ' . a:cmd)
   let l:command_window_id = win_getid()
   call win_gotoid(l:previous_window_id)
   if has('nvim')
