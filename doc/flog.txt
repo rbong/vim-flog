@@ -169,7 +169,8 @@ workflow.
 The best way to discover how to use the API is by reading it:
 https://github.com/rbong/vim-flog/blob/master/autoload/flog.vim
 
-Example: to add a diff command to Flog, add the following to your |.vimrc|.
+Example: to add a command to Flog that displays a diff for the current "-path"
+and the commit under the cursor, add the following to your |.vimrc|.
 >
   function! Flogdiff(mods) abort
     let l:path = fnameescape(flog#get_state().path[0])
