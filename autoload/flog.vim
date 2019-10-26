@@ -135,15 +135,15 @@ function! flog#parse_set_args(args, current_args, defaults) abort
   let l:has_set_path = 0
 
   for l:arg in a:args
-    if l:arg =~# '^-format=.*'
+    if l:arg =~# '^-format=.\+'
       let a:current_args.format = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-format='
       let a:current_args.format = a:defaults.format
-    elseif l:arg =~# '^-date=.*'
+    elseif l:arg =~# '^-date=.\+'
       let a:current_args.date = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-date='
       let a:current_args.date = a:defaults.date
-    elseif l:arg =~# '^-raw-args=.*'
+    elseif l:arg =~# '^-raw-args=.\+'
       let a:current_args.raw_args = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-raw-args='
       let a:current_args.raw_args = a:defaults.raw_args
@@ -161,15 +161,15 @@ function! flog#parse_set_args(args, current_args, defaults) abort
       let a:current_args.max_count = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-max-count='
       let a:current_args.max_count = a:defaults.max_count
-    elseif l:arg =~# '^-open-cmd=.*'
+    elseif l:arg =~# '^-open-cmd=.\+'
       let a:current_args.open_cmd = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-open-cmd='
       let a:current_args.open_cmd = a:defaults.open_cmd
-    elseif l:arg =~# '^-rev=.*'
+    elseif l:arg =~# '^-rev=.\+'
       let a:current_args.rev = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-rev='
       let a:current_args.rev = a:defaults.rev
-    elseif l:arg =~# '^-path=.*'
+    elseif l:arg =~# '^-path=.\+'
       " multiple paths can be passed through arguments
       " this means we must overwrite the user's default path on the first encounter
       if !l:has_set_path
