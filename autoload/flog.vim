@@ -803,7 +803,7 @@ function! flog#quit() abort
   let l:flog_tab = tabpagenr()
   let l:tabs = tabpagenr('$')
   call flog#close_preview()
-  quit
+  quit!
   if l:tabs > tabpagenr('$') && l:flog_tab == tabpagenr()
     tabprev
   endif
