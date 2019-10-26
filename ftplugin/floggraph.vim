@@ -90,6 +90,16 @@ if !hasmapto('<Plug>FlogHelp')
 endif
 nnoremap <buffer> <Plug>FlogHelp :help flog-mappings<CR>
 
+if !hasmapto('<Plug>FlogSkipahead')
+  nmap <buffer> ]] <Plug>FlogSkipahead
+endif
+nnoremap <buffer> <silent> <Plug>FlogSkipahead :<C-U>call flog#change_skip_by_max_count(1 * max([v:count, 1]))<CR>
+
+if !hasmapto('<Plug>FlogSkipback')
+  nmap <buffer> [[ <Plug>FlogSkipback
+endif
+nnoremap <buffer> <silent> <Plug>FlogSkipback :<C-U>call flog#change_skip_by_max_count(-1 * max([v:count, 1]))<CR>
+
 " }}}
 
 " Commands {{{

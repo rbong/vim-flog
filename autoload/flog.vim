@@ -692,6 +692,18 @@ function! flog#toggle_no_merges_option() abort
   call flog#populate_graph_buffer()
 endfunction
 
+function! flog#change_skip_by_max_count(multiplier) abort
+  let l:state = flog#get_state()
+  if a:multiplier == 0 || l:state.max_count == v:null
+    return
+  endif
+  if l:state.skip == v:null
+    let l:state.skip = 0
+  endif
+  let l:state.skip = max([0, l:state.skip + l:state.max_count * a:multiplier])
+  call flog#populate_graph_buffer()
+endfunction
+
 " }}}
 
 " Preview buffer {{{

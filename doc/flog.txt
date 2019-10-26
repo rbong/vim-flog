@@ -107,6 +107,16 @@ y<C-G>                                          *flog-y<C-G>*
 Copy the short commit hash under the current line to a register. Accepts a
 count.
 
+[[                                              *flog-[[*
+
+Go back in the commit history by "--max-count" commits, if that argument is
+set. Accepts a count.
+
+]]                                              *flog-]]*
+
+Go forward in the commit history by "--max-count" commits, if that argument is
+set. Accepts a count.
+
 gq                                              *flog-gq*
 ZZ                                              *flog-ZZ*
 
