@@ -136,8 +136,6 @@ endfunction
 function! flog#parse_set_args(args, current_args, defaults) abort
   let l:has_set_path = 0
 
-  let g:debug1 = copy(a:args)
-
   for l:arg in a:args
     if l:arg =~# '^-format=.\+'
       let a:current_args.format = flog#parse_arg_opt(l:arg)
