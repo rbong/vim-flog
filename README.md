@@ -1,5 +1,7 @@
 # Flog
 
+[![Build Status](https://travis-ci.org/rbong/vim-flog.svg?branch=master)](https://travis-ci.org/rbong/vim-flog)
+
 Flog is a lightweight and powerful git branch viewer that integrates with
 [fugitive](https://github.com/tpope/vim-fugitive).
 
