@@ -101,6 +101,7 @@ function! flog#get_default_args() abort
         \ 'all': v:false,
         \ 'bisect': v:false,
         \ 'no_merges': v:false,
+        \ 'reflog': v:false,
         \ 'skip': v:null,
         \ 'max_count': v:null,
         \ 'open_cmd': 'tabedit',
@@ -134,6 +135,8 @@ endfunction
 function! flog#parse_set_args(args, current_args, defaults) abort
   let l:has_set_path = 0
 
+  let g:debug1 = copy(a:args)
+
   for l:arg in a:args
     if l:arg =~# '^-format=.\+'
       let a:current_args.format = flog#parse_arg_opt(l:arg)
@@ -153,6 +156,10 @@ function! flog#parse_set_args(args, current_args, defaults) abort
       let a:current_args.bisect = v:true
     elseif l:arg ==# '-no-merges'
       let a:current_args.no_merges = v:true
+    elseif l:arg ==# '-reflog'
+      let a:current_args.reflog = v:true
+    elseif l:arg ==# '-reflog'
+      let a:current_args.reflog = v:true
     elseif l:arg =~# '^-skip=\d\+'
       let a:current_args.skip = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-skip='
@@ -511,6 +518,9 @@ function! flog#build_log_command() abort
   if l:state.no_merges
     let l:command .= ' --no-merges'
   endif
+  if l:state.reflog
+    let l:command .= ' --reflog'
+  endif
   if l:state.skip != v:null
     let l:command .= ' --skip=' . shellescape(l:state.skip)
   endif
@@ -641,6 +651,9 @@ function! flog#set_graph_buffer_title() abort
   if l:state.no_merges
     let l:title .= ' [no_merges]'
   endif
+  if l:state.reflog
+    let l:title .= ' [reflog]'
+  endif
   if l:state.skip != v:null
     let l:title .= ' [skip=' . l:state.skip . ']'
   endif
@@ -728,6 +741,12 @@ endfunction
 function! flog#toggle_no_merges_option() abort
   let l:state = flog#get_state()
   let l:state.no_merges = l:state.no_merges ? v:false : v:true
+  call flog#populate_graph_buffer()
+endfunction
+
+function! flog#toggle_reflog_option() abort
+  let l:state = flog#get_state()
+  let l:state.reflog = l:state.reflog ? v:false : v:true
   call flog#populate_graph_buffer()
 endfunction
 

@@ -60,6 +60,11 @@ if !hasmapto('<Plug>FlogTogglenomerges')
 endif
 nnoremap <buffer> <silent> <Plug>FlogTogglenomerges :call flog#toggle_no_merges_option()<CR>
 
+if !hasmapto('<Plug>FlogTogglereflog')
+  nmap <buffer> gr <Plug>FlogTogglereflog
+endif
+nnoremap <buffer> <silent> <Plug>FlogTogglereflog :call flog#toggle_reflog_option()<CR>
+
 if !hasmapto('<Plug>FlogUpdate')
   nmap <buffer> u <Plug>FlogUpdate
 endif

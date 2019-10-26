@@ -67,6 +67,7 @@ let g:flog_default_completion = [
       \ '-open-cmd=',
       \ '-path=',
       \ '-raw-args=',
+      \ '-reflog ',
       \ '-rev='
       \ ]
 
