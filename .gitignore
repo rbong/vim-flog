@@ -1,1 +1,4 @@
 tags
+.vim-flavor
+Gemfile.lock
+VimFlavor.lock
