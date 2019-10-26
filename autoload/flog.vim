@@ -803,14 +803,17 @@ function! flog#preview(command, ...) abort
   let l:previous_window_id = win_getid()
   let l:state = flog#get_state()
 
-  call flog#close_preview()
   let l:saved_window_ids = flog#get_all_window_ids()
   exec a:command
   let l:preview_window_ids = flog#exclude(flog#get_all_window_ids(), l:saved_window_ids)
-  for l:preview_window_id in l:preview_window_ids
-    call win_gotoid(l:preview_window_id)
-    call flog#initialize_preview_buffer(l:state)
-  endfor
+  if l:preview_window_ids != []
+    call win_gotoid(l:previous_window_id)
+    call flog#close_preview()
+    for l:preview_window_id in l:preview_window_ids
+      call win_gotoid(l:preview_window_id)
+      call flog#initialize_preview_buffer(l:state)
+    endfor
+  endif
 
   if !l:keep_focus
     call win_gotoid(l:previous_window_id)
