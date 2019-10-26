@@ -68,7 +68,8 @@ let g:flog_default_completion = [
       \ '-path=',
       \ '-raw-args=',
       \ '-reflog ',
-      \ '-rev='
+      \ '-rev=',
+      \ '-search='
       \ ]
 
 let g:flog_date_formats = [

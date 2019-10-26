@@ -27,6 +27,7 @@ Toggle viewing all branches with `a`.
 Toggle bisect mode with `gb`.
 Toggle displaying no merges with `gm`.
 Toggle viewing the reflog with `gr`.
+Search commits with `g/`.
 Quit with `gq`.
 
 If you forget these bindings, press `g?` at any time to get help.

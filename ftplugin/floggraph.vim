@@ -84,6 +84,11 @@ endif
 nnoremap <buffer> <silent> <Plug>FlogYank :call flog#copy_commits()<CR>
 vnoremap <buffer> <silent> <Plug>FlogYank :call flog#copy_commits(1)<CR>
 
+if !hasmapto('<Plug>FlogSearch')
+  nmap <buffer> g/ <Plug>FlogSearch
+endif
+nnoremap <buffer> <Plug>FlogSearch :<C-U>Flogupdate -search=
+
 if !hasmapto('<Plug>FlogQuit')
   nmap <buffer> ZZ <Plug>FlogQuit
   nmap <buffer> gq <Plug>FlogQuit

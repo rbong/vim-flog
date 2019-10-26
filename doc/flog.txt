@@ -34,6 +34,7 @@ COMMANDS                                        *flog-commands*
                         Multiline formats are supported.
   -date=<date>          The date format to pass to "--date=". Currently,
                         "short" and "iso8601" are supported.
+  -search=<rev>         A regex pattern to pass to "--grep=" and "-G".
   -rev=<rev>            The git revision to pass to the log command.
   -path=<path>          A path to pass to the log command. This option can be
                         specified multiple times for multiple paths.
