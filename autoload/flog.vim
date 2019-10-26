@@ -702,6 +702,8 @@ function! flog#populate_graph_buffer() abort
   let l:state = flog#get_state()
 
   let l:command = flog#build_log_command()
+  let l:state.previous_log_command = l:command
+
   let l:output = flog#shell_command(l:command)
   let l:commits = flog#parse_log_output(l:output)
 
@@ -709,7 +711,6 @@ function! flog#populate_graph_buffer() abort
   call flog#set_graph_buffer_title()
   call flog#set_graph_buffer_color()
 
-  let l:state.previous_log_command = l:command
   let l:state.commits = l:commits
 endfunction
 
