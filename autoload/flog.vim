@@ -135,9 +135,15 @@ endfunction
 
 function! flog#parse_set_args(args, current_args, defaults) abort
   let l:has_set_path = 0
+  let l:got_raw_args_token = v:false
+  let l:raw_args = []
 
   for l:arg in a:args
-    if l:arg =~# '^-format=.\+'
+    if l:got_raw_args_token
+      let l:raw_args += [l:arg]
+    elseif l:arg ==# '--'
+      let l:got_raw_args_token = v:true
+    elseif l:arg =~# '^-format=.\+'
       let a:current_args.format = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-format='
       let a:current_args.format = a:defaults.format
@@ -195,6 +201,10 @@ function! flog#parse_set_args(args, current_args, defaults) abort
       throw g:flog_unsupported_argument
     endif
   endfor
+
+  if l:got_raw_args_token
+    let a:current_args.raw_args = join(l:raw_args, ' ')
+  endif
 
   return a:current_args
 endfunction
@@ -344,6 +354,10 @@ function! flog#complete_path(arg_lead) abort
 endfunction
 
 function! flog#complete(arg_lead, cmd_line, cursor_pos) abort
+  if a:cmd_line[:a:cursor_pos] =~# ' -- '
+    return []
+  endif
+
   if a:arg_lead ==# ''
     return flog#filter_completions(a:arg_lead, copy(g:flog_default_completion))
   elseif a:arg_lead =~# '^-format='

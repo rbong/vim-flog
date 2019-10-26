@@ -40,6 +40,8 @@ COMMANDS                                        *flog-commands*
                         specified multiple times for multiple paths.
   -raw-args=<args>      Additional args to pass to "git log --graph". No args
                         passed in using this option are guaranteed to work.
+  --                    Parse the rest of the arguments as if they were passed
+                        to -raw-args. Does not require escaping spaces.
 
 :Flogsplit                                      *flog-:Flogsplit*
 
