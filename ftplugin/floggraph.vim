@@ -90,6 +90,11 @@ if !hasmapto('<Plug>FlogHelp')
 endif
 nnoremap <buffer> <Plug>FlogHelp :help flog-mappings<CR>
 
+if !hasmapto('<Plug>FlogSetskip')
+  nmap <buffer> go <Plug>FlogSetskip
+endif
+nnoremap <buffer> <silent> <Plug>FlogSetskip :<C-U>call flog#set_skip_option(v:count)<CR>
+
 if !hasmapto('<Plug>FlogSkipahead')
   nmap <buffer> ]] <Plug>FlogSkipahead
 endif

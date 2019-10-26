@@ -692,6 +692,12 @@ function! flog#toggle_no_merges_option() abort
   call flog#populate_graph_buffer()
 endfunction
 
+function! flog#set_skip_option(skip) abort
+  let l:state = flog#get_state()
+  let l:state.skip = a:skip
+  call flog#populate_graph_buffer()
+endfunction
+
 function! flog#change_skip_by_max_count(multiplier) abort
   let l:state = flog#get_state()
   if a:multiplier == 0 || l:state.max_count == v:null
