@@ -86,24 +86,15 @@ endfunction
 
 " Argument parsing {{{
 
-function! flog#parse_arg_opt(arg) abort
-  let l:opt = matchstr(a:arg, '=\zs.*')
-  return l:opt
-endfunction
-
-function! flog#parse_path_opt(arg) abort
-  return [fnameescape(fnamemodify(expand(flog#parse_arg_opt(a:arg)), ':p'))]
-endfunction
-
-function! flog#parse_args(args) abort
+function! flog#get_default_args() abort
   if !g:flog_has_shown_deprecated_default_argument_vars_warning
         \ && (exists('g:flog_default_format') || exists('g:flog_default_date_format'))
     echoerr 'Warning: the options g:flog_default_format and g:flog_default_date_format are deprecated'
     echoerr 'Please use g:flog_default_arguments to set any defaults'
   endif
 
-  " the arguments object with true argument defaults
-  let l:arguments = {
+  " true argument defaults
+  let l:defaults = {
         \ 'raw_args': v:null,
         \ 'format': '%Cblue%ad%Creset %C(yellow)[%h]%Creset %Cgreen{%an}%Creset%Cred%d%Creset %s',
         \ 'date': 'iso8601',
@@ -120,52 +111,87 @@ function! flog#parse_args(args) abort
   " read the user argument defaults
   if exists('g:flog_default_arguments')
     for [l:key, l:value] in items(g:flog_default_arguments)
-      if has_key(l:arguments, l:key)
-        let l:arguments[l:key] = l:value
+      if has_key(l:defaults, l:key)
+        let l:defaults[l:key] = l:value
       else
         echoerr 'Warning: unrecognized default argument ' . l:key
       endif
     endfor
   endif
 
+  return l:defaults
+endfunction
+
+function! flog#parse_arg_opt(arg) abort
+  let l:opt = matchstr(a:arg, '=\zs.*')
+  return l:opt
+endfunction
+
+function! flog#parse_path_opt(arg) abort
+  return [fnameescape(fnamemodify(expand(flog#parse_arg_opt(a:arg)), ':p'))]
+endfunction
+
+function! flog#parse_set_args(args, current_args, defaults) abort
   let l:has_set_path = 0
 
   for l:arg in a:args
-    if l:arg =~# '^-format='
-      let l:arguments.format = flog#parse_arg_opt(l:arg)
-    elseif l:arg =~# '^-date='
-      let l:arguments.date = flog#parse_arg_opt(l:arg)
-    elseif l:arg =~# '^-raw-args='
-      let l:arguments.raw_args = flog#parse_arg_opt(l:arg)
+    if l:arg =~# '^-format=.*'
+      let a:current_args.format = flog#parse_arg_opt(l:arg)
+    elseif l:arg ==# '-format='
+      let a:current_args.format = a:defaults.format
+    elseif l:arg =~# '^-date=.*'
+      let a:current_args.date = flog#parse_arg_opt(l:arg)
+    elseif l:arg ==# '-date='
+      let a:current_args.date = a:defaults.date
+    elseif l:arg =~# '^-raw-args=.*'
+      let a:current_args.raw_args = flog#parse_arg_opt(l:arg)
+    elseif l:arg ==# '-raw-args='
+      let a:current_args.raw_args = a:defaults.raw_args
     elseif l:arg ==# '-all'
-      let l:arguments.all = v:true
+      let a:current_args.all = v:true
     elseif l:arg ==# '-bisect'
-      let l:arguments.bisect = v:true
+      let a:current_args.bisect = v:true
     elseif l:arg ==# '-no-merges'
-      let l:arguments.no_merges = v:true
+      let a:current_args.no_merges = v:true
     elseif l:arg =~# '^-skip=\d\+'
-      let l:arguments.skip = flog#parse_arg_opt(l:arg)
+      let a:current_args.skip = flog#parse_arg_opt(l:arg)
+    elseif l:arg ==# '-skip='
+      let a:current_args.skip = a:defaults.skip
     elseif l:arg =~# '^-max-count=\d\+'
-      let l:arguments.max_count = flog#parse_arg_opt(l:arg)
-    elseif l:arg =~# '^-open-cmd='
-      let l:arguments.open_cmd = flog#parse_arg_opt(l:arg)
-    elseif l:arg =~# '^-rev='
-      let l:arguments.rev = flog#parse_arg_opt(l:arg)
-    elseif l:arg =~# '^-path='
+      let a:current_args.max_count = flog#parse_arg_opt(l:arg)
+    elseif l:arg ==# '-max-count='
+      let a:current_args.max_count = a:defaults.max_count
+    elseif l:arg =~# '^-open-cmd=.*'
+      let a:current_args.open_cmd = flog#parse_arg_opt(l:arg)
+    elseif l:arg ==# '-open-cmd='
+      let a:current_args.open_cmd = a:defaults.open_cmd
+    elseif l:arg =~# '^-rev=.*'
+      let a:current_args.rev = flog#parse_arg_opt(l:arg)
+    elseif l:arg ==# '-rev='
+      let a:current_args.rev = a:defaults.rev
+    elseif l:arg =~# '^-path=.*'
       " multiple paths can be passed through arguments
       " this means we must overwrite the user's default path on the first encounter
       if !l:has_set_path
-        let l:arguments.path = []
+        let a:current_args.path = []
         let l:has_set_path = 1
       endif
-      let l:arguments.path += flog#parse_path_opt(l:arg)
+      let a:current_args.path += flog#parse_path_opt(l:arg)
+    elseif l:arg ==# '-path='
+      let a:current_args.path = a:defaults.path
+      let l:has_set_path = 0
     else
       echoerr 'error parsing argument ' . l:arg
       throw g:flog_unsupported_argument
     endif
   endfor
 
-  return l:arguments
+  return a:current_args
+endfunction
+
+function! flog#parse_args(args) abort
+  let l:defaults = flog#get_default_args()
+  return flog#parse_set_args(a:args, copy(l:defaults), l:defaults)
 endfunction
 
 " }}}
@@ -671,6 +697,19 @@ function! flog#initialize_graph_buffer(state) abort
   call flog#set_buffer_state(a:state)
   call flog#trigger_fugitive_git_detection()
   call flog#graph_buffer_settings()
+  call flog#populate_graph_buffer()
+endfunction
+
+function! flog#update_options(args, force) abort
+  let l:state = flog#get_state()
+  let l:defaults = flog#get_default_args()
+
+  if a:force
+    call extend(l:state, l:defaults)
+  endif
+
+  call flog#parse_set_args(a:args, l:state, l:defaults)
+
   call flog#populate_graph_buffer()
 endfunction
 

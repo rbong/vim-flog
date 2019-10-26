@@ -65,6 +65,16 @@ COMMANDS                                        *flog-commands*
 
   Same as |:Floggit|, but uses |:Git!|. In neovim, this is always used.
 
+:Flogupdate                                     *flog-:Flogupdate*
+
+  Update the arguments passed to |:Flog| or |:Flogsplit|. Can only be run in a
+  |:Flog| window. Merges new arguments with the current arguments.
+
+:Flogupdate!                                    *flog-:Flogupdate!*
+
+  Same as |:Flogupdate|, but overwrite all of the current arguments instead of
+  updating them.
+
 MAPPINGS                                        *flog-mappings*
 
 All mappings are available only from the |:Flog| window.
