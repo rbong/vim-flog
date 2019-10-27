@@ -104,7 +104,6 @@ You can also use `:Flogupdate -max-count=1000` to set the argument after running
 2. Type in `git c<Tab> master` to check out the master branch if you are not already on it - it will automatically complete to `:Floggit checkout master`.
 
 The graph will be updated after master is checked out, which will happen on any command.
-
 The master branch can also be completed, so if you don't have many branches you may be able to type `m<Tab>` to complete master.
 
 3. Press the `a` key to toggle showing all commits.
@@ -136,7 +135,6 @@ This example shows how to use visual selection mode to run commands on two diffe
 This will complete to `:Floggit diff <first commit> <second commit>`.
 
 Any ref names and commit hashes at the two ends of the visual selection will be completed first when using `:Floggit` in visual selection mode.
-
 You may have to press `<Tab>` more times if your commits have addition ref names to cycle through for command completion.
 
 ### Extension Example: Automating Diffing Two Commits
@@ -159,7 +157,7 @@ augroup END
 
 You can now diff commits by visually selecting them and pressing `gd`.
 
-Let's break this down.
+Let's break this code down.
 
 `flog#get_commit_data` gets the commit for the given line number, in this case, beginning and end of the selection, or `line("'<")` and `line("'>")`.
 
@@ -168,17 +166,16 @@ In the returned commit data, we use the key `short_commit_hash` to get the commi
 `flog#git` is just the functional equivalent of `:Floggit`.
 
 The first two arguments are the mods (see `:help <mods>`) and bang (see `:help <bang>`) that would be normally passed to the function.
-
 The last argument is the git command, in this case a diff between the two commits.
 
 `autocmd FileType floggraph` allows us to add settings just for the `:Flog` window.
 We bind the function we created to the `gd` key.
 
 The best way to learn how to use flog's internal functions is to [read them](https://github.com/rbong/vim-flog/blob/master/autoload/flog.vim) and try them out.
-
 Try mainly looking at the structure of the return value of `flog#get_commit_data(line('.'))`.
 
 It also helps to [learn a little vimscript](http://learnvimscriptthehardway.stevelosh.com/).
+If you have any problems, we're happy to help if you [post an issue](https://github.com/rbong/vim-flog/issues).
 
 ### Additional Examples
 
