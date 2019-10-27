@@ -45,6 +45,15 @@ endif
 nnoremap <buffer> <silent> <Plug>FlogVnextcommitright :<C-U>call flog#next_commit() \| vertical belowright Flogsplitcommit<CR>
 nnoremap <buffer> <silent> <Plug>FlogVprevcommitright :<C-U>call flog#previous_commit() \| vertical belowright Flogsplitcommit<CR>
 
+if !hasmapto('<Plug>FlogVnextrefright')
+  nmap <buffer> ]r <Plug>FlogVnextrefright
+endif
+if !hasmapto('<Plug>FlogVprevrefright')
+  nmap <buffer> [r <Plug>FlogVprevrefright
+endif
+nnoremap <buffer> <silent> <Plug>FlogVnextrefright :<C-U>call flog#next_ref() \| vertical belowright Flogsplitcommit<CR>
+nnoremap <buffer> <silent> <Plug>FlogVprevrefright :<C-U>call flog#previous_ref() \| vertical belowright Flogsplitcommit<CR>
+
 if !hasmapto('<Plug>FlogToggleall')
   nmap <buffer> a <Plug>FlogToggleall
 endif
@@ -124,6 +133,7 @@ command! -buffer Flogsplitcommit call flog#preview_commit('<mods> Gsplit')
 command! -buffer -range -bang -complete=customlist,flog#complete_git -nargs=* Floggit call flog#git('<mods>', '<bang>', <q-args>)
 
 command! -bang -complete=customlist,flog#complete -nargs=* Flogupdate call flog#update_options([<f-args>], '<bang>' ==# '!')
+command! -bang -complete=customlist,flog#complete_refs -nargs=* Flogjump call flog#jump_to_ref(<q-args>)
 
 " }}}
 

@@ -81,6 +81,11 @@ COMMANDS                                        *flog-commands*
   Same as |:Flogupdate|, but overwrite all of the current arguments instead of
   updating them.
 
+:Flogjump                                       *flog-:Flogjump*
+
+  Jump to the ref name given by the arguments. Must be a ref name currently in
+  the graph. Can only be run in a |:Flog| window. Supports completion.
+
 MAPPINGS                                        *flog-mappings*
 
 All mappings are available only from the |:Flog| window.
@@ -117,6 +122,26 @@ Jump to the next commit and open it in a preview window. Accepts a count.
 
 Jump to the previous commit and open it in a preview window. Accepts a count.
 
+]r                                              *flog-]r*
+
+Jump to the next commit with a ref name and open it in a preview window.
+Accepts a count.
+
+[r                                              *flog-[r*
+
+Jump to the previous commit with a ref name and open it in a preview window.
+Accepts a count.
+
+[[                                              *flog-[[*
+
+Go back in the commit history by "--max-count" commits, if that argument is
+set. Accepts a count.
+
+]]                                              *flog-]]*
+
+Go forward in the commit history by "--max-count" commits, if that argument is
+set. Accepts a count.
+
 git                                             *flog-git*
 
 Enter in the characters ":Floggit" from normal or visual mode in order to
@@ -130,16 +155,6 @@ count.
 go                                              *flog-go*
 
 Skip to the commit given by the count, or 0 if no count is given.
-
-[[                                              *flog-[[*
-
-Go back in the commit history by "--max-count" commits, if that argument is
-set. Accepts a count.
-
-]]                                              *flog-]]*
-
-Go forward in the commit history by "--max-count" commits, if that argument is
-set. Accepts a count.
 
 gq                                              *flog-gq*
 ZZ                                              *flog-ZZ*

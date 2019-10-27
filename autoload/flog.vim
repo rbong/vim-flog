@@ -289,6 +289,11 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   return l:completions
 endfunction
 
+function! flog#complete_refs(arg_lead, cmd_line, cursor_pos) abort
+  let l:state = flog#get_state()
+  return flog#filter_completions(a:arg_lead, copy(l:state.all_refs))
+endfunction
+
 function! flog#complete_format(arg_lead) abort
   " build patterns
   let l:completable_pattern = g:flog_eat_specifier_pattern
@@ -398,6 +403,10 @@ function! flog#get_initial_state(parsed_args, original_file) abort
         \ 'preview_window_ids': [],
         \ 'previous_log_command': v:null,
         \ 'line_commits': [],
+        \ 'all_refs': [],
+        \ 'commit_refs': [],
+        \ 'line_commit_refs': [],
+        \ 'ref_line_lookup': {},
         \ 'ansi_esc_called': v:false,
         \ })
 endfunction
@@ -635,6 +644,63 @@ endfunction
 
 " }}}
 
+" Ref operations {{{
+
+function! flog#get_ref_data(line) abort
+  let l:state = flog#get_state()
+  return l:state.line_commit_refs[a:line - 1]
+endfunction
+
+function! flog#jump_refs(refs) abort
+  let l:state = flog#get_state()
+
+  if l:state.commit_refs == []
+    return
+  endif
+
+  let l:current_ref = flog#get_ref_data(line('.'))
+  let l:current_commit = flog#get_commit_data(line('.'))
+
+  let l:refs = a:refs
+  if l:refs < 0 && l:current_commit.ref_names_unwrapped ==# ''
+    let l:refs += 1
+  endif
+
+  if type(l:current_ref) == v:t_none
+    let l:index = -1
+  else
+    let l:index = index(l:state.commit_refs, l:current_ref)
+  endif
+  let l:index = max([0, l:index + l:refs])
+  if l:index >= len(l:state.commit_refs)
+    return
+  endif
+
+  let l:line = index(l:state.line_commit_refs, l:state.commit_refs[l:index]) + 1
+
+  if l:line >= 0
+    exec l:line
+  endif
+endfunction
+
+function! flog#jump_to_ref(ref) abort
+  let l:state = flog#get_state()
+  if !has_key(l:state.ref_line_lookup, a:ref)
+    return
+  endif
+  exec l:state.ref_line_lookup[a:ref] + 1
+endfunction
+
+function! flog#next_ref() abort
+  call flog#jump_refs(v:count1)
+endfunction
+
+function! flog#previous_ref() abort
+  call flog#jump_refs(-v:count1)
+endfunction
+
+" }}}
+
 " Buffer management {{{
 
 " Graph buffer {{{
@@ -661,9 +727,28 @@ function! flog#set_graph_buffer_commits(commits) abort
   call flog#modify_graph_buffer_contents(flog#get_log_display(a:commits))
 
   let l:state.line_commits = []
+
+  let l:state.all_refs = []
+  let l:state.commit_refs = []
+  let l:state.line_commit_refs = []
+  let l:state.ref_line_lookup = {}
+
+  let l:current_ref = v:null
+
   for l:commit in a:commits
+    if l:commit.ref_names_unwrapped !=# ''
+      let l:current_ref = l:commit.ref_name_list
+      let l:state.commit_refs += [l:current_ref]
+      let l:state.all_refs += l:current_ref
+      let l:line = len(l:state.line_commits)
+      for l:ref in l:current_ref
+        let l:state.ref_line_lookup[l:ref] = len(l:state.line_commits)
+      endfor
+    endif
+
     for l:i in range(len(l:commit.display))
       let l:state.line_commits += [l:commit]
+      let l:state.line_commit_refs += [l:current_ref]
     endfor
   endfor
 endfunction
