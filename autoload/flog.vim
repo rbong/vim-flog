@@ -281,11 +281,19 @@ function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
 endfunction
 
 function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
-  if len(split(a:cmd_line, ' ', v:true)) <= 2
+  let l:split_args = split(a:cmd_line, '\s', v:true)
+  let l:current_arg_num = len(l:split_args)
+  if l:current_arg_num <= 2
     return flog#filter_completions(a:arg_lead, copy(g:flog_git_commands))
   endif
+  let l:command = l:split_args[1]
+
   let l:completions = flog#complete_line(a:arg_lead, a:cmd_line, a:cursor_pos)
   let l:completions += getcompletion(a:arg_lead, 'file')
+  if l:current_arg_num == 3 && has_key(g:flog_git_subcommands, l:command)
+    let l:completions += flog#filter_completions(a:arg_lead, copy(g:flog_git_subcommands[l:command]))
+  endif
+
   return l:completions
 endfunction
 

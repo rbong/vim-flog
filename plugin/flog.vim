@@ -337,6 +337,39 @@ let g:flog_git_commands = [
       \ 'stripspace',
       \ ]
 
+let g:flog_git_subcommands = {
+      \ 'bisect': [
+      \ 'start',
+      \ 'new',
+      \ 'bad',
+      \ 'old',
+      \ 'terms',
+      \ 'skip',
+      \ 'reset',
+      \ 'replay',
+      \ 'run',
+      \ 'help',
+      \ ],
+      \ 'rebase': [
+      \ '--continue',
+      \ '--skip',
+      \ '--abort',
+      \ '--quit',
+      \ '--show-current-patch',
+      \ ],
+      \ 'merge': [
+      \ '--continue',
+      \ '--abort',
+      \ '--quit',
+      \ ],
+      \ 'cherry-pick': [
+      \ '--continue',
+      \ '--skip',
+      \ '--abort',
+      \ '--quit',
+      \ ],
+      \ }
+
 " }}}
 
 " Commands {{{
