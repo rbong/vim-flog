@@ -818,6 +818,11 @@ function! flog#restore_graph_cursor(cursor) abort
   endif
 
   let l:state = flog#get_state()
+
+  if len(l:state.commits) == 0
+    return
+  endif
+
   let l:short_commit_hash = a:cursor.short_commit_hash
 
   if l:short_commit_hash ==# flog#get_commit_data(line('.')).short_commit_hash
