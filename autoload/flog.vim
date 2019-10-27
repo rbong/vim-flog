@@ -137,7 +137,7 @@ function! flog#parse_path_opt(arg) abort
 endfunction
 
 function! flog#parse_set_args(args, current_args, defaults) abort
-  let l:has_set_path = 0
+  let l:has_set_path = v:false
   let l:got_raw_args_token = v:false
   let l:raw_args = []
 
@@ -193,12 +193,12 @@ function! flog#parse_set_args(args, current_args, defaults) abort
       " this means we must overwrite the user's default path on the first encounter
       if !l:has_set_path
         let a:current_args.path = []
-        let l:has_set_path = 1
+        let l:has_set_path = v:true
       endif
       let a:current_args.path += flog#parse_path_opt(l:arg)
     elseif l:arg ==# '-path='
       let a:current_args.path = a:defaults.path
-      let l:has_set_path = 0
+      let l:has_set_path = v:false
     else
       echoerr 'error parsing argument ' . l:arg
       throw g:flog_unsupported_argument
