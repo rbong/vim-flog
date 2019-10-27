@@ -138,11 +138,14 @@ endfunction
 
 function! flog#parse_set_args(args, current_args, defaults) abort
   let l:has_set_path = v:false
+
+  let l:has_set_raw_args = v:false
   let l:got_raw_args_token = v:false
   let l:raw_args = []
 
   for l:arg in a:args
     if l:got_raw_args_token
+      let l:has_set_raw_args = v:true
       let l:raw_args += [l:arg]
     elseif l:arg ==# '--'
       let l:got_raw_args_token = v:true
@@ -155,8 +158,10 @@ function! flog#parse_set_args(args, current_args, defaults) abort
     elseif l:arg ==# '-date='
       let a:current_args.date = a:defaults.date
     elseif l:arg =~# '^-raw-args=.\+'
-      let a:current_args.raw_args = flog#parse_arg_opt(l:arg)
+      let l:has_set_raw_args = v:true
+      let l:raw_args += [flog#parse_arg_opt(l:arg)]
     elseif l:arg ==# '-raw-args='
+      let l:has_set_raw_args = v:false
       let a:current_args.raw_args = a:defaults.raw_args
     elseif l:arg ==# '-all'
       let a:current_args.all = v:true
@@ -205,7 +210,7 @@ function! flog#parse_set_args(args, current_args, defaults) abort
     endif
   endfor
 
-  if l:got_raw_args_token
+  if l:has_set_raw_args
     let a:current_args.raw_args = join(l:raw_args, ' ')
   endif
 
