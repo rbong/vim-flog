@@ -714,8 +714,39 @@ function! flog#set_graph_buffer_color() abort
   endif
 endfunction
 
+function! flog#get_graph_cursor() abort
+  let l:state = flog#get_state()
+  if l:state.line_commits != []
+    return flog#get_commit_data(line('.'))
+  endif
+  return v:null
+endfunction
+
+function! flog#restore_graph_cursor(cursor) abort
+  if type(a:cursor) == v:t_none
+    return
+  endif
+
+  let l:state = flog#get_state()
+  let l:short_commit_hash = a:cursor.short_commit_hash
+
+  if l:short_commit_hash ==# flog#get_commit_data(line('.')).short_commit_hash
+    return
+  endif
+
+  let l:line = v:null
+  for l:commit in l:state.commits
+    if l:commit.short_commit_hash == l:short_commit_hash
+      call cursor(index(l:state.line_commits, l:commit) + 1, 1)
+      return
+    endif
+  endfor
+endfunction
+
 function! flog#populate_graph_buffer() abort
   let l:state = flog#get_state()
+
+  let l:cursor = flog#get_graph_cursor()
 
   let l:command = flog#build_log_command()
   let l:state.previous_log_command = l:command
@@ -728,6 +759,8 @@ function! flog#populate_graph_buffer() abort
   call flog#set_graph_buffer_color()
 
   let l:state.commits = l:commits
+
+  call flog#restore_graph_cursor(cursor)
 endfunction
 
 function! flog#graph_buffer_settings() abort
