@@ -460,78 +460,69 @@ function! flog#create_log_format() abort
 endfunction
 
 function! flog#parse_log_commit(raw_commit) abort
-  " trim past the start of the format
-  let l:trimmed_commit = substitute(a:raw_commit, '.*' . g:flog_format_start, '', '')
-
-  " start of the commit not found
-  if l:trimmed_commit ==# a:raw_commit
+  let l:format_start_a = stridx(a:raw_commit, g:flog_format_start)
+  if l:format_start_a < 0
     return {}
   endif
+  let l:format_start_b = l:format_start_a + len(g:flog_format_start)
 
-  " separate the commit string
-  let l:split_commit = split(l:trimmed_commit, g:flog_format_separator, v:true)
+  let l:display_commit_start_a = stridx(a:raw_commit, g:flog_display_commit_start, l:format_start_b)
+  let l:display_commit_start_b = l:display_commit_start_a + len(g:flog_display_commit_start)
+
+  let l:display_commit_end_a = stridx(a:raw_commit, g:flog_display_commit_end, l:display_commit_start_b)
+  let l:display_commit_end_b = l:display_commit_end_a + len(g:flog_display_commit_end)
+
+  let l:flog_format_end_b = stridx(a:raw_commit, g:flog_format_end, l:display_commit_end_b) + len(g:flog_format_end)
+
+  let l:start = a:raw_commit[0 : l:format_start_a - 1]
+  let l:internal = split(a:raw_commit[l:format_start_b : l:display_commit_start_a - 1], g:flog_format_separator, v:true)
+  let l:display = a:raw_commit[l:display_commit_start_b : l:display_commit_end_a - 1]
+  let l:end = a:raw_commit[l:flog_format_end_b :]
 
   let l:commit = {}
 
-  " capture each data specifier and store it
   for l:i in range(len(g:flog_log_data_format_specifiers))
     let l:specifier = g:flog_log_data_format_specifiers[l:i]
-    let l:data = l:split_commit[l:i]
+    let l:data = l:internal[l:i]
     let l:commit[l:specifier] = l:data
   endfor
 
   let l:commit.ref_name_list = split(l:commit.ref_names_unwrapped, ' -> \|, \|tag: ')
-
-  " capture display information
-  let l:display_pattern = '^\(.*\)' . g:flog_format_start . '.*' 
-  let l:display_pattern .= g:flog_display_commit_start . '\(.*\)' . g:flog_display_commit_end . '.*'
-  let l:display_pattern .= g:flog_format_end . '\(.*\)'
-  let l:display = substitute(a:raw_commit, l:display_pattern, '\1\2\3', '')
-  let l:commit.display = split(l:display, "\n")
+  let l:commit.display = split(l:start . l:display . l:end, "\n")
 
   return l:commit
 endfunction
 
 function! flog#parse_log_output(output) abort
-  if len(a:output) == 0
+  let l:output_len = len(a:output)
+  if l:output_len == 0
     return []
   endif
 
-  let l:commit_split_pattern =
-        \ '\(\n\|^\)\zs\ze\(.\(\n\|' . g:flog_format_start . '\)\@<!\)\{-}'
-        \ . g:flog_format_start
-  let l:raw_commits = split(join(a:output, "\n"), l:commit_split_pattern)
-
-  if len(l:raw_commits) == 0
-    throw g:flog_no_commits
-  endif
-
   let l:commits = []
-  let l:parsing_start = v:true
-  let l:start_overflow = []
+  let l:raw_commit = []
+  let l:i = 0
 
-  for l:raw_commit in l:raw_commits
-    let l:parsed_commit = flog#parse_log_commit(l:raw_commit)
+  " Group non-commit lines at the start of output with the first commit
+  " See https://github.com/rbong/vim-flog/pull/14
+  while l:i < l:output_len && a:output[l:i] !~# g:flog_format_start
+    call add(l:raw_commit, a:output[l:i])
+    let l:i += 1
+  endwhile
 
-    if l:parsed_commit == {}
-      " Group non-commit lines at the start of output with the first commit
-      " See https://github.com/rbong/vim-flog/pull/14
-      if l:parsing_start
-        let l:start_overflow += split(l:raw_commit, "\n")
-        continue
-      else
-        echoerr 'error parsing commit ' . l:raw_commit
-        throw g:flog_missing_commit_start
-      endif
-    elseif l:start_overflow != []
-      let l:parsed_commit.display = l:start_overflow + l:parsed_commit.display
-      let l:start_overflow = []
+  while l:i < l:output_len
+    let l:line = a:output[l:i]
+    if l:line =~# g:flog_format_start && l:raw_commit != []
+      call add(l:commits, flog#parse_log_commit(join(l:raw_commit, "\n")))
+      let l:raw_commit = []
     endif
+    call add(l:raw_commit, l:line)
+    let l:i += 1
+  endwhile
 
-    let l:commits += [l:parsed_commit]
-
-    let l:parsing_start = v:false
-  endfor
+  if l:raw_commit != []
+      call add(l:commits, flog#parse_log_commit(join(l:raw_commit, "\n")))
+  endif
 
   return l:commits
 endfunction
