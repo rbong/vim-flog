@@ -86,15 +86,8 @@ endfunction
 
 " Argument parsing {{{
 
-function! flog#get_default_args() abort
-  if !g:flog_has_shown_deprecated_default_argument_vars_warning
-        \ && (exists('g:flog_default_format') || exists('g:flog_default_date_format'))
-    echoerr 'Warning: the options g:flog_default_format and g:flog_default_date_format are deprecated'
-    echoerr 'Please use g:flog_default_arguments to set any defaults'
-  endif
-
-  " true argument defaults
-  let l:defaults = {
+function! flog#get_internal_default_args() abort
+  return {
         \ 'raw_args': v:null,
         \ 'format': '%Cblue%ad%Creset %C(yellow)[%h]%Creset %Cgreen{%an}%Creset%Cred%d%Creset %s',
         \ 'date': 'iso8601',
@@ -109,6 +102,16 @@ function! flog#get_default_args() abort
         \ 'rev': v:null,
         \ 'path': []
         \ }
+endfunction
+
+function! flog#get_default_args() abort
+  if !g:flog_has_shown_deprecated_default_argument_vars_warning
+        \ && (exists('g:flog_default_format') || exists('g:flog_default_date_format'))
+    echoerr 'Warning: the options g:flog_default_format and g:flog_default_date_format are deprecated'
+    echoerr 'Please use g:flog_default_arguments to set any defaults'
+  endif
+
+  let l:defaults = flog#get_internal_default_args()
 
   " read the user argument defaults
   if exists('g:flog_default_arguments')
@@ -210,8 +213,7 @@ function! flog#parse_set_args(args, current_args, defaults) abort
 endfunction
 
 function! flog#parse_args(args) abort
-  let l:defaults = flog#get_default_args()
-  return flog#parse_set_args(a:args, copy(l:defaults), l:defaults)
+  return flog#parse_set_args(a:args, flog#get_default_args(), flog#get_internal_default_args())
 endfunction
 
 " }}}
@@ -742,7 +744,7 @@ endfunction
 
 function! flog#update_options(args, force) abort
   let l:state = flog#get_state()
-  let l:defaults = flog#get_default_args()
+  let l:defaults = flog#get_internal_default_args()
 
   if a:force
     call extend(l:state, l:defaults)
