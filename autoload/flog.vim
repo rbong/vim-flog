@@ -854,7 +854,7 @@ function! flog#populate_graph_buffer() abort
 
   let l:state.commits = l:commits
 
-  call flog#restore_graph_cursor(cursor)
+  call flog#restore_graph_cursor(l:cursor)
 endfunction
 
 function! flog#graph_buffer_settings() abort
