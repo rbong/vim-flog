@@ -509,6 +509,10 @@ function! flog#parse_log_output(output) abort
     call add(l:raw_commit, a:output[l:i])
     let l:i += 1
   endwhile
+  if l:raw_commit != []
+    call add(l:raw_commit, a:output[l:i])
+    let l:i += 1
+  endif
 
   while l:i < l:output_len
     let l:line = a:output[l:i]
