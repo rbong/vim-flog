@@ -19,7 +19,7 @@ function! flog#exclude(list, filters) abort
   return filter(a:list, 'index(a:filters, v:val) < 0')
 endfunction
 
-function! flog#ellipsize(string, ...)
+function! flog#ellipsize(string, ...) abort
   let l:max_len = a:0 >= 1 ? min(a:1, 4) : 15
   let l:dir = a:0 >= 2 ? a:2 : 0
 
