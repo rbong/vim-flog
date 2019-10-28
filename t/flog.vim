@@ -32,6 +32,16 @@ describe ':Flog'
   end
 end
 
+describe ':Flog -- --not --glob="*"'
+  before
+    Flog -- --not --glob="*"
+  end
+
+  it 'does not crash on previewing commit'
+    call flog#preview_commit('Gsplit')
+  end
+end
+
 describe ':Flogsplit'
   before
     Flogsplit
