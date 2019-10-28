@@ -647,7 +647,7 @@ endfunction
 
 function! flog#get_ref_data(line) abort
   let l:state = flog#get_state()
-  return l:state.line_commit_refs[a:line - 1]
+  return get(l:state.line_commit_refs, a:line - 1, -1)
 endfunction
 
 function! flog#jump_refs(refs) abort
@@ -665,7 +665,7 @@ function! flog#jump_refs(refs) abort
     let l:refs += 1
   endif
 
-  if type(l:current_ref) == v:t_none
+  if type(l:current_ref) == v:t_number
     let l:index = -1
   else
     let l:index = index(l:state.commit_refs, l:current_ref)
@@ -808,11 +808,11 @@ function! flog#get_graph_cursor() abort
   if l:state.line_commits != []
     return flog#get_commit_data(line('.'))
   endif
-  return v:null
+  return -1
 endfunction
 
 function! flog#restore_graph_cursor(cursor) abort
-  if type(a:cursor) == v:t_none
+  if type(a:cursor) == v:t_number
     return
   endif
 
