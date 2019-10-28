@@ -665,7 +665,7 @@ function! flog#jump_refs(refs) abort
     let l:refs += 1
   endif
 
-  if type(l:current_ref) == v:t_none
+  if l:current_ref == v:null
     let l:index = -1
   else
     let l:index = index(l:state.commit_refs, l:current_ref)
@@ -812,7 +812,7 @@ function! flog#get_graph_cursor() abort
 endfunction
 
 function! flog#restore_graph_cursor(cursor) abort
-  if type(a:cursor) == v:t_none
+  if a:cursor == v:null
     return
   endif
 
@@ -854,7 +854,7 @@ function! flog#populate_graph_buffer() abort
 
   let l:state.commits = l:commits
 
-  call flog#restore_graph_cursor(cursor)
+  call flog#restore_graph_cursor(l:cursor)
 endfunction
 
 function! flog#graph_buffer_settings() abort
