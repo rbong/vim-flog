@@ -267,11 +267,17 @@ function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
   if (l:line != l:firstline && l:line != l:lastline) || l:firstline == l:lastline
     " complete for only the current line
     let l:commit = flog#get_commit_data(line('.'))
+    if type(l:commit) != v:t_dict
+      return []
+    endif
     let l:completions = [l:commit.short_commit_hash] + l:commit.ref_name_list
   else
     " complete for a range
     let l:first_commit = flog#get_commit_data(l:firstline)
     let l:last_commit = flog#get_commit_data(l:lastline)
+    if type(l:first_commit) != v:t_dict || type(l:last_commit) != v:t_dict
+      return []
+    endif
     let l:completions = [l:first_commit.short_commit_hash, l:last_commit.short_commit_hash]
           \ + l:first_commit.ref_name_list + l:last_commit.ref_name_list
           \ + [l:last_commit.short_commit_hash . '..' . l:first_commit.short_commit_hash]
@@ -598,13 +604,16 @@ endfunction
 
 function! flog#get_commit_data(line) abort
   let l:state = flog#get_state()
-  return l:state.line_commits[a:line - 1]
+  return get(l:state.line_commits, a:line - 1, v:null)
 endfunction
 
 function! flog#jump_commits(commits) abort
   let l:state = flog#get_state()
 
   let l:current_commit = flog#get_commit_data(line('.'))
+  if type(l:current_commit) != v:t_dict
+    return
+  endif
 
   let l:index = index(l:state.commits, l:current_commit) + a:commits
   let l:index = min([max([l:index, 0]), len(l:state.commits) - 1])
@@ -629,9 +638,15 @@ function! flog#copy_commits(...) range abort
   let l:state = flog#get_state()
 
   let l:first_commit = flog#get_commit_data(a:firstline)
+  if type(l:first_commit) != v:t_dict
+    return 0
+  endif
   let l:first_index = index(l:state.commits, l:first_commit)
   if l:by_line
     let l:last_commit = flog#get_commit_data(a:lastline)
+    if type(l:last_commit) != v:t_dict
+      return 0
+    endif
     let l:last_index = index(l:state.commits, l:last_commit)
   elseif a:lastline > 0
     let l:last_index = l:first_index + a:lastline - a:firstline
@@ -663,6 +678,9 @@ function! flog#jump_refs(refs) abort
 
   let l:current_ref = flog#get_ref_data(line('.'))
   let l:current_commit = flog#get_commit_data(line('.'))
+  if type(l:current_commit) != v:t_dict
+    return
+  endif
 
   let l:refs = a:refs
   if l:refs < 0 && l:current_commit.ref_names_unwrapped ==# ''
@@ -828,7 +846,11 @@ function! flog#restore_graph_cursor(cursor) abort
 
   let l:short_commit_hash = a:cursor.short_commit_hash
 
-  if l:short_commit_hash ==# flog#get_commit_data(line('.')).short_commit_hash
+  let l:commit = flog#get_commit_data(line('.'))
+  if type(l:commit) != v:t_dict
+    return
+  endif
+  if l:short_commit_hash ==# l:commit.short_commit_hash
     return
   endif
 
@@ -1003,7 +1025,11 @@ function! flog#preview_commit(open_cmd, ...) abort
   let l:keep_focus = exists('a:0') ? a:0 : v:false
   let l:previous_window_id = win_getid()
 
-  let l:hash = flog#get_commit_data(line('.')).short_commit_hash
+  let l:commit = flog#get_commit_data(line('.'))
+  if type(l:commit) != v:t_dict
+    return
+  endif
+  let l:hash = l:commit.short_commit_hash
   call flog#preview(a:open_cmd . ' ' . l:hash, v:true)
   call flog#commit_preview_buffer_settings()
 
