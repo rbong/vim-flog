@@ -687,7 +687,7 @@ function! flog#jump_refs(refs) abort
     let l:refs += 1
   endif
 
-  if type(l:current_ref) != v:t_dict
+  if type(l:current_ref) != v:t_list
     let l:index = -1
   else
     let l:index = index(l:state.commit_refs, l:current_ref)
