@@ -5,6 +5,7 @@ silent setlocal nomodifiable
       \ nowrap
       \ buftype=nofile
       \ bufhidden=wipe
+      \ cursorline
 
 " Bindings {{{
 
