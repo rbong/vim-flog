@@ -1,13 +1,28 @@
-language: vim
+dist: "bionic"
 cache:
   directories:
     - $HOME/.rvm
     - $HOME/.vvm
+rvm:
+  - 2.6.5
 before_install:
   - curl https://raw.githubusercontent.com/kana/vim-version-manager/master/bin/vvm | python - setup; true
   - source ~/.vvm/etc/login
   - vvm update_itself
-  - vvm use vimorg--v8.1.1904 --install --with-features=huge
-  -
-  - rvm use 2.5.0 --install --binary --fuzzy
-script: rake ci
+  - vvm use vimorg--$VIM_VERSION --install --with-features=huge
+jobs:
+  include:
+    - name: "vim 7"
+      env:
+        VIM_VERSION: "v7.4.2367"
+    - name: "vim 8"
+      env:
+        VIM_VERSION: "v8.1.2221"
+    - name: "neovim"
+      before_install:
+        - sudo add-apt-repository -y ppa:neovim-ppa/stable
+        - sudo apt-get -y update
+        - sudo apt-get -y install neovim
+        - sudo ln -s /usr/bin/nvim /usr/local/bin/vim
+script:
+  - rake ci

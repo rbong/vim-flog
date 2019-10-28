@@ -100,11 +100,19 @@ describe 'flog#git("", "", "status")'
     endif
   end
 
-  it 'does not open in a window'
-    Expect &ft ==# 'floggraph'
-    Expect winnr('$') == 1
-    Expect flog#get_state().preview_window_ids == []
-  end
+  if has("nvim")
+    it 'opens in a preview window'
+      wincmd w
+      Expect winnr('$') == 2
+      Expect flog#get_state().preview_window_ids == [win_getid()]
+    end
+  else
+    it 'does not open in a window'
+      Expect &ft ==# 'floggraph'
+      Expect winnr('$') == 1
+      Expect flog#get_state().preview_window_ids == []
+    end
+  endif
 end
 
 " explicitly opens in a preview window
