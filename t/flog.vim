@@ -37,6 +37,12 @@ describe ':Flog -- --not --glob="*"'
     Flog -- --not --glob="*"
   end
 
+  after
+    if &ft ==# 'floggraph'
+      call flog#quit()
+    endif
+  end
+
   it 'does not crash on previewing commit'
     call flog#preview_commit('Gsplit')
   end
@@ -110,19 +116,11 @@ describe 'flog#git("", "", "status")'
     endif
   end
 
-  if has("nvim")
-    it 'opens in a preview window'
-      wincmd w
-      Expect winnr('$') == 2
-      Expect flog#get_state().preview_window_ids == [win_getid()]
-    end
-  else
-    it 'does not open in a window'
-      Expect &ft ==# 'floggraph'
-      Expect winnr('$') == 1
-      Expect flog#get_state().preview_window_ids == []
-    end
-  endif
+  it 'does not open in a window'
+    Expect &ft ==# 'floggraph'
+    Expect winnr('$') == 1
+    Expect flog#get_state().preview_window_ids == []
+  end
 end
 
 " explicitly opens in a preview window
