@@ -46,11 +46,14 @@ let g:flog_format_specifiers = {
       \ 'short_commit_hash': '%h',
       \ 'ref_names_unwrapped': '%D',
       \ }
-" the specifiers to use to retrieve data
+" the specifiers referring to data
 let g:flog_log_data_format_specifiers = [
       \ 'ref_names_unwrapped',
       \ 'short_commit_hash',
       \ ]
+" the indices to use to retrieve data
+let g:flog_log_data_ref_index = 0
+let g:flog_log_data_hash_index = 1
 
 " }}}
 

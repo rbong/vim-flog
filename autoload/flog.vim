@@ -490,11 +490,9 @@ function! flog#parse_log_commit(raw_commit) abort
 
   let l:commit = {}
 
-  for l:i in range(len(g:flog_log_data_format_specifiers))
-    let l:specifier = g:flog_log_data_format_specifiers[l:i]
-    let l:data = l:internal[l:i]
-    let l:commit[l:specifier] = l:data
-  endfor
+  let l:commit.short_commit_hash = l:internal[g:flog_log_data_hash_index]
+  let l:commit.ref_names_unwrapped = l:internal[g:flog_log_data_ref_index]
+  let l:commit.internal_data = l:internal
 
   let l:commit.ref_name_list = split(l:commit.ref_names_unwrapped, ' -> \|, \|tag: ')
   let l:commit.display = split(l:start . l:display . l:end, "\n")
