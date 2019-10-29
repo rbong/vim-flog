@@ -39,12 +39,12 @@ endfunction
 " Shell interface {{{
 
 function! flog#shell_command(command) abort
-  let l:output = system(a:command)
+  let l:output = systemlist(a:command)
   if v:shell_error
-    echoerr l:output
+    echoerr join(l:output, "\n")
     throw g:flog_shell_error
   endif
-  return split(l:output, '\n')
+  return l:output
 endfunction
 
 " }}}
