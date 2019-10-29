@@ -758,7 +758,7 @@ function! flog#set_graph_buffer_commits(commits) abort
   let l:current_ref = v:null
 
   for l:commit in a:commits
-    if l:commit.ref_names_unwrapped !=# ''
+    if l:commit.ref_name_list !=# []
       let l:current_ref = l:commit.ref_name_list
       let l:state.commit_refs += [l:current_ref]
       let l:state.all_refs += l:current_ref
@@ -768,10 +768,9 @@ function! flog#set_graph_buffer_commits(commits) abort
       endfor
     endif
 
-    for l:i in range(len(l:commit.display))
-      let l:state.line_commits += [l:commit]
-      let l:state.line_commit_refs += [l:current_ref]
-    endfor
+    let l:nlines = len(l:commit.display)
+    let l:state.line_commits += repeat([l:commit], l:nlines)
+    let l:state.line_commit_refs += repeat([l:current_ref], l:nlines)
   endfor
 endfunction
 
