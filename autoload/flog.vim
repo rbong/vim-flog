@@ -484,6 +484,9 @@ function! flog#parse_log_commit(raw_commit) abort
   let l:internal = split(a:raw_commit[l:format_start_b : l:display_commit_start_a - 1], g:flog_format_separator, v:true)
   let l:display = a:raw_commit[l:display_commit_start_b : l:display_commit_end_a - 1]
   let l:end = a:raw_commit[l:flog_format_end_b :]
+  if l:end !=# '' && l:end[0] !=# "\n"
+    let l:end = "\n" . l:end
+  endif
 
   let l:commit = {}
 
