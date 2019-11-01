@@ -34,6 +34,23 @@ function! flog#ellipsize(string, ...) abort
   endif
 endfunction
 
+function! flog#unescape_arg(arg) abort
+  " remove trailing backslashes to prevent evaluation errors
+  let l:arg = substitute(a:arg, '\\*$', '', '')
+  try
+    " unescape spaces to deal with argument interpolation
+    let l:arg = substitute(l:arg, '\\ ', ' ', '')
+  catch /E114:/
+    " invalid trailing escape sequence
+    return []
+  endtry
+  return l:arg
+endfunction
+
+function! flog#escape_completions(lead, completions) abort
+  return map(a:completions, "a:lead . substitute(v:val, ' ', '\\\\ ', '')")
+endfunction
+
 " }}}
 
 " Shell interface {{{
@@ -100,6 +117,7 @@ function! flog#get_internal_default_args() abort
         \ 'open_cmd': 'tabedit',
         \ 'search': v:null,
         \ 'patch_search': v:null,
+        \ 'limit': v:null,
         \ 'rev': v:null,
         \ 'path': []
         \ }
@@ -194,6 +212,10 @@ function! flog#parse_set_args(args, current_args, defaults) abort
       let a:current_args.patch_search = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-patch-search='
       let a:current_args.patch_search = a:defaults.patch_search
+    elseif l:arg =~# '^-limit=.\+'
+      let a:current_args.limit = flog#parse_arg_opt(l:arg)
+    elseif l:arg ==# '-limit='
+      let a:current_args.limit = a:defaults.limit
     elseif l:arg =~# '^-rev=.\+'
       let a:current_args.rev = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-rev='
@@ -353,6 +375,21 @@ function! flog#complete_open_cmd(arg_lead) abort
   return flog#filter_completions(a:arg_lead, l:completions)
 endfunction
 
+function! flog#complete_limit(arg_lead) abort
+  let [l:lead, l:last] = flog#split_completable_arg(a:arg_lead)
+
+  let l:limit = substitute(l:last, '^:\?.\{-}:\zs.*', '', '')
+  if l:limit !~# '^.\+:$'
+    return []
+  endif
+  let l:path = l:last[len(l:limit) :]
+
+  let l:files = getcompletion(flog#unescape_arg(l:path), 'file')
+  let l:completions = flog#escape_completions(l:lead . l:limit, l:files)
+
+  return flog#filter_completions(a:arg_lead, l:completions)
+endfunction
+
 function! flog#complete_rev(arg_lead) abort
   if !flog#is_fugitive_buffer()
     return []
@@ -367,19 +404,8 @@ endfunction
 function! flog#complete_path(arg_lead) abort
   let [l:lead, l:path] = flog#split_single_completable_arg(a:arg_lead)
 
-  " remove trailing backslashes to prevent evaluation errors
-  let l:path = substitute(l:path, '\\*$', '', '')
-  try
-    " unescape spaces to deal with argument interpolation
-    let l:path = substitute(l:path, '\\ ', ' ', '')
-  catch /E114:/
-    " invalid trailing escape sequence
-    return []
-  endtry
-  let l:files = getcompletion(l:path, 'file')
-
-  " build the completion and re-apply escape sequences
-  let l:completions = map(l:files, "l:lead . substitute(v:val, ' ', '\\\\ ', '')")
+  let l:files = getcompletion(flog#unescape_arg(l:path), 'file')
+  let l:completions = flog#escape_completions(l:lead, l:files)
 
   return flog#filter_completions(a:arg_lead, l:completions)
 endfunction
@@ -399,6 +425,8 @@ function! flog#complete(arg_lead, cmd_line, cursor_pos) abort
     return flog#complete_open_cmd(a:arg_lead)
   elseif a:arg_lead =~# '^-\(patch-\)\?search='
     return []
+  elseif a:arg_lead =~# '^-limit='
+    return flog#complete_limit(a:arg_lead)
   elseif a:arg_lead =~# '^-rev='
     return flog#complete_rev(a:arg_lead)
   elseif a:arg_lead =~# '^-path='
@@ -556,16 +584,16 @@ function! flog#build_log_command() abort
   let l:command .= ' log --graph --no-color'
   let l:command .= ' --pretty=' . flog#create_log_format()
   let l:command .= ' --date=' . shellescape(l:state.date)
-  if l:state.all
+  if l:state.all && !l:state.limit
     let l:command .= ' --all'
   endif
-  if l:state.bisect
+  if l:state.bisect && !l:state.limit
     let l:command .= ' --bisect'
   endif
   if l:state.no_merges
     let l:command .= ' --no-merges'
   endif
-  if l:state.reflog
+  if l:state.reflog && !l:state.limit
     let l:command .= ' --reflog'
   endif
   if l:state.skip != v:null
@@ -581,6 +609,10 @@ function! flog#build_log_command() abort
   if l:state.patch_search != v:null
     let l:patch_search = shellescape(l:state.patch_search)
     let l:command .= ' -G' . l:patch_search
+  endif
+  if l:state.limit != v:null
+    let l:limit = shellescape(l:state.limit)
+    let l:command .= ' -L' . l:limit . ' --no-patch'
   endif
   if l:state.raw_args != v:null
     let l:command .= ' ' . l:state.raw_args
@@ -640,7 +672,7 @@ function! flog#previous_commit() abort
 endfunction
 
 function! flog#copy_commits(...) range abort
-  let l:by_line = exists('a:0') ? a:0 : v:false
+  let l:by_line = exists('a:1') ? a:1 : v:false
   let l:state = flog#get_state()
 
   let l:first_commit = flog#get_commit_data(a:firstline)
@@ -787,16 +819,16 @@ function! flog#set_graph_buffer_title() abort
   let l:state = flog#get_state()
 
   let l:title = 'flog-' . l:state.instance
-  if l:state.all
+  if l:state.all && !l:state.limit
     let l:title .= ' [all]'
   endif
-  if l:state.bisect
+  if l:state.bisect && !l:state.limit
     let l:title .= ' [bisect]'
   endif
   if l:state.no_merges
     let l:title .= ' [no_merges]'
   endif
-  if l:state.reflog
+  if l:state.reflog && !l:state.limit
     let l:title .= ' [reflog]'
   endif
   if l:state.skip != v:null
@@ -810,6 +842,9 @@ function! flog#set_graph_buffer_title() abort
   endif
   if l:state.patch_search != v:null
     let l:title .= ' [patch_search=' . flog#ellipsize(l:state.patch_search) . ']'
+  endif
+  if l:state.limit != v:null
+    let l:title .= ' [limit=' . flog#ellipsize(l:state.limit) . ']'
   endif
   if l:state.rev != v:null
     let l:title .= ' [rev=' . flog#ellipsize(l:state.rev) . ']'
@@ -1012,7 +1047,7 @@ function! flog#close_preview() abort
 endfunction
 
 function! flog#preview(command, ...) abort
-  let l:keep_focus = exists('a:0') ? a:0 : v:false
+  let l:keep_focus = exists('a:1') ? a:1 : v:false
   let l:previous_window_id = win_getid()
   let l:state = flog#get_state()
 
@@ -1034,7 +1069,7 @@ function! flog#preview(command, ...) abort
 endfunction
 
 function! flog#preview_commit(open_cmd, ...) abort
-  let l:keep_focus = exists('a:0') ? a:0 : v:false
+  let l:keep_focus = exists('a:1') ? a:1 : v:false
   let l:previous_window_id = win_getid()
 
   let l:commit = flog#get_commit_data(line('.'))
@@ -1048,6 +1083,19 @@ function! flog#preview_commit(open_cmd, ...) abort
   if !l:keep_focus
     call win_gotoid(l:previous_window_id)
   endif
+endfunction
+
+function! flog#preview_split_commit(mods, ...) abort
+  let l:keep_focus = exists('a:1') ? a:1 : v:false
+  let l:state = flog#get_state()
+
+  if l:state.limit
+    let l:cmd = ' Git! log -1 --format=raw -L' . shellescape(l:state.limit)
+  else
+    let l:cmd = ' Gsplit'
+  endif
+
+  call flog#preview_commit(a:mods . l:cmd, l:keep_focus)
 endfunction
 
 " }}}

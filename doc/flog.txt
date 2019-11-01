@@ -36,6 +36,9 @@ COMMANDS                                        *flog-commands*
                         "short" and "iso8601" are supported.
   -search=<rev>         A regex pattern to pass to "--grep=".
   -patch-search=<rev>   A regex pattern to pass to "-G".
+  -limit=<limit>        A limit to pass to "-L". This will restrict commit
+                        diffs to the specified limit. This will limit the
+                        log to a single target, disabling some options.
   -rev=<rev>            The git revision to pass to the log command.
   -path=<path>          A path to pass to the log command. This option can be
                         specified multiple times for multiple paths.

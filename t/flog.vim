@@ -44,7 +44,7 @@ describe ':Flog -- --not --glob="*"'
   end
 
   it 'does not crash on previewing commit'
-    call flog#preview_commit('Gsplit')
+    call flog#preview_split_commit('')
   end
 end
 
@@ -77,10 +77,10 @@ describe ':Flogsplit'
   end
 end
 
-describe 'flog#preview_commit()'
+describe 'flog#preview_split_commit()'
   before
     Flog
-    call flog#preview_commit('Gsplit')
+    call flog#preview_split_commit('')
     wincmd w
   end
 

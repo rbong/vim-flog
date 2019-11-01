@@ -64,6 +64,7 @@ let g:flog_default_completion = [
       \ '-bisect ',
       \ '-date=',
       \ '-format=',
+      \ '-limit=',
       \ '-max-count=',
       \ '-no-merges',
       \ '-open-cmd=',

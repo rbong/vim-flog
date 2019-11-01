@@ -134,7 +134,7 @@ nnoremap <buffer> <silent> <Plug>FlogSkipback :<C-U>call flog#change_skip_by_max
 
 " Commands {{{
 
-command! -buffer Flogsplitcommit call flog#preview_commit('<mods> Gsplit')
+command! -buffer Flogsplitcommit call flog#preview_split_commit('<mods>')
 
 command! -buffer -range -bang -complete=customlist,flog#complete_git -nargs=* Floggit call flog#git('<mods>', '<bang>', <q-args>)
 
