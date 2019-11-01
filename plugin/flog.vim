@@ -64,16 +64,16 @@ let g:flog_default_completion = [
       \ '-bisect ',
       \ '-date=',
       \ '-format=',
-      \ '-no-merges',
-      \ '-skip=',
       \ '-max-count=',
+      \ '-no-merges',
       \ '-open-cmd=',
       \ '-patch-search=',
       \ '-path=',
       \ '-raw-args=',
       \ '-reflog ',
       \ '-rev=',
-      \ '-search='
+      \ '-search=',
+      \ '-skip='
       \ ]
 
 let g:flog_date_formats = [
