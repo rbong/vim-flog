@@ -99,6 +99,11 @@ if !hasmapto('<Plug>FlogSearch')
 endif
 nnoremap <buffer> <Plug>FlogSearch :<C-U>Flogupdate -search=
 
+if !hasmapto('<Plug>FlogPatchSearch')
+  nmap <buffer> g\ <Plug>FlogPatchSearch
+endif
+nnoremap <buffer> <Plug>FlogPatchSearch :<C-U>Flogupdate -patch-search=
+
 if !hasmapto('<Plug>FlogQuit')
   nmap <buffer> ZZ <Plug>FlogQuit
   nmap <buffer> gq <Plug>FlogQuit

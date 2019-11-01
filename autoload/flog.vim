@@ -99,6 +99,7 @@ function! flog#get_internal_default_args() abort
         \ 'max_count': v:null,
         \ 'open_cmd': 'tabedit',
         \ 'search': v:null,
+        \ 'patch_search': v:null,
         \ 'rev': v:null,
         \ 'path': []
         \ }
@@ -189,6 +190,10 @@ function! flog#parse_set_args(args, current_args, defaults) abort
       let a:current_args.search = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-search='
       let a:current_args.search = a:defaults.search
+    elseif l:arg =~# '^-patch-search=.\+'
+      let a:current_args.patch_search = flog#parse_arg_opt(l:arg)
+    elseif l:arg ==# '-patch-search='
+      let a:current_args.patch_search = a:defaults.patch_search
     elseif l:arg =~# '^-rev=.\+'
       let a:current_args.rev = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-rev='
@@ -392,7 +397,7 @@ function! flog#complete(arg_lead, cmd_line, cursor_pos) abort
     return flog#complete_date(a:arg_lead)
   elseif a:arg_lead =~# '^-open-cmd='
     return flog#complete_open_cmd(a:arg_lead)
-  elseif a:arg_lead =~# '^-search='
+  elseif a:arg_lead =~# '^-\(patch-\)\?search='
     return []
   elseif a:arg_lead =~# '^-rev='
     return flog#complete_rev(a:arg_lead)
@@ -572,6 +577,10 @@ function! flog#build_log_command() abort
   if l:state.search != v:null
     let l:search = shellescape(l:state.search)
     let l:command .= ' --grep=' . l:search
+  endif
+  if l:state.patch_search != v:null
+    let l:patch_search = shellescape(l:state.patch_search)
+    let l:command .= ' -G' . l:search
   endif
   if l:state.raw_args != v:null
     let l:command .= ' ' . l:state.raw_args
@@ -798,6 +807,9 @@ function! flog#set_graph_buffer_title() abort
   endif
   if l:state.search != v:null
     let l:title .= ' [search=' . flog#ellipsize(l:state.search) . ']'
+  endif
+  if l:state.patch_search != v:null
+    let l:title .= ' [patch_search=' . flog#ellipsize(l:state.patch_search) . ']'
   endif
   if l:state.rev != v:null
     let l:title .= ' [rev=' . flog#ellipsize(l:state.rev) . ']'

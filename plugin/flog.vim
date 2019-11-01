@@ -68,6 +68,7 @@ let g:flog_default_completion = [
       \ '-skip=',
       \ '-max-count=',
       \ '-open-cmd=',
+      \ '-patch-search=',
       \ '-path=',
       \ '-raw-args=',
       \ '-reflog ',
