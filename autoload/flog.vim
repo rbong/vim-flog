@@ -465,39 +465,36 @@ function! flog#create_log_format() abort
   return shellescape(l:format)
 endfunction
 
-function! flog#parse_log_commit(raw_commit) abort
-  let l:format_start_a = stridx(a:raw_commit, g:flog_format_start)
-  if l:format_start_a < 0
+function! flog#parse_log_commit(c) abort
+  let l:i = stridx(a:c, g:flog_format_start)
+  if l:i < 0
     return {}
   endif
-  let l:format_start_b = l:format_start_a + len(g:flog_format_start)
+  let l:j = stridx(a:c, g:flog_display_commit_start)
+  let l:k = stridx(a:c, g:flog_display_commit_end)
+  let l:l = stridx(a:c, g:flog_format_end)
 
-  let l:display_commit_start_a = stridx(a:raw_commit, g:flog_display_commit_start, l:format_start_b)
-  let l:display_commit_start_b = l:display_commit_start_a + len(g:flog_display_commit_start)
+  let l:dat = split(a:c[l:i + len(g:flog_format_start) : l:j - 1], g:flog_format_separator, v:true)
 
-  let l:display_commit_end_a = stridx(a:raw_commit, g:flog_display_commit_end, l:display_commit_start_b)
-  let l:display_commit_end_b = l:display_commit_end_a + len(g:flog_display_commit_end)
+  let l:c = {}
 
-  let l:flog_format_end_b = stridx(a:raw_commit, g:flog_format_end, l:display_commit_end_b) + len(g:flog_format_end)
+  let l:c.short_commit_hash = l:dat[g:flog_log_data_hash_index]
+  let l:c.ref_names_unwrapped = l:dat[g:flog_log_data_ref_index]
+  let l:c.internal_data = l:dat
 
-  let l:start = a:raw_commit[0 : l:format_start_a - 1]
-  let l:internal = split(a:raw_commit[l:format_start_b : l:display_commit_start_a - 1], g:flog_format_separator, v:true)
-  let l:display = a:raw_commit[l:display_commit_start_b : l:display_commit_end_a - 1]
-  let l:end = a:raw_commit[l:flog_format_end_b :]
+  let l:c.ref_name_list = split(l:c.ref_names_unwrapped, ' -> \|, \|tag: ')
+
+  let l:end = a:c[l:l  + len(g:flog_format_end):]
   if l:end !=# '' && l:end[0] !=# "\n"
     let l:end = "\n" . l:end
   endif
+  let l:c.display = split(
+        \ a:c[0 : l:i - 1]
+        \ . a:c[l:j + len(g:flog_display_commit_start) : l:k + len(g:flog_display_commit_end) - 1]
+        \ . l:end,
+        \ "\n")
 
-  let l:commit = {}
-
-  let l:commit.short_commit_hash = l:internal[g:flog_log_data_hash_index]
-  let l:commit.ref_names_unwrapped = l:internal[g:flog_log_data_ref_index]
-  let l:commit.internal_data = l:internal
-
-  let l:commit.ref_name_list = split(l:commit.ref_names_unwrapped, ' -> \|, \|tag: ')
-  let l:commit.display = split(l:start . l:display . l:end, "\n")
-
-  return l:commit
+  return l:c
 endfunction
 
 function! flog#parse_log_output(output) abort
