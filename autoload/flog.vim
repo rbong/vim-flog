@@ -503,36 +503,36 @@ function! flog#parse_log_output(output) abort
     return []
   endif
 
-  let l:commits = []
-  let l:raw_commit = []
+  let l:o = []
+  let l:raw = []
   let l:i = 0
 
   " Group non-commit lines at the start of output with the first commit
   " See https://github.com/rbong/vim-flog/pull/14
   while l:i < l:output_len && a:output[l:i] !~# g:flog_format_start
-    call add(l:raw_commit, a:output[l:i])
+    let l:raw += [a:output[l:i]]
     let l:i += 1
   endwhile
-  if l:raw_commit != []
-    call add(l:raw_commit, a:output[l:i])
+  if l:raw != []
+    let l:raw += [a:output[l:i]]
     let l:i += 1
   endif
 
   while l:i < l:output_len
     let l:line = a:output[l:i]
-    if l:line =~# g:flog_format_start && l:raw_commit != []
-      call add(l:commits, flog#parse_log_commit(join(l:raw_commit, "\n")))
-      let l:raw_commit = []
+    if l:line =~# g:flog_format_start && l:raw != []
+      let l:o += [flog#parse_log_commit(join(l:raw, "\n"))]
+      let l:raw = []
     endif
-    call add(l:raw_commit, l:line)
+    let l:raw += [l:line]
     let l:i += 1
   endwhile
 
-  if l:raw_commit != []
-      call add(l:commits, flog#parse_log_commit(join(l:raw_commit, "\n")))
+  if l:raw != []
+      let l:o += [flog#parse_log_commit(join(l:raw, "\n"))]
   endif
 
-  return l:commits
+  return l:o
 endfunction
 
 function! flog#build_log_paths() abort
