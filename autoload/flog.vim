@@ -490,7 +490,7 @@ function! flog#parse_log_commit(c) abort
   endif
   let l:c.display = split(
         \ a:c[0 : l:i - 1]
-        \ . a:c[l:j + len(g:flog_display_commit_start) : l:k + len(g:flog_display_commit_end) - 1]
+        \ . a:c[l:j + len(g:flog_display_commit_start) : l:k - 1]
         \ . l:end,
         \ "\n")
 
@@ -571,7 +571,7 @@ function! flog#build_log_command() abort
   endif
   if l:state.search != v:null
     let l:search = shellescape(l:state.search)
-    let l:command .= ' -G' . l:search . ' --grep=' . l:search
+    let l:command .= ' --grep=' . l:search
   endif
   if l:state.raw_args != v:null
     let l:command .= ' ' . l:state.raw_args
