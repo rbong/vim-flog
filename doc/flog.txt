@@ -39,7 +39,9 @@ COMMANDS                                        *flog-commands*
   -limit=<limit>        A limit to pass to "-L". This will restrict commit
                         diffs to the specified limit. This will limit the
                         log to a single target, disabling some options.
-  -rev=<rev>            The git revision to pass to the log command.
+  -rev=<rev>            The git revision to pass to the log command. Can be
+                        specified more than once. When "-limit=" is specified,
+                        only the first revision is used.
   -path=<path>          A path to pass to the log command. This option can be
                         specified multiple times for multiple paths.
   -raw-args=<args>      Additional args to pass to "git log --graph". No args

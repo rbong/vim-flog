@@ -118,7 +118,7 @@ function! flog#get_internal_default_args() abort
         \ 'search': v:null,
         \ 'patch_search': v:null,
         \ 'limit': v:null,
-        \ 'rev': v:null,
+        \ 'rev': [],
         \ 'path': []
         \ }
 endfunction
@@ -157,6 +157,8 @@ endfunction
 
 function! flog#parse_set_args(args, current_args, defaults) abort
   let l:has_set_path = v:false
+
+  let l:has_set_rev = v:false
 
   let l:has_set_raw_args = v:false
   let l:got_raw_args_token = v:false
@@ -217,12 +219,15 @@ function! flog#parse_set_args(args, current_args, defaults) abort
     elseif l:arg ==# '-limit='
       let a:current_args.limit = a:defaults.limit
     elseif l:arg =~# '^-rev=.\+'
-      let a:current_args.rev = flog#parse_arg_opt(l:arg)
+      if !l:has_set_rev
+        let a:current_args.rev = []
+        let l:has_set_rev = v:true
+      endif
+      let a:current_args.rev += [flog#parse_arg_opt(l:arg)]
     elseif l:arg ==# '-rev='
+      let l:has_set_rev = v:false
       let a:current_args.rev = a:defaults.rev
     elseif l:arg =~# '^-path=.\+'
-      " multiple paths can be passed through arguments
-      " this means we must overwrite the user's default path on the first encounter
       if !l:has_set_path
         let a:current_args.path = []
         let l:has_set_path = v:true
@@ -617,8 +622,13 @@ function! flog#build_log_command() abort
   if l:state.raw_args != v:null
     let l:command .= ' ' . l:state.raw_args
   endif
-  if l:state.rev != v:null
-    let l:command .= ' ' . l:state.rev
+  if len(l:state.rev) >= 1
+    if l:state.limit
+      let l:rev = l:state.rev[0]
+    else
+      let l:rev = join(l:state.rev, ' ')
+    endif
+    let l:command .= ' ' . l:rev . ' --'
   endif
   if get(g:, 'flog_use_ansi_esc')
     let l:command .= ' --color'
@@ -846,8 +856,11 @@ function! flog#set_graph_buffer_title() abort
   if l:state.limit != v:null
     let l:title .= ' [limit=' . flog#ellipsize(l:state.limit) . ']'
   endif
-  if l:state.rev != v:null
-    let l:title .= ' [rev=' . flog#ellipsize(l:state.rev) . ']'
+  if len(l:state.rev) == 1
+    let l:title .= ' [rev=' . flog#ellipsize(l:state.rev[0]) . ']'
+  endif
+  if len(l:state.rev) > 1
+    let l:title .= ' [rev=...]'
   endif
   if len(l:state.path) == 1
     let l:title .= ' [path=' . flog#ellipsize(fnamemodify(l:state.path[0], ':t')) . ']'
