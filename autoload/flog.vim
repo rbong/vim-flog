@@ -588,12 +588,11 @@ function! flog#build_log_command() abort
 endfunction
 
 function! flog#get_log_display(commits) abort
-  let l:display_lines = []
-  for l:commit in a:commits
-    let l:display_lines += l:commit.display
+  let l:o = []
+  for l:c in a:commits
+    let l:o += l:c.display
   endfor
-
-  return l:display_lines
+  return l:o
 endfunction
 
 " }}}
