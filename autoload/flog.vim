@@ -580,7 +580,7 @@ function! flog#build_log_command() abort
   endif
   if l:state.patch_search != v:null
     let l:patch_search = shellescape(l:state.patch_search)
-    let l:command .= ' -G' . l:search
+    let l:command .= ' -G' . l:patch_search
   endif
   if l:state.raw_args != v:null
     let l:command .= ' ' . l:state.raw_args
