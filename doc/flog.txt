@@ -16,8 +16,12 @@ COMMANDS                                        *flog-commands*
 :Flog
 
   Open the log graph in a new tab. This command can be run from any file in a
-  git repository. Any |fugitive-commands| can be run from the buffer. The
-  following options are supported:
+  git repository. Any |fugitive-commands| can be run from the buffer.
+
+  When opened in visual mode, the currently selected range and filename is
+  passed to "-limit=".
+
+  The following options are supported:
 
   -all                  Enable the "--all" argument by default.
   -bisect               Enable the "--bisect" argument by default.

@@ -379,8 +379,8 @@ let g:flog_git_subcommands = {
 
 " Commands {{{
 
-command! -complete=customlist,flog#complete -nargs=* Flog call flog#open([<f-args>])
-command! -complete=customlist,flog#complete -nargs=* Flogsplit call flog#open(['-open-cmd=<mods> split', <f-args>])
+command! -range=0 -complete=customlist,flog#complete -nargs=* Flog call flog#open((<range> ? ['-limit=<line1>,<line2>:' . expand('%')] : []) + [<f-args>])
+command! -range=0 -complete=customlist,flog#complete -nargs=* Flogsplit call flog#open((<range> ? ['-limit=<line1>,<line2>:' . expand('%')] : []) + ['-open-cmd=<mods> split', <f-args>])
 
 " }}}
 
