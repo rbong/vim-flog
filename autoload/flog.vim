@@ -752,22 +752,26 @@ function! flog#set_graph_buffer_commits(commits) abort
   let l:state.line_commit_refs = []
   let l:state.ref_line_lookup = {}
 
-  let l:current_ref = v:null
+  let l:cr = v:null
 
-  for l:commit in a:commits
-    if l:commit.ref_name_list !=# []
-      let l:current_ref = l:commit.ref_name_list
-      let l:state.commit_refs += [l:current_ref]
-      let l:state.all_refs += l:current_ref
-      let l:line = len(l:state.line_commits)
-      for l:ref in l:current_ref
-        let l:state.ref_line_lookup[l:ref] = len(l:state.line_commits)
+  let l:scr = l:state.commit_refs
+  let l:sr = l:state.all_refs
+  let l:srl = l:state.ref_line_lookup
+  let l:slc = l:state.line_commits
+  let l:slr = l:state.line_commit_refs
+
+  for l:c in a:commits
+    if l:c.ref_name_list !=# []
+      let l:cr = l:c.ref_name_list
+      let l:scr += [l:cr]
+      let l:sr += l:cr
+      for l:r in l:cr
+        let l:srl[l:r] = len(l:slc)
       endfor
     endif
 
-    let l:nlines = len(l:commit.display)
-    let l:state.line_commits += repeat([l:commit], l:nlines)
-    let l:state.line_commit_refs += repeat([l:current_ref], l:nlines)
+    let l:slc += repeat([l:c], len(l:c.display))
+    let l:slr += repeat([l:cr], len(l:c.display))
   endfor
 endfunction
 
