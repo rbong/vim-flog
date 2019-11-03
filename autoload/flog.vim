@@ -104,7 +104,7 @@ endfunction
 " Argument parsing {{{
 
 function! flog#get_internal_default_args() abort
-  return {
+  let l:defaults = {
         \ 'raw_args': v:null,
         \ 'format': '%Cblue%ad%Creset %C(yellow)[%h]%Creset %Cgreen{%an}%Creset%Cred%d%Creset %s',
         \ 'date': 'iso8601',
@@ -121,13 +121,26 @@ function! flog#get_internal_default_args() abort
         \ 'rev': [],
         \ 'path': []
         \ }
+
+  " read the user immutable defaults
+  if exists('g:flog_permanent_default_arguments')
+    for [l:key, l:value] in items(g:flog_permanent_default_arguments)
+      if has_key(l:defaults, l:key)
+        let l:defaults[l:key] = l:value
+      else
+        echoerr 'Warning: unrecognized immutable argument ' . l:key
+      endif
+    endfor
+  endif
+
+  return l:defaults
 endfunction
 
 function! flog#get_default_args() abort
   if !g:flog_has_shown_deprecated_default_argument_vars_warning
         \ && (exists('g:flog_default_format') || exists('g:flog_default_date_format'))
     echoerr 'Warning: the options g:flog_default_format and g:flog_default_date_format are deprecated'
-    echoerr 'Please use g:flog_default_arguments to set any defaults'
+    echoerr 'Please use g:flog_default_arguments or g:flog_permanent_default_arguments to set any defaults'
   endif
 
   let l:defaults = flog#get_internal_default_args()

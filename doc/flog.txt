@@ -190,6 +190,13 @@ g:flog_default_arguments                        *flog-g:flog_default_arguments*
 A |dict| containing the default values for arguments to |:Flog|. Keys in the
 dictionary are in underscore format.
 
+g:flog_permanent_default_arguments              *flog-g:flog_permanent_default_arguments*
+
+Like |g:flog_default_arguments|, only the arguments are treated as the plugin
+defaults and can't be cleared using |:Flog|, |:Flogupdate|, or |:Flogupdate!|.
+
+Has lower presidence than |g:flog_default_arguments|.
+
 g:flog_use_ansi_esc                             *flog-g:flog_use_ansi_esc*
 
 By default, Flog uses limited regex syntax highlighting. This option enables
