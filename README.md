@@ -14,6 +14,8 @@ See `:help plug-example` for more information.
 You must also install [fugitive](https://github.com/tpope/vim-fugitive).
 If you do not use plug, see your plugin manager of choice's documentation.
 
+Requires vim version 7.4.2204 or greater.
+
 ## Using Flog
 
 Open the commit graph with `:Flog` or `:Flogsplit`.
