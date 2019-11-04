@@ -51,6 +51,14 @@ function! flog#escape_completions(lead, completions) abort
   return map(a:completions, "a:lead . substitute(v:val, ' ', '\\\\ ', '')")
 endfunction
 
+function! flog#split_limit(limit) abort
+  let [l:match, l:start, l:end] = matchstrpos(a:limit, '.\+:\zs')
+  if l:start < 0
+    return [a:limit, '']
+  endif
+  return [a:limit[: l:start - 1], a:limit[l:start :]]
+endfunction
+
 " }}}
 
 " Shell interface {{{
@@ -332,6 +340,8 @@ function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
 endfunction
 
 function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
+  let l:state = flog#get_state()
+
   let l:split_args = split(a:cmd_line, '\s', v:true)
   let l:current_arg_num = len(l:split_args)
   if l:current_arg_num <= 2
@@ -340,7 +350,12 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   let l:command = l:split_args[1]
 
   let l:completions = flog#complete_line(a:arg_lead, a:cmd_line, a:cursor_pos)
-  let l:completions += getcompletion(a:arg_lead, 'file')
+  if l:state.limit
+    let [l:limit, l:limit_path] = flog#split_limit(l:state.limit)
+    let l:completions += [l:limit_path]
+  endif
+  let l:completions += flog#exclude(l:state.path, l:completions)
+  let l:completions += flog#exclude(getcompletion(a:arg_lead, 'file'), l:completions)
   if l:current_arg_num == 3 && has_key(g:flog_git_subcommands, l:command)
     let l:completions += flog#filter_completions(a:arg_lead, copy(g:flog_git_subcommands[l:command]))
   endif
@@ -396,11 +411,10 @@ endfunction
 function! flog#complete_limit(arg_lead) abort
   let [l:lead, l:last] = flog#split_completable_arg(a:arg_lead)
 
-  let l:limit = substitute(l:last, '^:\?.\{-}:\zs.*', '', '')
+  let [l:limit, l:path] = flog#split_limit(l:last)
   if l:limit !~# '^.\+:$'
     return []
   endif
-  let l:path = l:last[len(l:limit) :]
 
   let l:files = getcompletion(flog#unescape_arg(l:path), 'file')
   let l:completions = flog#escape_completions(l:lead . l:limit, l:files)
