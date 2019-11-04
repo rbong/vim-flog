@@ -51,6 +51,14 @@ function! flog#escape_completions(lead, completions) abort
   return map(a:completions, "a:lead . substitute(v:val, ' ', '\\\\ ', '')")
 endfunction
 
+function! flog#resolve_path(path, relative_dir) abort
+  let l:full_path = fnamemodify(a:path, ':p')
+  if stridx(l:full_path, a:relative_dir) == 0
+    return l:full_path[len(a:relative_dir) + 1:]
+  endif
+  return a:path
+endfunction
+
 function! flog#split_limit(limit) abort
   let [l:match, l:start, l:end] = matchstrpos(a:limit, '.\+:\zs')
   if l:start < 0
@@ -83,6 +91,10 @@ function! flog#is_fugitive_buffer() abort
     return v:false
   endtry
   return v:true
+endfunction
+
+function! flog#resolve_fugitive_path_arg(path) abort
+  return flog#resolve_path(a:path, fugitive#repo().tree())
 endfunction
 
 function! flog#get_initial_fugitive_repo() abort
@@ -172,8 +184,17 @@ function! flog#parse_arg_opt(arg) abort
   return l:opt
 endfunction
 
+function! flog#parse_limit_opt(arg) abort
+  let l:arg = flog#parse_arg_opt(a:arg)
+  let [l:limit, l:path] = flog#split_limit(l:arg)
+  if l:path ==# ''
+    return l:arg
+  endif
+  return l:limit . fnameescape(flog#resolve_fugitive_path_arg(l:path))
+endfunction
+
 function! flog#parse_path_opt(arg) abort
-  return [fnameescape(fnamemodify(expand(flog#parse_arg_opt(a:arg)), ':p'))]
+  return [fnameescape(flog#resolve_fugitive_path_arg(expand(flog#parse_arg_opt(a:arg))))]
 endfunction
 
 function! flog#parse_set_args(args, current_args, defaults) abort
@@ -236,7 +257,7 @@ function! flog#parse_set_args(args, current_args, defaults) abort
     elseif l:arg ==# '-patch-search='
       let a:current_args.patch_search = a:defaults.patch_search
     elseif l:arg =~# '^-limit=.\+'
-      let a:current_args.limit = flog#parse_arg_opt(l:arg)
+      let a:current_args.limit = flog#parse_limit_opt(l:arg)
     elseif l:arg ==# '-limit='
       let a:current_args.limit = a:defaults.limit
     elseif l:arg =~# '^-rev=.\+'
