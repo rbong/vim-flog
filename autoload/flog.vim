@@ -47,10 +47,6 @@ function! flog#unescape_arg(arg) abort
   return l:arg
 endfunction
 
-function! flog#escape_completions(lead, completions) abort
-  return map(a:completions, "a:lead . substitute(v:val, ' ', '\\\\ ', '')")
-endfunction
-
 function! flog#resolve_path(path, relative_dir) abort
   let l:full_path = fnamemodify(a:path, ':p')
   if stridx(l:full_path, a:relative_dir) == 0
@@ -302,6 +298,10 @@ endfunction
 function! flog#filter_completions(arg_lead, completions) abort
   let l:lead = escape(a:arg_lead, '\\')
   return filter(a:completions, 'v:val =~# "^" . l:lead')
+endfunction
+
+function! flog#escape_completions(lead, completions) abort
+  return map(a:completions, "a:lead . substitute(v:val, ' ', '\\\\ ', '')")
 endfunction
 
 function! flog#split_single_completable_arg(arg) abort
