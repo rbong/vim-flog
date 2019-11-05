@@ -8,13 +8,14 @@ if get(g:, 'flog_use_ansi_esc')
   finish
 endif
 
+runtime! syntax/diff.vim
+
 " Commit {{{
 
-syntax match flogCommit /.*/
-syntax match flogHash   contained containedin=flogCommit /\s\zs\[[0-9a-f]\+\]/
-syntax match flogAuthor contained containedin=flogCommit /\s\zs{[^}].*}/
-syntax match flogRef    contained containedin=flogCommit /\s\zs([^)].*)/
-syntax match flogDate   contained containedin=flogCommit /\v\s\d{4}-\d\d-\d\d( \d\d:\d\d(:\d\d( [+-][0-9]{4})?)?)?/
+syntax match flogHash   /\[[0-9a-f]\+\]/
+syntax match flogAuthor /{[^}].*}/
+syntax match flogRef    /([^)].*)/
+syntax match flogDate   /\v\d{4}-\d\d-\d\d( \d\d:\d\d(:\d\d( [+-][0-9]{4})?)?)?/
 
 highlight default link flogHash   Statement
 highlight default link flogAuthor String
@@ -23,13 +24,73 @@ highlight default link flogDate   Number
 
 " Ref {{{
 
-syntax match flogRefTag    contained containedin=flogRef /\vtags\/\zs.{-}\ze(, |)\)/
-syntax match flogRefRemote contained containedin=flogRef /\vremotes\/\zs.{-}\ze(, |)\)/
-syntax match flogRefHead   contained containedin=flogRef /HEAD/
+syntax match flogRefTag    /\vtags\/\zs.{-}\ze(, |)\)/
+syntax match flogRefRemote /\vremotes\/\zs.{-}\ze(, |)\)/
+syntax match flogRefHead   /HEAD/
 
 highlight default link flogRefTag    String
 highlight default link flogRefRemote Statement
 highlight default link flogRefHead   Special
+
+" }}}
+
+" Diff {{{
+
+syntax cluster flogDiff contains=flogDiffOnly,flogDiffIdentical,flogDiffDiffer,flogDiffBDiffer,flogDiffIsA,flogDiffNoEOL,flogDiffCommon,flogDiffRemoved,flogDiffRemoved,flogDiffAdded,flogDiffAdded,flogDiffChanged,flogDiffLine,flogDiffLine,flogDiffLine,flogDiffLine,flogDiffLine,flogDiffFile,flogDiffFile,flogDiffFile,flogDiffFile,flogDiffOldFile,flogDiffNewFile,flogDiffIndexLine,flogDiffComment
+
+syntax match flogEmptyStart /^ \+\ze / nextgroup=@flogDiff
+
+" copied from syntax/diff.vim
+
+syn match flogDiffOnly      contained / Only in .*/
+syn match flogDiffIdentical contained / Files .* and .* are identical$/
+syn match flogDiffDiffer    contained / Files .* and .* differ$/
+syn match flogDiffBDiffer   contained / Binary files .* and .* differ$/
+syn match flogDiffIsA       contained / File .* is a .* while file .* is a .*/
+syn match flogDiffNoEOL     contained / \ No newline at end of file .*/
+syn match flogDiffCommon    contained / Common subdirectories: .*/
+
+syn match flogDiffRemoved contained / -.*/
+syn match flogDiffRemoved contained / <.*/
+syn match flogDiffAdded   contained / +.*/
+syn match flogDiffAdded   contained / >.*/
+syn match flogDiffChanged contained / ! .*/
+
+syn match flogDiffSubname contained containedin=flogDiffSubname / @@..*/ms=s+3
+syn match flogDiffLine    contained / @.*/
+
+syn match flogDiffLine contained / \*\*\*\*.*/
+syn match flogDiffLine contained / ---$/
+syn match flogDiffLine contained / \d\+\(,\d\+\)\=[cda]\d\+\>.*/
+
+syn match flogDiffFile    contained / diff\>.*/
+syn match flogDiffFile    contained / +++ .*/
+syn match flogDiffFile    contained / Index: .*/
+syn match flogDiffFile    contained / ==== .*/
+syn match flogDiffOldFile contained / \*\*\* .*/
+syn match flogDiffNewFile contained / --- .*/
+
+syn match flogDiffIndexLine contained / index \x\x\x\x.*/
+syn match flogDiffComment   contained / #.*/
+
+" link to original highlight groups
+
+hi default link flogDiffAdded     diffAdded
+hi default link flogDiffBDiffer   diffBDiffer
+hi default link flogDiffChanged   diffChanged
+hi default link flogDiffComment   diffComment
+hi default link flogDiffCommon    diffCommon
+hi default link flogDiffDiffer    diffDiffer
+hi default link flogDiffFile      diffFile
+hi default link flogDiffIdentical diffIdentical
+hi default link flogDiffIndexLine diffIndexLine
+hi default link flogDiffIsA       diffIsA
+hi default link flogDiffLine      diffLine
+hi default link flogDiffNewFile   diffNewFile
+hi default link flogDiffNoEOL     diffNoEOL
+hi default link flogDiffOldFile   diffOldFile
+hi default link flogDiffOnly      diffOnly
+hi default link flogDiffRemoved   diffRemoved
 
 " }}}
 
@@ -40,23 +101,25 @@ highlight default link flogRefHead   Special
 " these syntax regex match all possible graph characters
 " they will match one vertical column of graph characters from left to right ignoring whitespace
 " this makes all graph characters in a column highlighted in the same way
-syntax match flogGraphEdge9 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge1,flogCommit skipwhite
-syntax match flogGraphEdge8 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge9,flogCommit skipwhite
-syntax match flogGraphEdge7 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge8,flogCommit skipwhite
-syntax match flogGraphEdge6 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge7,flogCommit skipwhite
-syntax match flogGraphEdge5 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge6,flogCommit skipwhite
-syntax match flogGraphEdge4 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge5,flogCommit skipwhite
-syntax match flogGraphEdge3 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge4,flogCommit skipwhite
-syntax match flogGraphEdge2 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge3,flogCommit skipwhite
-syntax match flogGraphEdge1 /[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge2,flogCommit skipwhite
+syntax match flogGraphEdge9 /[_/ ]\?[|/\\*]/  nextgroup=flogGraphEdge1,@flogDiff contained
+syntax match flogGraphEdge8 /[_/ ]\?[|/\\*]/  nextgroup=flogGraphEdge9,@flogDiff contained
+syntax match flogGraphEdge7 /[_/ ]\?[|/\\*]/  nextgroup=flogGraphEdge8,@flogDiff contained
+syntax match flogGraphEdge6 /[_/ ]\?[|/\\*]/  nextgroup=flogGraphEdge7,@flogDiff contained
+syntax match flogGraphEdge5 /[_/ ]\?[|/\\*]/  nextgroup=flogGraphEdge6,@flogDiff contained
+syntax match flogGraphEdge4 /[_/ ]\?[|/\\*]/  nextgroup=flogGraphEdge5,@flogDiff contained
+syntax match flogGraphEdge3 /[_/ ]\?[|/\\*]/  nextgroup=flogGraphEdge4,@flogDiff contained
+syntax match flogGraphEdge2 /[_/ ]\?[|/\\*]/  nextgroup=flogGraphEdge3,@flogDiff contained
+syntax match flogGraphEdge1 /[_/ ]\?[|/\\*]/  nextgroup=flogGraphEdge2,@flogDiff contained
+syntax match flogGraphEdge0 /^[_/ ]\?[|/\\*]/ nextgroup=flogGraphEdge2,@flogDiff
 
-syntax cluster flogGraphEdge contains=flogGraphEdge1,flogGraphEdge2,flogGraphEdge3,flogGraphEdge4,flogGraphEdge5,flogGraphEdge6,flogGraphEdge7,flogGraphEdge8,flogGraphEdge9
+syntax cluster flogGraphEdge contains=flogGraphEdge0,flogGraphEdge1,flogGraphEdge2,flogGraphEdge3,flogGraphEdge4,flogGraphEdge5,flogGraphEdge6,flogGraphEdge7,flogGraphEdge8,flogGraphEdge9
 
 syntax match flogGraphCrossing /_\|\/\ze|/ contained containedin=@flogGraphEdge
 syntax match flogGraphCommit /\*/ contained containedin=@flogGraphEdge
 
 if &background ==# 'dark'
   highlight default flogGraphEdge1 ctermfg=magenta     guifg=green1
+  highlight link    flogGraphEdge0 flogGraphEdge1
   highlight default flogGraphEdge2 ctermfg=green       guifg=yellow1
   highlight default flogGraphEdge3 ctermfg=yellow      guifg=orange1
   highlight default flogGraphEdge4 ctermfg=cyan        guifg=greenyellow
