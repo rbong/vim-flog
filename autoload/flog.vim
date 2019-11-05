@@ -56,7 +56,7 @@ function! flog#resolve_path(path, relative_dir) abort
 endfunction
 
 function! flog#split_limit(limit) abort
-  let [l:match, l:start, l:end] = matchstrpos(a:limit, '.\+:\zs')
+  let [l:match, l:start, l:end] = matchstrpos(a:limit, '^.\{1}:\zs')
   if l:start < 0
     return [a:limit, '']
   endif
@@ -433,7 +433,7 @@ function! flog#complete_limit(arg_lead) abort
   let [l:lead, l:last] = flog#split_completable_arg(a:arg_lead)
 
   let [l:limit, l:path] = flog#split_limit(l:last)
-  if l:limit !~# '^.\+:$'
+  if l:limit !~# '^.\{1}:$'
     return []
   endif
 
