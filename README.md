@@ -53,7 +53,3 @@ More info:
 - [FAQ](FAQ.md)
 - [Examples](EXAMPLES.md)
 - [Contributing](CONTRIBUTING.md)
-
-## Contributing
-
-Before contributing please see [CONTRIBUTING.md](CONTRIBUTING.md).
