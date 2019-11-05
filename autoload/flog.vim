@@ -665,7 +665,7 @@ function! flog#build_log_command() abort
   endif
   if l:state.limit != v:null
     let l:limit = shellescape(l:state.limit)
-    let l:command .= ' -L' . l:limit . ' --no-patch'
+    let l:command .= ' -L' . l:limit
   endif
   if l:state.raw_args != v:null
     let l:command .= ' ' . l:state.raw_args
@@ -1149,14 +1149,7 @@ endfunction
 function! flog#preview_split_commit(mods, ...) abort
   let l:keep_focus = exists('a:1') ? a:1 : v:false
   let l:state = flog#get_state()
-
-  if l:state.limit
-    let l:cmd = ' Git! log -1 --format=raw -L' . shellescape(l:state.limit)
-  else
-    let l:cmd = ' Gsplit'
-  endif
-
-  call flog#preview_commit(a:mods . l:cmd, l:keep_focus)
+  call flog#preview_commit(a:mods . ' Gsplit', l:keep_focus)
 endfunction
 
 " }}}

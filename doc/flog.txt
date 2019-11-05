@@ -41,7 +41,7 @@ COMMANDS                                        *flog-commands*
   -search=<rev>         A regex pattern to pass to "--grep=".
   -patch-search=<rev>   A regex pattern to pass to "-G".
   -limit=<limit>        A limit to pass to "-L". This will restrict commit
-                        diffs to the specified limit. This will limit the
+                        history to the specified limit. This will limit the
                         log to a single target, disabling some options.
   -rev=<rev>            The git revision to pass to the log command. Can be
                         specified more than once. When "-limit=" is specified,
