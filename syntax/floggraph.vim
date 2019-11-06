@@ -47,7 +47,7 @@ syn match flogDiffIdentical contained / Files .* and .* are identical$/
 syn match flogDiffDiffer    contained / Files .* and .* differ$/
 syn match flogDiffBDiffer   contained / Binary files .* and .* differ$/
 syn match flogDiffIsA       contained / File .* is a .* while file .* is a .*/
-syn match flogDiffNoEOL     contained / \ No newline at end of file .*/
+syn match flogDiffNoEOL     contained / \\ No newline at end of file .*/
 syn match flogDiffCommon    contained / Common subdirectories: .*/
 
 syn match flogDiffRemoved contained / -.*/
