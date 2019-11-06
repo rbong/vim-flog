@@ -97,4 +97,5 @@ Here are some brief ideas.
 * You can do git commands like `revert` and `reset` using `:Floggit` completion, not just operations between branches.
 * You can start/manage a bisect with `:Floggit` commands, taking advantage of completion, and toggle seeing the current commits in the bisect with `gb`.
 * You can view the history of a file next to the file itself with `:Flogsplit -path=%`.
+* You can view the history for a particular range of lines in a file by visually selecting it and then typing `:Flog`.
 * If you haven't already, look through `:help flog`. There are many commands that still haven't been covered here.
