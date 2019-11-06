@@ -36,7 +36,7 @@ highlight default link flogRefHead   Special
 
 " Diff {{{
 
-syntax cluster flogDiff contains=flogDiffOnly,flogDiffIdentical,flogDiffDiffer,flogDiffBDiffer,flogDiffIsA,flogDiffNoEOL,flogDiffCommon,flogDiffRemoved,flogDiffRemoved,flogDiffAdded,flogDiffAdded,flogDiffChanged,flogDiffLine,flogDiffLine,flogDiffLine,flogDiffLine,flogDiffLine,flogDiffFile,flogDiffFile,flogDiffFile,flogDiffFile,flogDiffOldFile,flogDiffNewFile,flogDiffIndexLine,flogDiffComment
+syntax cluster flogDiff contains=flogDiffAdded,flogDiffBDiffer,flogDiffChanged,flogDiffComment,flogDiffCommon,flogDiffDiffer,flogDiffFile,flogDiffIdentical,flogDiffIndexLine,flogDiffIsA,flogDiffLine,flogDiffNewFile,flogDiffNoEOL,flogDiffOldFile,flogDiffOnly,flogDiffRemoved
 
 syntax match flogEmptyStart /^ \+\ze / nextgroup=@flogDiff
 
