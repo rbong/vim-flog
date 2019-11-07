@@ -14,7 +14,7 @@ runtime! syntax/diff.vim
 
 syntax match flogHash   /\[[0-9a-f]\+\]/
 syntax match flogAuthor /{[^}].*}/
-syntax match flogRef    /([^)~\\^:]\+)/
+syntax match flogRef    /(\([^)~\\:^]\|tag:\)\+)/
 syntax match flogDate   /\v\d{4}-\d\d-\d\d( \d\d:\d\d(:\d\d( [+-][0-9]{4})?)?)?/
 
 highlight default link flogHash   Statement
