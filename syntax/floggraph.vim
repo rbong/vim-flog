@@ -24,9 +24,9 @@ highlight default link flogDate   Number
 
 " Ref {{{
 
-syntax match flogRefTag    /\vtags\/\zs.{-}\ze(, |)\)/
-syntax match flogRefRemote /\vremotes\/\zs.{-}\ze(, |)\)/
-syntax match flogRefHead   /HEAD/
+syntax match flogRefTag    contained containedin=flogRef /\vtags\/\zs.{-}\ze(, |)\)/
+syntax match flogRefRemote contained containedin=flogRef /\vremotes\/\zs.{-}\ze(, |)\)/
+syntax match flogRefHead   contained containedin=flogRef /HEAD/
 
 highlight default link flogRefTag    String
 highlight default link flogRefRemote Statement
