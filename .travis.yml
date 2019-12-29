@@ -14,10 +14,10 @@ jobs:
   include:
     - name: "vim 7"
       env:
-        VIM_VERSION: "v7.4.2204"
+        VIM_VERSION: "v7.4.2367"
     - name: "vim 8"
       env:
-        VIM_VERSION: "v8.1.2221"
+        VIM_VERSION: "v8.2.0055"
     - name: "neovim"
       before_install:
         - sudo add-apt-repository -y ppa:neovim-ppa/stable
