@@ -352,9 +352,14 @@ function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
     if type(l:first_commit) != v:t_dict || type(l:last_commit) != v:t_dict
       return []
     endif
-    let l:completions = [l:first_commit.short_commit_hash, l:last_commit.short_commit_hash]
+    let l:first_hash = l:first_commit.short_commit_hash
+    let l:last_hash = l:last_commit.short_commit_hash
+    let l:completions = [l:first_hash, l:last_hash]
           \ + l:first_commit.ref_name_list + l:last_commit.ref_name_list
-          \ + [l:last_commit.short_commit_hash . '..' . l:first_commit.short_commit_hash]
+          \ + [
+            \ l:last_hash . '..' . l:first_hash,
+            \ l:last_hash . '^..' . l:first_hash
+          \ ]
   endif
 
   return flog#filter_completions(a:arg_lead, l:completions)
