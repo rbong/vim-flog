@@ -39,9 +39,11 @@ nnoremap <buffer> <silent> <Plug>FlogVsplitcommitright :vertical belowright Flog
 
 if !hasmapto('<Plug>FlogVnextcommitright')
   nmap <buffer> <C-N> <Plug>FlogVnextcommitright
+  nmap <buffer> ) <Plug>FlogVnextcommitright
 endif
 if !hasmapto('<Plug>FlogVprevcommitright')
   nmap <buffer> <C-P> <Plug>FlogVprevcommitright
+  nmap <buffer> ( <Plug>FlogVprevcommitright
 endif
 nnoremap <buffer> <silent> <Plug>FlogVnextcommitright :<C-U>call flog#next_commit() \| vertical belowright Flogsplitcommit<CR>
 nnoremap <buffer> <silent> <Plug>FlogVprevcommitright :<C-U>call flog#previous_commit() \| vertical belowright Flogsplitcommit<CR>

@@ -125,10 +125,12 @@ Update the graph window.
 Open the commit under the cursor in a preview window.
 
 <C-N>                                           *flog-CTRL-N*
+)                                               *flog-)*
 
 Jump to the next commit and open it in a preview window. Accepts a count.
 
 <C-P>                                           *flog-CTRL-P*
+(                                               *flog-(*
 
 Jump to the previous commit and open it in a preview window. Accepts a count.
 
