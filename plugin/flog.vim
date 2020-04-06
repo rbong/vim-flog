@@ -202,8 +202,7 @@ let g:flog_unsupported_argument = 'flog: unrecognized argument'
 
 " Deprecation warnings {{{
 
-let g:flog_has_shown_deprecated_mapping_spelling_warning = 0
-let g:flog_has_shown_deprecated_default_argument_vars_warning = 0
+let g:flog_shown_deprecation_warnings = {}
 
 " }}}
 

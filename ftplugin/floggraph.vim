@@ -9,29 +9,6 @@ silent setlocal nomodifiable
 
 " Mappings {{{
 
-if !g:flog_has_shown_deprecated_mapping_spelling_warning
-  for flog_deprecated_mapping in [
-        \ '<Plug>Floggit',
-        \ '<Plug>Floghelp',
-        \ '<Plug>Flogquit',
-        \ '<Plug>Flogtoggleall',
-        \ '<Plug>Flogtogglebisect',
-        \ '<Plug>Flogtogglenomerges',
-        \ '<Plug>Flogupdate',
-        \ '<Plug>Flogvnextcommitright',
-        \ '<Plug>Flogvprevcommitright',
-        \ '<Plug>Flogvsplitcommitright',
-        \ '<Plug>Flogyank',
-        \ ]
-    if hasmapto(flog_deprecated_mapping)
-      echoerr 'Waring: using deprecated mapping ' . flog_deprecated_mapping
-      echoerr 'Please capitalize flog mappings in the following way: <Plug>Flogmapping to <Plug>FlogMapping'
-      let g:flog_has_shown_deprecated_mapping_spelling_warning = 1
-      break
-    endif
-  endfor
-endif
-
 if !hasmapto('<Plug>FlogVsplitcommitright')
   nmap <buffer> <CR> <Plug>FlogVsplitcommitright
 endif
@@ -184,6 +161,22 @@ if !hasmapto('<Plug>FlogGitbranch')
   nmap <buffer> cb<Space> <Plug>FlogGitbranch
 endif
 nnoremap <buffer> <Plug>FlogGitbranch :Floggit branch<Space>
+
+" Deprecated mappings {{{
+
+call flog#deprecate_mapping('<Plug>Floggit', '<Plug>FlogGit')
+call flog#deprecate_mapping('<Plug>Floghelp', '<Plug>FlogHelp', 'nmap')
+call flog#deprecate_mapping('<Plug>Flogquit', '<Plug>FlogQuit', 'nmap')
+call flog#deprecate_mapping('<Plug>Flogtoggleall', '<Plug>FlogToggleall', 'nmap')
+call flog#deprecate_mapping('<Plug>Flogtogglebisect', '<Plug>FlogTogglebisect', 'nmap')
+call flog#deprecate_mapping('<Plug>Flogtogglenomerges', '<Plug>FlogTogglenomerges', 'nmap')
+call flog#deprecate_mapping('<Plug>Flogupdate', '<Plug>FlogUpdate', 'nmap')
+call flog#deprecate_mapping('<Plug>Flogvnextcommitright', '<Plug>FlogVnextcommitright', 'nmap')
+call flog#deprecate_mapping('<Plug>Flogvprevcommitright', '<Plug>FlogVprevcommitright', 'nmap')
+call flog#deprecate_mapping('<Plug>Flogvsplitcommitright', '<Plug>FlogVsplitcommitright', 'nmap')
+call flog#deprecate_mapping('<Plug>Flogyank', '<Plug>FlogYank')
+
+" }}}
 
 " }}}
 

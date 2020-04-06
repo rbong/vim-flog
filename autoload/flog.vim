@@ -65,6 +65,51 @@ endfunction
 
 " }}}
 
+" Deprecation helpers {{{
+
+function! flog#show_deprecation_warning(deprecated_usage, new_usage) abort
+  echoerr printf('Deprecated: %s', a:deprecated_usage)
+  echoerr printf('New usage: %s', a:new_usage)
+  let g:flog_shown_deprecation_warnings[a:deprecated_usage] = 1
+endfunction
+
+function! flog#did_show_deprecation_warning(deprecated_usage) abort
+  return has_key(g:flog_shown_deprecation_warnings, a:deprecated_usage)
+endfunction
+
+function! flog#deprecate_mapping(mapping, new_mapping, ...) abort
+  let l:deprecated_usage = a:mapping
+  if hasmapto(a:mapping) && !flog#did_show_deprecation_warning(l:deprecated_usage)
+    let l:new_mapping_type = exists('a:1') ? a:1 : '{nmap|vmap}'
+    let l:new_mapping_value = exists('a:2') ? a:2 : '...'
+    let l:new_usage = printf('%s %s %s', l:new_mapping_type, l:new_mapping_value, a:new_mapping)
+    return flog#show_deprecation_warning(l:deprecated_usage, l:new_usage)
+  endif
+endfunction
+
+function! flog#deprecate_setting(setting, new_setting, ...) abort
+  let l:deprecated_usage = a:setting
+  if exists(a:setting) && !flog#did_show_deprecation_warning(l:deprecated_usage)
+    let l:new_setting_value = exists('a:1') ? a:1 : '...'
+    let l:new_usage = printf('let %s = %s', a:new_setting, l:new_setting_value)
+    return flog#show_deprecation_warning(l:deprecated_usage, l:new_usage)
+  endif
+endfunction
+
+function! flog#deprecate_function(func, new_func, ...) abort
+  let l:deprecated_usage = printf('%s()', a:func)
+  let l:new_func_args = exists('a:1') ? a:1 : '...'
+  let l:new_usage = printf('call %s(%s)', a:new_func, l:new_func_args)
+
+  if !flog#did_show_deprecation_warning(l:deprecated_usage)
+    let l:new_func_args = exists('a:1') ? a:1 : '...'
+    let l:new_usage = printf('call %s(%s)', a:new_func, l:new_func_args)
+    call flog#show_deprecation_warning(l:deprecated_usage, l:new_usage)
+  endif
+endfunction
+
+" }}}
+
 " Shell interface {{{
 
 function! flog#systemlist(command) abort
@@ -153,11 +198,9 @@ function! flog#get_internal_default_args() abort
 endfunction
 
 function! flog#get_default_args() abort
-  if !g:flog_has_shown_deprecated_default_argument_vars_warning
-        \ && (exists('g:flog_default_format') || exists('g:flog_default_date_format'))
-    echoerr 'Warning: the options g:flog_default_format and g:flog_default_date_format are deprecated'
-    echoerr 'Please use g:flog_default_arguments or g:flog_permanent_default_arguments to set any defaults'
-  endif
+  let l:new_settings = '{g:flog_default_arguments|g:flog_permanent_default_arguments}'
+  call flog#deprecate_setting('g:flog_default_format', l:new_settings, '{ "format": ... }')
+  call flog#deprecate_setting('g:flog_default_date_format', l:new_settings, '{ "date": ... }')
 
   let l:defaults = flog#get_internal_default_args()
 
