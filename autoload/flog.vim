@@ -1375,4 +1375,44 @@ endfunction
 
 " }}}
 
+" Deprecated functions {{{
+
+function! flog#shell_command(...) range abort
+  call flog#deprecate_function('flog#shell_command', 'flog#systemlist', '{command}')
+endfunction
+
+function! flog#get_commit_data(...) range abort
+  call flog#deprecate_function(
+        \ 'flog#get_commit_data',
+        \ 'flog#get_commit_at_line',
+        \ '[firstline], [lastline], [should_swap]')
+endfunction
+
+function! flog#get_ref_data(...) range abort
+  call flog#deprecate_function('flog#get_ref_data', 'flog#get_ref_at_line', '[line]')
+endfunction
+
+function! flog#preview_commit(...) range abort
+  call flog#deprecate_function(
+        \ 'flog#preview_commit',
+        \ 'flog#preview_command',
+        \ 'flog#format_commit(flog#get_commit_at_current_line(), "MyCommand %s"), [keep_focus], [should_update]')
+endfunction
+
+function! flog#preview_split_commit(...) range abort
+  call flog#deprecate_function(
+        \ 'flog#preview_split_commit',
+        \ 'flog#preview_command',
+        \ 'flog#format_commit(flog#get_commit_at_current_line(), "(mods) Gsplit %s"), [keep_focus]')
+endfunction
+
+function! flog#git(...) range abort
+  call flog#deprecate_function(
+        \ 'flog#git',
+        \ 'flog#run_command',
+        \ '"(mods) Git (cmd)", [keep_focus], [should_update], [should_preview]')
+endfunction
+
+" }}}
+
 " vim: set et sw=2 ts=2 fdm=marker:
