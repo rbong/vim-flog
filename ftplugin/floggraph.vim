@@ -41,8 +41,8 @@ if !hasmapto('<Plug>(FlogVDiffSplitRight)')
   vmap <buffer> dv <Plug>(FlogVDiffSplitRight)
 endif
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#preview_command(flog#format_commit(flog#get_commit_at_current_line(), 'vertical belowright Git diff HEAD %s'))<CR>
-vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#preview_command(flog#format_commit(flog#get_commit_at_selection(), 'vertical belowright Git diff %s', '', 'HEAD'))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_current_line(), 'vertical belowright Git diff HEAD %s'))<CR>
+vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_selection(), 'vertical belowright Git diff %s', '', 'HEAD'))<CR>
 
 if !hasmapto('<Plug>(FlogToggleAll)')
   nmap <buffer> a <Plug>(FlogToggleAll)
@@ -211,9 +211,9 @@ call flog#deprecate_mapping('<Plug>FlogSkipback', '<Plug>(FlogSkipBack)', 'nmap'
 
 " Commands {{{
 
-command! -buffer Flogsplitcommit call flog#preview_command(flog#format_commit(flog#get_commit_at_current_line(), '<mods> Gsplit %s'))
+command! -buffer Flogsplitcommit call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_current_line(), '<mods> Gsplit %s'))
 
-command! -buffer -range -bang -complete=customlist,flog#complete_git -nargs=* Floggit call flog#run_command('<mods> Git' . <q-args>, 1, 1, !empty('<bang>'))
+command! -buffer -range -bang -complete=customlist,flog#complete_git -nargs=* Floggit call flog#run_command('<mods> Git ' . <q-args>, 1, 1, !empty('<bang>'))
 
 command! -bang -complete=customlist,flog#complete -nargs=* Flogupdate call flog#update_options([<f-args>], '<bang>' ==# '!')
 command! -bang -complete=customlist,flog#complete_refs -nargs=* Flogjump call flog#jump_to_ref(<q-args>)

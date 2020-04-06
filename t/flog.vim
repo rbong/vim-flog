@@ -27,8 +27,8 @@ describe ':Flog'
     Expect tabpagenr() == 2
   end
 
-  it 'has empty preview windows'
-    Expect flog#get_state().preview_window_ids == []
+  it 'has empty temporary windows'
+    Expect flog#get_state().tmp_window_ids == []
   end
 end
 

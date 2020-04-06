@@ -108,6 +108,14 @@ function! flog#deprecate_function(func, new_func, ...) abort
   endif
 endfunction
 
+function! flog#deprecate_autocmd(autocmd, new_autocmd) abort
+  let l:deprecated_usage = a:autocmd
+  if exists('#' . a:autocmd) && !flog#did_show_deprecation_warning(l:deprecated_usage)
+    let l:new_usage = printf('autocmd %s ...', a:new_autocmd)
+    call flog#show_deprecation_warning(l:deprecated_usage, l:new_usage)
+  endif
+endfunction
+
 " }}}
 
 " Shell interface {{{
@@ -549,7 +557,7 @@ function! flog#get_initial_state(parsed_args, original_file) abort
         \ 'fugitive_repo': flog#get_initial_fugitive_repo(),
         \ 'original_file': a:original_file,
         \ 'graph_window_id': v:null,
-        \ 'preview_window_ids': [],
+        \ 'tmp_window_ids': [],
         \ 'previous_log_command': v:null,
         \ 'line_commits': [],
         \ 'all_refs': [],
@@ -1203,20 +1211,22 @@ endfunction
 
 " }}}
 
-" Preview buffer {{{
+" Temporary buffers {{{
 
-function! flog#preview_buffer_settings() abort
-  silent doautocmd User FlogPreviewSetup
+function! flog#tmp_buffer_settings() abort
+  call flog#deprecate_autocmd('FlogPreviewSetup', 'FlogTmpWinSetup')
+  silent doautocmd User FlogTmpWinSetup
 endfunction
 
-function! flog#commit_preview_buffer_settings() abort
-  silent doautocmd User FlogCommitPreviewSetup
+function! flog#tmp_command_buffer_settings() abort
+  call flog#deprecate_autocmd('FlogCommitPreviewSetup', 'FlogTmpCommandWinSetup')
+  silent doautocmd User FlogTmpCommandWinSetup
 endfunction
 
-function! flog#initialize_preview_buffer(state) abort
-  let a:state.preview_window_ids += [win_getid()]
+function! flog#initialize_tmp_buffer(state) abort
+  let a:state.tmp_window_ids += [win_getid()]
   call flog#set_buffer_state(a:state)
-  call flog#preview_buffer_settings()
+  call flog#tmp_buffer_settings()
 endfunction
 
 " }}}
@@ -1225,24 +1235,24 @@ endfunction
 
 " Layout management {{{
 
-" Preview layout management {{{
+" Temporary window layout management {{{
 
-function! flog#close_preview() abort
+function! flog#close_tmp_win() abort
   let l:state = flog#get_state()
   let l:previous_window_id = win_getid()
 
-  for l:preview_window_id in l:state.preview_window_ids
-    " preview buffer is not open
-    if win_id2tabwin(l:preview_window_id) == [0, 0]
+  for l:tmp_window_id in l:state.tmp_window_ids
+    " temporary buffer is not open
+    if win_id2tabwin(l:tmp_window_id) == [0, 0]
       continue
     endif
 
     " get the previous buffer to switch back to it after closing
-    call win_gotoid(l:preview_window_id)
+    call win_gotoid(l:tmp_window_id)
     close
   endfor
 
-  let l:state.preview_window_ids = []
+  let l:state.tmp_window_ids = []
 
   " go back to the previous window
   call win_gotoid(l:previous_window_id)
@@ -1250,7 +1260,7 @@ function! flog#close_preview() abort
   return
 endfunction
 
-function! flog#preview(command, ...) abort
+function! flog#open_tmp_win(command, ...) abort
   let l:keep_focus = exists('a:1') ? a:1 : v:false
   let l:should_update = exists('a:2') ? a:2 : v:false
 
@@ -1261,13 +1271,13 @@ function! flog#preview(command, ...) abort
 
   let l:saved_window_ids = flog#get_all_window_ids()
   exec a:command
-  let l:preview_window_ids = flog#exclude(flog#get_all_window_ids(), l:saved_window_ids)
-  if l:preview_window_ids != []
+  let l:tmp_window_ids = flog#exclude(flog#get_all_window_ids(), l:saved_window_ids)
+  if l:tmp_window_ids != []
     call win_gotoid(l:previous_window_id)
-    call flog#close_preview()
-    for l:preview_window_id in l:preview_window_ids
-      call win_gotoid(l:preview_window_id)
-      call flog#initialize_preview_buffer(l:state)
+    call flog#close_tmp_win()
+    for l:tmp_window_id in l:tmp_window_ids
+      call win_gotoid(l:tmp_window_id)
+      call flog#initialize_tmp_buffer(l:state)
     endfor
   endif
 
@@ -1328,7 +1338,7 @@ endfunction
 function! flog#quit() abort
   let l:flog_tab = tabpagenr()
   let l:tabs = tabpagenr('$')
-  call flog#close_preview()
+  call flog#close_tmp_win()
   quit!
   if l:tabs > tabpagenr('$') && l:flog_tab == tabpagenr()
     tabprev
@@ -1344,7 +1354,7 @@ endfunction
 function! flog#run_command(cmd, ...) abort
   let l:keep_focus = exists('a:1') ? a:1 : v:false
   let l:should_update = exists('a:2') ? a:2 : v:false
-  let l:should_preview = exists('a:3') ? a:3 : v:false
+  let l:is_tmp = exists('a:3') ? a:3 : v:false
 
   let l:previous_window_id = win_getid()
   let l:previous_buffer_number = bufnr()
@@ -1355,9 +1365,9 @@ function! flog#run_command(cmd, ...) abort
     return
   endif
 
-  if l:should_preview
-    call flog#preview(a:cmd, v:true)
-    call flog#commit_preview_buffer_settings()
+  if l:is_tmp
+    call flog#open_tmp_win(a:cmd, v:true)
+    call flog#tmp_command_buffer_settings()
     call flog#handle_command_window_cleanup(l:keep_focus, l:previous_window_id)
   else
     exec a:cmd
@@ -1366,7 +1376,7 @@ function! flog#run_command(cmd, ...) abort
   endif
 endfunction
 
-function! flog#preview_command(cmd, ...) abort
+function! flog#run_tmp_command(cmd, ...) abort
   let l:keep_focus = exists('a:1') ? a:1 : v:false
   let l:should_update = exists('a:2') ? a:2 : v:false
 
@@ -1392,17 +1402,25 @@ function! flog#get_ref_data(...) range abort
   call flog#deprecate_function('flog#get_ref_data', 'flog#get_ref_at_line', '[line]')
 endfunction
 
+function! flog#close_preview(...) range abort
+  call flog#deprecate_function('flog#close_preview', 'flog#close_tmp_win', '')
+endfunction
+
+function! flog#preview(...) range abort
+  call flog#deprecate_function('flog#preview', 'flog#open_tmp_win', '{command}, [keep_focus], [should_update]')
+endfunction
+
 function! flog#preview_commit(...) range abort
   call flog#deprecate_function(
         \ 'flog#preview_commit',
-        \ 'flog#preview_command',
+        \ 'flog#run_tmp_command',
         \ 'flog#format_commit(flog#get_commit_at_current_line(), "MyCommand %s"), [keep_focus], [should_update]')
 endfunction
 
 function! flog#preview_split_commit(...) range abort
   call flog#deprecate_function(
         \ 'flog#preview_split_commit',
-        \ 'flog#preview_command',
+        \ 'flog#run_tmp_command',
         \ 'flog#format_commit(flog#get_commit_at_current_line(), "(mods) Gsplit %s"), [keep_focus]')
 endfunction
 
@@ -1410,7 +1428,7 @@ function! flog#git(...) range abort
   call flog#deprecate_function(
         \ 'flog#git',
         \ 'flog#run_command',
-        \ '"(mods) Git (cmd)", [keep_focus], [should_update], [should_preview]')
+        \ '"(mods) Git (cmd)", [keep_focus], [should_update], [is_tmp]')
 endfunction
 
 " }}}

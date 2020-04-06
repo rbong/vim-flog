@@ -26,7 +26,7 @@ Requires vim version 7.4.2204 or greater.
 Open the commit graph with `:Flog` or `:Flogsplit`.
 Many options can be passed in, complete with `<Tab>` completion.
 
-Preview commits once you've opened Flog using `<CR>`.
+Open commits in temporary windows once you've opened Flog using `<CR>`.
 Jump between commits with `<C-N>` and `<C-P>`.
 
 Refresh the graph with `u`.
