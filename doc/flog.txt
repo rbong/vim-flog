@@ -3,17 +3,16 @@
 Author:  Roger Bongers <https://github.com/rbong>
 License: Same terms as Vim itself (see |license|)
 
-INTRODUCTION                                    *flog*
+INTRODUCTION                                                            *flog*
 
 Flog is a lightweight branch viewer for vim. Flog provides a wrapper to "git
 log --graph" that can be run from any git repository. It provides several
 helpful commands and bindings to interact with the graph. Flog integrates with
 |fugitive|. See "git log --help" and |fugitive| for more details.
 
-COMMANDS                                        *flog-commands*
+COMMANDS                                                       *flog-commands*
 
-                                                *flog-:Flog*
-:Flog
+:Flog                                                             *flog-:Flog*
 
   Open the log graph in a new tab. This command can be run from any file in a
   git repository. Any |fugitive-commands| can be run from the buffer.
@@ -55,17 +54,17 @@ COMMANDS                                        *flog-commands*
   --                    Parse the rest of the arguments as if they were passed
                         to -raw-args. Does not require escaping spaces.
 
-:Flogsplit                                      *flog-:Flogsplit*
+:Flogsplit                                                   *flog-:Flogsplit*
 
   Open the log graph in a split. Supports |<mods>|. Behaves the same as
   |:Flog| otherwise.
 
-:Flogsplitcommit                                *flog-:Flogsplitcommit*
+:Flogsplitcommit                                       *flog-:Flogsplitcommit*
 
   Open a commit under the cursor using |:Gsplit| in a |flog-preview-window|.
   Can only be run in the |:Flog| window.
 
-:Floggit                                        *flog-:Floggit*
+:Floggit                                                       *flog-:Floggit*
 
   Open a git command via |:Git| and display the output in a
   |flog-preview-window|.
@@ -78,65 +77,55 @@ COMMANDS                                        *flog-commands*
 
   This command can only be run in the |:Flog| window.
 
-:Floggit!                                       *flog-:Floggit!*
+:Floggit!                                                     *flog-:Floggit!*
 
   Same as |:Floggit|, but do not open the output in a preview window.
 
-:Flogupdate                                     *flog-:Flogupdate*
+:Flogupdate                                                 *flog-:Flogupdate*
 
   Update the arguments passed to |:Flog| or |:Flogsplit|. Can only be run in a
   |:Flog| window. Merges new arguments with the current arguments.
 
-:Flogupdate!                                    *flog-:Flogupdate!*
+:Flogupdate!                                               *flog-:Flogupdate!*
 
   Same as |:Flogupdate|, but overwrite all of the current arguments instead of
   updating them.
 
-:Flogjump                                       *flog-:Flogjump*
+:Flogjump                                                     *flog-:Flogjump*
 
   Jump to the ref name given by the arguments. Must be a ref name currently in
   the graph. Can only be run in a |:Flog| window. Supports completion.
 
-MAPPINGS                                        *flog-mappings*
+MAPPINGS                                                       *flog-mappings*
 
 All mappings are available only from the |:Flog| window.
 
-a                                               *flog-a*
-
-Toggle the "--all" argument.
-
-gb                                              *flog-gb*
-
-Toggle the "--bisect" argument.
-
-gm                                              *flog-gm*
-
-Toggle the "--no-merges" argument.
-
-gr                                              *flog-gr*
-
-Toggle the "--reflog" argument.
-
-u                                               *flog-u*
-
-Update the graph window.
-
-<CR>                                            *flog-<CR>*
+<CR>                                                               *flog-<CR>*
 
 Open the commit under the cursor in a preview window.
 
-<C-N>                                           *flog-CTRL-N*
-)                                               *flog-)*
+<C-N>                                                            *flog-CTRL-N*
+)                                                                     *flog-)*
 
 Jump to the next commit and open it in a preview window. Accepts a count.
 
-<C-P>                                           *flog-CTRL-P*
-(                                               *flog-(*
+<C-P>                                                            *flog-CTRL-P*
+(                                                                     *flog-(*
 
 Jump to the previous commit and open it in a preview window. Accepts a count.
 
-dd                                              *flog-dd*
-dv                                              *flog-dv*
+]r                                                                   *flog-]r*
+
+Jump to the next commit with a ref name and open it in a preview window.
+Accepts a count.
+
+[r                                                                   *flog-[r*
+
+Jump to the previous commit with a ref name and open it in a preview window.
+Accepts a count.
+
+dd                                                                   *flog-dd*
+dv                                                                   *flog-dv*
 
 In normal mode, open a diff in a preview window comparing the commit under the
 cursor with the current commit.
@@ -146,107 +135,117 @@ top and bottom of the visual selection.
 
 Similar to |fugitive_dd| and |fugitive_dv|.
 
-]r                                              *flog-]r*
+a                                                                     *flog-a*
 
-Jump to the next commit with a ref name and open it in a preview window.
-Accepts a count.
+Toggle the "--all" argument.
 
-[r                                              *flog-[r*
+gb                                                                   *flog-gb*
 
-Jump to the previous commit with a ref name and open it in a preview window.
-Accepts a count.
+Toggle the "--bisect" argument.
 
-g/                                              *flog-g/*
+gm                                                                   *flog-gm*
+
+Toggle the "--no-merges" argument.
+
+gr                                                                   *flog-gr*
+
+Toggle the "--reflog" argument.
+
+u                                                                     *flog-u*
+
+Update the graph window.
+
+g/                                                                   *flog-g/*
 
 Open the command line with ":Flogupdate -search=".
 
-g\                                              *flog-g\*
+g\                                                                   *flog-g\*
 
 Open the command line with ":Flogupdate -patch-search=".
 
-[[                                              *flog-[[*
+[[                                                                   *flog-[[*
 
 Go back in the commit history by "--max-count" commits, if that argument is
 set. Accepts a count.
 
-]]                                              *flog-]]*
+]]                                                                   *flog-]]*
 
 Go forward in the commit history by "--max-count" commits, if that argument is
 set. Accepts a count.
 
-git                                             *flog-git*
+git                                                                 *flog-git*
 
 Enter in the characters ":Floggit" from normal or visual mode in order to
 quickly begin a |:Floggit| command.
 
-y<C-G>                                          *flog-y<C-G>*
+y<C-G>                                                           *flog-y<C-G>*
 
 Copy the short commit hash under the current line to a register. Accepts a
 count.
 
-go                                              *flog-go*
+go                                                                   *flog-go*
 
 Skip to the commit given by the count, or 0 if no count is given.
 
-gq                                              *flog-gq*
-ZZ                                              *flog-ZZ*
+gq                                                                   *flog-gq*
+ZZ                                                                   *flog-ZZ*
 
 Quit Flog.
 
-crc                                             *flog-crc*
+crc                                                                 *flog-crc*
 
 Revert the commit under the cursor. In visual mode, revert all selected
 commits.
 
 Similar to the fugitive "crc" mapping (see |fugitive_cr|).
 
-crn                                             *flog-crn*
+crn                                                                 *flog-crn*
 
 Same as |flog-crc|, but use the "--no-edit" flag.
 
-cr<Space>                                       *flog-cr<space>*
+cr<Space>                                                     *flog-cr<space>*
 
 Start a command line with ":Floggit revert ".
 
-cm<Space>                                       *flog-cm<space>*
+cm<Space>                                                     *flog-cm<space>*
 
 Start a command line with ":Floggit merge ".
 
 Similar to |fugitive_cm|.
 
-coo                                             *flog-coo*
+coo                                                                 *flog-coo*
 
 Checkout the commit under the cursor.
 
 Similar to the fugitive "coo" mapping (see |fugitive_co|).
 
-co<Space>                                       *flog-co<Space>*
+co<Space>                                                     *flog-co<Space>*
 
 Start a command line with ":Floggit checkout ".
 
-cb<Space>                                       *flog-cb<Space>*
+cb<Space>                                                     *flog-cb<Space>*
 
 Start a command line with ":Floggit branch ".
 
-g?                                              *flog-g?*
+g?                                                                   *flog-g?*
 
 Jump to this list of mappings in help.
 
-OPTIONS                                         *flog-options*
+OPTIONS                                                         *flog-options*
 
-g:flog_default_arguments                        *flog-g:flog_default_arguments*
+g:flog_default_arguments                       *flog-g:flog_default_arguments*
 
 A |dict| containing the default values for arguments to |:Flog|. Keys in the
 dictionary are in underscore format.
 
-g:flog_permanent_default_arguments              *flog-g:flog_permanent_default_arguments*
+g:flog_permanent_default_arguments             *g_permanent_default_arguments*
 
 Like |g:flog_default_arguments|, only the arguments are treated as the plugin
 defaults and can't be cleared using |:Flog|, |:Flogupdate|, or |:Flogupdate!|.
 
 Has lower presidence than |g:flog_default_arguments|.
 
-g:flog_use_ansi_esc                             *flog-g:flog_use_ansi_esc*
+g:flog_use_ansi_esc                                 *flog-g:flog_use_ansi_esc*
 
 By default, Flog uses limited regex syntax highlighting. This option enables
 terminal coloring using the AnsiEsc script.
@@ -254,7 +253,7 @@ terminal coloring using the AnsiEsc script.
 For more details, help and installation, see AnsiEsc:
 <https://github.com/vim-scripts/AnsiEsc.vim>
 
-PREVIEW WINDOWS                                 *flog-preview-window*
+PREVIEW WINDOWS                                          *flog-preview-window*
 
 To view more information from the graph, you can open "Flog preview windows".
 Opening a command in Flog preview windows closes any previously opened preview
@@ -263,7 +262,7 @@ windows. Flog preview windows will be closed when quitting Flog.
 Flog preview windows are opened in normal windows, and are not to be confused
 with |preview-window|.
 
-ADVANCED USAGE                                  *flog-advanced-usage*
+ADVANCED USAGE                                           *flog-advanced-usage*
 
 Flog keeps an open API in order to allow you to customize it to suit your git
 workflow.
