@@ -162,6 +162,75 @@ if !hasmapto('<Plug>(FlogGitBranch)')
 endif
 nnoremap <buffer> <Plug>(FlogGitBranch) :Floggit branch<Space>
 
+if !hasmapto('<Plug>(FlogGitRebase)')
+  nmap <buffer> r<Space> <Plug>(FlogGitRebase)
+endif
+nnoremap <buffer> <Plug>(FlogGitRebase) :Floggit rebase<Space>
+
+" Rebase mappings {{{
+
+if !hasmapto('<Plug>(FlogRebaseInteractive)')
+  nmap <buffer> ri <Plug>(FlogRebaseInteractive)
+endif
+nnoremap <buffer> <Plug>(FlogRebaseInteractive) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_current_line(), 'Git rebase --interactive %s^'), 1, 1)<CR>
+
+if !hasmapto('<Plug>(FlogRebaseInteractiveAutosquash)')
+  nmap <buffer> rf <Plug>(FlogRebaseInteractiveAutosquash)
+endif
+nnoremap <buffer> <Plug>(FlogRebaseInteractiveAutosquash) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_current_line(), 'Git rebase --interactive --autosquash %s^'), 1, 1)<CR>
+
+if !hasmapto('<Plug>(FlogRebaseInteractiveUpstream)')
+  nmap <buffer> ru <Plug>(FlogRebaseInteractiveUpstream)
+endif
+nnoremap <buffer> <Plug>(FlogRebaseInteractiveUpstream) :<C-U>call flog#run_command('Git rebase --interactive @{upstream}', 1, 1)<CR>
+
+if !hasmapto('<Plug>(FlogRebaseInteractivePush)')
+  nmap <buffer> rp <Plug>(FlogRebaseInteractivePush)
+endif
+nnoremap <buffer> <Plug>(FlogRebaseInteractivePush) :<C-U>call flog#run_command('Git rebase --interactive @{push}', 1, 1)<CR>
+
+if !hasmapto('<Plug>(FlogRebaseContinue)')
+  nmap <buffer> rr <Plug>(FlogRebaseContinue)
+endif
+nnoremap <buffer> <Plug>(FlogRebaseContinue) :<C-U>call flog#run_command('Git rebase --continue', 1, 1)<CR>
+
+if !hasmapto('<Plug>(FlogRebaseSkip)')
+  nmap <buffer> rs <Plug>(FlogRebaseSkip)
+endif
+nnoremap <buffer> <Plug>(FlogRebaseSkip) :<C-U>call flog#run_command('Git rebase --skip', 1, 1)<CR>
+
+if !hasmapto('<Plug>(FlogRebaseAbort)')
+  nmap <buffer> ra <Plug>(FlogRebaseAbort)
+endif
+nnoremap <buffer> <Plug>(FlogRebaseAbort) :<C-U>call flog#run_command('Git rebase --abort', 1, 1)<CR>
+
+if !hasmapto('<Plug>(FlogRebaseEditTodo)')
+  nmap <buffer> re <Plug>(FlogRebaseEditTodo)
+endif
+nnoremap <buffer> <Plug>(FlogRebaseEditTodo) :<C-U>call flog#run_command('Git rebase --edit-todo', 1, 1)<CR>
+
+if !hasmapto('<Plug>(FlogRebaseInteractiveReword)')
+  nmap <buffer> rw <Plug>(FlogRebaseInteractiveReword)
+endif
+nnoremap <buffer> <Plug>(FlogRebaseInteractiveReword) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_current_line(), 'Git rebase --interactive %s^ \| s/^pick/reword/e'), 1, 1)
+
+if !hasmapto('<Plug>(FlogRebaseInteractiveEdit)')
+  nmap <buffer> rm <Plug>(FlogRebaseInteractiveEdit)
+endif
+nnoremap <buffer> <Plug>(FlogRebaseInteractiveEdit) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_current_line(), 'Git rebase --interactive %s^ \| s/^pick/edit/e'), 1, 1)
+
+if !hasmapto('<Plug>(FlogRebaseInteractiveDrop)')
+  nmap <buffer> rd <Plug>(FlogRebaseInteractiveDrop)
+endif
+nnoremap <buffer> <Plug>(FlogRebaseInteractiveDrop) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_current_line(), 'Git rebase --interactive %s^ \| s/^pick/drop/e'), 1, 1)
+
+if !hasmapto('<Plug>(FlogGitRebase)')
+  nmap <buffer> r<Space> <Plug>(FlogGitRebase)
+endif
+nnoremap <buffer> <Plug>(FlogGitRebase) :Floggit rebase<Space>
+
+" }}}
+
 " Deprecated mappings {{{
 
 call flog#deprecate_mapping('<Plug>Flogvsplitcommitright', '<Plug>(FlogVSplitCommitRight)', 'nmap')
@@ -202,8 +271,6 @@ call flog#deprecate_mapping('<Plug>Floghelp', '<Plug>(FlogHelp)', 'nmap')
 call flog#deprecate_mapping('<Plug>FlogSetskip', '<Plug>(FlogSetSkip)', 'nmap')
 call flog#deprecate_mapping('<Plug>FlogSkipahead', '<Plug>(FlogSkipAhead)', 'nmap')
 call flog#deprecate_mapping('<Plug>FlogSkipback', '<Plug>(FlogSkipBack)', 'nmap')
-
-" }}}
 
 " }}}
 
