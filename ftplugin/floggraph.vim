@@ -9,10 +9,51 @@ silent setlocal nomodifiable
 
 " Mappings {{{
 
+" Misc. mappings {{{
+
+if !hasmapto('<Plug>(FlogHelp)')
+  nmap <buffer> g? <Plug>(FlogHelp)
+endif
+nnoremap <buffer> <Plug>(FlogHelp) :help flog-mappings<CR>
+
 if !hasmapto('<Plug>(FlogVSplitCommitRight)')
   nmap <buffer> <CR> <Plug>(FlogVSplitCommitRight)
 endif
 nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitRight) :vertical belowright Flogsplitcommit<CR>
+
+if !hasmapto('<Plug>(FlogVDiffSplitRight)')
+  nmap <buffer> dd <Plug>(FlogVDiffSplitRight)
+  vmap <buffer> dd <Plug>(FlogVDiffSplitRight)
+  nmap <buffer> dv <Plug>(FlogVDiffSplitRight)
+  vmap <buffer> dv <Plug>(FlogVDiffSplitRight)
+endif
+
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_current_line(), 'vertical belowright Git diff HEAD %s'))<CR>
+vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_selection(), 'vertical belowright Git diff %s', '', 'HEAD'))<CR>
+
+if !hasmapto('<Plug>(FlogYank)')
+  nmap <buffer> y<C-G> <Plug>(FlogYank)
+  vmap <buffer> y<C-G> <Plug>(FlogYank)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogYank) :call flog#copy_commits()<CR>
+vnoremap <buffer> <silent> <Plug>(FlogYank) :call flog#copy_commits(1)<CR>
+
+if !hasmapto('<Plug>(FlogGit)')
+  nmap <buffer> git <Plug>(FlogGit)
+  vmap <buffer> git <Plug>(FlogGit)
+endif
+nnoremap <buffer> <Plug>(FlogGit) :Floggit
+vnoremap <buffer> <Plug>(FlogGit) :Floggit
+
+if !hasmapto('<Plug>(FlogQuit)')
+  nmap <buffer> ZZ <Plug>(FlogQuit)
+  nmap <buffer> gq <Plug>(FlogQuit)
+endif
+nnoremap <buffer> <Plug>(FlogQuit) :call flog#quit()<CR>
+
+" }}}
+
+" Navigation mappings {{{
 
 if !hasmapto('<Plug>(FlogVNextCommitRight)')
   nmap <buffer> <C-N> <Plug>(FlogVNextCommitRight)
@@ -34,15 +75,24 @@ endif
 nnoremap <buffer> <silent> <Plug>(FlogVNextRefRight) :<C-U>call flog#next_ref() \| vertical belowright Flogsplitcommit<CR>
 nnoremap <buffer> <silent> <Plug>(FlogVPrevRefRight) :<C-U>call flog#previous_ref() \| vertical belowright Flogsplitcommit<CR>
 
-if !hasmapto('<Plug>(FlogVDiffSplitRight)')
-  nmap <buffer> dd <Plug>(FlogVDiffSplitRight)
-  vmap <buffer> dd <Plug>(FlogVDiffSplitRight)
-  nmap <buffer> dv <Plug>(FlogVDiffSplitRight)
-  vmap <buffer> dv <Plug>(FlogVDiffSplitRight)
+if !hasmapto('<Plug>(FlogSkipAhead)')
+  nmap <buffer> ]] <Plug>(FlogSkipAhead)
 endif
+nnoremap <buffer> <silent> <Plug>(FlogSkipAhead) :<C-U>call flog#change_skip_by_max_count(1 * max([v:count, 1]))<CR>
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_current_line(), 'vertical belowright Git diff HEAD %s'))<CR>
-vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_selection(), 'vertical belowright Git diff %s', '', 'HEAD'))<CR>
+if !hasmapto('<Plug>(FlogSkipBack)')
+  nmap <buffer> [[ <Plug>(FlogSkipBack)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogSkipBack) :<C-U>call flog#change_skip_by_max_count(-1 * max([v:count, 1]))<CR>
+
+if !hasmapto('<Plug>(FlogSetSkip)')
+  nmap <buffer> go <Plug>(FlogSetSkip)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogSetSkip) :<C-U>call flog#set_skip_option(v:count)<CR>
+
+" }}}
+
+" Argument modifier mappings {{{
 
 if !hasmapto('<Plug>(FlogToggleAll)')
   nmap <buffer> a <Plug>(FlogToggleAll)
@@ -69,20 +119,6 @@ if !hasmapto('<Plug>(FlogUpdate)')
 endif
 nnoremap <buffer> <silent> <Plug>(FlogUpdate) :call flog#populate_graph_buffer()<CR>
 
-if !hasmapto('<Plug>(FlogGit)')
-  nmap <buffer> git <Plug>(FlogGit)
-  vmap <buffer> git <Plug>(FlogGit)
-endif
-nnoremap <buffer> <Plug>(FlogGit) :Floggit
-vnoremap <buffer> <Plug>(FlogGit) :Floggit
-
-if !hasmapto('<Plug>(FlogYank)')
-  nmap <buffer> y<C-G> <Plug>(FlogYank)
-  vmap <buffer> y<C-G> <Plug>(FlogYank)
-endif
-nnoremap <buffer> <silent> <Plug>(FlogYank) :call flog#copy_commits()<CR>
-vnoremap <buffer> <silent> <Plug>(FlogYank) :call flog#copy_commits(1)<CR>
-
 if !hasmapto('<Plug>(FlogSearch)')
   nmap <buffer> g/ <Plug>(FlogSearch)
 endif
@@ -93,33 +129,9 @@ if !hasmapto('<Plug>(FlogPatchSearch)')
 endif
 nnoremap <buffer> <Plug>(FlogPatchSearch) :<C-U>Flogupdate -patch-search=
 
-if !hasmapto('<Plug>(FlogQuit)')
-  nmap <buffer> ZZ <Plug>(FlogQuit)
-  nmap <buffer> gq <Plug>(FlogQuit)
-endif
-nnoremap <buffer> <Plug>(FlogQuit) :call flog#quit()<CR>
+" }}}
 
-if !hasmapto('<Plug>(FlogHelp)')
-  nmap <buffer> g? <Plug>(FlogHelp)
-endif
-nnoremap <buffer> <Plug>(FlogHelp) :help flog-mappings<CR>
-
-if !hasmapto('<Plug>(FlogSetSkip)')
-  nmap <buffer> go <Plug>(FlogSetSkip)
-endif
-nnoremap <buffer> <silent> <Plug>(FlogSetSkip) :<C-U>call flog#set_skip_option(v:count)<CR>
-
-if !hasmapto('<Plug>(FlogSkipAhead)')
-  nmap <buffer> ]] <Plug>(FlogSkipAhead)
-endif
-nnoremap <buffer> <silent> <Plug>(FlogSkipAhead) :<C-U>call flog#change_skip_by_max_count(1 * max([v:count, 1]))<CR>
-
-if !hasmapto('<Plug>(FlogSkipBack)')
-  nmap <buffer> [[ <Plug>(FlogSkipBack)
-endif
-nnoremap <buffer> <silent> <Plug>(FlogSkipBack) :<C-U>call flog#change_skip_by_max_count(-1 * max([v:count, 1]))<CR>
-
-" Fugitive-like mappings {{{
+" Commit/branch mappings {{{
 
 if !hasmapto('<Plug>(FlogRevert)')
   nmap <buffer> crc <Plug>(FlogRevert)
@@ -162,10 +174,7 @@ if !hasmapto('<Plug>(FlogGitBranch)')
 endif
 nnoremap <buffer> <Plug>(FlogGitBranch) :Floggit branch<Space>
 
-if !hasmapto('<Plug>(FlogGitRebase)')
-  nmap <buffer> r<Space> <Plug>(FlogGitRebase)
-endif
-nnoremap <buffer> <Plug>(FlogGitRebase) :Floggit rebase<Space>
+" }}}
 
 " Rebase mappings {{{
 
