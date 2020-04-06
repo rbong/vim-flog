@@ -67,7 +67,7 @@ endfunction
 
 " Shell interface {{{
 
-function! flog#shell_command(command) abort
+function! flog#systemlist(command) abort
   let l:output = systemlist(a:command)
   if v:shell_error
     echoerr join(l:output, "\n")
@@ -455,7 +455,7 @@ function! flog#complete_rev(arg_lead) abort
   let [l:lead, l:last] = flog#split_single_completable_arg(a:arg_lead)
   let l:cmd = fugitive#repo().git_command()
         \ . ' rev-parse --symbolic --branches --tags --remotes'
-  let l:revs = flog#shell_command(l:cmd) +  ['HEAD', 'FETCH_HEAD', 'MERGE_HEAD', 'ORIG_HEAD']
+  let l:revs = flog#systemlist(l:cmd) +  ['HEAD', 'FETCH_HEAD', 'MERGE_HEAD', 'ORIG_HEAD']
   return flog#filter_completions(a:arg_lead, map(l:revs, 'l:lead . v:val'))
 endfunction
 
@@ -984,7 +984,7 @@ function! flog#populate_graph_buffer() abort
   let l:command = flog#build_log_command()
   let l:state.previous_log_command = l:command
 
-  let l:output = flog#shell_command(l:command)
+  let l:output = flog#systemlist(l:command)
   let l:commits = flog#parse_log_output(l:output)
 
   call flog#set_graph_buffer_commits(l:commits)
