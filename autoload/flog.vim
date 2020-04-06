@@ -340,18 +340,19 @@ function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
 
   if (l:line != l:firstline && l:line != l:lastline) || l:firstline == l:lastline
     " complete for only the current line
-    let l:commit = flog#get_commit_data(line('.'))
+    let l:commit = flog#get_commit_at_current_line()
     if type(l:commit) != v:t_dict
       return []
     endif
     let l:completions = [l:commit.short_commit_hash] + l:commit.ref_name_list
   else
     " complete for a range
-    let l:first_commit = flog#get_commit_data(l:firstline)
-    let l:last_commit = flog#get_commit_data(l:lastline)
-    if type(l:first_commit) != v:t_dict || type(l:last_commit) != v:t_dict
+    let l:commit = flog#get_commit_at_line(l:firstline, l:lastline)
+    if type(l:commit) != v:t_list
       return []
     endif
+    let l:first_commit = l:commit[0]
+    let l:last_commit = l:commit[1]
     let l:first_hash = l:first_commit.short_commit_hash
     let l:last_hash = l:last_commit.short_commit_hash
     let l:completions = [l:first_hash, l:last_hash]
@@ -703,15 +704,87 @@ endfunction
 
 " Commit operations {{{
 
-function! flog#get_commit_data(line) abort
+function! flog#get_commit_at_line(...) abort
+  let l:firstline = exists('a:1') ? a:1 : -1
+  let l:lastline = exists('a:2') ? a:2 : -1
+  let l:should_swap = exists('a:3') ? a:3 : v:false
+
+  if l:firstline < 0
+    let l:firstline = line('.')
+  endif
+
+  if l:lastline < 0
+    let l:lastline = line('.')
+  endif
+
+  if l:should_swap
+    let l:tmp = l:lastline
+    let l:lastline = l:firstline
+    let l:firstline = l:tmp
+  endif
+
   let l:state = flog#get_state()
-  return get(l:state.line_commits, a:line - 1, v:null)
+
+  let l:first_commit = get(l:state.line_commits, l:firstline - 1, v:null)
+
+  if type(l:first_commit) != v:t_dict
+    return v:null
+  endif
+
+  " not a range, return only first commit
+  if l:firstline == l:lastline
+    return l:first_commit
+  endif
+
+  let l:last_commit = get(l:state.line_commits, l:lastline - 1, v:null)
+
+  if type(l:last_commit) != v:t_dict
+    return v:null
+  endif
+
+  return [l:first_commit, l:last_commit]
+endfunction
+
+function! flog#get_commit_at_current_line() abort
+  return flog#get_commit_at_line(line('.'), line('.'))
+endfunction
+
+function! flog#get_commit_at_selection(...) abort
+  let l:should_swap = exists('a:1') ? a:1 : v:false
+  return flog#get_commit_at_line(line("'<"), line("'>"), l:should_swap)
+endfunction
+
+function! flog#format_commit(commit, ...) abort
+  let l:format = exists('a:1') ? a:1 : ''
+  let l:dual_format = exists('a:2') ? a:2 : ''
+  let l:default_first = exists('a:3') ? a:3 : ''
+
+  if empty(l:format)
+    let l:format = '%s'
+  endif
+
+  if empty(l:dual_format)
+    let l:dual_format = printf(l:format, '%s %s')
+  endif
+
+  if type(a:commit) == v:t_dict
+    " single commit
+    if !empty(l:default_first)
+      return printf(l:dual_format, l:default_first, a:commit.short_commit_hash)
+    endif
+    return printf(l:format, a:commit.short_commit_hash)
+  elseif type(a:commit) == v:t_list
+    " two commits
+    return printf(l:dual_format, a:commit[0].short_commit_hash, a:commit[1].short_commit_hash)
+  endif
+  " presumably no commit
+  return v:null
 endfunction
 
 function! flog#jump_commits(commits) abort
   let l:state = flog#get_state()
 
-  let l:current_commit = flog#get_commit_data(line('.'))
+  let l:current_commit = flog#get_commit_at_current_line()
   if type(l:current_commit) != v:t_dict
     return
   endif
@@ -738,21 +811,24 @@ function! flog#copy_commits(...) range abort
   let l:by_line = exists('a:1') ? a:1 : v:false
   let l:state = flog#get_state()
 
-  let l:first_commit = flog#get_commit_data(a:firstline)
-  if type(l:first_commit) != v:t_dict
+  let l:commits = flog#get_commit_at_line(a:firstline, a:lastline)
+
+  if type(l:commits) == v:t_dict
+    let l:first_commit = l:commits
+    let l:last_commit = l:commits
+  elseif type(l:commits) == v:t_list
+    let l:first_commit = l:commits[0]
+    let l:last_commit = l:commits[1]
+  else
     return 0
   endif
+
   let l:first_index = index(l:state.commits, l:first_commit)
+
   if l:by_line
-    let l:last_commit = flog#get_commit_data(a:lastline)
-    if type(l:last_commit) != v:t_dict
-      return 0
-    endif
     let l:last_index = index(l:state.commits, l:last_commit)
-  elseif a:lastline > 0
-    let l:last_index = l:first_index + a:lastline - a:firstline
   else
-    let l:last_index = l:first_index
+    let l:last_index = l:first_index + a:lastline - a:firstline
   endif
 
   let l:commits = l:state.commits[l:first_index : l:last_index]
@@ -765,9 +841,10 @@ endfunction
 
 " Ref operations {{{
 
-function! flog#get_ref_data(line) abort
+function! flog#get_ref_at_line(...) abort
+  let l:line = exists('a:1') ? a:1 : line('.')
   let l:state = flog#get_state()
-  return get(l:state.line_commit_refs, a:line - 1, v:null)
+  return get(l:state.line_commit_refs, l:line - 1, v:null)
 endfunction
 
 function! flog#jump_refs(refs) abort
@@ -777,8 +854,8 @@ function! flog#jump_refs(refs) abort
     return
   endif
 
-  let l:current_ref = flog#get_ref_data(line('.'))
-  let l:current_commit = flog#get_commit_data(line('.'))
+  let l:current_ref = flog#get_ref_at_line()
+  let l:current_commit = flog#get_commit_at_current_line()
   if type(l:current_commit) != v:t_dict
     return
   endif
@@ -941,7 +1018,7 @@ endfunction
 function! flog#get_graph_cursor() abort
   let l:state = flog#get_state()
   if l:state.line_commits != []
-    return flog#get_commit_data(line('.'))
+    return flog#get_commit_at_current_line()
   endif
   return v:null
 endfunction
@@ -959,7 +1036,7 @@ function! flog#restore_graph_cursor(cursor) abort
 
   let l:short_commit_hash = a:cursor.short_commit_hash
 
-  let l:commit = flog#get_commit_data(line('.'))
+  let l:commit = flog#get_commit_at_current_line()
   if type(l:commit) != v:t_dict
     return
   endif
@@ -994,6 +1071,24 @@ function! flog#populate_graph_buffer() abort
   let l:state.commits = l:commits
 
   call flog#restore_graph_cursor(l:cursor)
+endfunction
+
+function! flog#clear_graph_update_queue() abort
+  augroup FlogGraphUpdate
+    autocmd! * <buffer>
+  augroup END
+endfunction
+
+function! flog#do_queued_graph_update() abort
+  call flog#clear_graph_update_queue()
+  call flog#populate_graph_buffer()
+endfunction
+
+function! flog#queue_graph_update(buff) abort
+  augroup FlogGraphUpdate
+    exec 'autocmd! * <buffer=' . a:buff . '>'
+    exec 'autocmd WinEnter <buffer=' . a:buff . '> call flog#do_queued_graph_update()'
+  augroup END
 endfunction
 
 function! flog#graph_buffer_settings() abort
@@ -1114,7 +1209,11 @@ endfunction
 
 function! flog#preview(command, ...) abort
   let l:keep_focus = exists('a:1') ? a:1 : v:false
+  let l:should_update = exists('a:2') ? a:2 : v:false
+
   let l:previous_window_id = win_getid()
+  let l:previous_buffer_number = bufnr()
+
   let l:state = flog#get_state()
 
   let l:saved_window_ids = flog#get_all_window_ids()
@@ -1129,37 +1228,37 @@ function! flog#preview(command, ...) abort
     endfor
   endif
 
-  if !l:keep_focus
-    call win_gotoid(l:previous_window_id)
-  endif
-endfunction
-
-function! flog#preview_commit(open_cmd, ...) abort
-  let l:keep_focus = exists('a:1') ? a:1 : v:false
-  let l:previous_window_id = win_getid()
-
-  let l:commit = flog#get_commit_data(line('.'))
-  if type(l:commit) != v:t_dict
-    return
-  endif
-  let l:hash = l:commit.short_commit_hash
-  call flog#preview(a:open_cmd . ' ' . l:hash, v:true)
-  call flog#commit_preview_buffer_settings()
-
-  if !l:keep_focus
-    call win_gotoid(l:previous_window_id)
-  endif
-endfunction
-
-function! flog#preview_split_commit(mods, ...) abort
-  let l:keep_focus = exists('a:1') ? a:1 : v:false
-  let l:state = flog#get_state()
-  call flog#preview_commit(a:mods . ' Gsplit', l:keep_focus)
+  call flog#handle_command_cleanup(
+        \ l:keep_focus, l:should_update, l:previous_window_id, l:previous_buffer_number)
 endfunction
 
 " }}}
 
 " Graph layout management {{{
+
+function! flog#handle_command_window_cleanup(keep_focus, previous_window_id) abort
+  if !a:keep_focus
+    call win_gotoid(a:previous_window_id)
+    if has('nvim')
+      redraw!
+    endif
+  endif
+endfunction
+
+function! flog#handle_command_update_cleanup(should_update, previous_window_id, previous_buffer_number) abort
+  if a:should_update
+    if win_getid() != a:previous_window_id
+      call flog#queue_graph_update(a:previous_buffer_number)
+    else
+      call flog#populate_graph_buffer()
+    endif
+  endif
+endfunction
+
+function! flog#handle_command_cleanup(keep_focus, should_update, previous_window_id, previous_buffer_number) abort
+  call flog#handle_command_window_cleanup(a:keep_focus, a:previous_window_id)
+  call flog#handle_command_update_cleanup(a:should_update, a:previous_window_id, a:previous_buffer_number)
+endfunction
 
 function! flog#open_graph(state) abort
   let l:window_name = 'flog-' . a:state.instance . ' [uninitialized]'
@@ -1197,19 +1296,38 @@ endfunction
 
 " }}}
 
-" User commands {{{
+" Command helpers {{{
 
-function! flog#git(mods, bang, cmd) abort
+function! flog#run_command(cmd, ...) abort
+  let l:keep_focus = exists('a:1') ? a:1 : v:false
+  let l:should_update = exists('a:2') ? a:2 : v:false
+  let l:should_preview = exists('a:3') ? a:3 : v:false
+
   let l:previous_window_id = win_getid()
-  call flog#preview(a:mods . ' Git' . a:bang . ' ' . a:cmd)
-  let l:command_window_id = win_getid()
-  if l:command_window_id != l:previous_window_id
-    call win_gotoid(l:previous_window_id)
-    if has('nvim')
-      redraw!
-    endif
+  let l:previous_buffer_number = bufnr()
+
+  let g:debug = a:cmd
+
+  if type(a:cmd) != v:t_string
+    return
   endif
-  call flog#populate_graph_buffer()
+
+  if l:should_preview
+    call flog#preview(a:cmd, v:true)
+    call flog#commit_preview_buffer_settings()
+    call flog#handle_command_window_cleanup(l:keep_focus, l:previous_window_id)
+  else
+    exec a:cmd
+    call flog#handle_command_cleanup(
+          \ l:keep_focus, l:should_update, l:previous_window_id, l:previous_buffer_number)
+  endif
+endfunction
+
+function! flog#preview_command(cmd, ...) abort
+  let l:keep_focus = exists('a:1') ? a:1 : v:false
+  let l:should_update = exists('a:2') ? a:2 : v:false
+
+  call flog#run_command(a:cmd, l:keep_focus, l:should_update, v:true)
 endfunction
 
 " }}}

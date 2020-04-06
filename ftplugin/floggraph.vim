@@ -7,7 +7,7 @@ silent setlocal nomodifiable
       \ bufhidden=wipe
       \ cursorline
 
-" Bindings {{{
+" Mappings {{{
 
 if !g:flog_has_shown_deprecated_mapping_spelling_warning
   for flog_deprecated_mapping in [
@@ -136,9 +136,9 @@ nnoremap <buffer> <silent> <Plug>FlogSkipback :<C-U>call flog#change_skip_by_max
 
 " Commands {{{
 
-command! -buffer Flogsplitcommit call flog#preview_split_commit('<mods>')
+command! -buffer Flogsplitcommit call flog#preview_command(flog#format_commit(flog#get_commit_at_current_line(), '<mods> Gsplit %s'))
 
-command! -buffer -range -bang -complete=customlist,flog#complete_git -nargs=* Floggit call flog#git('<mods>', '<bang>', <q-args>)
+command! -buffer -range -bang -complete=customlist,flog#complete_git -nargs=* Floggit call flog#run_command('<mods> Git' . <q-args>, 1, 1, !empty('<bang>'))
 
 command! -bang -complete=customlist,flog#complete -nargs=* Flogupdate call flog#update_options([<f-args>], '<bang>' ==# '!')
 command! -bang -complete=customlist,flog#complete_refs -nargs=* Flogjump call flog#jump_to_ref(<q-args>)
