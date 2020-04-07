@@ -83,15 +83,15 @@ COMMANDS                                                       *flog-commands*
 
   Same as |:Floggit|, but open the command using a |flog-temp-window|.
 
-:Flogupdate                                                      *:Flogupdate*
+:Flogsetargs                                                    *:Flogsetargs*
 
   Update the arguments passed to |:Flog| or |:Flogsplit|. Can only be run in a
   |:Flog| window. Merges new arguments with the current arguments.
 
-:Flogupdate!                                                    *:Flogupdate!*
+:Flogsetargs!                                                  *:Flogsetargs!*
 
-  Same as |:Flogupdate|, but overwrite all of the current arguments instead of
-  updating them.
+  Same as |:Flogsetargs|, but overwrite all of the current arguments instead
+  of updating them.
 
 :Flogjump                                                          *:Flogjump*
 
@@ -219,12 +219,12 @@ u                                                                     *flog-u*
                                                           *<Plug>(FlogSearch)*
 g/                                                                   *flog-g/*
 
-  Open the command line with ":Flogupdate -search=".
+  Open the command line with ":Flogsetargs -search=".
 
                                                      *<Plug>(FlogPatchSearch)*
 g\                                                                   *flog-g\*
 
-  Open the command line with ":Flogupdate -patch-search=".
+  Open the command line with ":Flogsetargs -patch-search=".
 
 ------------------------------------------------------------------------------
 COMMIT AND BRANCH MAPPINGS                              *flog-commit-mappings*
@@ -342,8 +342,8 @@ g:flog_default_arguments                            *g:flog_default_arguments*
 g:flog_permanent_default_arguments        *g:flog_permanent_default_arguments*
 
   Like |g:flog_default_arguments|, only the arguments are treated as the
-  plugin defaults and can't be cleared using |:Flog|, |:Flogupdate|, or
-  |:Flogupdate!|.
+  plugin defaults and can't be cleared using |:Flog|, |:Flogsetargs|, or
+  |:Flogsetargs!|.
 
   Has lower presidence than |g:flog_default_arguments|.
 

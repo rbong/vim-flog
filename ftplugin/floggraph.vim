@@ -122,12 +122,12 @@ nnoremap <buffer> <silent> <Plug>(FlogUpdate) :call flog#populate_graph_buffer()
 if !hasmapto('<Plug>(FlogSearch)')
   nmap <buffer> g/ <Plug>(FlogSearch)
 endif
-nnoremap <buffer> <Plug>(FlogSearch) :<C-U>Flogupdate -search=
+nnoremap <buffer> <Plug>(FlogSearch) :<C-U>Flogsetargs -search=
 
 if !hasmapto('<Plug>(FlogPatchSearch)')
   nmap <buffer> g\ <Plug>(FlogPatchSearch)
 endif
-nnoremap <buffer> <Plug>(FlogPatchSearch) :<C-U>Flogupdate -patch-search=
+nnoremap <buffer> <Plug>(FlogPatchSearch) :<C-U>Flogsetargs -patch-search=
 
 " }}}
 
@@ -301,8 +301,14 @@ command! -buffer Flogsplitcommit call flog#run_tmp_command(flog#format_commit(fl
 
 command! -buffer -range -bang -complete=customlist,flog#complete_git -nargs=* Floggit call flog#run_command('<mods> Git ' . <q-args>, 1, 1, !empty('<bang>'))
 
-command! -bang -complete=customlist,flog#complete -nargs=* Flogupdate call flog#update_options([<f-args>], '<bang>' ==# '!')
+command! -bang -complete=customlist,flog#complete -nargs=* Flogsetargs call flog#update_options([<f-args>], '<bang>' ==# '!')
 command! -bang -complete=customlist,flog#complete_refs -nargs=* Flogjump call flog#jump_to_ref(<q-args>)
+
+" Deprecated commands {{{
+
+command! -buffer -nargs=* Flogupdate call flog#deprecate_command('Flogupdate', 'Flogsetargs')
+
+" }}}
 
 " }}}
 

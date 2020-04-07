@@ -10,7 +10,7 @@ If your repository has lots of commits and the command is slow to finish, you mi
 
 You can set this argument by default by putting `let g:flog_default_arguments = { 'max_count': 1000 }` in your `.vimrc`.
 
-You can also use `:Flogupdate -max-count=1000` to set the argument after running `:Flog` or `:Flogupdate -max-count=` to unset it.
+You can also use `:Flogsetargs -max-count=1000` to set the argument after running `:Flog` or `:Flogsetargs -max-count=` to unset it.
 
 2. Type in `git c<Tab> master` to check out the master branch if you are not already on it - it will automatically complete to `:Floggit checkout master`.
 

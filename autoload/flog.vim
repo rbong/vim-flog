@@ -116,6 +116,15 @@ function! flog#deprecate_autocmd(autocmd, new_autocmd) abort
   endif
 endfunction
 
+function! flog#deprecate_command(command, new_command, ...) abort
+  let l:deprecated_usage = a:command
+  if !flog#did_show_deprecation_warning(l:deprecated_usage)
+    let l:new_command_args = exists('a:1') ? a:1 : '...'
+    let l:new_usage = printf('%s %s', a:new_command, l:new_command_args)
+    call flog#show_deprecation_warning(l:deprecated_usage, l:new_usage)
+  endif
+endfunction
+
 " }}}
 
 " Shell interface {{{
