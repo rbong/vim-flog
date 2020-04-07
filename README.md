@@ -36,9 +36,11 @@ Toggle displaying no merges with `gm`.
 Toggle viewing the reflog with `gr`.
 Quit with `gq`.
 
+Many of the bindings that work in fugitive in `:Gstatus` windows will work in Flog.
+
 To see more bindings or get a refresher, press `g?`.
 
-Run `:Git` commands in a split next to the graph using `:Floggit!`.
+Run `:Git` commands in a split next to the graph using `:Floggit -p`.
 Command line completion is provided to do any git command with the commits and refs under the cursor.
 
 ## Getting Help

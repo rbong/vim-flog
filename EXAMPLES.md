@@ -14,7 +14,12 @@ You can also use `:Flogupdate -max-count=1000` to set the argument after running
 
 2. Type in `git c<Tab> master` to check out the master branch if you are not already on it - it will automatically complete to `:Floggit checkout master`.
 
-The graph will be updated after master is checked out, which will happen on any command.
+The graph will be updated after master is checked out.
+This will also happen on any command.
+
+You could also use the mapping `co<Space>` to enter `:Floggit checkout `.
+Use `g?` to view a full list of mappings.
+
 The master branch can also be completed, so if you don't have many branches you may be able to type `m<Tab>` to complete master.
 
 3. Press the `a` key to toggle showing all commits.
@@ -29,8 +34,10 @@ You can also use `:Flogjump <Tab>` to look through and navigate to the currently
 
 5. Type in `git m<Tab> <Tab><Tab>`. This will automatically complete to `:Floggit merge <branch>`.
 
-If you'd like to save the merge output to a buffer, use `git!` instead of `git`.
-You can run any git command using this command.
+If you'd like to save the merge output to a buffer, use `git -p` instead of `git`.
+You can run any git command with this option.
+
+You can also use `cm<Space>` to complete to `:Floggit merge `.
 
 This seems like a lot, but as you get used to running commands you'll do all of this without thinking, especially with all of the completion available.
 
@@ -48,45 +55,38 @@ This will complete to `:Floggit diff <first commit> <second commit>`.
 Any ref names and commit hashes at the two ends of the visual selection will be completed first when using `:Floggit` in visual selection mode.
 You may have to press `<Tab>` more times if your commits have addition ref names to cycle through for command completion.
 
+You can also use the mapping `dd` or `dv` to diff the currently selected commits.
+
 ## Extension Example: Automating Diffing Two Commits
 
-This example shows how to make a binding to automate the diffing process shown in the previous example by using flog's publicly available functions.
+This example shows how the `dd` binding is implemented.
 
 Put this code inside of your `.vimrc`:
 
 ```vim
-function! Flogdiff()
-  let first_commit = flog#get_commit_data(line("'<")).short_commit_hash
-  let last_commit = flog#get_commit_data(line("'>")).short_commit_hash
-  call flog#git('vertical belowright', '!', 'diff ' . first_commit . ' ' . last_commit)
-endfunction
-
 augroup flog
-  autocmd FileType floggraph vno gd :<C-U>call Flogdiff()<CR>
+  autocmd FileType floggraph vno <buffer> D :<C-U>call flog#run_tmp_command(
+    \ flog#format_commit(
+      \ flog#get_commit_at_selection(),
+      \ 'vertical belowright Git diff %s', '', 'HEAD'))<CR>
 augroup END
 ```
 
-You can now diff commits by visually selecting them and pressing `gd`.
+You can now diff commits by visually selecting them and pressing `D`, equivalent to `dd`.
 
 Let's break this code down.
 
-`flog#get_commit_data` gets the commit for the given line number, in this case, beginning and end of the selection, or `line("'<")` and `line("'>")`.
+`flog#get_commit_at_selection` will return the commits or commit at the beginning of the virtual selection.
 
-In the returned commit data, we use the key `short_commit_hash` to get the commit hash.
+The two format specifiers describe how the hashes in these commits will be formatted: `'vertical belowright Git diff %s'` and `''`.
+The first format specifier describes how to build the command if only one commit was returned from `flog#get_commit_at_selection`.
+The second format specifier would describe how to format hashes from two commits, but since it is an empty string it will use the first format specifier with a space between the hashes.
 
-`flog#git` is just the functional equivalent of `:Floggit`.
+The `'HEAD'` option tells the function to use the `'HEAD'` ref for the first hash if only one commit was found.
 
-The first two arguments are the mods (see `:help <mods>`) and bang (see `:help <bang>`) that would be normally passed to the function.
-The last argument is the git command, in this case a diff between the two commits.
+Finally `flog#run_tmp_command` tells flog to run the command and treat any windows it opens as temporary.
 
-`autocmd FileType floggraph` allows us to add settings just for the `:Flog` window.
-We bind the function we created to the `gd` key.
-
-The best way to learn how to use flog's internal functions is to [read them](https://github.com/rbong/vim-flog/blob/master/autoload/flog.vim) and try them out.
-Try mainly looking at the structure of the return value of `flog#get_commit_data(line('.'))`.
-
-It also helps to [learn a little vimscript](http://learnvimscriptthehardway.stevelosh.com/).
-If you have any problems, we're happy to help if you [post an issue](https://github.com/rbong/vim-flog/issues).
+For more details, see `:help flog-functions` and `:help flog-about`.
 
 ## Additional Examples
 
