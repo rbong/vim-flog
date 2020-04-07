@@ -67,7 +67,8 @@ COMMANDS                                        *flog-commands*
 
 :Floggit                                        *flog-:Floggit*
 
-  Open a git command via |:Git|.
+  Open a git command via |:Git| and display the output in a
+  |flog-preview-window|.
 
   File completion is available from this command, as well as completion for
   the commits and refs under the cursor. Completion applies to the first and
@@ -79,7 +80,7 @@ COMMANDS                                        *flog-commands*
 
 :Floggit!                                       *flog-:Floggit!*
 
-  Same as |:Floggit|, but uses |:Git!|.
+  Same as |:Floggit|, but do not open the output in a preview window.
 
 :Flogupdate                                     *flog-:Flogupdate*
 
@@ -134,6 +135,17 @@ Jump to the next commit and open it in a preview window. Accepts a count.
 
 Jump to the previous commit and open it in a preview window. Accepts a count.
 
+dd                                              *flog-dd*
+dv                                              *flog-dv*
+
+In normal mode, open a diff in a preview window comparing the commit under the
+cursor with the current commit.
+
+In visual mode, open a diff in a preview window comparing the commits at the
+top and bottom of the visual selection.
+
+Similar to |fugitive_dd| and |fugitive_dv|.
+
 ]r                                              *flog-]r*
 
 Jump to the next commit with a ref name and open it in a preview window.
@@ -181,6 +193,41 @@ ZZ                                              *flog-ZZ*
 
 Quit Flog.
 
+crc                                             *flog-crc*
+
+Revert the commit under the cursor. In visual mode, revert all selected
+commits.
+
+Similar to the fugitive "crc" mapping (see |fugitive_cr|).
+
+crn                                             *flog-crn*
+
+Same as |flog-crc|, but use the "--no-edit" flag.
+
+cr<Space>                                       *flog-cr<space>*
+
+Start a command line with ":Floggit revert ".
+
+cm<Space>                                       *flog-cm<space>*
+
+Start a command line with ":Floggit merge ".
+
+Similar to |fugitive_cm|.
+
+coo                                             *flog-coo*
+
+Checkout the commit under the cursor.
+
+Similar to the fugitive "coo" mapping (see |fugitive_co|).
+
+co<Space>                                       *flog-co<Space>*
+
+Start a command line with ":Floggit checkout ".
+
+cb<Space>                                       *flog-cb<Space>*
+
+Start a command line with ":Floggit branch ".
+
 g?                                              *flog-g?*
 
 Jump to this list of mappings in help.
@@ -212,6 +259,9 @@ PREVIEW WINDOWS                                 *flog-preview-window*
 To view more information from the graph, you can open "Flog preview windows".
 Opening a command in Flog preview windows closes any previously opened preview
 windows. Flog preview windows will be closed when quitting Flog.
+
+Flog preview windows are opened in normal windows, and are not to be confused
+with |preview-window|.
 
 ADVANCED USAGE                                  *flog-advanced-usage*
 

@@ -57,6 +57,16 @@ endif
 nnoremap <buffer> <silent> <Plug>FlogVnextrefright :<C-U>call flog#next_ref() \| vertical belowright Flogsplitcommit<CR>
 nnoremap <buffer> <silent> <Plug>FlogVprevrefright :<C-U>call flog#previous_ref() \| vertical belowright Flogsplitcommit<CR>
 
+if !hasmapto('<Plug>FlogVdiffsplitright')
+  nmap <buffer> dd <Plug>FlogVdiffsplitright
+  vmap <buffer> dd <Plug>FlogVdiffsplitright
+  nmap <buffer> dv <Plug>FlogVdiffsplitright
+  vmap <buffer> dv <Plug>FlogVdiffsplitright
+endif
+
+nnoremap <buffer> <silent> <Plug>FlogVdiffsplitright :<C-U>call flog#preview_command(flog#format_commit(flog#get_commit_at_current_line(), 'vertical belowright Git diff HEAD %s'))<CR>
+vnoremap <buffer> <silent> <Plug>FlogVdiffsplitright :<C-U>call flog#preview_command(flog#format_commit(flog#get_commit_at_selection(), 'vertical belowright Git diff %s', '', 'HEAD'))<CR>
+
 if !hasmapto('<Plug>FlogToggleall')
   nmap <buffer> a <Plug>FlogToggleall
 endif
@@ -131,6 +141,51 @@ if !hasmapto('<Plug>FlogSkipback')
   nmap <buffer> [[ <Plug>FlogSkipback
 endif
 nnoremap <buffer> <silent> <Plug>FlogSkipback :<C-U>call flog#change_skip_by_max_count(-1 * max([v:count, 1]))<CR>
+
+" Fugitive-like mappings {{{
+
+if !hasmapto('<Plug>FlogRevert')
+  nmap <buffer> crc <Plug>FlogRevert
+  vmap <buffer> crc <Plug>FlogRevert
+endif
+
+if !hasmapto('<Plug>FlogRevertnoedit')
+  nmap <buffer> crn <Plug>FlogRevertnoedit
+  vmap <buffer> crn <Plug>FlogRevertnoedit
+endif
+
+nnoremap <buffer> <Plug> FlogRevert :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_current_line(), 'Git revert %s'), 1, 1)<CR>
+vnoremap <buffer> <Plug> FlogRevert :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_selection(1), 'Git revert %s', 'Git revert %s^..%s'), 1, 1)<CR>
+
+nnoremap <buffer> <Plug> FlogRevertnoedit :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_current_line(), 'Git revert --no-edit %s'), 1, 1)<CR>
+vnoremap <buffer> <Plug> FlogRevertnoedit :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_selection(1), 'Git revert --no-edit %s', 'Git revert --no-edit %s^..%s'), 1, 1)<CR>
+
+if !hasmapto('<Plug>FlogGitrevert')
+  nmap <buffer> cr<Space> <Plug>FlogGitrevert
+endif
+nnoremap <buffer> <Plug>FlogGitrevert :Floggit revert<Space>
+
+if !hasmapto('<Plug>FlogGitmerge')
+  nmap <buffer> cm<Space> <Plug>FlogGitmerge
+endif
+nnoremap <buffer> <Plug>FlogGitmerge :Floggit merge<Space>
+
+if !hasmapto('<Plug>FlogCheckout')
+  nmap <buffer> coo <Plug>FlogCheckout
+endif
+nnoremap <buffer> <Plug>FlogCheckout :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_current_line(), 'Git checkout %s'), 0, 1)<CR>
+
+if !hasmapto('<Plug>FlogGitcheckout')
+  nmap <buffer> co<Space> <Plug>FlogGitcheckout
+endif
+nnoremap <buffer> <Plug>FlogGitcheckout :Floggit checkout<Space>
+
+if !hasmapto('<Plug>FlogGitbranch')
+  nmap <buffer> cb<Space> <Plug>FlogGitbranch
+endif
+nnoremap <buffer> <Plug>FlogGitbranch :Floggit branch<Space>
+
+" }}}
 
 " }}}
 
