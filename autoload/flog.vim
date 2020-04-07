@@ -1151,7 +1151,11 @@ endfunction
 function! flog#queue_graph_update(buff) abort
   augroup FlogGraphUpdate
     exec 'autocmd! * <buffer=' . a:buff . '>'
-    exec 'autocmd WinEnter <buffer=' . a:buff . '> call flog#do_queued_graph_update()'
+    if exists('##SafeState')
+      exec 'autocmd SafeState <buffer=' . a:buff . '> call flog#do_queued_graph_update()'
+    else
+      exec 'autocmd BufWinEnter <buffer=' . a:buff . '> call flog#do_queued_graph_update()'
+    endif
   augroup END
 endfunction
 
@@ -1371,8 +1375,6 @@ function! flog#run_command(cmd, ...) abort
 
   let l:previous_window_id = win_getid()
   let l:previous_buffer_number = bufnr()
-
-  let g:debug = a:cmd
 
   if type(a:cmd) != v:t_string
     return
