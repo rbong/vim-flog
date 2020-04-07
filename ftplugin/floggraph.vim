@@ -156,23 +156,31 @@ nnoremap <buffer> <Plug>(FlogCheckout) :<C-U>call flog#run_command(flog#format_c
 
 if !hasmapto('<Plug>(FlogGitRevert)')
   nmap <buffer> cr<Space> <Plug>(FlogGitRevert)
+  vmap <buffer> cr<Space> <Plug>(FlogGitRevert)
 endif
 nnoremap <buffer> <Plug>(FlogGitRevert) :Floggit revert<Space>
+vnoremap <buffer> <Plug>(FlogGitRevert) :Floggit revert<Space>
 
 if !hasmapto('<Plug>(FlogGitMerge)')
   nmap <buffer> cm<Space> <Plug>(FlogGitMerge)
+  vmap <buffer> cm<Space> <Plug>(FlogGitMerge)
 endif
 nnoremap <buffer> <Plug>(FlogGitMerge) :Floggit merge<Space>
+vnoremap <buffer> <Plug>(FlogGitMerge) :Floggit merge<Space>
 
 if !hasmapto('<Plug>(FlogGitCheckout)')
   nmap <buffer> co<Space> <Plug>(FlogGitCheckout)
+  vmap <buffer> co<Space> <Plug>(FlogGitCheckout)
 endif
 nnoremap <buffer> <Plug>(FlogGitCheckout) :Floggit checkout<Space>
+vnoremap <buffer> <Plug>(FlogGitCheckout) :Floggit checkout<Space>
 
 if !hasmapto('<Plug>(FlogGitBranch)')
   nmap <buffer> cb<Space> <Plug>(FlogGitBranch)
+  vmap <buffer> cb<Space> <Plug>(FlogGitBranch)
 endif
 nnoremap <buffer> <Plug>(FlogGitBranch) :Floggit branch<Space>
+vnoremap <buffer> <Plug>(FlogGitBranch) :Floggit branch<Space>
 
 " }}}
 
@@ -235,8 +243,10 @@ nnoremap <buffer> <Plug>(FlogRebaseInteractiveDrop) :<C-U>call flog#run_command(
 
 if !hasmapto('<Plug>(FlogGitRebase)')
   nmap <buffer> r<Space> <Plug>(FlogGitRebase)
+  vmap <buffer> r<Space> <Plug>(FlogGitRebase)
 endif
 nnoremap <buffer> <Plug>(FlogGitRebase) :Floggit rebase<Space>
+vnoremap <buffer> <Plug>(FlogGitRebase) :Floggit rebase<Space>
 
 " }}}
 
