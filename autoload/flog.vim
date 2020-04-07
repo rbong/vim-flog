@@ -793,6 +793,10 @@ function! flog#get_commit_at_line(...) abort
     return v:null
   endif
 
+  if l:first_commit == l:last_commit
+    return l:first_commit
+  endif
+
   return [l:first_commit, l:last_commit]
 endfunction
 
