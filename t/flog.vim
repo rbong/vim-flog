@@ -43,8 +43,8 @@ describe ':Flog -- --not --glob="*"'
     endif
   end
 
-  it 'does not crash on previewing commit'
-    call flog#preview_split_commit('')
+  it 'does not crash on opening temp commit'
+    call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_current_line(), 'Gsplit %s'))
   end
 end
 
@@ -72,126 +72,8 @@ describe ':Flogsplit'
     Expect tabpagenr() == 1
   end
 
-  it 'has empty preview windows'
-    Expect flog#get_state().preview_window_ids == []
-  end
-end
-
-describe 'flog#preview_split_commit()'
-  before
-    Flog
-    call flog#preview_split_commit('')
-    wincmd w
-  end
-
-  after
-    if &ft ==# 'git'
-      quit
-    endif
-    if &ft ==# 'floggraph'
-      call flog#quit()
-    endif
-  end
-
-  it 'sets filetype'
-    Expect &ft ==# 'git'
-  end
-
-  it 'opens in a preview window'
-    Expect winnr('$') == 2
-    Expect flog#get_state().preview_window_ids == [win_getid()]
-  end
-end
-
-" implicitly does not open in a preview window
-describe 'flog#git("", "", "status")'
-  before
-    Flog
-    call flog#git('', '', 'status')
-  end
-
-  after
-    if &ft ==# 'floggraph'
-      call flog#quit()
-    endif
-  end
-
-  it 'does not open in a window'
-    Expect &ft ==# 'floggraph'
-    Expect winnr('$') == 1
-    Expect flog#get_state().preview_window_ids == []
-  end
-end
-
-" explicitly opens in a preview window
-describe 'flog#git("", "!", "status")'
-  before
-    Flog
-    call flog#git('', '!', 'status')
-  end
-
-  after
-    if &ft ==# 'git'
-      call flog#quit()
-    endif
-    if &ft ==# 'floggraph'
-      call flog#quit()
-    endif
-  end
-
-  it 'opens in a preview window'
-    wincmd w
-    Expect &ft ==# 'git'
-    Expect winnr('$') == 2
-    Expect flog#get_state().preview_window_ids == [win_getid()]
-  end
-end
-
-" implicitly opens in a preview window
-describe 'flog#git("", "", "diff")'
-  before
-    Flog
-    call flog#git('', '', 'diff')
-  end
-
-  after
-    if &ft ==# 'git'
-      call flog#quit()
-    endif
-    if &ft ==# 'floggraph'
-      call flog#quit()
-    endif
-  end
-
-  it 'opens in a preview window'
-    wincmd w
-    Expect &ft ==# 'git'
-    Expect winnr('$') == 2
-    Expect flog#get_state().preview_window_ids == [win_getid()]
-  end
-end
-
-" both explicitly and implicitly opens in a preview window
-describe 'flog#git("", "!", "diff")'
-  before
-    Flog
-    call flog#git('', '!', 'diff')
-  end
-
-  after
-    if &ft ==# 'git'
-      call flog#quit()
-    endif
-    if &ft ==# 'floggraph'
-      call flog#quit()
-    endif
-  end
-
-  it 'opens in a preview window'
-    wincmd w
-    Expect &ft ==# 'git'
-    Expect winnr('$') == 2
-    Expect flog#get_state().preview_window_ids == [win_getid()]
+  it 'has empty temp windows'
+    Expect flog#get_state().tmp_window_ids == []
   end
 end
 
