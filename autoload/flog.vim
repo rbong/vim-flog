@@ -1282,7 +1282,7 @@ function! flog#open_tmp_win(command, ...) abort
   let l:should_update = exists('a:2') ? a:2 : v:false
 
   let l:previous_window_id = win_getid()
-  let l:previous_buffer_number = bufnr()
+  let l:previous_buffer_number = bufnr('')
 
   let l:state = flog#get_state()
 
@@ -1374,7 +1374,7 @@ function! flog#run_command(cmd, ...) abort
   let l:is_tmp = exists('a:3') ? a:3 : v:false
 
   let l:previous_window_id = win_getid()
-  let l:previous_buffer_number = bufnr()
+  let l:previous_buffer_number = bufnr('')
 
   if type(a:cmd) != v:t_string
     return
