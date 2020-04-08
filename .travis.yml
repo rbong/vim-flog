@@ -14,7 +14,7 @@ jobs:
   include:
     - name: "vim 7"
       env:
-        VIM_VERSION: "v7.4.2367"
+        VIM_VERSION: "v7.4.2204"
     - name: "vim 8"
       env:
         VIM_VERSION: "v8.2.0055"
