@@ -37,6 +37,7 @@ describe ':Flog'
   end
 end
 
+" returns empty log every time
 describe ':Flog -- --not --glob="*"'
   before
     Flog -- --not --glob="*"
