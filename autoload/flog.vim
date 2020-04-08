@@ -1154,7 +1154,7 @@ function! flog#queue_graph_update(previous_buffer_number) abort
     if exists('##SafeState')
       exec 'autocmd SafeState <buffer=' . a:previous_buffer_number . '> call flog#do_queued_graph_update()'
     else
-      exec 'autocmd BufWinEnter <buffer=' . a:previous_buffer_number . '> call flog#do_queued_graph_update()'
+      exec 'autocmd WinEnter <buffer=' . a:previous_buffer_number . '> call flog#do_queued_graph_update()'
     endif
   augroup END
 endfunction
