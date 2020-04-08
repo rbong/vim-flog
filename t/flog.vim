@@ -14,6 +14,11 @@ describe ':Flog'
     endif
   end
 
+  it 'allows quitting'
+    call flog#quit()
+    Expect &ft !=# 'floggraph'
+  end
+
   it 'sets filetype'
     Expect &ft ==# 'floggraph'
   end
