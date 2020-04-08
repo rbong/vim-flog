@@ -1266,7 +1266,7 @@ function! flog#close_tmp_win() abort
 
     " get the previous buffer to switch back to it after closing
     call win_gotoid(l:tmp_window_id)
-    close
+    close!
   endfor
 
   let l:state.tmp_window_ids = []
