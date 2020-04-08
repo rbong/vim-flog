@@ -50,6 +50,7 @@ describe ':Flog -- --not --glob="*"'
 
   it 'does not crash on opening temp commit'
     call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_current_line(), 'Gsplit %s'))
+    Expect winnr('$') == 1
   end
 end
 
