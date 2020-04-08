@@ -514,9 +514,9 @@ function! flog#complete_rev(arg_lead) abort
     return []
   endif
   let [l:lead, l:last] = flog#split_single_completable_arg(a:arg_lead)
-  let l:cmd = fugitive#repo().git_command()
+  let l:command = fugitive#repo().git_command()
         \ . ' rev-parse --symbolic --branches --tags --remotes'
-  let l:revs = flog#systemlist(l:cmd) +  ['HEAD', 'FETCH_HEAD', 'MERGE_HEAD', 'ORIG_HEAD']
+  let l:revs = flog#systemlist(l:command) +  ['HEAD', 'FETCH_HEAD', 'MERGE_HEAD', 'ORIG_HEAD']
   return flog#filter_completions(a:arg_lead, map(l:revs, 'l:lead . v:val'))
 endfunction
 
@@ -1148,13 +1148,13 @@ function! flog#do_queued_graph_update() abort
   call flog#populate_graph_buffer()
 endfunction
 
-function! flog#queue_graph_update(buff) abort
+function! flog#queue_graph_update(previous_buffer_number) abort
   augroup FlogGraphUpdate
-    exec 'autocmd! * <buffer=' . a:buff . '>'
+    exec 'autocmd! * <buffer=' . a:previous_buffer_number . '>'
     if exists('##SafeState')
-      exec 'autocmd SafeState <buffer=' . a:buff . '> call flog#do_queued_graph_update()'
+      exec 'autocmd SafeState <buffer=' . a:previous_buffer_number . '> call flog#do_queued_graph_update()'
     else
-      exec 'autocmd BufWinEnter <buffer=' . a:buff . '> call flog#do_queued_graph_update()'
+      exec 'autocmd BufWinEnter <buffer=' . a:previous_buffer_number . '> call flog#do_queued_graph_update()'
     endif
   augroup END
 endfunction
@@ -1368,7 +1368,7 @@ endfunction
 
 " Command helpers {{{
 
-function! flog#run_command(cmd, ...) abort
+function! flog#run_command(command, ...) abort
   let l:keep_focus = exists('a:1') ? a:1 : v:false
   let l:should_update = exists('a:2') ? a:2 : v:false
   let l:is_tmp = exists('a:3') ? a:3 : v:false
@@ -1376,26 +1376,26 @@ function! flog#run_command(cmd, ...) abort
   let l:previous_window_id = win_getid()
   let l:previous_buffer_number = bufnr('')
 
-  if type(a:cmd) != v:t_string
+  if type(a:command) != v:t_string
     return
   endif
 
   if l:is_tmp
-    call flog#open_tmp_win(a:cmd, v:true)
+    call flog#open_tmp_win(a:command, v:true)
     call flog#tmp_command_buffer_settings()
     call flog#handle_command_window_cleanup(l:keep_focus, l:previous_window_id)
   else
-    exec a:cmd
+    exec a:command
     call flog#handle_command_cleanup(
           \ l:keep_focus, l:should_update, l:previous_window_id, l:previous_buffer_number)
   endif
 endfunction
 
-function! flog#run_tmp_command(cmd, ...) abort
+function! flog#run_tmp_command(command, ...) abort
   let l:keep_focus = exists('a:1') ? a:1 : v:false
   let l:should_update = exists('a:2') ? a:2 : v:false
 
-  call flog#run_command(a:cmd, l:keep_focus, l:should_update, v:true)
+  call flog#run_command(a:command, l:keep_focus, l:should_update, v:true)
 endfunction
 
 " }}}
