@@ -1334,12 +1334,8 @@ function! flog#close_tmp_win() abort
   return
 endfunction
 
-function! flog#open_tmp_win(command, ...) abort
-  let l:keep_focus = exists('a:1') ? a:1 : v:false
-  let l:should_update = exists('a:2') ? a:2 : v:false
-
+function! flog#open_tmp_win(command) abort
   let l:previous_window_id = win_getid()
-  let l:previous_buffer_number = bufnr('')
 
   let l:state = flog#get_state()
 
@@ -1354,9 +1350,6 @@ function! flog#open_tmp_win(command, ...) abort
       call flog#initialize_tmp_buffer(l:state)
     endfor
   endif
-
-  call flog#handle_command_cleanup(
-        \ l:keep_focus, l:should_update, l:previous_window_id, l:previous_buffer_number)
 endfunction
 
 " }}}
@@ -1438,9 +1431,10 @@ function! flog#run_command(command, ...) abort
   endif
 
   if l:is_tmp
-    call flog#open_tmp_win(a:command, v:true)
+    call flog#open_tmp_win(a:command)
     call flog#tmp_command_buffer_settings()
-    call flog#handle_command_window_cleanup(l:keep_focus, l:previous_window_id)
+    call flog#handle_command_cleanup(
+          \ l:keep_focus, l:should_update, l:previous_window_id, l:previous_buffer_number)
   else
     exec a:command
     call flog#handle_command_cleanup(
@@ -1479,7 +1473,7 @@ function! flog#close_preview(...) range abort
 endfunction
 
 function! flog#preview(...) range abort
-  call flog#deprecate_function('flog#preview', 'flog#open_tmp_win', '{command}, [keep_focus], [should_update]')
+  call flog#deprecate_function('flog#preview', 'flog#run_tmp_command', '{command}, [keep_focus], [should_update]')
 endfunction
 
 function! flog#preview_commit(...) range abort
