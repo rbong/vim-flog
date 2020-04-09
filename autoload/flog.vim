@@ -409,7 +409,7 @@ function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
 
   if (l:line != l:firstline && l:line != l:lastline) || l:firstline == l:lastline
     " complete for only the current line
-    let l:commit = flog#get_commit_at_current_line()
+    let l:commit = flog#get_commit_at_line()
     if type(l:commit) != v:t_dict
       return []
     endif
@@ -796,84 +796,58 @@ endfunction
 " Commit operation utilities {{{
 
 function! flog#get_commit_at_line(...) abort
-  let l:firstline = exists('a:1') ? a:1 : -1
-  let l:lastline = exists('a:2') ? a:2 : -1
-  let l:should_swap = exists('a:3') ? a:3 : v:false
+  let l:line = exists('a:1') ? a:1 : '.'
+  return get(flog#get_state().line_commits, line(l:line) - 1, v:null)
+endfunction
 
-  if l:firstline < 0
-    let l:firstline = line('.')
+function! flog#get_commit_at_selection(...) abort
+  let l:firstline = exists('a:1') ? a:1 : v:null
+  let l:lastline = exists('a:2') ? a:2 : v:null
+  let l:should_swap = exists('a:3') ? a:3 : 0
+
+  if type(l:firstline) != v:t_string && type(l:firstline) != v:t_number
+    let l:firstline = "'<"
   endif
 
-  if l:lastline < 0
-    let l:lastline = line('.')
+  if type(l:lastline) != v:t_string && type(l:lastline) != v:t_number
+    let l:lastline = "'>"
   endif
 
-  if l:should_swap
-    let l:tmp = l:lastline
-    let l:lastline = l:firstline
-    let l:firstline = l:tmp
-  endif
-
-  let l:state = flog#get_state()
-
-  let l:first_commit = get(l:state.line_commits, l:firstline - 1, v:null)
+  let l:first_commit = flog#get_commit_at_line(l:firstline)
 
   if type(l:first_commit) != v:t_dict
     return v:null
   endif
 
-  " not a range, return only first commit
-  if l:firstline == l:lastline
-    return l:first_commit
-  endif
-
-  let l:last_commit = get(l:state.line_commits, l:lastline - 1, v:null)
+  let l:last_commit = flog#get_commit_at_line(l:lastline)
 
   if type(l:last_commit) != v:t_dict
     return v:null
   endif
 
-  if l:first_commit == l:last_commit
-    return l:first_commit
-  endif
-
-  return [l:first_commit, l:last_commit]
-endfunction
-
-function! flog#get_commit_at_current_line() abort
-  return flog#get_commit_at_line(line('.'), line('.'))
-endfunction
-
-function! flog#get_commit_at_selection(...) abort
-  let l:should_swap = exists('a:1') ? a:1 : v:false
-  return flog#get_commit_at_line(line("'<"), line("'>"), l:should_swap)
+  return l:should_swap ? [l:last_commit, l:first_commit] : [l:first_commit, l:last_commit]
 endfunction
 
 function! flog#format_commit(commit, ...) abort
-  let l:format = exists('a:1') ? a:1 : ''
-  let l:dual_format = exists('a:2') ? a:2 : ''
-  let l:default_first = exists('a:3') ? a:3 : ''
+  let l:format = exists('a:1') ? a:1 : '%s'
 
-  if empty(l:format)
-    let l:format = '%s'
+  if type(a:commit) != v:t_dict
+    return v:null
   endif
 
-  if empty(l:dual_format)
-    let l:dual_format = printf(l:format, '%s %s')
+  return printf(l:format, a:commit.short_commit_hash)
+endfunction
+
+function! flog#format_commit_selection(commit_selection, ...) abort
+  let l:format = exists('a:1') ? a:1 : '%s %s'
+
+  if type(a:commit_selection) != v:t_list
+    return v:null
   endif
 
-  if type(a:commit) == v:t_dict
-    " single commit
-    if !empty(l:default_first)
-      return printf(l:dual_format, l:default_first, a:commit.short_commit_hash)
-    endif
-    return printf(l:format, a:commit.short_commit_hash)
-  elseif type(a:commit) == v:t_list
-    " two commits
-    return printf(l:dual_format, a:commit[0].short_commit_hash, a:commit[1].short_commit_hash)
-  endif
-  " presumably no commit
-  return v:null
+  let [l:first_commit, l:last_commit] = a:commit_selection
+
+  return printf(l:format, l:first_commit.short_commit_hash, l:last_commit.short_commit_hash)
 endfunction
 
 " }}}
@@ -883,7 +857,7 @@ endfunction
 function! flog#jump_commits(commits) abort
   let l:state = flog#get_state()
 
-  let l:current_commit = flog#get_commit_at_current_line()
+  let l:current_commit = flog#get_commit_at_line()
   if type(l:current_commit) != v:t_dict
     return
   endif
@@ -912,17 +886,13 @@ function! flog#copy_commits(...) range abort
   let l:by_line = exists('a:1') ? a:1 : v:false
   let l:state = flog#get_state()
 
-  let l:commits = flog#get_commit_at_line(a:firstline, a:lastline)
+  let l:commits = flog#get_commit_at_selection(a:firstline, a:lastline)
 
-  if type(l:commits) == v:t_dict
-    let l:first_commit = l:commits
-    let l:last_commit = l:commits
-  elseif type(l:commits) == v:t_list
-    let l:first_commit = l:commits[0]
-    let l:last_commit = l:commits[1]
-  else
+  if type(l:commits) != v:t_list
     return 0
   endif
+
+  let [l:first_commit, l:last_commit] = l:commits
 
   let l:first_index = index(l:state.commits, l:first_commit)
 
@@ -962,7 +932,7 @@ function! flog#jump_refs(refs) abort
   endif
 
   let l:current_ref = flog#get_ref_at_line()
-  let l:current_commit = flog#get_commit_at_current_line()
+  let l:current_commit = flog#get_commit_at_line()
   if type(l:current_commit) != v:t_dict
     return
   endif
@@ -1129,7 +1099,7 @@ endfunction
 function! flog#get_graph_cursor() abort
   let l:state = flog#get_state()
   if l:state.line_commits != []
-    return flog#get_commit_at_current_line()
+    return flog#get_commit_at_line()
   endif
   return v:null
 endfunction
@@ -1147,7 +1117,7 @@ function! flog#restore_graph_cursor(cursor) abort
 
   let l:short_commit_hash = a:cursor.short_commit_hash
 
-  let l:commit = flog#get_commit_at_current_line()
+  let l:commit = flog#get_commit_at_line()
   if type(l:commit) != v:t_dict
     return
   endif
@@ -1461,7 +1431,7 @@ function! flog#get_commit_data(...) range abort
   call flog#deprecate_function(
         \ 'flog#get_commit_data',
         \ 'flog#get_commit_at_line',
-        \ '[firstline], [lastline], [should_swap]')
+        \ '[line]')
 endfunction
 
 function! flog#get_ref_data(...) range abort
@@ -1480,14 +1450,14 @@ function! flog#preview_commit(...) range abort
   call flog#deprecate_function(
         \ 'flog#preview_commit',
         \ 'flog#run_tmp_command',
-        \ 'flog#format_commit(flog#get_commit_at_current_line(), "MyCommand %s"), [keep_focus], [should_update]')
+        \ 'flog#format_commit(flog#get_commit_at_line(), "MyCommand %s"), [keep_focus], [should_update]')
 endfunction
 
 function! flog#preview_split_commit(...) range abort
   call flog#deprecate_function(
         \ 'flog#preview_split_commit',
         \ 'flog#run_tmp_command',
-        \ 'flog#format_commit(flog#get_commit_at_current_line(), "(mods) Gsplit %s"), [keep_focus]')
+        \ 'flog#format_commit(flog#get_commit_at_line(), "(mods) Gsplit %s"), [keep_focus]')
 endfunction
 
 function! flog#git(...) range abort

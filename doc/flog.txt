@@ -361,50 +361,50 @@ FUNCTIONS                                                     *flog-functions*
 Flog provides several functions to allow you to define your own commands.
 
                                                    *flog#get_commit_at_line()*
-flog#get_commit_at_line([{firstline} [, {lastline} [, {should-swap}]]])
+flog#get_commit_at_line([{line}])
 
-  Get the commit(s) at the given line(s).
-  
-  If {firstline} or {lastline} aren't given or are less than 0, default to the
-  current line.
+  Gets the commit at the given line.
 
-  If {should-swap} is truthy, swap the given first and last lines.
+  If {line} isn't provided, use the current line.
 
-  If no commits were found, return |v:null|.
-
-  If one commit was found, return a |dict| containing the commit data.
-
-  If two commits were found, return a |list| containing both commits.
-
-flog#get_commit_at_current_line()          *flog#get_commit_at_current_line()*
-
-  Same as |flog-flog#get_commit_at_line()|, but explicitly use the current
-  line.
+  If the commit was found, returns a |dict| containing the commit data.
+  Otherwise, returns |v:null|.
 
                                               *flog#get_commit_at_selection()*
-flog#get_commit_at_selection([{should-swap}])
+flog#get_commit_at_selection([{firstline}[, {lastline}[, {should-swap}]]])
 
-  Same as |flog-flog#get_commit_at_line()|, but use the start and end of the
-  current visual selection.
+  Gets the commits at the beginning and end of the given lines.
+
+  If {firstline} is null, use the start of the current visual selection.
+
+  If {lastline} is null, use the end of the current visual selection.
+
+  If {should-swap} is truthy, swap the order of the commits.
+
+  If both commits were found, returns a |list| containing the commits.
+  Otherwise, returns |v:null|.
 
                                                         *flog#format_commit()*
-flog#format_commit({commit}, [{format}[, {dual-format}[, {default-first}]]])
+flog#format_commit({commit}, [{format}])
 
-  Format the hashes in commits returned from |flog-flog#get_commit_at_line()|
-  using |printf()|.
+  Format the hash of a commit from |flog#get_commit_at_line()| using
+  |printf()|.
 
-  {format} is optionally used as the format specifier for a single commit,
-  while {dual-format} is used as the format specifier for dual commits.
+  If {format} is not given use "%s".
 
-  {default-first} indicates the default ref to use for the first commit if
-  none was found, typically "HEAD". This makes sure that at least two commits
-  will always be formatted.
+  If the commit is valid, returns the formatted |string|.
+  Otherwise, returns v:null.
 
-  If {format} is not given or is empty, do not format the hashes.
+                                                        *flog#format_commit()*
+flog#format_commit_selection({commit-selection}, [{format}])
 
-  If {dual-format} is not given or is empty, use {format} when two commits
-  were found, but instead of using a single hash, use both hashes separated by
-  a space.
+  Format the hash of a commit from |flog#get_commit_at_selection()| using
+  |printf()|.
+
+  If {format} is not given use "%s %s".
+
+  If the commit list is valid, returns the formatted |string|.
+  Otherwise, returns v:null.
 
                                                           *flog#run_command()*
 flog#run_command({command}, [{keep-focus}[, {should-update}[, {is-tmp}]]])
@@ -416,14 +416,14 @@ flog#run_command({command}, [{keep-focus}[, {should-update}[, {is-tmp}]]])
 
   Example:
 >
-    flog#run_command(flog#format_commit(
+    flog#run_command(flog#format_commit_selection(
       \ flog#get_commit_at_selection(), 'Git diff %s'))
 <
 
                                                       *flog#run_tmp_command()*
 flog#run_tmp_command({command}, [{keep-focus}[, {should-update}]])
 
-  Same as |flog-flog#run_command()|, but explicitly make the windows opened by
+  Same as |flog#run_command()|, but explicitly make the windows opened by
   the command temporary.
 
 ==============================================================================

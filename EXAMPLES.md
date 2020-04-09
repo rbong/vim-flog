@@ -66,9 +66,13 @@ Put this code inside of your `.vimrc`:
 ```vim
 augroup flog
   autocmd FileType floggraph vno <buffer> D :<C-U>call flog#run_tmp_command(
-    \ flog#format_commit(
+    \ flog#format_commit_selection(
       \ flog#get_commit_at_selection(),
-      \ 'vertical belowright Git diff %s', '', 'HEAD'))<CR>
+      \ 'vertical belowright Git diff %s %s'))<CR>
+  autocmd FileType floggraph nno <buffer> D :<C-U>call flog#run_tmp_command(
+    \ flog#format_commit(
+      \ flog#get_commit_at_line(),
+      \ 'vertical belowright Git diff HEAD %s'))<CR>
 augroup END
 ```
 
@@ -76,15 +80,14 @@ You can now diff commits by visually selecting them and pressing `D`, equivalent
 
 Let's break this code down.
 
-`flog#get_commit_at_selection` will return the commits or commit at the beginning of the virtual selection.
+`flog#get_commit_at_selection` will return the commits at the beginning and end of the virtual selection.
 
-The two format specifiers describe how the hashes in these commits will be formatted: `'vertical belowright Git diff %s'` and `''`.
-The first format specifier describes how to build the command if only one commit was returned from `flog#get_commit_at_selection`.
-The second format specifier would describe how to format hashes from two commits, but since it is an empty string it will use the first format specifier with a space between the hashes.
+`flog#format_commit_selection` will format those commit based on a format specifier for `printf()`.
+The commands will be formatted as `'vertical belowright Git diff <commit 1> <commit 2>'`.
 
-The `'HEAD'` option tells the function to use the `'HEAD'` ref for the first hash if only one commit was found.
+`flog#run_tmp_command` tells flog to run the command and treat any windows it opens as temporary.
 
-Finally `flog#run_tmp_command` tells flog to run the command and treat any windows it opens as temporary.
+For normal mode, similar functions are used, only the format specifier will format the single commit as `... Git diff HEAD <commit>`.
 
 For more details, see `:help flog-functions` and `:help flog-about`.
 
