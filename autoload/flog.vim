@@ -422,14 +422,18 @@ function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
     endif
     let l:first_commit = l:commit[0]
     let l:last_commit = l:commit[1]
-    let l:first_hash = l:first_commit.short_commit_hash
-    let l:last_hash = l:last_commit.short_commit_hash
-    let l:completions = [l:first_hash, l:last_hash]
-          \ + l:first_commit.ref_name_list + l:last_commit.ref_name_list
-          \ + [
-            \ l:last_hash . '..' . l:first_hash,
-            \ l:last_hash . '^..' . l:first_hash
-          \ ]
+    if l:first_commit == l:last_commit
+      let l:completions = [l:first_commit.short_commit_hash] + l:commit.ref_name_list
+    else
+      let l:first_hash = l:first_commit.short_commit_hash
+      let l:last_hash = l:last_commit.short_commit_hash
+      let l:completions = [l:first_hash, l:last_hash]
+            \ + l:first_commit.ref_name_list + l:last_commit.ref_name_list
+            \ + [
+              \ l:last_hash . '..' . l:first_hash,
+              \ l:last_hash . '^..' . l:first_hash
+            \ ]
+    endif
   endif
 
   return flog#filter_completions(a:arg_lead, l:completions)
