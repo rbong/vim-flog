@@ -1154,24 +1154,24 @@ function! flog#populate_graph_buffer() abort
   call flog#restore_graph_cursor(l:cursor)
 endfunction
 
-function! flog#clear_graph_update_queue() abort
+function! flog#clear_graph_update_hook() abort
   augroup FlogGraphUpdate
     autocmd! * <buffer>
   augroup END
 endfunction
 
-function! flog#do_queued_graph_update() abort
-  call flog#clear_graph_update_queue()
+function! flog#do_graph_update_hook() abort
+  call flog#clear_graph_update_hook()
   call flog#populate_graph_buffer()
 endfunction
 
-function! flog#queue_graph_update(previous_buffer_number) abort
+function! flog#initialize_graph_update_hook(previous_buffer_number) abort
   augroup FlogGraphUpdate
     exec 'autocmd! * <buffer=' . a:previous_buffer_number . '>'
     if exists('##SafeState')
-      exec 'autocmd SafeState <buffer=' . a:previous_buffer_number . '> call flog#do_queued_graph_update()'
+      exec 'autocmd SafeState <buffer=' . a:previous_buffer_number . '> call flog#do_graph_update_hook()'
     else
-      exec 'autocmd WinEnter <buffer=' . a:previous_buffer_number . '> call flog#do_queued_graph_update()'
+      exec 'autocmd WinEnter <buffer=' . a:previous_buffer_number . '> call flog#do_graph_update_hook()'
     endif
   augroup END
 endfunction
@@ -1373,7 +1373,7 @@ endfunction
 function! flog#handle_command_update_cleanup(should_update, previous_window_id, previous_buffer_number) abort
   if a:should_update
     if win_getid() != a:previous_window_id
-      call flog#queue_graph_update(a:previous_buffer_number)
+      call flog#initialize_graph_update_hook(a:previous_buffer_number)
     else
       call flog#populate_graph_buffer()
     endif
