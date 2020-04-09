@@ -1311,13 +1311,13 @@ function! flog#open_tmp_win(command) abort
 
   let l:saved_window_ids = flog#get_all_window_ids()
   exec a:command
-  let l:tmp_window_ids = flog#exclude(flog#get_all_window_ids(), l:saved_window_ids)
+  silent! let l:tmp_window_ids = flog#exclude(flog#get_all_window_ids(), l:saved_window_ids)
   if l:tmp_window_ids != []
-    call win_gotoid(l:previous_window_id)
-    call flog#close_tmp_win()
+    silent! call win_gotoid(l:previous_window_id)
+    silent! call flog#close_tmp_win()
     for l:tmp_window_id in l:tmp_window_ids
-      call win_gotoid(l:tmp_window_id)
-      call flog#initialize_tmp_buffer(l:state)
+      silent! call win_gotoid(l:tmp_window_id)
+      silent! call flog#initialize_tmp_buffer(l:state)
     endfor
   endif
 endfunction
@@ -1402,12 +1402,12 @@ function! flog#run_command(command, ...) abort
 
   if l:is_tmp
     call flog#open_tmp_win(a:command)
-    call flog#tmp_command_buffer_settings()
-    call flog#handle_command_cleanup(
+    silent! call flog#tmp_command_buffer_settings()
+    silent! call flog#handle_command_cleanup(
           \ l:keep_focus, l:should_update, l:previous_window_id, l:previous_buffer_number)
   else
     exec a:command
-    call flog#handle_command_cleanup(
+    silent! call flog#handle_command_cleanup(
           \ l:keep_focus, l:should_update, l:previous_window_id, l:previous_buffer_number)
   endif
 endfunction
