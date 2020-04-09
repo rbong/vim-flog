@@ -358,6 +358,8 @@ endfunction
 
 " Argument completion {{{
 
+" Argument completion utilities {{{
+
 function! flog#filter_completions(arg_lead, completions) abort
   let l:lead = escape(a:arg_lead, '\\')
   return filter(a:completions, 'v:val =~# "^" . l:lead')
@@ -395,6 +397,10 @@ function! flog#split_completable_arg(arg) abort
 
   return [l:lead, l:last]
 endfunction
+
+" }}}
+
+" Git command argument completion {{{
 
 function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
   let l:line = line('.')
@@ -466,6 +472,10 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
 
   return l:completions
 endfunction
+
+" }}}
+
+" Flog command argument commpletion {{{
 
 function! flog#complete_refs(arg_lead, cmd_line, cursor_pos) abort
   let l:state = flog#get_state()
@@ -570,6 +580,8 @@ function! flog#complete(arg_lead, cmd_line, cursor_pos) abort
   endif
   return flog#filter_completions(a:arg_lead, copy(g:flog_default_completion))
 endfunction
+
+" }}}
 
 " }}}
 
@@ -781,6 +793,8 @@ endfunction
 
 " Commit operations {{{
 
+" Commit operation utilities {{{
+
 function! flog#get_commit_at_line(...) abort
   let l:firstline = exists('a:1') ? a:1 : -1
   let l:lastline = exists('a:2') ? a:2 : -1
@@ -862,6 +876,10 @@ function! flog#format_commit(commit, ...) abort
   return v:null
 endfunction
 
+" }}}
+
+" Commit navigation {{{
+
 function! flog#jump_commits(commits) abort
   let l:state = flog#get_state()
 
@@ -887,6 +905,8 @@ endfunction
 function! flog#previous_commit() abort
   call flog#jump_commits(-v:count1)
 endfunction
+
+" }}}
 
 function! flog#copy_commits(...) range abort
   let l:by_line = exists('a:1') ? a:1 : v:false
@@ -922,11 +942,17 @@ endfunction
 
 " Ref operations {{{
 
+" Ref operation utilities {{{
+
 function! flog#get_ref_at_line(...) abort
   let l:line = exists('a:1') ? a:1 : line('.')
   let l:state = flog#get_state()
   return get(l:state.line_commit_refs, l:line - 1, v:null)
 endfunction
+
+" }}}
+
+" Ref navigation {{{
 
 function! flog#jump_refs(refs) abort
   let l:state = flog#get_state()
@@ -981,9 +1007,13 @@ endfunction
 
 " }}}
 
+" }}}
+
 " Buffer management {{{
 
 " Graph buffer {{{
+
+" Graph buffer population {{{
 
 function! flog#modify_graph_buffer_contents(content) abort
   let l:state = flog#get_state()
@@ -1166,6 +1196,10 @@ function! flog#initialize_graph_buffer(state) abort
   call flog#populate_graph_buffer()
 endfunction
 
+" }}}
+
+" Graph buffer settings {{{
+
 function! flog#update_options(args, force) abort
   let l:state = flog#get_state()
   let l:defaults = flog#get_internal_default_args()
@@ -1221,6 +1255,10 @@ function! flog#change_skip_by_max_count(multiplier) abort
   call flog#populate_graph_buffer()
 endfunction
 
+" }}}
+
+" Graph buffer update hook {{{
+
 function! flog#clear_graph_update_hook() abort
   augroup FlogGraphUpdate
     autocmd! * <buffer>
@@ -1242,6 +1280,8 @@ function! flog#initialize_graph_update_hook(previous_buffer_number) abort
     endif
   augroup END
 endfunction
+
+" }}}
 
 " }}}
 
@@ -1359,7 +1399,7 @@ endfunction
 
 " }}}
 
-" Command helpers {{{
+" Command utilities {{{
 
 function! flog#handle_command_window_cleanup(keep_focus, previous_window_id) abort
   if !a:keep_focus
