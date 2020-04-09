@@ -1240,16 +1240,16 @@ function! flog#do_graph_update_hook() abort
   call flog#populate_graph_buffer()
 endfunction
 
-function! flog#initialize_graph_update_hook(previous_buffer_number) abort
+function! flog#initialize_graph_update_hook(graph_buff_num) abort
   augroup FlogGraphUpdate
 
-    exec 'autocmd! * <buffer=' . a:previous_buffer_number . '>'
+    exec 'autocmd! * <buffer=' . a:graph_buff_num . '>'
     if exists('##SafeState')
-      exec 'autocmd SafeState <buffer=' . a:previous_buffer_number . '> call flog#do_graph_update_hook()'
+      exec 'autocmd SafeState <buffer=' . a:graph_buff_num . '> call flog#do_graph_update_hook()'
     elseif has('nvim')
-      exec 'autocmd WinEnter <buffer=' . a:previous_buffer_number . '> call timer_start(0, {-> flog#do_graph_update_hook()})'
+      exec 'autocmd WinEnter <buffer=' . a:graph_buff_num . '> call timer_start(0, {-> flog#do_graph_update_hook()})'
     else
-      exec 'autocmd WinEnter <buffer=' . a:previous_buffer_number . '> call flog#do_graph_update_hook()'
+      exec 'autocmd WinEnter <buffer=' . a:graph_buff_num . '> call flog#do_graph_update_hook()'
     endif
   augroup END
 endfunction
@@ -1286,7 +1286,7 @@ endfunction
 
 function! flog#close_tmp_win() abort
   let l:state = flog#get_state()
-  let l:previous_window_id = win_getid()
+  let l:graph_window_id = win_getid()
 
   for l:tmp_window_id in l:state.tmp_window_ids
     " temporary buffer is not open
@@ -1302,13 +1302,13 @@ function! flog#close_tmp_win() abort
   let l:state.tmp_window_ids = []
 
   " go back to the previous window
-  call win_gotoid(l:previous_window_id)
+  call win_gotoid(l:graph_window_id)
 
   return
 endfunction
 
 function! flog#open_tmp_win(command) abort
-  let l:previous_window_id = win_getid()
+  let l:graph_window_id = win_getid()
 
   let l:state = flog#get_state()
 
@@ -1316,7 +1316,7 @@ function! flog#open_tmp_win(command) abort
   exec a:command
   silent! let l:tmp_window_ids = flog#exclude(flog#get_all_window_ids(), l:saved_window_ids)
   if l:tmp_window_ids != []
-    silent! call win_gotoid(l:previous_window_id)
+    silent! call win_gotoid(l:graph_window_id)
     silent! call flog#close_tmp_win()
     for l:tmp_window_id in l:tmp_window_ids
       silent! call win_gotoid(l:tmp_window_id)
@@ -1367,28 +1367,28 @@ endfunction
 
 " Command utilities {{{
 
-function! flog#handle_command_window_cleanup(keep_focus, previous_window_id) abort
+function! flog#handle_command_window_cleanup(keep_focus, graph_window_id) abort
   if !a:keep_focus
-    call win_gotoid(a:previous_window_id)
+    call win_gotoid(a:graph_window_id)
     if has('nvim')
       redraw!
     endif
   endif
 endfunction
 
-function! flog#handle_command_update_cleanup(should_update, previous_window_id, previous_buffer_number) abort
+function! flog#handle_command_update_cleanup(should_update, graph_window_id, graph_buff_num) abort
   if a:should_update
-    if win_getid() != a:previous_window_id
-      call flog#initialize_graph_update_hook(a:previous_buffer_number)
+    if win_getid() != a:graph_window_id
+      call flog#initialize_graph_update_hook(a:graph_buff_num)
     else
       call flog#populate_graph_buffer()
     endif
   endif
 endfunction
 
-function! flog#handle_command_cleanup(keep_focus, should_update, previous_window_id, previous_buffer_number) abort
-  call flog#handle_command_window_cleanup(a:keep_focus, a:previous_window_id)
-  call flog#handle_command_update_cleanup(a:should_update, a:previous_window_id, a:previous_buffer_number)
+function! flog#handle_command_cleanup(keep_focus, should_update, graph_window_id, graph_buff_num) abort
+  call flog#handle_command_window_cleanup(a:keep_focus, a:graph_window_id)
+  call flog#handle_command_update_cleanup(a:should_update, a:graph_window_id, a:graph_buff_num)
 endfunction
 
 function! flog#run_command(command, ...) abort
@@ -1396,8 +1396,8 @@ function! flog#run_command(command, ...) abort
   let l:should_update = get(a:, 2, v:false)
   let l:is_tmp = get(a:, 3, v:false)
 
-  let l:previous_window_id = win_getid()
-  let l:previous_buffer_number = bufnr('')
+  let l:graph_window_id = win_getid()
+  let l:graph_buff_num = bufnr('')
 
   if type(a:command) != v:t_string
     return
@@ -1407,11 +1407,11 @@ function! flog#run_command(command, ...) abort
     call flog#open_tmp_win(a:command)
     silent! call flog#tmp_command_buffer_settings()
     silent! call flog#handle_command_cleanup(
-          \ l:keep_focus, l:should_update, l:previous_window_id, l:previous_buffer_number)
+          \ l:keep_focus, l:should_update, l:graph_window_id, l:graph_buff_num)
   else
     exec a:command
     silent! call flog#handle_command_cleanup(
-          \ l:keep_focus, l:should_update, l:previous_window_id, l:previous_buffer_number)
+          \ l:keep_focus, l:should_update, l:graph_window_id, l:graph_buff_num)
   endif
 endfunction
 
