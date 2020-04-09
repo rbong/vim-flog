@@ -29,7 +29,7 @@ if !hasmapto('<Plug>(FlogVDiffSplitRight)')
 endif
 
 nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_line(), 'vertical belowright Git diff HEAD %s'))<CR>
-vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command(flog#format_commit_selection(flog#get_commit_at_selection(), 'vertical belowright Git diff %s %s'))<CR>
+vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command(flog#format_commit_selection(flog#get_commit_selection(), 'vertical belowright Git diff %s %s'))<CR>
 
 if !hasmapto('<Plug>(FlogYank)')
   nmap <buffer> y<C-G> <Plug>(FlogYank)
@@ -144,10 +144,10 @@ if !hasmapto('<Plug>(FlogRevertNoEdit)')
 endif
 
 nnoremap <buffer> <Plug>(FlogRevert) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git revert %s'), 1, 1)<CR>
-vnoremap <buffer> <Plug>(FlogRevert) :<C-U>call flog#run_command(flog#format_commit_selection(flog#get_commit_at_selection(v:null, v:null, 1), 'Git revert %s^..%s'), 1, 1)<CR>
+vnoremap <buffer> <Plug>(FlogRevert) :<C-U>call flog#run_command(flog#format_commit_selection(flog#get_commit_selection(v:null, v:null, 1), 'Git revert %s^..%s'), 1, 1)<CR>
 
 nnoremap <buffer> <Plug>(FlogRevertNoEdit) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git revert --no-edit %s'), 1, 1)<CR>
-vnoremap <buffer> <Plug>(FlogRevertNoEdit) :<C-U>call flog#run_command(flog#format_commit_selection(flog#get_commit_at_selection(v:null, v:null, 1), 'Git revert --no-edit %s^..%s'), 1, 1)<CR>
+vnoremap <buffer> <Plug>(FlogRevertNoEdit) :<C-U>call flog#run_command(flog#format_commit_selection(flog#get_commit_selection(v:null, v:null, 1), 'Git revert --no-edit %s^..%s'), 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogCheckout)')
   nmap <buffer> coo <Plug>(FlogCheckout)

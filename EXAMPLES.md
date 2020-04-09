@@ -67,7 +67,7 @@ Put this code inside of your `.vimrc`:
 augroup flog
   autocmd FileType floggraph vno <buffer> D :<C-U>call flog#run_tmp_command(
     \ flog#format_commit_selection(
-      \ flog#get_commit_at_selection(),
+      \ flog#get_commit_selection(),
       \ 'vertical belowright Git diff %s %s'))<CR>
   autocmd FileType floggraph nno <buffer> D :<C-U>call flog#run_tmp_command(
     \ flog#format_commit(
@@ -80,7 +80,7 @@ You can now diff commits by visually selecting them and pressing `D`, equivalent
 
 Let's break this code down.
 
-`flog#get_commit_at_selection` will return the commits at the beginning and end of the virtual selection.
+`flog#get_commit_selection` will return the commits at the beginning and end of the virtual selection.
 
 `flog#format_commit_selection` will format those commit based on a format specifier for `printf()`.
 The commands will be formatted as `'vertical belowright Git diff <commit 1> <commit 2>'`.

@@ -416,7 +416,7 @@ function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
     let l:completions = [l:commit.short_commit_hash] + l:commit.ref_name_list
   else
     " complete for a range
-    let l:commit = flog#get_commit_at_selection(l:firstline, l:lastline)
+    let l:commit = flog#get_commit_selection(l:firstline, l:lastline)
     if type(l:commit) != v:t_list
       return []
     endif
@@ -807,7 +807,7 @@ function! flog#get_commit_at_line(...) abort
   return get(flog#get_state().line_commits, l:line - 1, v:null)
 endfunction
 
-function! flog#get_commit_at_selection(...) abort
+function! flog#get_commit_selection(...) abort
   let l:firstline = get(a:, 1, v:null)
   let l:lastline = get(a:, 2, v:null)
   let l:should_swap = get(a:, 3, 0)
@@ -833,6 +833,14 @@ function! flog#get_commit_at_selection(...) abort
   endif
 
   return l:should_swap ? [l:last_commit, l:first_commit] : [l:first_commit, l:last_commit]
+endfunction
+
+" alias for flog#get_commit_selection
+function! flog#get_commit_at_selection(...) abort
+  let l:firstline = get(a:, 1, v:null)
+  let l:lastline = get(a:, 2, v:null)
+  let l:should_swap = get(a:, 3, 0)
+  return flog#get_commit_selection(l:firstline, l:lastline, l:should_swap)
 endfunction
 
 function! flog#format_commit(commit, ...) abort
@@ -893,7 +901,7 @@ function! flog#copy_commits(...) range abort
   let l:by_line = get(a:, 1, v:false)
   let l:state = flog#get_state()
 
-  let l:commits = flog#get_commit_at_selection(a:firstline, a:lastline)
+  let l:commits = flog#get_commit_selection(a:firstline, a:lastline)
 
   if type(l:commits) != v:t_list
     return 0

@@ -370,8 +370,8 @@ flog#get_commit_at_line([{line}])
   If the commit was found, returns a |dict| containing the commit data.
   Otherwise, returns |v:null|.
 
-                                              *flog#get_commit_at_selection()*
-flog#get_commit_at_selection([{firstline}[, {lastline}[, {should-swap}]]])
+                                                 *flog#get_commit_selection()*
+flog#get_commit_selection([{firstline}[, {lastline}[, {should-swap}]]])
 
   Gets the commits at the beginning and end of the given lines.
 
@@ -398,7 +398,7 @@ flog#format_commit({commit}, [{format}])
                                                         *flog#format_commit()*
 flog#format_commit_selection({commit-selection}, [{format}])
 
-  Format the hash of a commit from |flog#get_commit_at_selection()| using
+  Format the hash of a commit from |flog#get_commit_selection()| using
   |printf()|.
 
   If {format} is not given use "%s %s".
@@ -417,7 +417,7 @@ flog#run_command({command}, [{keep-focus}[, {should-update}[, {is-tmp}]]])
   Example:
 >
     flog#run_command(flog#format_commit_selection(
-      \ flog#get_commit_at_selection(), 'Git diff %s'))
+      \ flog#get_commit_selection(), 'Git diff %s'))
 <
 
                                                       *flog#run_tmp_command()*
