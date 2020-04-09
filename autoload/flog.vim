@@ -83,8 +83,8 @@ endfunction
 function! flog#deprecate_mapping(mapping, new_mapping, ...) abort
   let l:deprecated_usage = a:mapping
   if hasmapto(a:mapping) && !flog#did_show_deprecation_warning(l:deprecated_usage)
-    let l:new_mapping_type = exists('a:1') ? a:1 : '{nmap|vmap}'
-    let l:new_mapping_value = exists('a:2') ? a:2 : '...'
+    let l:new_mapping_type = get(a:, 1, '{nmap|vmap}')
+    let l:new_mapping_value = get(a:, 2, '...')
     let l:new_usage = printf('%s %s %s', l:new_mapping_type, l:new_mapping_value, a:new_mapping)
     return flog#show_deprecation_warning(l:deprecated_usage, l:new_usage)
   endif
@@ -93,7 +93,7 @@ endfunction
 function! flog#deprecate_setting(setting, new_setting, ...) abort
   let l:deprecated_usage = a:setting
   if exists(a:setting) && !flog#did_show_deprecation_warning(l:deprecated_usage)
-    let l:new_setting_value = exists('a:1') ? a:1 : '...'
+    let l:new_setting_value = get(a:, 1, '...')
     let l:new_usage = printf('let %s = %s', a:new_setting, l:new_setting_value)
     return flog#show_deprecation_warning(l:deprecated_usage, l:new_usage)
   endif
@@ -101,11 +101,11 @@ endfunction
 
 function! flog#deprecate_function(func, new_func, ...) abort
   let l:deprecated_usage = printf('%s()', a:func)
-  let l:new_func_args = exists('a:1') ? a:1 : '...'
+  let l:new_func_args = get(a:, 1, '...')
   let l:new_usage = printf('call %s(%s)', a:new_func, l:new_func_args)
 
   if !flog#did_show_deprecation_warning(l:deprecated_usage)
-    let l:new_func_args = exists('a:1') ? a:1 : '...'
+    let l:new_func_args = get(a:, 1, '...')
     let l:new_usage = printf('call %s(%s)', a:new_func, l:new_func_args)
     call flog#show_deprecation_warning(l:deprecated_usage, l:new_usage)
   endif
@@ -122,7 +122,7 @@ endfunction
 function! flog#deprecate_command(command, new_command, ...) abort
   let l:deprecated_usage = a:command
   if !flog#did_show_deprecation_warning(l:deprecated_usage)
-    let l:new_command_args = exists('a:1') ? a:1 : '...'
+    let l:new_command_args = get(a:, 1, '...')
     let l:new_usage = printf('%s %s', a:new_command, l:new_command_args)
     call flog#show_deprecation_warning(l:deprecated_usage, l:new_usage)
   endif
@@ -796,14 +796,14 @@ endfunction
 " Commit operation utilities {{{
 
 function! flog#get_commit_at_line(...) abort
-  let l:line = exists('a:1') ? a:1 : '.'
+  let l:line = get(a:, 1, '.')
   return get(flog#get_state().line_commits, line(l:line) - 1, v:null)
 endfunction
 
 function! flog#get_commit_at_selection(...) abort
-  let l:firstline = exists('a:1') ? a:1 : v:null
-  let l:lastline = exists('a:2') ? a:2 : v:null
-  let l:should_swap = exists('a:3') ? a:3 : 0
+  let l:firstline = get(a:, 1, v:null)
+  let l:lastline = get(a:, 2, v:null)
+  let l:should_swap = get(a:, 3, 0)
 
   if type(l:firstline) != v:t_string && type(l:firstline) != v:t_number
     let l:firstline = "'<"
@@ -829,7 +829,7 @@ function! flog#get_commit_at_selection(...) abort
 endfunction
 
 function! flog#format_commit(commit, ...) abort
-  let l:format = exists('a:1') ? a:1 : '%s'
+  let l:format = get(a:, 1, '%s')
 
   if type(a:commit) != v:t_dict
     return v:null
@@ -839,7 +839,7 @@ function! flog#format_commit(commit, ...) abort
 endfunction
 
 function! flog#format_commit_selection(commit_selection, ...) abort
-  let l:format = exists('a:1') ? a:1 : '%s %s'
+  let l:format = get(a:, 1, '%s %s')
 
   if type(a:commit_selection) != v:t_list
     return v:null
@@ -883,7 +883,7 @@ endfunction
 " }}}
 
 function! flog#copy_commits(...) range abort
-  let l:by_line = exists('a:1') ? a:1 : v:false
+  let l:by_line = get(a:, 1, v:false)
   let l:state = flog#get_state()
 
   let l:commits = flog#get_commit_at_selection(a:firstline, a:lastline)
@@ -915,7 +915,7 @@ endfunction
 " Ref operation utilities {{{
 
 function! flog#get_ref_at_line(...) abort
-  let l:line = exists('a:1') ? a:1 : line('.')
+  let l:line = get(a:, 1, line('.'))
   let l:state = flog#get_state()
   return get(l:state.line_commit_refs, l:line - 1, v:null)
 endfunction
@@ -1389,9 +1389,9 @@ function! flog#handle_command_cleanup(keep_focus, should_update, previous_window
 endfunction
 
 function! flog#run_command(command, ...) abort
-  let l:keep_focus = exists('a:1') ? a:1 : v:false
-  let l:should_update = exists('a:2') ? a:2 : v:false
-  let l:is_tmp = exists('a:3') ? a:3 : v:false
+  let l:keep_focus = get(a:, 1, v:false)
+  let l:should_update = get(a:, 2, v:false)
+  let l:is_tmp = get(a:, 3, v:false)
 
   let l:previous_window_id = win_getid()
   let l:previous_buffer_number = bufnr('')
@@ -1413,8 +1413,8 @@ function! flog#run_command(command, ...) abort
 endfunction
 
 function! flog#run_tmp_command(command, ...) abort
-  let l:keep_focus = exists('a:1') ? a:1 : v:false
-  let l:should_update = exists('a:2') ? a:2 : v:false
+  let l:keep_focus = get(a:, 1, v:false)
+  let l:should_update = get(a:, 2, v:false)
 
   call flog#run_command(a:command, l:keep_focus, l:should_update, v:true)
 endfunction
