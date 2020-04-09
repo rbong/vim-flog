@@ -1323,30 +1323,6 @@ endfunction
 
 " Graph layout management {{{
 
-function! flog#handle_command_window_cleanup(keep_focus, previous_window_id) abort
-  if !a:keep_focus
-    call win_gotoid(a:previous_window_id)
-    if has('nvim')
-      redraw!
-    endif
-  endif
-endfunction
-
-function! flog#handle_command_update_cleanup(should_update, previous_window_id, previous_buffer_number) abort
-  if a:should_update
-    if win_getid() != a:previous_window_id
-      call flog#queue_graph_update(a:previous_buffer_number)
-    else
-      call flog#populate_graph_buffer()
-    endif
-  endif
-endfunction
-
-function! flog#handle_command_cleanup(keep_focus, should_update, previous_window_id, previous_buffer_number) abort
-  call flog#handle_command_window_cleanup(a:keep_focus, a:previous_window_id)
-  call flog#handle_command_update_cleanup(a:should_update, a:previous_window_id, a:previous_buffer_number)
-endfunction
-
 function! flog#open_graph(state) abort
   let l:window_name = 'flog-' . a:state.instance . ' [uninitialized]'
   silent exec a:state.open_cmd . ' ' . l:window_name
@@ -1384,6 +1360,30 @@ endfunction
 " }}}
 
 " Command helpers {{{
+
+function! flog#handle_command_window_cleanup(keep_focus, previous_window_id) abort
+  if !a:keep_focus
+    call win_gotoid(a:previous_window_id)
+    if has('nvim')
+      redraw!
+    endif
+  endif
+endfunction
+
+function! flog#handle_command_update_cleanup(should_update, previous_window_id, previous_buffer_number) abort
+  if a:should_update
+    if win_getid() != a:previous_window_id
+      call flog#queue_graph_update(a:previous_buffer_number)
+    else
+      call flog#populate_graph_buffer()
+    endif
+  endif
+endfunction
+
+function! flog#handle_command_cleanup(keep_focus, should_update, previous_window_id, previous_buffer_number) abort
+  call flog#handle_command_window_cleanup(a:keep_focus, a:previous_window_id)
+  call flog#handle_command_update_cleanup(a:should_update, a:previous_window_id, a:previous_buffer_number)
+endfunction
 
 function! flog#run_command(command, ...) abort
   let l:keep_focus = exists('a:1') ? a:1 : v:false
