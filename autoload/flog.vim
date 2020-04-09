@@ -35,15 +35,18 @@ function! flog#ellipsize(string, ...) abort
 endfunction
 
 function! flog#unescape_arg(arg) abort
-  " remove trailing backslashes to prevent evaluation errors
-  let l:arg = substitute(a:arg, '\\*$', '', '')
-  try
-    " unescape spaces to deal with argument interpolation
-    let l:arg = substitute(l:arg, '\\ ', ' ', '')
-  catch /E114:/
-    " invalid trailing escape sequence
-    return []
-  endtry
+  let l:arg = ''
+  let l:is_escaped = 0
+
+  for l:char in split(a:arg, '\zs')
+    if l:char ==# '\' && !l:is_escaped
+      let l:is_escaped = 1
+    else
+      let l:arg .= l:char
+      let l:is_escaped = 0
+    endif
+  endfor
+
   return l:arg
 endfunction
 
