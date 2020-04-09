@@ -1242,9 +1242,12 @@ endfunction
 
 function! flog#initialize_graph_update_hook(previous_buffer_number) abort
   augroup FlogGraphUpdate
+
     exec 'autocmd! * <buffer=' . a:previous_buffer_number . '>'
     if exists('##SafeState')
       exec 'autocmd SafeState <buffer=' . a:previous_buffer_number . '> call flog#do_graph_update_hook()'
+    elseif has('nvim')
+      exec 'autocmd WinEnter <buffer=' . a:previous_buffer_number . '> call timer_start(0, {-> flog#do_graph_update_hook()})'
     else
       exec 'autocmd WinEnter <buffer=' . a:previous_buffer_number . '> call flog#do_graph_update_hook()'
     endif
