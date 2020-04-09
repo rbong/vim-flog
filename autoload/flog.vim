@@ -446,11 +446,11 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   " complete limit
   if l:state.limit
     let [l:limit, l:limit_path] = flog#split_limit(l:state.limit)
-    let l:completions += [l:limit_path]
+    let l:completions += flog#filter_completions(a:arg_lead, [l:limit_path])
   endif
 
   " complete path
-  let l:completions += flog#exclude(l:state.path, l:completions)
+  let l:completions += flog#exclude(flog#filter_completions(a:arg_lead, l:state.path), l:completions)
 
   " complete all filenames
   let l:completions += flog#exclude(getcompletion(a:arg_lead, 'file'), l:completions)
