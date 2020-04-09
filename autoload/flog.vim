@@ -1154,28 +1154,6 @@ function! flog#populate_graph_buffer() abort
   call flog#restore_graph_cursor(l:cursor)
 endfunction
 
-function! flog#clear_graph_update_hook() abort
-  augroup FlogGraphUpdate
-    autocmd! * <buffer>
-  augroup END
-endfunction
-
-function! flog#do_graph_update_hook() abort
-  call flog#clear_graph_update_hook()
-  call flog#populate_graph_buffer()
-endfunction
-
-function! flog#initialize_graph_update_hook(previous_buffer_number) abort
-  augroup FlogGraphUpdate
-    exec 'autocmd! * <buffer=' . a:previous_buffer_number . '>'
-    if exists('##SafeState')
-      exec 'autocmd SafeState <buffer=' . a:previous_buffer_number . '> call flog#do_graph_update_hook()'
-    else
-      exec 'autocmd WinEnter <buffer=' . a:previous_buffer_number . '> call flog#do_graph_update_hook()'
-    endif
-  augroup END
-endfunction
-
 function! flog#graph_buffer_settings() abort
   exec 'lcd ' . flog#get_fugitive_workdir()
   set filetype=floggraph
@@ -1241,6 +1219,28 @@ function! flog#change_skip_by_max_count(multiplier) abort
   endif
   let l:state.skip = max([0, l:state.skip + l:state.max_count * a:multiplier])
   call flog#populate_graph_buffer()
+endfunction
+
+function! flog#clear_graph_update_hook() abort
+  augroup FlogGraphUpdate
+    autocmd! * <buffer>
+  augroup END
+endfunction
+
+function! flog#do_graph_update_hook() abort
+  call flog#clear_graph_update_hook()
+  call flog#populate_graph_buffer()
+endfunction
+
+function! flog#initialize_graph_update_hook(previous_buffer_number) abort
+  augroup FlogGraphUpdate
+    exec 'autocmd! * <buffer=' . a:previous_buffer_number . '>'
+    if exists('##SafeState')
+      exec 'autocmd SafeState <buffer=' . a:previous_buffer_number . '> call flog#do_graph_update_hook()'
+    else
+      exec 'autocmd WinEnter <buffer=' . a:previous_buffer_number . '> call flog#do_graph_update_hook()'
+    endif
+  augroup END
 endfunction
 
 " }}}
