@@ -416,7 +416,7 @@ function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
     let l:completions = [l:commit.short_commit_hash] + l:commit.ref_name_list
   else
     " complete for a range
-    let l:commit = flog#get_commit_at_line(l:firstline, l:lastline)
+    let l:commit = flog#get_commit_at_selection(l:firstline, l:lastline)
     if type(l:commit) != v:t_list
       return []
     endif
@@ -797,7 +797,10 @@ endfunction
 
 function! flog#get_commit_at_line(...) abort
   let l:line = get(a:, 1, '.')
-  return get(flog#get_state().line_commits, line(l:line) - 1, v:null)
+  if type(l:line) == v:t_string
+    let l:line = line(l:line)
+  endif
+  return get(flog#get_state().line_commits, l:line - 1, v:null)
 endfunction
 
 function! flog#get_commit_at_selection(...) abort
