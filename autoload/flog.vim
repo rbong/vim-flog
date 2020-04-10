@@ -959,11 +959,13 @@ endfunction
 
 function! flog#get_branch_at_line(...) abort
   let l:line = get(a:, 1, '.')
-  if type(l:line) == v:t_string
-    let l:line = line(l:line)
-  endif
 
-  let l:refs = get(flog#get_state().line_commit_refs, l:line - 1, [])
+  let l:commit = flog#get_commit_at_line(l:line)
+  if type(l:commit) != v:t_dict
+    return v:null
+  endif
+  let l:refs = l:commit.ref_name_list
+
   let l:remote_refs = []
   let l:local_refs = []
   for l:ref in l:refs
@@ -986,11 +988,12 @@ endfunction
 
 function! flog#get_local_branch_at_line(...) abort
   let l:line = get(a:, 1, '.')
-  if type(l:line) == v:t_string
-    let l:line = line(l:line)
-  endif
 
-  let l:refs = get(flog#get_state().line_commit_refs, l:line - 1, [])
+  let l:commit = flog#get_commit_at_line(l:line)
+  if type(l:commit) != v:t_dict
+    return v:null
+  endif
+  let l:refs = l:commit.ref_name_list
   let l:refs = filter(l:refs, 'v:val !~# "HEAD$"')
 
   if empty(l:refs)
