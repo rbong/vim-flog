@@ -930,7 +930,10 @@ endfunction
 " Ref operation utilities {{{
 
 function! flog#get_ref_at_line(...) abort
-  let l:line = get(a:, 1, line('.'))
+  let l:line = get(a:, 1, '.')
+  if type(l:line) == v:t_string
+    let l:line = line(l:line)
+  endif
   let l:state = flog#get_state()
   return get(l:state.line_commit_refs, l:line - 1, v:null)
 endfunction
