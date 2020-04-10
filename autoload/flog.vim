@@ -957,7 +957,7 @@ function! flog#get_ref_at_line(...) abort
   return get(l:state.line_commit_refs, l:line - 1, v:null)
 endfunction
 
-function! flog#get_branch_or_hash_at_line(...) abort
+function! flog#get_branch_at_line(...) abort
   let l:line = get(a:, 1, '.')
   if type(l:line) == v:t_string
     let l:line = line(l:line)
@@ -981,7 +981,7 @@ function! flog#get_branch_or_hash_at_line(...) abort
   elseif !empty(l:remote_refs)
     return l:remote_refs[0]
   endif
-  return flog#get_commit_at_line(l:line)
+  return v:null
 endfunction
 
 function! flog#get_local_branch_at_line(...) abort

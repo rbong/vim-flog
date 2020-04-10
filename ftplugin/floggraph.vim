@@ -162,7 +162,7 @@ nnoremap <buffer> <Plug>(FlogCheckout) :<C-U>call flog#run_command(flog#format_c
 if !hasmapto('<Plug>(FlogCheckoutBranch)')
   nmap <buffer> cob <Plug>(FlogCheckoutBranch)
 endif
-nnoremap <buffer> <Plug>(FlogCheckoutBranch) :<C-U>call flog#run_command(flog#format(flog#get_branch_or_hash_at_line(), 'Git checkout %s'), 0, 1)<CR>
+nnoremap <buffer> <Plug>(FlogCheckoutBranch) :<C-U>call flog#run_command(flog#format(flog#get_branch_at_line(), 'Git checkout %s'), 0, 1)<CR>
 
 if !hasmapto('<Plug>(FlogCheckoutLocalBranch)')
   nmap <buffer> cot <Plug>(FlogCheckoutLocalBranch)

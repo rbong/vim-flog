@@ -405,15 +405,15 @@ flog#get_commit_selection([{firstline}[, {lastline}[, {should-swap}]]])
   If both commits were found, returns a |list| containing the commits.
   Otherwise, returns |v:null|.
 
-                                           *flog#get_branch_or_hash_at_line()*
-flog#get_branch_or_hash_at_line([{line}])
+                                                   *flog#get_branch_at_line()*
+flog#get_branch_at_line([{line}])
 
-  Get the first branch or commit hash at the current line, prioritizing local
-  branches. Useful for checkout commands.
+  Get the first branch at the current line, prioritizing local branches.
+  Useful for checkout commands.
 
   If {line} isn't provided, use the current line.
 
-  If the commit was found, returns a |string| containing the ref name.
+  If the branch was found, returns a |string| containing the name.
   Otherwise, returns |v:null|.
 
                                              *flog#get_local_branch_at_line()*
