@@ -1,5 +1,19 @@
 # Flog FAQ
 
+**How do I get Flog to run faster?**
+
+There are several things to take into account:
+  - You may want to specify `-max-count=<count>`, or use `let g:flog_default_arguments = { 'max_count': <count> }`.
+    This restricts the log to displaying a certain number of commits.
+    If you need to jump forward/backwards in history by `<count>`, use `[[`/`]]`
+  - You may find in very large repositories that `git log` runs faster in the terminal than `git log --graph`.
+    This is because `git` must get the full commit history for a repository when using `--graph`.
+    In these cases, you may want to pass `-no-graph` to Flog, or use the `gx` binding.
+  - You may notice that `:Flog -no-graph` with no `-max-count` runs slower than `git log` in the terminal.
+    This is because when `git log` is run without `--graph`, it is able to print commits straight to the terminal, where Flog and other wrappers must wait for the whole command to finish.
+    Using `-max-count` in these cases can assist, or you may want to run the command in the terminal for now.
+    Sometime in the future, `:Flog` may support running asynchronously, so check back.
+
 **Why not just use the `git log --graph` command?**
 
 To interact with commits.
