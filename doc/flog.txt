@@ -245,6 +245,21 @@ coo                                                                 *flog-coo*
 
   Checkout the commit under the cursor.
 
+                                                  *<Plug>(FlogCheckoutBranch)*
+cob                                                                 *flog-cob*
+
+  Checkout the first branch name under the cursor, prioritizing local
+  branches, or use the hash if there is no branch name.
+
+                                             *<Plug>(FlogCheckoutLocalBranch)*
+cot                                                                 *flog-cot*
+
+  Checkout the first local branch name under the cursor, or checkout the first
+  upstream branch with the remote name trimmed from the ref, causing it to be
+  tracked locally.
+
+  If no branch name was found do nothing.
+
                                                        *<Plug>(FlogGitRevert)*
 cr<Space>                                                     *flog-cr<space>*
 

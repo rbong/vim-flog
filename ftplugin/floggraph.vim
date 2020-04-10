@@ -154,6 +154,16 @@ if !hasmapto('<Plug>(FlogCheckout)')
 endif
 nnoremap <buffer> <Plug>(FlogCheckout) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git checkout %s'), 0, 1)<CR>
 
+if !hasmapto('<Plug>(FlogCheckoutBranch)')
+  nmap <buffer> cob <Plug>(FlogCheckoutBranch)
+endif
+nnoremap <buffer> <Plug>(FlogCheckoutBranch) :<C-U>call flog#run_command(flog#format(flog#get_branch_or_hash_at_line(), 'Git checkout %s'), 0, 1)<CR>
+
+if !hasmapto('<Plug>(FlogCheckoutLocalBranch)')
+  nmap <buffer> cot <Plug>(FlogCheckoutLocalBranch)
+endif
+nnoremap <buffer> <Plug>(FlogCheckoutLocalBranch) :<C-U>call flog#run_command(flog#format(flog#get_local_branch_at_line(), 'Git checkout %s'), 0, 1)<CR>
+
 if !hasmapto('<Plug>(FlogGitRevert)')
   nmap <buffer> cr<Space> <Plug>(FlogGitRevert)
   vmap <buffer> cr<Space> <Plug>(FlogGitRevert)
