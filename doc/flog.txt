@@ -384,6 +384,39 @@ flog#get_commit_selection([{firstline}[, {lastline}[, {should-swap}]]])
   If both commits were found, returns a |list| containing the commits.
   Otherwise, returns |v:null|.
 
+                                           *flog#get_branch_or_hash_at_line()*
+flog#get_branch_or_hash_at_line([{line}])
+
+  Get the first branch or commit hash at the current line, prioritizing local
+  branches. Useful for checkout commands.
+
+  If {line} isn't provided, use the current line.
+
+  If the commit was found, returns a |string| containing the ref name.
+  Otherwise, returns |v:null|.
+
+                                             *flog#get_local_branch_at_line()*
+flog#get_local_branch_at_line([{line}])
+
+  Get the first local branch at the current line, or trim the remote from the
+  first upstream branch. Useful for checkout commands.
+
+  If {line} isn't provided, use the current line.
+
+  If a branch was found, returns a |string| containing the ref name.
+  Otherwise, returns |v:null|.
+
+                                                               *flog#format()*
+flog#format({value}, [{format}])
+
+  Format a string or list with |printf|. Useful for formatting refs into
+  commands.
+
+  If {format} is not given use "%s".
+
+  If {value} is a string or list, returns the formatted |string|.
+  Otherwise, returns |v:null|.
+
                                                         *flog#format_commit()*
 flog#format_commit({commit}, [{format}])
 

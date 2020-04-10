@@ -58,6 +58,18 @@ function! flog#resolve_path(path, relative_dir) abort
   return a:path
 endfunction
 
+function! flog#format(value, ...)
+  let l:format = get(a:, 1, '%s')
+  let l:t = type(a:value)
+
+  if l:t == v:t_string || l:t == v:t_number || l:t == v:t_float
+    return printf(l:format, a:value)
+  elseif l:t == v:t_list
+    return call('printf', [l:format] + a:value)
+  endif
+  return v:null
+endfunction
+
 function! flog#split_limit(limit) abort
   let [l:match, l:start, l:end] = matchstrpos(a:limit, '^.\{1}:\zs')
   if l:start < 0
@@ -936,6 +948,49 @@ function! flog#get_ref_at_line(...) abort
   endif
   let l:state = flog#get_state()
   return get(l:state.line_commit_refs, l:line - 1, v:null)
+endfunction
+
+function! flog#get_branch_or_hash_at_line(...) abort
+  let l:line = get(a:, 1, '.')
+  if type(l:line) == v:t_string
+    let l:line = line(l:line)
+  endif
+
+  let l:refs = get(flog#get_state().line_commit_refs, l:line - 1, [])
+  let l:remote_refs = []
+  let l:local_refs = []
+  for l:ref in l:refs
+    if l:ref =~# 'HEAD$'
+      continue
+    elseif l:ref =~# '/'
+      call add(l:remote_refs, l:ref)
+    else
+      call add(l:local_refs, l:ref)
+    endif
+  endfor
+
+  if !empty(l:local_refs)
+    return l:local_refs[0]
+  elseif !empty(l:remote_refs)
+    return l:remote_refs[0]
+  endif
+  return flog#get_commit_at_line(l:line)
+endfunction
+
+function! flog#get_local_branch_at_line(...) abort
+  let l:line = get(a:, 1, '.')
+  if type(l:line) == v:t_string
+    let l:line = line(l:line)
+  endif
+
+  let l:refs = get(flog#get_state().line_commit_refs, l:line - 1, [])
+  let l:refs = filter(l:refs, 'v:val !~# "HEAD$"')
+
+  if empty(l:refs)
+    return v:null
+  endif
+  " trim remote
+  return substitute(l:refs[0], '.*/', '', '')
 endfunction
 
 " }}}
