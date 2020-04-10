@@ -58,7 +58,7 @@ function! flog#resolve_path(path, relative_dir) abort
   return a:path
 endfunction
 
-function! flog#format(value, ...)
+function! flog#format(value, ...) abort
   let l:format = get(a:, 1, '%s')
   let l:t = type(a:value)
 
