@@ -65,9 +65,20 @@ function! flog#format(value, ...) abort
   if l:t == v:t_string || l:t == v:t_number || l:t == v:t_float
     return printf(l:format, a:value)
   elseif l:t == v:t_list
+    if index(a:value, v:null) >= 0
+      return v:null
+    endif
     return call('printf', [l:format] + a:value)
   endif
   return v:null
+endfunction
+
+function! flog#join(list, ...) abort
+  let l:sep = get(a:, 1, ' ')
+  if type(a:list) != v:t_list || index(a:list, v:null) >= 0
+    return v:null
+  endif
+  return join(a:list, l:sep)
 endfunction
 
 function! flog#split_limit(limit) abort
@@ -608,6 +619,18 @@ endfunction
 
 " State management {{{
 
+" State command helpers {{{
+
+function! flog#get_paths() abort
+  let l:paths = flog#get_state().path
+  if empty(l:paths)
+    return v:null
+  endif
+  return l:paths
+endfunction
+
+" }}}
+
 function! flog#get_initial_state(parsed_args, original_file) abort
   return extend(copy(a:parsed_args), {
         \ 'instance': flog#instance(),
@@ -824,6 +847,15 @@ function! flog#get_commit_at_line(...) abort
     let l:line = line(l:line)
   endif
   return get(flog#get_state().line_commits, l:line - 1, v:null)
+endfunction
+
+function! flog#get_hash_at_line(...) abort
+  let l:line = get(a:, 1, '.')
+  let l:commit = flog#get_commit_at_line(l:line)
+  if type(l:commit) != v:t_dict
+    return v:null
+  endif
+  return l:commit.short_commit_hash
 endfunction
 
 function! flog#get_commit_selection(...) abort

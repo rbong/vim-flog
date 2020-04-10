@@ -21,6 +21,11 @@ if !hasmapto('<Plug>(FlogVSplitCommitRight)')
 endif
 nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitRight) :vertical belowright Flogsplitcommit<CR>
 
+if !hasmapto('<Plug>(FlogVSplitCommitPathsRight)')
+  nmap <buffer> <Tab> <Plug>(FlogVSplitCommitPathsRight)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitPathsRight) :<C-U>call flog#run_tmp_command(flog#format([flog#get_hash_at_line(), flog#join(flog#get_paths())], 'vertical belowright Git show %s %s'))<CR>
+
 if !hasmapto('<Plug>(FlogVDiffSplitRight)')
   nmap <buffer> dd <Plug>(FlogVDiffSplitRight)
   vmap <buffer> dd <Plug>(FlogVDiffSplitRight)
@@ -28,8 +33,16 @@ if !hasmapto('<Plug>(FlogVDiffSplitRight)')
   vmap <buffer> dv <Plug>(FlogVDiffSplitRight)
 endif
 
+if !hasmapto('<Plug>(FlogVDiffSplitPathsRight)')
+  nmap <buffer> dp <Plug>(FlogVDiffSplitPathsRight)
+  vmap <buffer> dp <Plug>(FlogVDiffSplitPathsRight)
+endif
+
 nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_line(), 'vertical belowright Git diff HEAD %s'))<CR>
 vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command(flog#format_commit_selection(flog#get_commit_selection(), 'vertical belowright Git diff %s %s'))<CR>
+
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command(flog#format([flog#get_hash_at_line(), flog#join(flog#get_paths())], 'vertical belowright Git diff HEAD %s -- %s'))<CR>
+vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command(flog#format([flog#format_commit_selection(flog#get_commit_selection()), flog#join(flog#get_paths())], 'vertical belowright Git diff %s -- %s'))<CR>
 
 if !hasmapto('<Plug>(FlogYank)')
   nmap <buffer> y<C-G> <Plug>(FlogYank)

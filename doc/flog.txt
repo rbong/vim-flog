@@ -117,6 +117,12 @@ g?                                                                   *flog-g?*
 
   Open the commit under the cursor in a temporary window.
 
+                                               *<Plug>(FlogVSplitCommitRight)*
+<Tab>                                                             *flog-<Tab>*
+
+  Same as |flog-<CR>|, but use the "-path" argument to only show the diff for
+  the currently selected paths.
+
                                                  *<Plug>(FlogVDiffSplitRight)*
 dd                                                                   *flog-dd*
 dv                                                                   *flog-dv*
@@ -126,6 +132,12 @@ dv                                                                   *flog-dv*
 
   In visual mode, open a diff in a temporary window comparing the commits at
   the top and bottom of the visual selection.
+
+                                            *<Plug>(FlogVDiffSplitPathsRight)*
+dp                                                                   *flog-dp*
+
+  Same as |flog-dd|, but use the "-path" argument to only show the diff for
+  the currently selected paths.
 
                                                             *<Plug>(FlogYank)*
 y<C-G>                                                           *flog-y<C-G>*
@@ -391,6 +403,12 @@ flog#get_commit_at_line([{line}])
   If the commit was found, returns a |dict| containing the commit data.
   Otherwise, returns |v:null|.
 
+                                                     *flog#get_hash_at_line()*
+flog#get_hash_at_line([{line}])
+
+  Same as |flog#get_commit_at_line()|, but return only the commit hash instead
+  of a |dict|.
+
                                                  *flog#get_commit_selection()*
 flog#get_commit_selection([{firstline}[, {lastline}[, {should-swap}]]])
 
@@ -427,6 +445,12 @@ flog#get_local_branch_at_line([{line}])
   If a branch was found, returns a |string| containing the ref name.
   Otherwise, returns |v:null|.
 
+                                                            *flog#get_paths()*
+flog#get_paths()
+
+  Gets a |list| containing the current paths specified using "-path", or
+  |v:null| if no paths were selected.
+
                                                                *flog#format()*
 flog#format({value}, [{format}])
 
@@ -435,8 +459,8 @@ flog#format({value}, [{format}])
 
   If {format} is not given use "%s".
 
-  If {value} is a string or list, returns the formatted |string|.
-  Otherwise, returns |v:null|.
+  If {value} is a non-null value or a list that does not contain |v:null|,
+  returns the formatted |string|. Otherwise, returns |v:null|.
 
                                                         *flog#format_commit()*
 flog#format_commit({commit}, [{format}])
@@ -458,6 +482,15 @@ flog#format_commit_selection({commit-selection}, [{format}])
   If {format} is not given use "%s %s".
 
   If the commit list is valid, returns the formatted |string|.
+  Otherwise, returns v:null.
+
+                                                                 *flog#join()*
+flog#join({list}, [{sep}])
+
+  Joins together a list of strings with a separator. Useful for safely joining
+  together paths.
+
+  If {list} is a valid list, returns the joined |string|.
   Otherwise, returns v:null.
 
                                                           *flog#run_command()*
