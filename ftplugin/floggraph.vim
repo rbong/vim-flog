@@ -14,7 +14,7 @@ silent setlocal nomodifiable
 if !hasmapto('<Plug>(FlogHelp)')
   nmap <buffer> g? <Plug>(FlogHelp)
 endif
-nnoremap <buffer> <Plug>(FlogHelp) :help flog-mappings<CR>
+nnoremap <buffer> <silent> <Plug>(FlogHelp) :help flog-mappings<CR>
 
 if !hasmapto('<Plug>(FlogVSplitCommitRight)')
   nmap <buffer> <CR> <Plug>(FlogVSplitCommitRight)
@@ -49,7 +49,7 @@ if !hasmapto('<Plug>(FlogQuit)')
   nmap <buffer> ZZ <Plug>(FlogQuit)
   nmap <buffer> gq <Plug>(FlogQuit)
 endif
-nnoremap <buffer> <Plug>(FlogQuit) :call flog#quit()<CR>
+nnoremap <buffer> <silent> <Plug>(FlogQuit) :call flog#quit()<CR>
 
 " }}}
 
@@ -148,26 +148,26 @@ if !hasmapto('<Plug>(FlogRevertNoEdit)')
   vmap <buffer> crn <Plug>(FlogRevertNoEdit)
 endif
 
-nnoremap <buffer> <Plug>(FlogRevert) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git revert %s'), 1, 1)<CR>
-vnoremap <buffer> <Plug>(FlogRevert) :<C-U>call flog#run_command(flog#format_commit_selection(flog#get_commit_selection(v:null, v:null, 1), 'Git revert %s^..%s'), 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRevert) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git revert %s'), 1, 1)<CR>
+vnoremap <buffer> <silent> <Plug>(FlogRevert) :<C-U>call flog#run_command(flog#format_commit_selection(flog#get_commit_selection(v:null, v:null, 1), 'Git revert %s^..%s'), 1, 1)<CR>
 
-nnoremap <buffer> <Plug>(FlogRevertNoEdit) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git revert --no-edit %s'), 1, 1)<CR>
-vnoremap <buffer> <Plug>(FlogRevertNoEdit) :<C-U>call flog#run_command(flog#format_commit_selection(flog#get_commit_selection(v:null, v:null, 1), 'Git revert --no-edit %s^..%s'), 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRevertNoEdit) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git revert --no-edit %s'), 1, 1)<CR>
+vnoremap <buffer> <silent> <Plug>(FlogRevertNoEdit) :<C-U>call flog#run_command(flog#format_commit_selection(flog#get_commit_selection(v:null, v:null, 1), 'Git revert --no-edit %s^..%s'), 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogCheckout)')
   nmap <buffer> coo <Plug>(FlogCheckout)
 endif
-nnoremap <buffer> <Plug>(FlogCheckout) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git checkout %s'), 0, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogCheckout) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git checkout %s'), 0, 1)<CR>
 
 if !hasmapto('<Plug>(FlogCheckoutBranch)')
   nmap <buffer> cob <Plug>(FlogCheckoutBranch)
 endif
-nnoremap <buffer> <Plug>(FlogCheckoutBranch) :<C-U>call flog#run_command(flog#format(flog#get_branch_at_line(), 'Git checkout %s'), 0, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogCheckoutBranch) :<C-U>call flog#run_command(flog#format(flog#get_branch_at_line(), 'Git checkout %s'), 0, 1)<CR>
 
 if !hasmapto('<Plug>(FlogCheckoutLocalBranch)')
   nmap <buffer> cot <Plug>(FlogCheckoutLocalBranch)
 endif
-nnoremap <buffer> <Plug>(FlogCheckoutLocalBranch) :<C-U>call flog#run_command(flog#format(flog#get_local_branch_at_line(), 'Git checkout %s'), 0, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogCheckoutLocalBranch) :<C-U>call flog#run_command(flog#format(flog#get_local_branch_at_line(), 'Git checkout %s'), 0, 1)<CR>
 
 if !hasmapto('<Plug>(FlogGitRevert)')
   nmap <buffer> cr<Space> <Plug>(FlogGitRevert)
@@ -204,57 +204,57 @@ vnoremap <buffer> <Plug>(FlogGitBranch) :Floggit branch<Space>
 if !hasmapto('<Plug>(FlogRebaseInteractive)')
   nmap <buffer> ri <Plug>(FlogRebaseInteractive)
 endif
-nnoremap <buffer> <Plug>(FlogRebaseInteractive) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive %s^'), 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractive) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive %s^'), 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveAutosquash)')
   nmap <buffer> rf <Plug>(FlogRebaseInteractiveAutosquash)
 endif
-nnoremap <buffer> <Plug>(FlogRebaseInteractiveAutosquash) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive --autosquash %s^'), 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveAutosquash) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive --autosquash %s^'), 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveUpstream)')
   nmap <buffer> ru <Plug>(FlogRebaseInteractiveUpstream)
 endif
-nnoremap <buffer> <Plug>(FlogRebaseInteractiveUpstream) :<C-U>call flog#run_command('Git rebase --interactive @{upstream}', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveUpstream) :<C-U>call flog#run_command('Git rebase --interactive @{upstream}', 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractivePush)')
   nmap <buffer> rp <Plug>(FlogRebaseInteractivePush)
 endif
-nnoremap <buffer> <Plug>(FlogRebaseInteractivePush) :<C-U>call flog#run_command('Git rebase --interactive @{push}', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractivePush) :<C-U>call flog#run_command('Git rebase --interactive @{push}', 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogRebaseContinue)')
   nmap <buffer> rr <Plug>(FlogRebaseContinue)
 endif
-nnoremap <buffer> <Plug>(FlogRebaseContinue) :<C-U>call flog#run_command('Git rebase --continue', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseContinue) :<C-U>call flog#run_command('Git rebase --continue', 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogRebaseSkip)')
   nmap <buffer> rs <Plug>(FlogRebaseSkip)
 endif
-nnoremap <buffer> <Plug>(FlogRebaseSkip) :<C-U>call flog#run_command('Git rebase --skip', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseSkip) :<C-U>call flog#run_command('Git rebase --skip', 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogRebaseAbort)')
   nmap <buffer> ra <Plug>(FlogRebaseAbort)
 endif
-nnoremap <buffer> <Plug>(FlogRebaseAbort) :<C-U>call flog#run_command('Git rebase --abort', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseAbort) :<C-U>call flog#run_command('Git rebase --abort', 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogRebaseEditTodo)')
   nmap <buffer> re <Plug>(FlogRebaseEditTodo)
 endif
-nnoremap <buffer> <Plug>(FlogRebaseEditTodo) :<C-U>call flog#run_command('Git rebase --edit-todo', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseEditTodo) :<C-U>call flog#run_command('Git rebase --edit-todo', 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveReword)')
   nmap <buffer> rw <Plug>(FlogRebaseInteractiveReword)
 endif
-nnoremap <buffer> <Plug>(FlogRebaseInteractiveReword) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive %s^ \| s/^pick/reword/e'), 1, 1)
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveReword) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive %s^ \| s/^pick/reword/e'), 1, 1)
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveEdit)')
   nmap <buffer> rm <Plug>(FlogRebaseInteractiveEdit)
 endif
-nnoremap <buffer> <Plug>(FlogRebaseInteractiveEdit) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive %s^ \| s/^pick/edit/e'), 1, 1)
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveEdit) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive %s^ \| s/^pick/edit/e'), 1, 1)
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveDrop)')
   nmap <buffer> rd <Plug>(FlogRebaseInteractiveDrop)
 endif
-nnoremap <buffer> <Plug>(FlogRebaseInteractiveDrop) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive %s^ \| s/^pick/drop/e'), 1, 1)
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveDrop) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive %s^ \| s/^pick/drop/e'), 1, 1)
 
 if !hasmapto('<Plug>(FlogGitRebase)')
   nmap <buffer> r<Space> <Plug>(FlogGitRebase)
