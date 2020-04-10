@@ -449,7 +449,7 @@ flog#format_commit({commit}, [{format}])
   If the commit is valid, returns the formatted |string|.
   Otherwise, returns v:null.
 
-                                                        *flog#format_commit()*
+                                              *flog#format_commit_selection()*
 flog#format_commit_selection({commit-selection}, [{format}])
 
   Format the hash of a commit from |flog#get_commit_selection()| using
