@@ -948,6 +948,44 @@ endfunction
 
 " Ref operation utilities {{{
 
+function! flog#get_ref_types(commit) abort
+  if type(a:commit) != v:t_dict
+    return v:null
+  endif
+
+  let l:original_refs = split(a:commit.ref_names_unwrapped, ' \ze-> \|, \|\zetag: ')
+  let l:refs = a:commit.ref_name_list
+
+  let l:remote_branches = []
+  let l:local_branches = []
+  let l:special_refs = []
+  let l:tags = []
+
+  let l:i = 0
+  while l:i < len(l:refs)
+    let l:ref = l:refs[l:i]
+
+    if l:ref =~# 'HEAD$\|^refs/'
+      call add(l:special_refs, l:ref)
+    elseif l:ref =~# '/'
+      call add(l:remote_branches, l:ref)
+    elseif l:original_refs[l:i] =~# '^tag: '
+      call add(l:tags, l:ref)
+    else
+      call add(l:local_branches, l:ref)
+    endif
+
+    let l:i += 1
+  endwhile
+
+  return {
+        \ 'local': l:local_branches,
+        \ 'remote': l:remote_branches,
+        \ 'tags': l:tags,
+        \ 'special': l:special_refs,
+        \ }
+endfunction
+
 function! flog#get_ref_at_line(...) abort
   let l:line = get(a:, 1, '.')
   if type(l:line) == v:t_string
@@ -960,28 +998,15 @@ endfunction
 function! flog#get_branch_at_line(...) abort
   let l:line = get(a:, 1, '.')
 
-  let l:commit = flog#get_commit_at_line(l:line)
-  if type(l:commit) != v:t_dict
+  let l:ref_types = flog#get_ref_types(flog#get_commit_at_line(l:line))
+  if type(l:ref_types) != v:t_dict
     return v:null
   endif
-  let l:refs = l:commit.ref_name_list
 
-  let l:remote_refs = []
-  let l:local_refs = []
-  for l:ref in l:refs
-    if l:ref =~# 'HEAD$'
-      continue
-    elseif l:ref =~# '/'
-      call add(l:remote_refs, l:ref)
-    else
-      call add(l:local_refs, l:ref)
-    endif
-  endfor
-
-  if !empty(l:local_refs)
-    return l:local_refs[0]
-  elseif !empty(l:remote_refs)
-    return l:remote_refs[0]
+  if !empty(l:ref_types.local)
+    return l:ref_types.local[0]
+  elseif !empty(l:ref_types.remote)
+    return l:ref_types.remote[0]
   endif
   return v:null
 endfunction
@@ -989,18 +1014,17 @@ endfunction
 function! flog#get_local_branch_at_line(...) abort
   let l:line = get(a:, 1, '.')
 
-  let l:commit = flog#get_commit_at_line(l:line)
-  if type(l:commit) != v:t_dict
+  let l:ref_types = flog#get_ref_types(flog#get_commit_at_line(l:line))
+  if type(l:ref_types) != v:t_dict
     return v:null
   endif
-  let l:refs = l:commit.ref_name_list
-  let l:refs = filter(l:refs, 'v:val !~# "HEAD$"')
 
-  if empty(l:refs)
-    return v:null
+  if !empty(l:ref_types.local)
+    return l:ref_types.local[0]
+  elseif !empty(l:ref_types.remote)
+    return substitute(l:ref_types.remote[0], '.*/', '', '')
   endif
-  " trim remote
-  return substitute(l:refs[0], '.*/', '', '')
+  return v:null
 endfunction
 
 " }}}
