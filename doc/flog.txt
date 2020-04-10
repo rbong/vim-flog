@@ -29,6 +29,7 @@ COMMANDS                                                       *flog-commands*
   -bisect               Enable the "--bisect" argument by default.
   -no-merges            Enable the "--no-merges" argument by default.
   -reflog               Enable the "--reflog" argument by default.
+  -no-graph             Disable the "--graph" argument by default.
   -skip=<number>        Passed to "--skip", skipping that number of commits by
                         default.
   -max-count=<number>   Passed to "--max-count", limiting to that number of
@@ -210,6 +211,11 @@ gm                                                                   *flog-gm*
 gr                                                                   *flog-gr*
 
   Toggle the "--reflog" argument.
+
+                                                   *<Plug>(FlogToggleNoGraph)*
+gx                                                                   *flog-gx*
+
+  Toggle the "--graph" argument.
 
                                                           *<Plug>(FlogUpdate)*
 u                                                                     *flog-u*

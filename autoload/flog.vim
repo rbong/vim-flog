@@ -205,6 +205,7 @@ function! flog#get_internal_default_args() abort
         \ 'bisect': v:false,
         \ 'no_merges': v:false,
         \ 'reflog': v:false,
+        \ 'no_graph': v:false,
         \ 'skip': v:null,
         \ 'max_count': v:null,
         \ 'open_cmd': 'tabedit',
@@ -307,6 +308,8 @@ function! flog#parse_set_args(args, current_args, defaults) abort
       let a:current_args.reflog = v:true
     elseif l:arg ==# '-reflog'
       let a:current_args.reflog = v:true
+    elseif l:arg ==# '-no-graph'
+      let a:current_args.no_graph = v:true
     elseif l:arg =~# '^-skip=\d\+'
       let a:current_args.skip = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-skip='
@@ -686,7 +689,7 @@ function! flog#parse_log_commit(c) abort
     let l:end = "\n" . l:end
   endif
   let l:c.display = split(
-        \ a:c[0 : l:i - 1]
+        \ (l:i == 0 ? '' : a:c[0 : l:i - 1])
         \ . a:c[l:j + len(g:flog_display_commit_start) : l:k - 1]
         \ . l:end,
         \ "\n")
@@ -745,7 +748,11 @@ function! flog#build_log_command() abort
   let l:state = flog#get_state()
 
   let l:command = flog#get_fugitive_git_command()
-  let l:command .= ' log --graph --no-color'
+  let l:command .= ' log'
+  if !l:state.no_graph
+    let l:command .= ' --graph'
+  endif
+  let l:command .= ' --no-color'
   let l:command .= ' --pretty=' . flog#create_log_format()
   let l:command .= ' --date=' . shellescape(l:state.date)
   if l:state.all && !l:state.limit
@@ -1125,6 +1132,9 @@ function! flog#set_graph_buffer_title() abort
   if l:state.reflog && !l:state.limit
     let l:title .= ' [reflog]'
   endif
+  if l:state.no_graph
+    let l:title .= ' [no_graph]'
+  endif
   if l:state.skip != v:null
     let l:title .= ' [skip=' . l:state.skip . ']'
   endif
@@ -1277,6 +1287,12 @@ endfunction
 function! flog#toggle_reflog_option() abort
   let l:state = flog#get_state()
   let l:state.reflog = l:state.reflog ? v:false : v:true
+  call flog#populate_graph_buffer()
+endfunction
+
+function! flog#toggle_no_graph_option() abort
+  let l:state = flog#get_state()
+  let l:state.no_graph = l:state.no_graph ? v:false : v:true
   call flog#populate_graph_buffer()
 endfunction
 

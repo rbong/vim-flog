@@ -114,6 +114,11 @@ if !hasmapto('<Plug>(FlogToggleReflog)')
 endif
 nnoremap <buffer> <silent> <Plug>(FlogToggleReflog) :call flog#toggle_reflog_option()<CR>
 
+if !hasmapto('<Plug>(FlogToggleNoGraph)')
+  nmap <buffer> gx <Plug>(FlogToggleNoGraph)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogToggleNoGraph) :call flog#toggle_no_graph_option()<CR>
+
 if !hasmapto('<Plug>(FlogUpdate)')
   nmap <buffer> u <Plug>(FlogUpdate)
 endif
