@@ -24,7 +24,7 @@ nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitRight) :vertical belowright Fl
 if !hasmapto('<Plug>(FlogVSplitCommitPathsRight)')
   nmap <buffer> <Tab> <Plug>(FlogVSplitCommitPathsRight)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitPathsRight) :<C-U>call flog#run_tmp_command(flog#format([flog#get_hash_at_line(), flog#join(flog#get_paths())], 'vertical belowright Git show %s %s'))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitPathsRight) :<C-U>call flog#run_tmp_command('vertical belowright Git show %h %p')<CR>
 
 if !hasmapto('<Plug>(FlogVDiffSplitRight)')
   nmap <buffer> dd <Plug>(FlogVDiffSplitRight)
@@ -38,11 +38,11 @@ if !hasmapto('<Plug>(FlogVDiffSplitPathsRight)')
   vmap <buffer> dp <Plug>(FlogVDiffSplitPathsRight)
 endif
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_line(), 'vertical belowright Git diff HEAD %s'))<CR>
-vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command(flog#format_commit_selection(flog#get_commit_selection(), 'vertical belowright Git diff %s %s'))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command('vertical belowright Git diff HEAD %h')<CR>
+vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command("vertical belowright Git diff %(h'<) %(h'>)")<CR>
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command(flog#format([flog#get_hash_at_line(), flog#join(flog#get_paths())], 'vertical belowright Git diff HEAD %s -- %s'))<CR>
-vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command(flog#format([flog#format_commit_selection(flog#get_commit_selection()), flog#join(flog#get_paths())], 'vertical belowright Git diff %s -- %s'))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command('vertical belowright Git diff HEAD %h -- %p')<CR>
+vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command("vertical belowright Git diff HEAD %(h'<) %(h'>) -- %p")<CR>
 
 if !hasmapto('<Plug>(FlogYank)')
   nmap <buffer> y<C-G> <Plug>(FlogYank)
@@ -161,26 +161,26 @@ if !hasmapto('<Plug>(FlogRevertNoEdit)')
   vmap <buffer> crn <Plug>(FlogRevertNoEdit)
 endif
 
-nnoremap <buffer> <silent> <Plug>(FlogRevert) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git revert %s'), 1, 1)<CR>
-vnoremap <buffer> <silent> <Plug>(FlogRevert) :<C-U>call flog#run_command(flog#format_commit_selection(flog#get_commit_selection(v:null, v:null, 1), 'Git revert %s^..%s'), 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRevert) :<C-U>call flog#run_command('Git revert %h', 1, 1)<CR>
+vnoremap <buffer> <silent> <Plug>(FlogRevert) :<C-U>call flog#run_command("Git revert %(h'<)^..%(h'>)", 1, 1)<CR>
 
-nnoremap <buffer> <silent> <Plug>(FlogRevertNoEdit) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git revert --no-edit %s'), 1, 1)<CR>
-vnoremap <buffer> <silent> <Plug>(FlogRevertNoEdit) :<C-U>call flog#run_command(flog#format_commit_selection(flog#get_commit_selection(v:null, v:null, 1), 'Git revert --no-edit %s^..%s'), 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRevertNoEdit) :<C-U>call flog#run_command('Git revert --no-edit %h', 1, 1)<CR>
+vnoremap <buffer> <silent> <Plug>(FlogRevertNoEdit) :<C-U>call flog#run_command("Git revert --no-edit %(h'<)^..%(h'>)", 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogCheckout)')
   nmap <buffer> coo <Plug>(FlogCheckout)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogCheckout) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git checkout %s'), 0, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogCheckout) :<C-U>call flog#run_command('Git checkout %h', 0, 1)<CR>
 
 if !hasmapto('<Plug>(FlogCheckoutBranch)')
   nmap <buffer> cob <Plug>(FlogCheckoutBranch)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogCheckoutBranch) :<C-U>call flog#run_command(flog#format(flog#get_branch_at_line(), 'Git checkout %s'), 0, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogCheckoutBranch) :<C-U>call flog#run_command('Git checkout %b', 0, 1)<CR>
 
 if !hasmapto('<Plug>(FlogCheckoutLocalBranch)')
   nmap <buffer> cot <Plug>(FlogCheckoutLocalBranch)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogCheckoutLocalBranch) :<C-U>call flog#run_command(flog#format(flog#get_local_branch_at_line(), 'Git checkout %s'), 0, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogCheckoutLocalBranch) :<C-U>call flog#run_command('Git checkout %l', 0, 1)<CR>
 
 if !hasmapto('<Plug>(FlogGitRevert)')
   nmap <buffer> cr<Space> <Plug>(FlogGitRevert)
@@ -217,12 +217,12 @@ vnoremap <buffer> <Plug>(FlogGitBranch) :Floggit branch<Space>
 if !hasmapto('<Plug>(FlogRebaseInteractive)')
   nmap <buffer> ri <Plug>(FlogRebaseInteractive)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractive) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive %s^'), 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractive) :<C-U>call flog#run_command('Git rebase --interactive %h^', 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveAutosquash)')
   nmap <buffer> rf <Plug>(FlogRebaseInteractiveAutosquash)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveAutosquash) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive --autosquash %s^'), 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveAutosquash) :<C-U>call flog#run_command('Git rebase --interactive --autosquash %h^', 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveUpstream)')
   nmap <buffer> ru <Plug>(FlogRebaseInteractiveUpstream)
@@ -257,17 +257,17 @@ nnoremap <buffer> <silent> <Plug>(FlogRebaseEditTodo) :<C-U>call flog#run_comman
 if !hasmapto('<Plug>(FlogRebaseInteractiveReword)')
   nmap <buffer> rw <Plug>(FlogRebaseInteractiveReword)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveReword) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive %s^ \| s/^pick/reword/e'), 1, 1)
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveReword) :<C-U>call flog#run_command('Git rebase --interactive %h^ \| s/^pick/reword/e', 1, 1)
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveEdit)')
   nmap <buffer> rm <Plug>(FlogRebaseInteractiveEdit)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveEdit) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive %s^ \| s/^pick/edit/e'), 1, 1)
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveEdit) :<C-U>call flog#run_command('Git rebase --interactive %h^ \| s/^pick/edit/e', 1, 1)
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveDrop)')
   nmap <buffer> rd <Plug>(FlogRebaseInteractiveDrop)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveDrop) :<C-U>call flog#run_command(flog#format_commit(flog#get_commit_at_line(), 'Git rebase --interactive %s^ \| s/^pick/drop/e'), 1, 1)
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveDrop) :<C-U>call flog#run_command('Git rebase --interactive %h^ \| s/^pick/drop/e', 1, 1)
 
 if !hasmapto('<Plug>(FlogGitRebase)')
   nmap <buffer> r<Space> <Plug>(FlogGitRebase)
@@ -325,11 +325,12 @@ call flog#deprecate_mapping('<Plug>FlogSkipback', '<Plug>(FlogSkipBack)', 'nmap'
 
 " Commands {{{
 
-command! -buffer Flogsplitcommit call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_line(), '<mods> Gsplit %s'))
+command! -buffer Flogsplitcommit call flog#run_tmp_command('<mods> Gsplit %h')
 
-command! -buffer -range -bang -complete=customlist,flog#complete_git -nargs=* Floggit call flog#run_command('<mods> Git ' . <q-args>, 1, 1, !empty('<bang>'))
+command! -buffer -range -bang -complete=customlist,flog#complete_git -nargs=* Floggit call flog#run_raw_command('<mods> Git ' . <q-args>, 1, 1, !empty('<bang>'))
 
 command! -bang -complete=customlist,flog#complete -nargs=* Flogsetargs call flog#update_options([<f-args>], '<bang>' ==# '!')
+
 command! -bang -complete=customlist,flog#complete_refs -nargs=* Flogjump call flog#jump_to_ref(<q-args>)
 
 " Deprecated commands {{{

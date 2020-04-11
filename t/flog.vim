@@ -50,7 +50,7 @@ describe ':Flog -- --not --glob="*"'
   end
 
   it 'does not crash on opening temp commit'
-    call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_line(), 'Gsplit %s'))
+    call flog#run_tmp_command('Gsplit %h')
     Expect winnr('$') == 1
   end
 end
@@ -84,10 +84,10 @@ describe ':Flogsplit'
   end
 end
 
-describe 'flog#run_tmp_command("Gsplit %s", 1)'
+describe 'flog#run_tmp_command("Gsplit %h", 1)'
   before
     Flog
-    call flog#run_tmp_command(flog#format_commit(flog#get_commit_at_line(), 'Gsplit %s'), 1)
+    call flog#run_tmp_command('Gsplit %h', 1)
   end
 
   after

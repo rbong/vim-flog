@@ -58,35 +58,20 @@ function! flog#resolve_path(path, relative_dir) abort
   return a:path
 endfunction
 
-function! flog#format(value, ...) abort
-  let l:format = get(a:, 1, '%s')
-  let l:t = type(a:value)
-
-  if l:t == v:t_string || l:t == v:t_number || l:t == v:t_float
-    return printf(l:format, a:value)
-  elseif l:t == v:t_list
-    if index(a:value, v:null) >= 0
-      return v:null
-    endif
-    return call('printf', [l:format] + a:value)
-  endif
-  return v:null
-endfunction
-
-function! flog#join(list, ...) abort
-  let l:sep = get(a:, 1, ' ')
-  if type(a:list) != v:t_list || index(a:list, v:null) >= 0
-    return v:null
-  endif
-  return join(a:list, l:sep)
-endfunction
-
 function! flog#split_limit(limit) abort
   let [l:match, l:start, l:end] = matchstrpos(a:limit, '^.\{1}:\zs')
   if l:start < 0
     return [a:limit, '']
   endif
   return [a:limit[: l:start - 1], a:limit[l:start :]]
+endfunction
+
+function! flog#get(dict, key, ...) abort
+  if type(a:dict) != v:t_dict
+    return v:null
+  endif
+  let l:default = get(a:, 1, v:null)
+  return get(a:dict, a:key, l:default)
 endfunction
 
 " }}}
@@ -619,18 +604,6 @@ endfunction
 
 " State management {{{
 
-" State command helpers {{{
-
-function! flog#get_paths() abort
-  let l:paths = flog#get_state().path
-  if empty(l:paths)
-    return v:null
-  endif
-  return l:paths
-endfunction
-
-" }}}
-
 function! flog#get_initial_state(parsed_args, original_file) abort
   return extend(copy(a:parsed_args), {
         \ 'instance': flog#instance(),
@@ -839,23 +812,12 @@ endfunction
 
 " Commit operations {{{
 
-" Commit operation utilities {{{
-
 function! flog#get_commit_at_line(...) abort
   let l:line = get(a:, 1, '.')
   if type(l:line) == v:t_string
     let l:line = line(l:line)
   endif
   return get(flog#get_state().line_commits, l:line - 1, v:null)
-endfunction
-
-function! flog#get_hash_at_line(...) abort
-  let l:line = get(a:, 1, '.')
-  let l:commit = flog#get_commit_at_line(l:line)
-  if type(l:commit) != v:t_dict
-    return v:null
-  endif
-  return l:commit.short_commit_hash
 endfunction
 
 function! flog#get_commit_selection(...) abort
@@ -885,38 +847,6 @@ function! flog#get_commit_selection(...) abort
 
   return l:should_swap ? [l:last_commit, l:first_commit] : [l:first_commit, l:last_commit]
 endfunction
-
-" alias for flog#get_commit_selection
-function! flog#get_commit_at_selection(...) abort
-  let l:firstline = get(a:, 1, v:null)
-  let l:lastline = get(a:, 2, v:null)
-  let l:should_swap = get(a:, 3, 0)
-  return flog#get_commit_selection(l:firstline, l:lastline, l:should_swap)
-endfunction
-
-function! flog#format_commit(commit, ...) abort
-  let l:format = get(a:, 1, '%s')
-
-  if type(a:commit) != v:t_dict
-    return v:null
-  endif
-
-  return printf(l:format, a:commit.short_commit_hash)
-endfunction
-
-function! flog#format_commit_selection(commit_selection, ...) abort
-  let l:format = get(a:, 1, '%s %s')
-
-  if type(a:commit_selection) != v:t_list
-    return v:null
-  endif
-
-  let [l:first_commit, l:last_commit] = a:commit_selection
-
-  return printf(l:format, l:first_commit.short_commit_hash, l:last_commit.short_commit_hash)
-endfunction
-
-" }}}
 
 " Commit navigation {{{
 
@@ -978,46 +908,6 @@ endfunction
 
 " Ref operations {{{
 
-" Ref operation utilities {{{
-
-function! flog#get_ref_types(commit) abort
-  if type(a:commit) != v:t_dict
-    return v:null
-  endif
-
-  let l:original_refs = split(a:commit.ref_names_unwrapped, ' \ze-> \|, \|\zetag: ')
-  let l:refs = a:commit.ref_name_list
-
-  let l:remote_branches = []
-  let l:local_branches = []
-  let l:special_refs = []
-  let l:tags = []
-
-  let l:i = 0
-  while l:i < len(l:refs)
-    let l:ref = l:refs[l:i]
-
-    if l:ref =~# 'HEAD$\|^refs/'
-      call add(l:special_refs, l:ref)
-    elseif l:ref =~# '/'
-      call add(l:remote_branches, l:ref)
-    elseif l:original_refs[l:i] =~# '^tag: '
-      call add(l:tags, l:ref)
-    else
-      call add(l:local_branches, l:ref)
-    endif
-
-    let l:i += 1
-  endwhile
-
-  return {
-        \ 'local': l:local_branches,
-        \ 'remote': l:remote_branches,
-        \ 'tags': l:tags,
-        \ 'special': l:special_refs,
-        \ }
-endfunction
-
 function! flog#get_ref_at_line(...) abort
   let l:line = get(a:, 1, '.')
   if type(l:line) == v:t_string
@@ -1026,42 +916,6 @@ function! flog#get_ref_at_line(...) abort
   let l:state = flog#get_state()
   return get(l:state.line_commit_refs, l:line - 1, v:null)
 endfunction
-
-function! flog#get_branch_at_line(...) abort
-  let l:line = get(a:, 1, '.')
-
-  let l:ref_types = flog#get_ref_types(flog#get_commit_at_line(l:line))
-  if type(l:ref_types) != v:t_dict
-    return v:null
-  endif
-
-  if !empty(l:ref_types.local)
-    return l:ref_types.local[0]
-  elseif !empty(l:ref_types.remote)
-    return l:ref_types.remote[0]
-  endif
-  return v:null
-endfunction
-
-function! flog#get_local_branch_at_line(...) abort
-  let l:line = get(a:, 1, '.')
-
-  let l:ref_types = flog#get_ref_types(flog#get_commit_at_line(l:line))
-  if type(l:ref_types) != v:t_dict
-    return v:null
-  endif
-
-  if !empty(l:ref_types.local)
-    return l:ref_types.local[0]
-  elseif !empty(l:ref_types.remote)
-    return substitute(l:ref_types.remote[0], '.*/', '', '')
-  endif
-  return v:null
-endfunction
-
-" }}}
-
-" Ref navigation {{{
 
 function! flog#jump_refs(refs) abort
   let l:state = flog#get_state()
@@ -1113,8 +967,6 @@ endfunction
 function! flog#previous_ref() abort
   call flog#jump_refs(-v:count1)
 endfunction
-
-" }}}
 
 " }}}
 
@@ -1515,6 +1367,195 @@ endfunction
 
 " Command utilities {{{
 
+" Command formatting {{{
+
+" Command formatting helpers {{{
+
+function! flog#get_cache_curr_line_refs(cache) abort
+  if !has_key(a:cache, '_refs')
+    let l:commit = flog#get_commit_at_line()
+    if type(l:commit) != v:t_dict || empty(l:commit.ref_name_list)
+      return v:null
+    endif
+    let l:refs = l:commit.ref_name_list
+
+    let l:original_refs = split(l:commit.ref_names_unwrapped, ' \ze-> \|, \|\zetag: ')
+
+    let l:remote_branches = []
+    let l:local_branches = []
+    let l:special = []
+    let l:tags = []
+
+    let l:i = 0
+    while l:i < len(l:refs)
+      let l:ref = l:refs[l:i]
+
+      if l:ref =~# 'HEAD$\|^refs/'
+        call add(l:special, l:ref)
+      elseif l:ref =~# '/'
+        call add(l:remote_branches, l:ref)
+      elseif l:original_refs[l:i] =~# '^tag: '
+        call add(l:tags, l:ref)
+      else
+        call add(l:local_branches, l:ref)
+      endif
+
+      let l:i += 1
+    endwhile
+
+    let a:cache['_refs'] = {
+          \ 'local_branches': l:local_branches,
+          \ 'remote_branches': l:remote_branches,
+          \ 'tags': l:tags,
+          \ 'special': l:special,
+          \ }
+  endif
+  return a:cache['_refs']
+endfunction
+
+" }}}
+
+" Command format specifier converters {{{
+
+function! flog#cmd_item_hash_at_curr_line(cache) abort
+  return flog#get(flog#get_commit_at_line(), 'short_commit_hash')
+endfunction
+
+function! flog#cmd_item_hash(cache, item) abort
+  return flog#get(flog#get_commit_at_line(a:item[1:]), 'short_commit_hash')
+endfunction
+
+function! flog#cmd_item_branch(cache) abort
+  let l:refs = flog#get_cache_curr_line_refs(a:cache)
+  let l:local_branches = flog#get(l:refs, 'local_branches', [])
+  let l:remote_branches = flog#get(l:refs, 'remote_branches', [])
+  return get(l:local_branches, 0, get(l:remote_branches, 0, v:null))
+endfunction
+
+function! flog#cmd_item_local_branch(cache) abort
+  let l:refs = flog#get_cache_curr_line_refs(a:cache)
+  let l:local_branches = flog#get(l:refs, 'local_branches', [])
+  let l:remote_branches = flog#get(l:refs, 'remote_branches', [])
+
+  if empty(l:local_branches)
+    if empty(l:remote_branches)
+      return v:null
+    endif
+    return substitute(l:remote_branches[0], '.*/', '', '')
+  endif
+  return l:local_branches[0]
+endfunction
+
+function! flog#cmd_item_path(cache) abort
+  let l:state = flog#get_state()
+  if empty(l:state.path)
+    return v:null
+  endif
+  return join(map(l:state.path, 'fnameescape(v:val)'), ' ')
+endfunction
+
+function! flog#convert_command_format_item(cache, item) abort
+  " return any cached data
+
+  if has_key(a:cache, a:item) && a:item[0] !=# '_'
+    return a:cache[a:item]
+  endif
+
+  " convert the specifier
+
+  let l:converted_item = v:null
+
+  if a:item ==# 'h'
+    let l:converted_item = flog#cmd_item_hash_at_curr_line(a:cache)
+  elseif a:item =~# "^h'."
+    let l:converted_item = flog#cmd_item_hash(a:cache, a:item)
+  elseif a:item =~# 'b'
+    let l:converted_item = flog#cmd_item_branch(a:cache)
+  elseif a:item =~# 'l'
+    let l:converted_item = flog#cmd_item_local_branch(a:cache)
+  elseif a:item =~# 'p'
+    let l:converted_item = flog#cmd_item_path(a:cache)
+  else
+    echoerr printf('error converting %s', a:item)
+    throw g:flog_unsupported_command_format_item
+  endif
+
+  " handle result
+
+  let a:cache[a:item] = l:converted_item
+  return l:converted_item
+endfunction
+
+" }}}
+
+function! flog#format_command(format) abort
+  " special token flags
+  let l:is_in_item = 0
+  let l:is_in_long_item = 0
+  let l:is_in_long_item_escape = 0
+
+  " special token data
+  let l:long_item = ''
+
+  " memoized data
+  let l:cache = {}
+
+  " return data
+  let l:ret = ''
+
+  for l:char in split(a:format, '\zs')
+    " parse characters in %()
+    if l:is_in_long_item
+      if l:char ==# ')'
+        " end long specifier
+        let l:converted_item = flog#convert_command_format_item(l:cache, l:long_item)
+        if type(l:converted_item) != v:t_string
+          return v:null
+        endif
+        let l:ret .= l:converted_item
+
+        let l:is_in_long_item = 0
+        let l:long_item = ''
+      else
+        " build specifier
+        let l:long_item .= l:char
+      endif
+      continue
+    endif
+
+    " parse character after %
+    if l:is_in_item
+      if l:char ==# '('
+        " start long specifier
+        let l:is_in_long_item = 1
+      else
+        " parse specifier chacter
+        let l:converted_item = flog#convert_command_format_item(l:cache, l:char)
+        if type(l:converted_item) != v:t_string
+          return v:null
+        endif
+        let l:ret .= l:converted_item
+      endif
+
+      let l:is_in_item = 0
+      continue
+    endif
+
+    " parse normal character
+    if l:char ==# '%'
+      let l:is_in_item = 1
+    else
+      let l:ret .= l:char
+    endif
+  endfor
+
+  return l:ret
+endfunction
+
+" }}}
+
+" Command running {{{
+
 function! flog#handle_command_window_cleanup(keep_focus, graph_window_id) abort
   if !a:keep_focus
     call win_gotoid(a:graph_window_id)
@@ -1539,7 +1580,7 @@ function! flog#handle_command_cleanup(keep_focus, should_update, graph_window_id
   call flog#handle_command_update_cleanup(a:should_update, a:graph_window_id, a:graph_buff_num)
 endfunction
 
-function! flog#run_command(command, ...) abort
+function! flog#run_raw_command(command, ...) abort
   let l:keep_focus = get(a:, 1, v:false)
   let l:should_update = get(a:, 2, v:false)
   let l:is_tmp = get(a:, 3, v:false)
@@ -1563,12 +1604,24 @@ function! flog#run_command(command, ...) abort
   endif
 endfunction
 
+function! flog#run_command(command, ...) abort
+  let l:keep_focus = get(a:, 1, v:false)
+  let l:should_update = get(a:, 2, v:false)
+  let l:is_tmp = get(a:, 3, v:false)
+
+  let l:command = flog#format_command(a:command)
+
+  call flog#run_raw_command(l:command, l:keep_focus, l:should_update, l:is_tmp)
+endfunction
+
 function! flog#run_tmp_command(command, ...) abort
   let l:keep_focus = get(a:, 1, v:false)
   let l:should_update = get(a:, 2, v:false)
 
   call flog#run_command(a:command, l:keep_focus, l:should_update, v:true)
 endfunction
+
+" }}}
 
 " }}}
 
@@ -1601,14 +1654,14 @@ function! flog#preview_commit(...) range abort
   call flog#deprecate_function(
         \ 'flog#preview_commit',
         \ 'flog#run_tmp_command',
-        \ 'flog#format_commit(flog#get_commit_at_line(), "MyCommand %s"), [keep_focus], [should_update]')
+        \ '"MyCommand %h", [keep_focus], [should_update]')
 endfunction
 
 function! flog#preview_split_commit(...) range abort
   call flog#deprecate_function(
         \ 'flog#preview_split_commit',
         \ 'flog#run_tmp_command',
-        \ 'flog#format_commit(flog#get_commit_at_line(), "(mods) Gsplit %s"), [keep_focus]')
+        \ '"(mods) Gsplit %h", [keep_focus]')
 endfunction
 
 function! flog#git(...) range abort
@@ -1616,6 +1669,66 @@ function! flog#git(...) range abort
         \ 'flog#git',
         \ 'flog#run_command',
         \ '"(mods) Git (cmd)", [keep_focus], [should_update], [is_tmp]')
+endfunction
+
+function! flog#format(...) range abort
+  call flog#deprecate_function(
+        \ 'flog#format',
+        \ 'flog#run_command',
+        \ '"(format)", ...')
+endfunction
+
+function! flog#join(...) range abort
+  call flog#deprecate_function('flog#join', 'flog#run_command')
+endfunction
+
+function! flog#get_paths() range abort
+  call flog#deprecate_function(
+        \ 'flog#get_paths',
+        \ 'flog#run_command',
+        \ '"MyCommand %p", ...')
+endfunction
+
+function! flog#get_hash_at_line() range abort
+  call flog#deprecate_function(
+        \ 'flog#get_hash_at_line',
+        \ 'flog#run_command',
+        \ '"MyCommand %h", ...')
+endfunction
+
+function! flog#get_commit_selection() range abort
+  call flog#deprecate_function(
+        \ 'flog#get_commit_selection',
+        \ 'flog#run_command',
+        \ "\"MyCommand %(h'<) %(h'>)\", ...")
+endfunction
+
+function! flog#format_commit() range abort
+  call flog#deprecate_function(
+        \ 'flog#format_commit',
+        \ 'flog#run_command',
+        \ '"MyCommand %h", ...')
+endfunction
+
+function! flog#format_commit_selection() range abort
+  call flog#deprecate_function(
+        \ 'flog#format_commit_selection',
+        \ 'flog#run_command',
+        \ "\"MyCommand %(h'<) %(h'>)\", ...")
+endfunction
+
+function! flog#get_branch_at_line() range abort
+  call flog#deprecate_function(
+        \ 'flog#get_branch_at_line',
+        \ 'flog#run_command',
+        \ '"MyCommand %b", ...')
+endfunction
+
+function! flog#get_local_branch_at_line() range abort
+  call flog#deprecate_function(
+        \ 'flog#get_local_branch_at_line',
+        \ 'flog#run_command',
+        \ '"MyCommand %l", ...')
 endfunction
 
 " }}}

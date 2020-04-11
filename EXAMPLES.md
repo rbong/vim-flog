@@ -29,14 +29,8 @@ Put this code inside of your `.vimrc`:
 
 ```vim
 augroup flog
-  autocmd FileType floggraph vno <buffer> D :<C-U>call flog#run_tmp_command(
-    \ flog#format_commit_selection(
-      \ flog#get_commit_selection(),
-      \ 'vertical belowright Git diff %s %s'))<CR>
-  autocmd FileType floggraph nno <buffer> D :<C-U>call flog#run_tmp_command(
-    \ flog#format_commit(
-      \ flog#get_commit_at_line(),
-      \ 'vertical belowright Git diff HEAD %s'))<CR>
+  autocmd FileType floggraph nno <buffer> D :<C-U>call flog#run_tmp_command('vertical belowright Git diff HEAD %h')<CR>
+  autocmd FileType floggraph vno <buffer> D :<C-U>call flog#run_tmp_command("vertical belowright Git diff %(h'<) %(h'>)")<CR>
 augroup END
 ```
 

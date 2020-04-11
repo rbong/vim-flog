@@ -391,127 +391,36 @@ g:flog_use_ansi_esc                                      *g:flog_use_ansi_esc*
 ==============================================================================
 FUNCTIONS                                                     *flog-functions*
 
-Flog provides several functions to allow you to define your own commands.
-
-                                                   *flog#get_commit_at_line()*
-flog#get_commit_at_line([{line}])
-
-  Gets the commit at the given line.
-
-  If {line} isn't provided, use the current line.
-
-  If the commit was found, returns a |dict| containing the commit data.
-  Otherwise, returns |v:null|.
-
-                                                     *flog#get_hash_at_line()*
-flog#get_hash_at_line([{line}])
-
-  Same as |flog#get_commit_at_line()|, but return only the commit hash instead
-  of a |dict|.
-
-                                                 *flog#get_commit_selection()*
-flog#get_commit_selection([{firstline}[, {lastline}[, {should-swap}]]])
-
-  Gets the commits at the beginning and end of the given lines.
-
-  If {firstline} is null, use the start of the current visual selection.
-
-  If {lastline} is null, use the end of the current visual selection.
-
-  If {should-swap} is truthy, swap the order of the commits.
-
-  If both commits were found, returns a |list| containing the commits.
-  Otherwise, returns |v:null|.
-
-                                                   *flog#get_branch_at_line()*
-flog#get_branch_at_line([{line}])
-
-  Get the first branch at the current line, prioritizing local branches.
-  Useful for checkout commands.
-
-  If {line} isn't provided, use the current line.
-
-  If the branch was found, returns a |string| containing the name.
-  Otherwise, returns |v:null|.
-
-                                             *flog#get_local_branch_at_line()*
-flog#get_local_branch_at_line([{line}])
-
-  Get the first local branch at the current line, or trim the remote from the
-  first upstream branch. Useful for checkout commands.
-
-  If {line} isn't provided, use the current line.
-
-  If a branch was found, returns a |string| containing the ref name.
-  Otherwise, returns |v:null|.
-
-                                                            *flog#get_paths()*
-flog#get_paths()
-
-  Gets a |list| containing the current paths specified using "-path", or
-  |v:null| if no paths were selected.
-
-                                                               *flog#format()*
-flog#format({value}, [{format}])
-
-  Format a string or list with |printf|. Useful for formatting refs into
-  commands.
-
-  If {format} is not given use "%s".
-
-  If {value} is a non-null value or a list that does not contain |v:null|,
-  returns the formatted |string|. Otherwise, returns |v:null|.
-
-                                                        *flog#format_commit()*
-flog#format_commit({commit}, [{format}])
-
-  Format the hash of a commit from |flog#get_commit_at_line()| using
-  |printf()|.
-
-  If {format} is not given use "%s".
-
-  If the commit is valid, returns the formatted |string|.
-  Otherwise, returns v:null.
-
-                                              *flog#format_commit_selection()*
-flog#format_commit_selection({commit-selection}, [{format}])
-
-  Format the hash of a commit from |flog#get_commit_selection()| using
-  |printf()|.
-
-  If {format} is not given use "%s %s".
-
-  If the commit list is valid, returns the formatted |string|.
-  Otherwise, returns v:null.
-
-                                                                 *flog#join()*
-flog#join({list}, [{sep}])
-
-  Joins together a list of strings with a separator. Useful for safely joining
-  together paths.
-
-  If {list} is a valid list, returns the joined |string|.
-  Otherwise, returns v:null.
-
                                                           *flog#run_command()*
-flog#run_command({command}, [{keep-focus}[, {should-update}[, {is-tmp}]]])
+flog#run_command({command}[, {keep-focus}[, {should-update}[, {is-tmp}]]])
 
-  Helper to run commands, optionally retaining focus using {keep-focus},
-  updating the graph buffer after the command is complete with
-  {should-update}, and making any windows the command launches temporary with
-  {is-tmp}.
+  Runs a command in the graph.
+
+  {command} is the command that is run in the graph. The command will be
+  formatted according to |flog-command-format|.
+
+  By default, focus returns to the graph window after running the command.
+  {keep-focus} allows the command to retrain focus.
+
+  {should-update} updates the graph after running the command.
+
+  {is-tmp} causes the window to run in a |flog-temp-window|.
 
   Example:
 >
-    flog#run_command(flog#format_commit_selection(
-      \ flog#get_commit_selection(), 'Git diff %s'))
+    flog#run_command('Git show %h')
 <
 
                                                       *flog#run_tmp_command()*
-flog#run_tmp_command({command}, [{keep-focus}[, {should-update}]])
+flog#run_tmp_command({command}[, {keep-focus}[, {should-update}]])
 
-  Same as |flog#run_command()|, but explicitly make the windows opened by
-  the command temporary.
+  Same as |flog#run_command()|, but always open the command in a
+  |flog-temp-window|.
+
+                                                      *flog#run_raw_command()*
+flog#run_raw_command({command}[, {keep-focus}[, {should-update}[, {is-tmp}]]])
+
+  Same as |flog#run_command()|, but do not format {command}.
 
 ==============================================================================
 ABOUT                                                             *flog-about*
@@ -519,8 +428,35 @@ ABOUT                                                             *flog-about*
 ------------------------------------------------------------------------------
 TEMPORARY WINDOWS                                           *flog-temp-window*
 
-To view more information from commits in the graph, you can open temporary
-windows. Opening a command in Flog temp windows closes any previously opened
-temp windows. Temp windows will be closed when quitting Flog.
+  To view more information from commits in the graph, you can open temporary
+  windows. Opening a command in Flog temp windows closes any previously opened
+  temp windows. Temp windows will be closed when quitting Flog.
+
+------------------------------------------------------------------------------
+COMMAND FORMAT                                           *flog-command-format*
+
+  Commands in Flog are converted using a special syntax similar to |printf|.
+  Items prefixed by the "%" character are resolved into commit information and
+  Flog options.
+
+  If any items cannot be resolved, such as for empty lines or if a path is not
+  set, the command will not be run.
+
+  The following items are supported:
+
+  %%                    A literal "%" character.
+  %h                    The hash of the commit under the cursor, if any.
+  %(h'x)                The hash of the commit at the given mark "x". Useful
+                        for getting the hash of the commits at the visual
+                        selection (|'<| and |'>|).
+  %b                    The first branch of the commit under the cursor, if
+                        any. Local branches prioritized first. Useful for
+                        checking out branches.
+  %l                    The first branch of the commit under the cursor, if
+                        any. Local branches prioritized first. If a remote
+                        commit is used, trim the remote name from the branch.
+                        Useful for checking out commits for tracking.
+  %p                    The arguments passed to the |:Flog| "-path" option, if
+                        any, escaped and joined together by spaces. 
 
  vim:tw=78:ts=8:ft=help
