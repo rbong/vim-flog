@@ -1682,49 +1682,49 @@ function! flog#join(...) range abort
   call flog#deprecate_function('flog#join', 'flog#run_command')
 endfunction
 
-function! flog#get_paths() range abort
+function! flog#get_paths(...) range abort
   call flog#deprecate_function(
         \ 'flog#get_paths',
         \ 'flog#run_command',
         \ '"MyCommand %p", ...')
 endfunction
 
-function! flog#get_hash_at_line() range abort
+function! flog#get_hash_at_line(...) range abort
   call flog#deprecate_function(
         \ 'flog#get_hash_at_line',
         \ 'flog#run_command',
         \ '"MyCommand %h", ...')
 endfunction
 
-function! flog#get_commit_selection() range abort
+function! flog#get_commit_selection(...) range abort
   call flog#deprecate_function(
         \ 'flog#get_commit_selection',
         \ 'flog#run_command',
         \ "\"MyCommand %(h'<) %(h'>)\", ...")
 endfunction
 
-function! flog#format_commit() range abort
+function! flog#format_commit(...) range abort
   call flog#deprecate_function(
         \ 'flog#format_commit',
         \ 'flog#run_command',
         \ '"MyCommand %h", ...')
 endfunction
 
-function! flog#format_commit_selection() range abort
+function! flog#format_commit_selection(...) range abort
   call flog#deprecate_function(
         \ 'flog#format_commit_selection',
         \ 'flog#run_command',
         \ "\"MyCommand %(h'<) %(h'>)\", ...")
 endfunction
 
-function! flog#get_branch_at_line() range abort
+function! flog#get_branch_at_line(...) range abort
   call flog#deprecate_function(
         \ 'flog#get_branch_at_line',
         \ 'flog#run_command',
         \ '"MyCommand %b", ...')
 endfunction
 
-function! flog#get_local_branch_at_line() range abort
+function! flog#get_local_branch_at_line(...) range abort
   call flog#deprecate_function(
         \ 'flog#get_local_branch_at_line',
         \ 'flog#run_command',
