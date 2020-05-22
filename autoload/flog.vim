@@ -1696,13 +1696,6 @@ function! flog#get_hash_at_line(...) range abort
         \ '"MyCommand %h", ...')
 endfunction
 
-function! flog#get_commit_selection(...) range abort
-  call flog#deprecate_function(
-        \ 'flog#get_commit_selection',
-        \ 'flog#run_command',
-        \ "\"MyCommand %(h'<) %(h'>)\", ...")
-endfunction
-
 function! flog#format_commit(...) range abort
   call flog#deprecate_function(
         \ 'flog#format_commit',
