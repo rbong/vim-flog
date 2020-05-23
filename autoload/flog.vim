@@ -622,7 +622,6 @@ function! flog#get_initial_state(parsed_args, original_file) abort
         \ 'tmp_window_ids': [],
         \ 'previous_log_command': v:null,
         \ 'line_commits': [],
-        \ 'all_refs': [],
         \ 'commit_refs': [],
         \ 'line_commit_refs': [],
         \ 'ref_line_lookup': {},
@@ -1008,7 +1007,6 @@ function! flog#set_graph_buffer_commits(commits) abort
 
   let l:state.line_commits = []
 
-  let l:state.all_refs = []
   let l:state.commit_refs = []
   let l:state.line_commit_refs = []
   let l:state.ref_line_lookup = {}
@@ -1016,7 +1014,6 @@ function! flog#set_graph_buffer_commits(commits) abort
   let l:cr = v:null
 
   let l:scr = l:state.commit_refs
-  let l:sr = l:state.all_refs
   let l:srl = l:state.ref_line_lookup
   let l:slc = l:state.line_commits
   let l:slr = l:state.line_commit_refs
@@ -1025,7 +1022,6 @@ function! flog#set_graph_buffer_commits(commits) abort
     if l:c.ref_name_list !=# []
       let l:cr = l:c.ref_name_list
       let l:scr += [l:cr]
-      let l:sr += l:cr
       for l:r in l:cr
         let l:srl[l:r] = len(l:slc)
       endfor
