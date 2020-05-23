@@ -413,6 +413,10 @@ endfunction
 
 " Argument commands {{{
 
+function! flog#get_remotes() abort
+  return flog#systemlist(fugitive#repo().git_command() . ' remote')
+endfunction
+
 function! flog#get_revs() abort
   let l:command = fugitive#repo().git_command()
         \ . ' rev-parse --symbolic --branches --tags --remotes'
@@ -434,7 +438,8 @@ function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
     if type(l:commit) != v:t_dict
       return []
     endif
-    let l:completions = [l:commit.short_commit_hash] + l:commit.ref_name_list
+    let l:completions = [l:commit.short_commit_hash]
+          \ + flog#get_remotes() + l:commit.ref_name_list
   else
     " complete for a range
     let l:commit = flog#get_commit_selection(l:firstline, l:lastline)
@@ -449,6 +454,7 @@ function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
       let l:first_hash = l:first_commit.short_commit_hash
       let l:last_hash = l:last_commit.short_commit_hash
       let l:completions = [l:first_hash, l:last_hash]
+            \ + flog#get_remotes()
             \ + l:first_commit.ref_name_list + l:last_commit.ref_name_list
             \ + [
               \ l:last_hash . '..' . l:first_hash,
