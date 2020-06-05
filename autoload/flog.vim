@@ -1397,7 +1397,7 @@ function! flog#get_cache_curr_line_refs(cache) abort
 
       if l:ref =~# 'HEAD$\|^refs/'
         call add(l:special, l:ref)
-      elseif l:ref =~# '/'
+      elseif l:ref =~# '[' . join(flog#get_remotes(), '\|') . ']/'
         call add(l:remote_branches, l:ref)
       elseif l:original_refs[l:i] =~# '^tag: '
         call add(l:tags, l:ref)
