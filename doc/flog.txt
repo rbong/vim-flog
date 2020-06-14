@@ -117,7 +117,7 @@ g?                                                                   *flog-g?*
 
   Open the commit under the cursor in a temporary window.
 
-                                               *<Plug>(FlogVSplitCommitRight)*
+                                           *<Plug>(FlogVSplitCommitRightPath)*
 <Tab>                                                             *flog-<Tab>*
 
   Same as |flog-<CR>|, but use the "-path" argument to only show the diff for
