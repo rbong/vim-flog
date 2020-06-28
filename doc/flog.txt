@@ -232,7 +232,7 @@ gx                                                                   *flog-gx*
                                                           *<Plug>(FlogUpdate)*
 u                                                                     *flog-u*
 
-  Update the graph window.
+  Update/reload the graph window.
 
                                                           *<Plug>(FlogSearch)*
 g/                                                                   *flog-g/*
