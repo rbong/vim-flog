@@ -30,6 +30,7 @@ COMMANDS                                                       *flog-commands*
   -no-merges            Enable the "--no-merges" argument by default.
   -reflog               Enable the "--reflog" argument by default.
   -no-graph             Disable the "--graph" argument by default.
+  -no-patch             Enable the "--no-patch" argument by default.
   -skip=<number>        Passed to "--skip", skipping that number of commits by
                         default.
   -max-count=<number>   Passed to "--max-count", limiting to that number of
@@ -44,8 +45,16 @@ COMMANDS                                                       *flog-commands*
   -search=<rev>         A regex pattern to pass to "--grep=".
   -patch-search=<rev>   A regex pattern to pass to "-G".
   -limit=<limit>        A limit to pass to "-L". This will restrict commit
-                        history to the specified limit. This will limit the
-                        log to a single target, disabling some options.
+                        history to the specified file/lines. This disables
+                        some options.
+
+                        Because it uses the "git log -L" argument, this option
+                        will display a patch inline to the graph window. This
+                        can be toggled with "gp".
+
+                        Instead of manually specifying this argument, you can
+                        also use a range or visually select some lines and
+                        type ":Flog<CR>".
   -rev=<rev>            The git revision to pass to the log command. Can be
                         specified more than once. When "-limit=" is specified,
                         only the first revision is used.
@@ -228,6 +237,12 @@ gr                                                                   *flog-gr*
 gx                                                                   *flog-gx*
 
   Toggle the "--graph" argument.
+
+                                                   *<Plug>(FlogToggleNoPatch)*
+gp                                                                   *flog-gp*
+
+  Toggle the "--no-patch" argument. Useful while the "-limit" option is
+  specified.
 
                                                           *<Plug>(FlogUpdate)*
 u                                                                     *flog-u*

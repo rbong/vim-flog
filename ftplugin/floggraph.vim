@@ -132,6 +132,11 @@ if !hasmapto('<Plug>(FlogToggleNoGraph)')
 endif
 nnoremap <buffer> <silent> <Plug>(FlogToggleNoGraph) :call flog#toggle_no_graph_option()<CR>
 
+if !hasmapto('<Plug>(FlogToggleNoPatch)')
+  nmap <buffer> gp <Plug>(FlogToggleNoPatch)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogToggleNoPatch) :call flog#toggle_no_patch_option()<CR>
+
 if !hasmapto('<Plug>(FlogUpdate)')
   nmap <buffer> u <Plug>(FlogUpdate)
 endif

@@ -68,6 +68,7 @@ let g:flog_default_completion = [
       \ '-max-count=',
       \ '-no-graph',
       \ '-no-merges',
+      \ '-no-patch',
       \ '-open-cmd=',
       \ '-patch-search=',
       \ '-path=',

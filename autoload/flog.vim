@@ -202,6 +202,7 @@ function! flog#get_internal_default_args() abort
         \ 'no_merges': v:false,
         \ 'reflog': v:false,
         \ 'no_graph': v:false,
+        \ 'no_patch': v:false,
         \ 'skip': v:null,
         \ 'max_count': v:null,
         \ 'open_cmd': 'tabedit',
@@ -304,6 +305,8 @@ function! flog#parse_set_args(args, current_args, defaults) abort
       let a:current_args.reflog = v:true
     elseif l:arg ==# '-no-graph'
       let a:current_args.no_graph = v:true
+    elseif l:arg ==# '-no-patch'
+      let a:current_args.no_patch = v:true
     elseif l:arg =~# '^-skip=\d\+'
       let a:current_args.skip = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-skip='
@@ -774,6 +777,9 @@ function! flog#build_log_command() abort
   if l:state.reflog && !l:state.limit
     let l:command .= ' --reflog'
   endif
+  if l:state.no_patch
+    let l:command .= ' --no-patch'
+  endif
   if l:state.skip != v:null
     let l:command .= ' --skip=' . shellescape(l:state.skip)
   endif
@@ -1054,6 +1060,9 @@ function! flog#set_graph_buffer_title() abort
   if l:state.no_graph
     let l:title .= ' [no_graph]'
   endif
+  if l:state.no_patch
+    let l:title .= ' [no_patch]'
+  endif
   if l:state.skip != v:null
     let l:title .= ' [skip=' . l:state.skip . ']'
   endif
@@ -1212,6 +1221,12 @@ endfunction
 function! flog#toggle_no_graph_option() abort
   let l:state = flog#get_state()
   let l:state.no_graph = l:state.no_graph ? v:false : v:true
+  call flog#populate_graph_buffer()
+endfunction
+
+function! flog#toggle_no_patch_option() abort
+  let l:state = flog#get_state()
+  let l:state.no_patch = l:state.no_patch ? v:false : v:true
   call flog#populate_graph_buffer()
 endfunction
 
