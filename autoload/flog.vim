@@ -1381,6 +1381,14 @@ endfunction
 
 " Command formatting helpers {{{
 
+function! flog#is_remote_ref(ref) abort
+  let l:split_ref = split(a:ref, '/')
+  if len(l:split_ref) < 2
+    return 0
+  endif
+  return index(flog#get_remotes(), l:split_ref[0]) >= 0
+endfunction
+
 function! flog#get_cache_curr_line_refs(cache) abort
   if !has_key(a:cache, '_refs')
     let l:commit = flog#get_commit_at_line()
@@ -1402,10 +1410,10 @@ function! flog#get_cache_curr_line_refs(cache) abort
 
       if l:ref =~# 'HEAD$\|^refs/'
         call add(l:special, l:ref)
-      elseif l:ref =~# '/'
-        call add(l:remote_branches, l:ref)
       elseif l:original_refs[l:i] =~# '^tag: '
         call add(l:tags, l:ref)
+      elseif flog#is_remote_ref(l:ref)
+        call add(l:remote_branches, l:ref)
       else
         call add(l:local_branches, l:ref)
       endif
