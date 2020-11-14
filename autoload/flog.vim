@@ -302,8 +302,6 @@ function! flog#parse_set_args(args, current_args, defaults) abort
       let a:current_args.no_merges = v:true
     elseif l:arg ==# '-reflog'
       let a:current_args.reflog = v:true
-    elseif l:arg ==# '-reflog'
-      let a:current_args.reflog = v:true
     elseif l:arg ==# '-no-graph'
       let a:current_args.no_graph = v:true
     elseif l:arg =~# '^-skip=\d\+'
