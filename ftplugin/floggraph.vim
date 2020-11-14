@@ -331,7 +331,7 @@ command! -buffer -range -bang -complete=customlist,flog#complete_git -nargs=* Fl
 
 command! -bang -complete=customlist,flog#complete -nargs=* Flogsetargs call flog#update_options([<f-args>], '<bang>' ==# '!')
 
-command! -bang -complete=customlist,flog#complete_refs -nargs=* Flogjump call flog#jump_to_ref(<q-args>)
+command! -bang -complete=customlist,flog#complete_jump -nargs=* Flogjump call flog#jump_to_ref(<q-args>)
 
 " Deprecated commands {{{
 

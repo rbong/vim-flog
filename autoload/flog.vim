@@ -504,6 +504,11 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   return l:completions
 endfunction
 
+function! flog#complete_jump(arg_lead, cmd_line, cursor_pos) abort
+  let l:state = flog#get_state()
+  return flog#complete_ref(a:arg_lead)
+endfunction
+
 " }}}
 
 " Flog command argument commpletion {{{
