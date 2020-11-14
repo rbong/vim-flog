@@ -417,7 +417,7 @@ function! flog#get_remotes() abort
   return flog#systemlist(fugitive#repo().git_command() . ' remote')
 endfunction
 
-function! flog#get_revs() abort
+function! flog#get_refs() abort
   let l:command = fugitive#repo().git_command()
         \ . ' rev-parse --symbolic --branches --tags --remotes'
   return flog#systemlist(l:command) +  ['HEAD', 'FETCH_HEAD', 'MERGE_HEAD', 'ORIG_HEAD']
@@ -479,9 +479,9 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   " complete line info
   let l:completions = flog#complete_line(a:arg_lead, a:cmd_line, a:cursor_pos)
 
-  " complete all possible revs
-  let l:completed_revs = flog#filter_completions(a:arg_lead, flog#get_revs())
-  let l:completions += flog#exclude(l:completed_revs, l:completions)
+  " complete all possible refs
+  let l:completed_refs = flog#filter_completions(a:arg_lead, flog#get_refs())
+  let l:completions += flog#exclude(l:completed_refs, l:completions)
 
   " complete limit
   if l:state.limit
@@ -562,13 +562,13 @@ function! flog#complete_limit(arg_lead) abort
   return flog#filter_completions(a:arg_lead, l:completions)
 endfunction
 
-function! flog#complete_rev(arg_lead) abort
+function! flog#complete_ref(arg_lead) abort
   if !flog#is_fugitive_buffer()
     return []
   endif
   let [l:lead, l:last] = flog#split_single_completable_arg(a:arg_lead)
-  let l:revs = flog#get_revs()
-  return flog#filter_completions(a:arg_lead, map(l:revs, 'l:lead . v:val'))
+  let l:refs = flog#get_refs()
+  return flog#filter_completions(a:arg_lead, map(l:refs, 'l:lead . v:val'))
 endfunction
 
 function! flog#complete_path(arg_lead) abort
