@@ -72,7 +72,7 @@ Flog allows updating the graph, running commands, and customization, where gv do
 Flog is a next generation branch viewer that learns a lot of lessons from gitv.
 It has a better defined argument system, more robust window management, more stable update system, has the ability to run more commands in the graph easier, has cleaner mappings, and supports any log format.
 
-**How can I learn how to use flog?**
+## How can I learn how to use flog?
 
 See `:help flog` for all commands and options.
 See [the examples](EXAMPLES.md) for detailed walkthroughs of different operations using flog.
