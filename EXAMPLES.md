@@ -36,14 +36,11 @@ augroup END
 
 You can now diff commits by visually selecting them and pressing `D`, equivalent to `dd`.
 
-Let's break this code down.
-
-`flog#get_commit_selection` will return the commits at the beginning and end of the virtual selection.
-
-`flog#format_commit_selection` will format those commit based on a format specifier for `printf()`.
-The commands will be formatted as `'vertical belowright Git diff <commit 1> <commit 2>'`.
-
 `flog#run_tmp_command` tells flog to run the command and treat any windows it opens as temporary.
+
+This can use different special format specifiers for this function, similar to `printf()`.
+In this case, `%h` will resolve to the hash on the current line, and `%(h'<) %(h'>)` will resolve to the commits in the visual selection.
+See `:help flog-command-format` for more format specifiers.
 
 For normal mode, similar functions are used, only the format specifier will format the single commit as `... Git diff HEAD <commit>`.
 
