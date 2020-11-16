@@ -40,11 +40,9 @@ You can now diff commits by visually selecting them and pressing `D`, equivalent
 
 This function can use different special format specifiers, similar to `printf()`.
 In this case, `%h` will resolve to the hash on the current line, and `%(h'<) %(h'>)` will resolve to the hashes in the visual selection.
+
 See `:help flog-command-format` for more format specifiers.
-
-For normal mode, similar functions are used, only the format specifier will format the single commit as `... Git diff HEAD <commit>`.
-
-For more details, see `:help flog-functions` and `:help flog-about`.
+You can also view the [the floggraph syntax file](https://github.com/rbong/vim-flog/blob/master/ftplugin/floggraph.vim) for more examples.
 
 ## Additional Examples
 
