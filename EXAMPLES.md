@@ -38,8 +38,8 @@ You can now diff commits by visually selecting them and pressing `D`, equivalent
 
 `flog#run_tmp_command` tells flog to run the command and treat any windows it opens as temporary.
 
-This can use different special format specifiers for this function, similar to `printf()`.
-In this case, `%h` will resolve to the hash on the current line, and `%(h'<) %(h'>)` will resolve to the commits in the visual selection.
+This function can use different special format specifiers, similar to `printf()`.
+In this case, `%h` will resolve to the hash on the current line, and `%(h'<) %(h'>)` will resolve to the hashes in the visual selection.
 See `:help flog-command-format` for more format specifiers.
 
 For normal mode, similar functions are used, only the format specifier will format the single commit as `... Git diff HEAD <commit>`.
