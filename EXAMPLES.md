@@ -77,6 +77,7 @@ This is because `%(h'<)` and `%(h'>)` have been swapped from the default command
 
 See `:help flog-command-format` for more format specifiers.
 You can also view [the floggraph filetype script](https://github.com/rbong/vim-flog/blob/master/ftplugin/floggraph.vim), which effectively serves as documentation of Flog's utility functions.
+Finally, if you would like to view user-created commands, check out the [Wiki](https://github.com/rbong/vim-flog/wiki/Custom-Commands).
 
 ## Additional Examples
 
