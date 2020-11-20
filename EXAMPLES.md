@@ -52,26 +52,28 @@ There are several different ways to diff commits after launching Flog:
   - Visually select the commits and use `:Floggit diff <Tab>` to complete the commits at the beginning and end of the selection.
   - Press `dd` in visual mode to diff the commits at the beginning and end of the selection
 
-## Extension Example: Automating Diffing Two Commits
+## Extension Example: Switch Diff Order
 
 Instead of trying to provide settings for everything, Flog provides utility functions for customization.
-This example shows how the `dd` binding is implemented.
+This example shows how to switch the order of commits when diffing with `dd`.
 
 Put this code inside of your `.vimrc`:
 
 ```vim
 augroup flog
-  autocmd FileType floggraph nno <buffer> D :<C-U>call flog#run_tmp_command('vertical belowright Git diff HEAD %h')<CR>
-  autocmd FileType floggraph vno <buffer> D :<C-U>call flog#run_tmp_command("vertical belowright Git diff %(h'<) %(h'>)")<CR>
+  autocmd FileType floggraph nno <buffer> dd :<C-U>call flog#run_tmp_command('vertical belowright Git diff HEAD %h')<CR>
+  autocmd FileType floggraph vno <buffer> dd :<C-U>call flog#run_tmp_command("vertical belowright Git diff %(h'>) %(h'<)")<CR>
 augroup END
 ```
 
-You can now diff commits by visually selecting them and pressing `D`, equivalent to `dd`.
-
 `flog#run_tmp_command` tells flog to run the command and treat any windows it opens as temporary.
+You can also use `flog#run_command`, which runs a command using the same syntax without temporary windows.
 
 This function can use different special format specifiers, similar to `printf()`.
-In this case, `%h` will resolve to the hash on the current line, and `%(h'<) %(h'>)` will resolve to the hashes in the visual selection.
+In this case, `%h` will resolve to the hash on the current line, and `%(h'<) %(h'>)` will resolve to the hashes at the beginning and end of the visual selection.
+
+When diffing with `dd`, Flog will now show a diff from bottom-to-top, instead of top-to-bottom.
+This is because `%(h'<)` and `%(h'>)` have been swapped from the default command.
 
 See `:help flog-command-format` for more format specifiers.
 You can also view [the floggraph filetype script](https://github.com/rbong/vim-flog/blob/master/ftplugin/floggraph.vim), which effectively serves as documentation of Flog's utility functions.
