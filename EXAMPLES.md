@@ -70,7 +70,7 @@ augroup END
 You can also use `flog#run_command`, which runs a command using the same syntax without temporary windows.
 
 This function can use different special format specifiers, similar to `printf()`.
-In this case, `%h` will resolve to the hash on the current line, and `%(h'<) %(h'>)` will resolve to the hashes at the beginning and end of the visual selection.
+In this case, `%h` will resolve to the hash on the current line, and `%(h'>) %(h'<)` will resolve to the hashes at the end and beginning of the visual selection.
 
 When diffing with `dd`, Flog will now show a diff from bottom-to-top, instead of top-to-bottom.
 This is because `%(h'<)` and `%(h'>)` have been swapped from the default command.
