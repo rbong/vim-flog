@@ -76,7 +76,8 @@ When diffing with `dd`, Flog will now show a diff from bottom-to-top, instead of
 This is because `%(h'<)` and `%(h'>)` have been swapped from the default command.
 
 See `:help flog-command-format` for more format specifiers.
-You can also view [the floggraph filetype script](https://github.com/rbong/vim-flog/blob/master/ftplugin/floggraph.vim), which effectively serves as documentation of Flog's utility functions.
+See `:help flog-functions` for more details about calling command functions.
+You can also view [the floggraph filetype script](https://github.com/rbong/vim-flog/blob/master/ftplugin/floggraph.vim), which effectively serves as further examples of Flog's utility functions.
 Finally, if you would like to view user-created commands, check out the [Wiki](https://github.com/rbong/vim-flog/wiki/Custom-Commands).
 
 ## Additional Examples
