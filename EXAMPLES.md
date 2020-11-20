@@ -14,6 +14,37 @@
   - Use `cob` to checkout the first local branch name, or remote branch if it is not available.
   - Use `cot` to checkout the first branch name, setting it up to be tracked locally if it is a remote branch.
 
+## Adding Default Arguments
+
+Put this inside of your `.vimrc` to always launch Flog with the `-all` and `-max-count=2000` options:
+
+```vim
+let g:flog_default_arguments = {
+            \ 'max_count': 2000,
+            \ 'all': 1,
+            \ }
+```
+
+You can use `:Flogsetargs` after the graph has launched to override these options:
+
+```
+# Clear the max count
+Flogsetargs -max-count=
+# Increase the max count to 3000
+Flogsetargs -max-count=3000
+# Clear out options
+Flogsetargs!
+```
+
+If you don't want options to be cleared when you run `:Flogsetargs!` you can use `g:flog_permanent_default_arguments`.
+For example, if you want to always use the short date format:
+
+```vim
+let g:flog_permanent_default_arguments = {
+            \ 'date': 'short',
+            \ }
+```
+
 ## Diffing Commits
 
 There are several different ways to diff commits after launching Flog:
@@ -23,6 +54,7 @@ There are several different ways to diff commits after launching Flog:
 
 ## Extension Example: Automating Diffing Two Commits
 
+Instead of trying to provide settings for everything, Flog provides utility functions for customization.
 This example shows how the `dd` binding is implemented.
 
 Put this code inside of your `.vimrc`:
@@ -42,7 +74,7 @@ This function can use different special format specifiers, similar to `printf()`
 In this case, `%h` will resolve to the hash on the current line, and `%(h'<) %(h'>)` will resolve to the hashes in the visual selection.
 
 See `:help flog-command-format` for more format specifiers.
-You can also view [the floggraph syntax file](https://github.com/rbong/vim-flog/blob/master/ftplugin/floggraph.vim) for more examples.
+You can also view [the floggraph filetype script](https://github.com/rbong/vim-flog/blob/master/ftplugin/floggraph.vim), which effectively serves as documentation of Flog's utility functions.
 
 ## Additional Examples
 
