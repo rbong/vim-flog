@@ -467,10 +467,12 @@ COMMAND FORMAT                                           *flog-command-format*
   %b                    The first branch of the commit under the cursor, if
                         any. Local branches prioritized first. Useful for
                         checking out branches.
+  %(b'x)                The branch at the given mark "x".
   %l                    The first branch of the commit under the cursor, if
                         any. Local branches prioritized first. If a remote
                         commit is used, trim the remote name from the branch.
                         Useful for checking out commits for tracking.
+  %(l'x)                The local branch at the given mark "x".
   %p                    The arguments passed to the |:Flog| "-path" option, if
                         any, escaped and joined together by spaces. 
 

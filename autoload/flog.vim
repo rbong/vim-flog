@@ -1402,9 +1402,11 @@ function! flog#is_remote_ref(ref) abort
   return index(flog#get_remotes(), l:split_ref[0]) >= 0
 endfunction
 
-function! flog#get_cache_curr_line_refs(cache) abort
-  if !has_key(a:cache, '_refs')
-    let l:commit = flog#get_commit_at_line()
+function! flog#get_cache_refs(cache, line) abort
+  let l:ref_cache = a:cache['refs']
+
+  if !has_key(l:ref_cache, a:line)
+    let l:commit = flog#get_commit_at_line(a:line)
     if type(l:commit) != v:t_dict || empty(l:commit.ref_name_list)
       return v:null
     endif
@@ -1434,37 +1436,34 @@ function! flog#get_cache_curr_line_refs(cache) abort
       let l:i += 1
     endwhile
 
-    let a:cache['_refs'] = {
+    let l:ref_cache[a:line] = {
           \ 'local_branches': l:local_branches,
           \ 'remote_branches': l:remote_branches,
           \ 'tags': l:tags,
           \ 'special': l:special,
           \ }
   endif
-  return a:cache['_refs']
+
+  return l:ref_cache[a:line]
 endfunction
 
 " }}}
 
 " Command format specifier converters {{{
 
-function! flog#cmd_item_hash_at_curr_line(cache) abort
-  return flog#get(flog#get_commit_at_line(), 'short_commit_hash')
+function! flog#cmd_convert_hash(cache, item, line) abort
+  return flog#get(flog#get_commit_at_line(a:line), 'short_commit_hash')
 endfunction
 
-function! flog#cmd_item_hash(cache, item) abort
-  return flog#get(flog#get_commit_at_line(a:item[1:]), 'short_commit_hash')
-endfunction
-
-function! flog#cmd_item_branch(cache) abort
-  let l:refs = flog#get_cache_curr_line_refs(a:cache)
+function! flog#cmd_convert_branch(cache, item, line) abort
+  let l:refs = flog#get_cache_refs(a:cache, a:line)
   let l:local_branches = flog#get(l:refs, 'local_branches', [])
   let l:remote_branches = flog#get(l:refs, 'remote_branches', [])
   return get(l:local_branches, 0, get(l:remote_branches, 0, v:null))
 endfunction
 
-function! flog#cmd_item_local_branch(cache) abort
-  let l:refs = flog#get_cache_curr_line_refs(a:cache)
+function! flog#cmd_convert_local_branch(cache, item, line) abort
+  let l:refs = flog#get_cache_refs(a:cache, a:line)
   let l:local_branches = flog#get(l:refs, 'local_branches', [])
   let l:remote_branches = flog#get(l:refs, 'remote_branches', [])
 
@@ -1477,7 +1476,15 @@ function! flog#cmd_item_local_branch(cache) abort
   return l:local_branches[0]
 endfunction
 
-function! flog#cmd_item_path(cache) abort
+function! flog#cmd_convert_line(cache, item, Convert) abort
+  return a:Convert(a:cache, a:item, '.')
+endfunction
+
+function! flog#cmd_convert_mark(cache, item, Convert) abort
+  return a:Convert(a:cache, a:item, a:item[1:])
+endfunction
+
+function! flog#cmd_convert_path(cache, item) abort
   let l:state = flog#get_state()
   if empty(l:state.path)
     return v:null
@@ -1486,10 +1493,12 @@ function! flog#cmd_item_path(cache) abort
 endfunction
 
 function! flog#convert_command_format_item(cache, item) abort
+  let l:item_cache = a:cache['items']
+
   " return any cached data
 
-  if has_key(a:cache, a:item) && a:item[0] !=# '_'
-    return a:cache[a:item]
+  if has_key(l:item_cache, a:item)
+    return l:item_cache[a:item]
   endif
 
   " convert the specifier
@@ -1497,15 +1506,19 @@ function! flog#convert_command_format_item(cache, item) abort
   let l:converted_item = v:null
 
   if a:item ==# 'h'
-    let l:converted_item = flog#cmd_item_hash_at_curr_line(a:cache)
+    let l:converted_item = flog#cmd_convert_line(a:cache, a:item, function('flog#cmd_convert_hash'))
   elseif a:item =~# "^h'."
-    let l:converted_item = flog#cmd_item_hash(a:cache, a:item)
+    let l:converted_item = flog#cmd_convert_mark(a:cache, a:item, function('flog#cmd_convert_hash'))
   elseif a:item =~# 'b'
-    let l:converted_item = flog#cmd_item_branch(a:cache)
+    let l:converted_item = flog#cmd_convert_line(a:cache, a:item, function('flog#cmd_convert_branch'))
+  elseif a:item =~# "^b'."
+    let l:converted_item = flog#cmd_convert_mark(a:cache, a:item, function('flog#cmd_convert_branch'))
   elseif a:item =~# 'l'
-    let l:converted_item = flog#cmd_item_local_branch(a:cache)
+    let l:converted_item = flog#cmd_convert_line(a:cache, a:item, function('flog#cmd_convert_local_branch'))
+  elseif a:item =~# "^l'."
+    let l:converted_item = flog#cmd_convert_mark(a:cache, a:item, function('flog#cmd_convert_local_branch'))
   elseif a:item =~# 'p'
-    let l:converted_item = flog#cmd_item_path(a:cache)
+    let l:converted_item = flog#cmd_convert_path(a:cache, a:item)
   else
     echoerr printf('error converting %s', a:item)
     throw g:flog_unsupported_command_format_item
@@ -1513,7 +1526,7 @@ function! flog#convert_command_format_item(cache, item) abort
 
   " handle result
 
-  let a:cache[a:item] = l:converted_item
+  let l:item_cache[a:item] = l:converted_item
   return l:converted_item
 endfunction
 
@@ -1529,7 +1542,10 @@ function! flog#format_command(format) abort
   let l:long_item = ''
 
   " memoized data
-  let l:cache = {}
+  let l:cache = {
+        \ 'items': {},
+        \ 'refs': {}
+        \ }
 
   " return data
   let l:ret = ''
@@ -1754,6 +1770,49 @@ function! flog#get_local_branch_at_line(...) range abort
         \ 'flog#run_command',
         \ '"MyCommand %l", ...')
 endfunction
+
+function! flog#get_cache_curr_line_refs(...) range abort
+  call flog#deprecate_function(
+        \ 'flog#get_cache_curr_line_refs',
+        \ 'flog#get_cache_refs',
+        \ '(cache), "."')
+endfunction
+
+function! flog#cmd_item_hash_at_curr_line(...) range abort
+  call flog#deprecate_function(
+        \ 'flog#cmd_item_hash_at_curr_line',
+        \ 'flog#cmd_item_hash_at_curr_line',
+        \ '(cache), (item), "."')
+endfunction
+
+function! flog#cmd_item_hash(...) range abort
+  call flog#deprecate_function(
+        \ 'flog#cmd_item_hash',
+        \ 'flog#cmd_convert_hash',
+        \ '(cache), (item), (line)')
+endfunction
+
+function! flog#cmd_item_branch(...) range abort
+  call flog#deprecate_function(
+        \ 'flog#cmd_item_branch',
+        \ 'flog#cmd_convert_branch',
+        \ '(cache), (item), "."')
+endfunction
+
+function! flog#cmd_item_local_branch(...) range abort
+  call flog#deprecate_function(
+        \ 'flog#cmd_item_local_branch',
+        \ 'flog#cmd_convert_local_branch',
+        \ '(cache), (item), "."')
+endfunction
+
+function! flog#cmd_item_path(...) range abort
+  call flog#deprecate_function(
+        \ 'flog#cmd_item_path',
+        \ 'flog#cmd_convert_path',
+        \ '(cache), (item)')
+endfunction
+
 
 " }}}
 
