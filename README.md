@@ -45,7 +45,7 @@ Run `:Git` commands in a split next to the graph using `:Floggit -p`.
 Command line completion is provided to do any git command with the commits and refs under the cursor.
 
 You can do a lot more with Flog.
-Flog's behavior can be customized with utility functions rather than settings.
+Flog can be heavily customized, and comes with utility functions for defining your own commands.
 See the [examples](EXAMPLES.md) for more details.
 
 ## Getting Help
