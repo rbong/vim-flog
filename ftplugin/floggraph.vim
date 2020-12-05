@@ -39,7 +39,7 @@ if !hasmapto('<Plug>(FlogVDiffSplitPathsRight)')
 endif
 
 nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command('vertical belowright Git diff HEAD %h')<CR>
-vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command("vertical belowright Git diff %(h'<) %(h'>)")<CR>
+vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command("vertical belowright Git diff %(h'>) %(h'<)")<CR>
 
 nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command('vertical belowright Git diff HEAD %h -- %p')<CR>
 vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command("vertical belowright Git diff HEAD %(h'<) %(h'>) -- %p")<CR>
