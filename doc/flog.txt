@@ -44,6 +44,7 @@ COMMANDS                                                       *flog-commands*
                         "short" and "iso8601" are supported.
   -search=<rev>         A regex pattern to pass to "--grep=".
   -patch-search=<rev>   A regex pattern to pass to "-G".
+  -author=<author>      An author name to pass to "--author=".
   -limit=<limit>        A limit to pass to "-L". This will restrict commit
                         history to the specified file/lines. This disables
                         some options.

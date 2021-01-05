@@ -208,6 +208,7 @@ function! flog#get_internal_default_args() abort
         \ 'open_cmd': 'tabedit',
         \ 'search': v:null,
         \ 'patch_search': v:null,
+        \ 'author': v:null,
         \ 'limit': v:null,
         \ 'rev': [],
         \ 'path': []
@@ -327,6 +328,10 @@ function! flog#parse_set_args(args, current_args, defaults) abort
       let a:current_args.patch_search = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-patch-search='
       let a:current_args.patch_search = a:defaults.patch_search
+    elseif l:arg =~# '^-author=.\+'
+      let a:current_args.author = flog#parse_arg_opt(l:arg)
+    elseif l:arg ==# '-author='
+      let a:current_args.author = a:defaults.author
     elseif l:arg =~# '^-limit=.\+'
       let a:current_args.limit = flog#parse_limit_opt(l:arg)
     elseif l:arg ==# '-limit='
@@ -422,6 +427,15 @@ function! flog#get_refs() abort
   let l:command = fugitive#repo().git_command()
         \ . ' rev-parse --symbolic --branches --tags --remotes'
   return flog#systemlist(l:command) +  ['HEAD', 'FETCH_HEAD', 'MERGE_HEAD', 'ORIG_HEAD']
+endfunction
+
+function! flog#get_authors() abort
+  let l:command = fugitive#repo().git_command()
+        \ . ' shortlog --all --no-merges -s -n'
+  " Filter author commit numbers before returning
+  return map(
+        \ flog#systemlist(l:command), 
+        \ 'substitute(v:val, "^\\s*\\d\\+\\s*", "", "")')
 endfunction
 
 " }}}
@@ -586,6 +600,12 @@ function! flog#complete_path(arg_lead) abort
   return flog#filter_completions(a:arg_lead, l:completions)
 endfunction
 
+function! flog#complete_author(arg_lead) abort
+  let [l:lead, l:name] = flog#split_single_completable_arg(a:arg_lead)
+  let l:authors = flog#escape_completions(l:lead, flog#get_authors())
+  return flog#filter_completions(a:arg_lead, l:authors)
+endfunction
+
 function! flog#complete(arg_lead, cmd_line, cursor_pos) abort
   if a:cmd_line[:a:cursor_pos] =~# ' -- '
     return []
@@ -601,6 +621,8 @@ function! flog#complete(arg_lead, cmd_line, cursor_pos) abort
     return flog#complete_open_cmd(a:arg_lead)
   elseif a:arg_lead =~# '^-\(patch-\)\?search='
     return []
+  elseif a:arg_lead =~# '^-author='
+    return flog#complete_author(a:arg_lead)
   elseif a:arg_lead =~# '^-limit='
     return flog#complete_limit(a:arg_lead)
   elseif a:arg_lead =~# '^-rev='
@@ -793,6 +815,9 @@ function! flog#build_log_command() abort
   if l:state.patch_search != v:null
     let l:patch_search = shellescape(l:state.patch_search)
     let l:command .= ' -G' . l:patch_search
+  endif
+  if l:state.author != v:null
+    let l:command .= '--author=' . shellescape(l:state.author)
   endif
   if l:state.limit != v:null
     let l:limit = shellescape(l:state.limit)
@@ -1074,6 +1099,9 @@ function! flog#set_graph_buffer_title() abort
   endif
   if l:state.patch_search != v:null
     let l:title .= ' [patch_search=' . flog#ellipsize(l:state.patch_search) . ']'
+  endif
+  if l:state.author != v:null
+    let l:title .= ' [author=' . l:state.author . ']'
   endif
   if l:state.limit != v:null
     let l:title .= ' [limit=' . flog#ellipsize(l:state.limit) . ']'

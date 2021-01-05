@@ -61,6 +61,7 @@ let g:flog_log_data_hash_index = 1
 
 let g:flog_default_completion = [
       \ '-all ',
+      \ '-author=',
       \ '-bisect ',
       \ '-date=',
       \ '-format=',
