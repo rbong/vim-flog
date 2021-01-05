@@ -817,7 +817,7 @@ function! flog#build_log_command() abort
     let l:command .= ' -G' . l:patch_search
   endif
   if l:state.author != v:null
-    let l:command .= '--author=' . shellescape(l:state.author)
+    let l:command .= ' --author=' . shellescape(l:state.author)
   endif
   if l:state.limit != v:null
     let l:limit = shellescape(l:state.limit)
