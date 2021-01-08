@@ -26,11 +26,17 @@ highlight default link flogDate   Number
 
 syntax match flogRefTag    contained containedin=flogRef /\vtag: \zs.{-}\ze(, |)\)/
 syntax match flogRefRemote contained containedin=flogRef /\vremotes\/\zs.{-}\ze(, |)\)/
-syntax match flogRefHead   contained containedin=flogRef /HEAD/
 
 highlight default link flogRefTag    String
 highlight default link flogRefRemote Statement
-highlight default link flogRefHead   Special
+
+syntax match flogRefHead       contained containedin=flogRef nextgroup=flogRefHeadArrow  /\<HEAD/
+syntax match flogRefHeadArrow  contained                     nextgroup=flogRefHeadBranch / -> /
+syntax match flogRefHeadBranch contained                                                 /[^,)]\+/
+
+highlight default link flogRefHead       Keyword
+highlight default link flogRefHeadArrow  flogRef
+highlight default link flogRefHeadBranch Special
 
 " }}}
 
