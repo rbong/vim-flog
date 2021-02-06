@@ -1043,6 +1043,93 @@ function! flog#jump_refs(refs) abort
   endif
 endfunction
 
+" See https://vi.stackexchange.com/questions/29062/how-to-check-if-a-string-starts-with-another-string-in-vimscript/29063#29063
+fu! flog#starts_with(longer, shorter) abort
+  return a:longer[0:len(a:shorter)-1] ==# a:shorter
+endfunction
+
+" See https://vi.stackexchange.com/questions/29056/how-to-find-first-item-that-satisfies-predicate/29059#29059
+function! flog#find_predicate(haystack, predicate) abort
+    return get(filter(copy(a:haystack), "a:predicate(v:val)"), 0, v:null)
+endfunction
+
+fu! flog#jump_to_commit(commit_hash) abort
+  let l:state = flog#get_state()
+  let l:commit = flog#find_predicate(l:state.commits, {item -> flog#starts_with(a:commit_hash, item.short_commit_hash)})
+  let l:index = index(l:state.commits, l:commit)
+  let l:index = min([max([l:index, 0]), len(l:state.commits) - 1])
+  let l:line = index(l:state.line_commits, l:state.commits[l:index]) + 1
+  if l:line >= 0
+    exec l:line
+    " to end up on the star symbol of the commit:
+    exec "normal! 0f*"
+  endif
+endfunction
+
+fu! flog#get_short_commit_hash() abort
+  let l:state = flog#get_state()
+  let l:current_commit = flog#get_commit_at_line()
+  if type(l:current_commit) != v:t_dict
+    return
+  endif
+  return l:current_commit.short_commit_hash
+endfunction
+
+fu! flog#get_full_commit_hash() abort
+  let rev_parse = system("git rev-parse " . flog#get_short_commit_hash())
+  return split(rev_parse)[0]
+endfunction
+
+" Returns one of the elements of the list.
+" If it has been called before with a commit
+" present in the list, or has previously returned
+" an element of the current list, *that* element will be
+" returned. In addition, if the current commit is
+" not in the list of prior inputs and outputs,
+" that list is cleared. Hence there can only be one
+" matching element.
+" Use this as a replacement for just doing commit_list[0],
+" giving the current commit as an additional input. 
+" In the base case, it just returns
+" the first element. But the most recent inputs and outputs 
+" of this function are given priority before any others,
+" giving the function 'stability' when navigating up/down
+" a directed acyclic graph
+fu! flog#stable_select(commit_list, current_commit) abort
+  if index(g:flog_visited_commits, a:current_commit) == -1
+    let g:flog_visited_commits = [a:current_commit]
+    echo g:flog_visited_commits
+  endif
+  let pick = flog#find_predicate(a:commit_list, {target_commit -> index(g:flog_visited_commits, target_commit) != -1})
+  if pick == v:null
+    let pick = a:commit_list[0]
+  endif
+  call add(g:flog_visited_commits, l:pick)
+  return pick
+endfunction
+
+fu! flog#jump_to_parent() abort
+  let l:current_commit = flog#get_full_commit_hash()
+  let l:parent_commit = system("git rev-list --parents -n 1 " . l:current_commit)
+  let l:parents = split(l:parent_commit)[1:]
+  if len(l:parents) == 0
+    return
+  endif
+  let l:chosen = flog#stable_select(l:parents, l:current_commit)
+  call flog#jump_to_commit(l:chosen)
+endfunction
+
+fu! flog#jump_to_child() abort
+  let l:current_commit = flog#get_full_commit_hash()
+  let l:child_commit = system("git log --format='%H %P' --all --reflog | grep -F \" " . l:current_commit . "\" | cut -f1 -d' '")
+  let l:children = split(l:child_commit)
+  if len(l:children) == 0
+    return
+  endif
+  let l:chosen = flog#stable_select(l:children, l:current_commit)
+  call flog#jump_to_commit(l:chosen)
+endfunction
+
 function! flog#jump_to_ref(ref) abort
   let l:state = flog#get_state()
   if !has_key(l:state.ref_line_lookup, a:ref)
@@ -1058,6 +1145,7 @@ endfunction
 function! flog#previous_ref() abort
   call flog#jump_refs(-v:count1)
 endfunction
+
 
 " }}}
 

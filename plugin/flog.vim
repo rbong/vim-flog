@@ -11,6 +11,7 @@ let g:loaded_flog = 1
 " Global state {{{
 
 let g:flog_instance_counter = 0
+let g:flog_visited_commits = []
 
 " }}}
 
