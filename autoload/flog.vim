@@ -1098,7 +1098,6 @@ endfunction
 fu! flog#stable_select(commit_list, current_commit) abort
   if index(g:flog_visited_commits, a:current_commit) == -1
     let g:flog_visited_commits = [a:current_commit]
-    echo g:flog_visited_commits
   endif
   let pick = flog#find_predicate(a:commit_list, {target_commit -> index(g:flog_visited_commits, target_commit) != -1})
   if pick == v:null
@@ -1108,26 +1107,42 @@ fu! flog#stable_select(commit_list, current_commit) abort
   return pick
 endfunction
 
-fu! flog#jump_to_parent() abort
+fu! flog#jump_up_N_parents(amount) abort
   let l:current_commit = flog#get_full_commit_hash()
-  let l:parent_commit = system("git rev-list --parents -n 1 " . l:current_commit)
-  let l:parents = split(l:parent_commit)[1:]
-  if len(l:parents) == 0
-    return
-  endif
-  let l:chosen = flog#stable_select(l:parents, l:current_commit)
-  call flog#jump_to_commit(l:chosen)
+  let c = 0
+  while c < a:amount
+    let l:parent_commit = system("git rev-list --parents -n 1 " . l:current_commit)
+    let l:parents = split(l:parent_commit)[1:]
+    if len(l:parents) == 0
+      return
+    endif
+    let l:current_commit = flog#stable_select(l:parents, l:current_commit)
+    call flog#jump_to_commit(l:current_commit)
+    let c += 1
+  endwhile
+endfunction
+
+fu! flog#jump_to_parent() abort
+  call flog#jump_up_N_parents(v:count1)
+endfunction
+
+fu! flog#jump_down_N_children(amount) abort
+  let l:current_commit = flog#get_full_commit_hash()
+  let c = 0
+  while c < a:amount
+    let l:child_commit = system("git log --format='%H %P' --all --reflog | grep -F \" " . l:current_commit . "\" | cut -f1 -d' '")
+    let l:children = split(l:child_commit)
+    if len(l:children) == 0
+      return
+    endif
+    let l:current_commit = flog#stable_select(l:children, l:current_commit)
+    call flog#jump_to_commit(l:current_commit)
+    let c += 1
+  endwhile
 endfunction
 
 fu! flog#jump_to_child() abort
-  let l:current_commit = flog#get_full_commit_hash()
-  let l:child_commit = system("git log --format='%H %P' --all --reflog | grep -F \" " . l:current_commit . "\" | cut -f1 -d' '")
-  let l:children = split(l:child_commit)
-  if len(l:children) == 0
-    return
-  endif
-  let l:chosen = flog#stable_select(l:children, l:current_commit)
-  call flog#jump_to_commit(l:chosen)
+  call flog#jump_down_N_children(v:count1)
 endfunction
 
 function! flog#jump_to_ref(ref) abort
