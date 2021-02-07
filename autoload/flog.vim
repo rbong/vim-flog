@@ -967,35 +967,6 @@ function! flog#previous_commit() abort
   call flog#jump_commits(-v:count1)
 endfunction
 
-" if the star symbol ever changes, this will remain
-" the backwards compatible way of going to the last
-" char that is a part of the graph drawing
-fu! flog#to_commit_start() abort
-  execute "normal! 0f*"
-endfunction
-
-" If you bind these to j and k,
-" you can more naturally go up and down one commit,
-" while still being able to use your relative
-" line numbers as expected
-function! flog#up() abort
-  if v:count1 == 1
-    call flog#previous_commit()
-  else
-    execute "normal! " . v:count1 . "k"
-  endif
-  call flog#to_commit_start()
-endfunction
-
-function! flog#down() abort
-  if v:count1 == 1
-    call flog#next_commit()
-  else
-    execute "normal! " . v:count1 . "j"
-  endif
-  call flog#to_commit_start()
-endfunction
-
 " }}}
 
 function! flog#copy_commits(...) range abort
@@ -1070,6 +1041,55 @@ function! flog#jump_refs(refs) abort
   if l:line >= 0
     exec l:line
   endif
+endfunction
+
+function! flog#jump_to_ref(ref) abort
+  let l:state = flog#get_state()
+  if !has_key(l:state.ref_line_lookup, a:ref)
+    return
+  endif
+  exec l:state.ref_line_lookup[a:ref] + 1
+endfunction
+
+function! flog#next_ref() abort
+  call flog#jump_refs(v:count1)
+endfunction
+
+function! flog#previous_ref() abort
+  call flog#jump_refs(-v:count1)
+endfunction
+
+" }}}
+
+" Quick navigate operations {{{
+
+" if the star symbol ever changes, this will remain
+" the backwards compatible way of going to the last
+" char that is a part of the graph drawing
+fu! flog#to_commit_start() abort
+  execute "normal! 0f*"
+endfunction
+
+" If you bind these to j and k,
+" you can more naturally go up and down one commit,
+" while still being able to use your relative
+" line numbers as expected
+function! flog#up() abort
+  if v:count1 == 1
+    call flog#previous_commit()
+  else
+    execute "normal! " . v:count1 . "k"
+  endif
+  call flog#to_commit_start()
+endfunction
+
+function! flog#down() abort
+  if v:count1 == 1
+    call flog#next_commit()
+  else
+    execute "normal! " . v:count1 . "j"
+  endif
+  call flog#to_commit_start()
 endfunction
 
 " See https://vi.stackexchange.com/questions/29062/how-to-check-if-a-string-starts-with-another-string-in-vimscript/29063#29063
@@ -1172,23 +1192,6 @@ endfunction
 fu! flog#jump_to_child() abort
   call flog#jump_down_N_children(v:count1)
 endfunction
-
-function! flog#jump_to_ref(ref) abort
-  let l:state = flog#get_state()
-  if !has_key(l:state.ref_line_lookup, a:ref)
-    return
-  endif
-  exec l:state.ref_line_lookup[a:ref] + 1
-endfunction
-
-function! flog#next_ref() abort
-  call flog#jump_refs(v:count1)
-endfunction
-
-function! flog#previous_ref() abort
-  call flog#jump_refs(-v:count1)
-endfunction
-
 
 " }}}
 
