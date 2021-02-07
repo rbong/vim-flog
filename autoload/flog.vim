@@ -1123,9 +1123,13 @@ fu! flog#get_short_commit_hash() abort
   return l:current_commit.short_commit_hash
 endfunction
 
-fu! flog#get_full_commit_hash() abort
-  let rev_parse = system("git rev-parse " . flog#get_short_commit_hash())
+fu! flog#rev_parse(revitem) abort
+  let rev_parse = system("git rev-parse " . a:revitem)
   return split(rev_parse)[0]
+endfunction
+
+fu! flog#get_full_commit_hash() abort
+  return flog#rev_parse(flog#get_short_commit_hash())
 endfunction
 
 " Returns one of the elements of the list.
@@ -1191,6 +1195,34 @@ endfunction
 
 fu! flog#jump_to_child() abort
   call flog#jump_down_N_children(v:count1)
+endfunction
+
+fu! flog#offset_head_hash() abort
+  return flog#rev_parse("HEAD@{" . g:flog_head_offset . "}")
+endfunction
+
+fu! flog#jump_to_offset_head(offset) abort
+  let l:current_commit = flog#get_full_commit_hash()
+  let l:current_head_commit = flog#offset_head_hash()
+  if g:flog_head_offset == 0 || l:current_commit == l:current_head_commit
+    let g:flog_head_offset = max([0, g:flog_head_offset + a:offset])
+  else
+    let g:flog_head_offset = 0
+  endif
+  let l:head_commit = flog#offset_head_hash()
+  call flog#jump_to_commit(l:head_commit)
+  echom "HEAD@{" . g:flog_head_offset . "}"
+endfunction
+
+" For example, bind to [h
+" these are for jumping through the previously checked out commits
+fu! flog#jump_to_previous_head() abort
+  call flog#jump_to_offset_head(1)
+endfunction
+
+" For example, bind to ]h
+fu! flog#jump_to_next_head() abort
+  call flog#jump_to_offset_head(-1)
 endfunction
 
 " }}}
