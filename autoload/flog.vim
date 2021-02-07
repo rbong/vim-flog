@@ -967,6 +967,35 @@ function! flog#previous_commit() abort
   call flog#jump_commits(-v:count1)
 endfunction
 
+" if the star symbol ever changes, this will remain
+" the backwards compatible way of going to the last
+" char that is a part of the graph drawing
+fu! flog#to_commit_start() abort
+  execute "normal! 0f*"
+endfunction
+
+" If you bind these to j and k,
+" you can more naturally go up and down one commit,
+" while still being able to use your relative
+" line numbers as expected
+function! flog#up() abort
+  if v:count1 == 1
+    call flog#previous_commit()
+  else
+    execute "normal! " . v:count1 . "k"
+  endif
+  call flog#to_commit_start()
+endfunction
+
+function! flog#down() abort
+  if v:count1 == 1
+    call flog#next_commit()
+  else
+    execute "normal! " . v:count1 . "j"
+  endif
+  call flog#to_commit_start()
+endfunction
+
 " }}}
 
 function! flog#copy_commits(...) range abort
@@ -1050,7 +1079,7 @@ endfunction
 
 " See https://vi.stackexchange.com/questions/29056/how-to-find-first-item-that-satisfies-predicate/29059#29059
 function! flog#find_predicate(haystack, predicate) abort
-    return get(filter(copy(a:haystack), "a:predicate(v:val)"), 0, v:null)
+  return get(filter(copy(a:haystack), "a:predicate(v:val)"), 0, v:null)
 endfunction
 
 fu! flog#jump_to_commit(commit_hash) abort
@@ -1061,8 +1090,7 @@ fu! flog#jump_to_commit(commit_hash) abort
   let l:line = index(l:state.line_commits, l:state.commits[l:index]) + 1
   if l:line >= 0
     exec l:line
-    " to end up on the star symbol of the commit:
-    exec "normal! 0f*"
+    call flog#to_commit_start()
   endif
 endfunction
 
