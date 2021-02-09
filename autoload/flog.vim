@@ -1123,13 +1123,8 @@ fu! flog#get_short_commit_hash() abort
   return l:current_commit.short_commit_hash
 endfunction
 
-fu! flog#rev_parse(revitem) abort
-  let rev_parse = system("git rev-parse " . a:revitem)
-  return split(rev_parse)[0]
-endfunction
-
 fu! flog#get_full_commit_hash() abort
-  return flog#rev_parse(flog#get_short_commit_hash())
+  return fugitive#RevParse(flog#get_short_commit_hash())
 endfunction
 
 " Returns one of the elements of the list.
@@ -1198,7 +1193,7 @@ fu! flog#jump_to_child() abort
 endfunction
 
 fu! flog#offset_head_hash() abort
-  return flog#rev_parse("HEAD@{" . g:flog_head_offset . "}")
+  return fugitive#RevParse("HEAD@{" . g:flog_head_offset . "}")
 endfunction
 
 fu! flog#jump_to_offset_head(offset) abort
