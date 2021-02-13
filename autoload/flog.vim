@@ -1222,7 +1222,8 @@ fu! flog#jump_to_offset_head(offset) abort
   endif
   let l:current_head_commit = flog#offset_head_hash()
   if g:flog_head_offset == 0 || l:current_commit == l:current_head_commit
-    let g:flog_head_offset = max([0, g:flog_head_offset + a:offset])
+    let l:reflog_size = str2nr(substitute(system('git reflog | wc -l'), '\v\C\n$', '', '')) - 1
+    let g:flog_head_offset = min([max([0, g:flog_head_offset + a:offset]), l:reflog_size])
   else
     let g:flog_head_offset = 0
   endif
