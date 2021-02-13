@@ -1067,7 +1067,7 @@ endfunction
 " the backwards compatible way of going to the last
 " char that is a part of the graph drawing
 fu! flog#to_commit_start() abort
-  execute "normal! 0f*"
+  execute 'normal! 0f*'
 endfunction
 
 " If you bind these to j and k,
@@ -1078,7 +1078,7 @@ function! flog#up() abort
   if v:count1 == 1
     call flog#previous_commit()
   else
-    execute "normal! " . v:count1 . "k"
+    execute 'normal! ' . v:count1 . 'k'
   endif
   call flog#to_commit_start()
 endfunction
@@ -1087,7 +1087,7 @@ function! flog#down() abort
   if v:count1 == 1
     call flog#next_commit()
   else
-    execute "normal! " . v:count1 . "j"
+    execute 'normal! ' . v:count1 . 'j'
   endif
   call flog#to_commit_start()
 endfunction
@@ -1099,7 +1099,7 @@ endfunction
 
 " See https://vi.stackexchange.com/questions/29056/how-to-find-first-item-that-satisfies-predicate/29059#29059
 function! flog#find_predicate(haystack, predicate) abort
-  return get(filter(copy(a:haystack), "a:predicate(v:val)"), 0, v:null)
+  return get(filter(copy(a:haystack), 'a:predicate(v:val)'), 0, v:null)
 endfunction
 
 fu! flog#find_commit(state, commit_hash) abort
@@ -1174,7 +1174,7 @@ fu! flog#jump_up_N_parents(amount) abort
   endif
   let c = 0
   while c < a:amount
-    let l:parent_commit = system("git rev-list --parents -n 1 " . l:current_commit)
+    let l:parent_commit = system('git rev-list --parents -n 1 ' . l:current_commit)
     let l:parents = split(l:parent_commit)[1:]
     if len(l:parents) == 0
       return
@@ -1212,7 +1212,7 @@ fu! flog#jump_to_child() abort
 endfunction
 
 fu! flog#offset_head_hash() abort
-  return fugitive#RevParse("HEAD@{" . g:flog_head_offset . "}")
+  return fugitive#RevParse('HEAD@{' . g:flog_head_offset . '}')
 endfunction
 
 fu! flog#jump_to_offset_head(offset) abort
@@ -1229,7 +1229,7 @@ fu! flog#jump_to_offset_head(offset) abort
   endif
   let l:head_commit = flog#offset_head_hash()
   call flog#jump_to_commit(l:head_commit)
-  echom "HEAD@{" . g:flog_head_offset . "}"
+  echom 'HEAD@{' . g:flog_head_offset . '}'
 endfunction
 
 " For example, bind to [h
