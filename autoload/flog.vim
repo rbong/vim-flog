@@ -1124,6 +1124,10 @@ fu! flog#get_short_commit_hash() abort
 endfunction
 
 fu! flog#get_full_commit_hash() abort
+  let l:short = flog#get_short_commit_hash()
+  if type(l:short) != v:t_string
+    return v:null
+  endif
   return fugitive#RevParse(flog#get_short_commit_hash())
 endfunction
 
@@ -1156,6 +1160,9 @@ endfunction
 
 fu! flog#jump_up_N_parents(amount) abort
   let l:current_commit = flog#get_full_commit_hash()
+  if type(l:current_commit) != v:t_string
+    return v:null
+  endif
   let c = 0
   while c < a:amount
     let l:parent_commit = system("git rev-list --parents -n 1 " . l:current_commit)
@@ -1175,6 +1182,9 @@ endfunction
 
 fu! flog#jump_down_N_children(amount) abort
   let l:current_commit = flog#get_full_commit_hash()
+  if type(l:current_commit) != v:t_string
+    return v:null
+  endif
   let c = 0
   while c < a:amount
     let l:child_commit = system("git log --format='%H %P' --all --reflog | grep -F \" " . l:current_commit . "\" | cut -f1 -d' '")
@@ -1198,6 +1208,9 @@ endfunction
 
 fu! flog#jump_to_offset_head(offset) abort
   let l:current_commit = flog#get_full_commit_hash()
+  if type(l:current_commit) != v:t_string
+    return v:null
+  endif
   let l:current_head_commit = flog#offset_head_hash()
   if g:flog_head_offset == 0 || l:current_commit == l:current_head_commit
     let g:flog_head_offset = max([0, g:flog_head_offset + a:offset])
