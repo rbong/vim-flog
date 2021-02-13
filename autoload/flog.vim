@@ -1102,9 +1102,18 @@ function! flog#find_predicate(haystack, predicate) abort
   return get(filter(copy(a:haystack), "a:predicate(v:val)"), 0, v:null)
 endfunction
 
+fu! flog#find_commit(state, commit_hash) abort
+  return flog#find_predicate(a:state.commits, {item -> flog#starts_with(a:commit_hash, item.short_commit_hash)})
+endfunction
+
 fu! flog#jump_to_commit(commit_hash) abort
   let l:state = flog#get_state()
-  let l:commit = flog#find_predicate(l:state.commits, {item -> flog#starts_with(a:commit_hash, item.short_commit_hash)})
+  let l:commit = flog#find_commit(l:state, a:commit_hash)
+  if type(l:commit) != v:t_dict
+    let l:state.reflog = v:true
+    call flog#populate_graph_buffer()
+    let l:commit = flog#find_commit(l:state, a:commit_hash)
+  endif
   let l:index = index(l:state.commits, l:commit)
   let l:index = min([max([l:index, 0]), len(l:state.commits) - 1])
   let l:line = index(l:state.line_commits, l:state.commits[l:index]) + 1
