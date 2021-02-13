@@ -1694,6 +1694,35 @@ function! flog#is_remote_ref(ref) abort
   return index(flog#get_remotes(), l:split_ref[0]) >= 0
 endfunction
 
+function! flog#parse_ref_name_list(commit) abort
+  let l:refs = a:commit.ref_name_list
+
+  let l:original_refs = split(a:commit.ref_names_unwrapped, ' \ze-> \|, \|\zetag: ')
+
+  let l:remote_branches = []
+  let l:local_branches = []
+  let l:special = []
+  let l:tags = []
+
+  let l:i = 0
+  while l:i < len(l:refs)
+    let l:ref = l:refs[l:i]
+
+    if l:ref =~# 'HEAD$\|^refs/'
+      call add(l:special, l:ref)
+    elseif l:original_refs[l:i] =~# '^tag: '
+      call add(l:tags, l:ref)
+    elseif flog#is_remote_ref(l:ref)
+      call add(l:remote_branches, l:ref)
+    else
+      call add(l:local_branches, l:ref)
+    endif
+
+    let l:i += 1
+  endwhile
+  return [l:local_branches, l:remote_branches, l:tags, l:special]
+endfunction
+
 function! flog#get_cache_refs(cache, line) abort
   let l:ref_cache = a:cache['refs']
 
@@ -1702,31 +1731,7 @@ function! flog#get_cache_refs(cache, line) abort
     if type(l:commit) != v:t_dict || empty(l:commit.ref_name_list)
       return v:null
     endif
-    let l:refs = l:commit.ref_name_list
-
-    let l:original_refs = split(l:commit.ref_names_unwrapped, ' \ze-> \|, \|\zetag: ')
-
-    let l:remote_branches = []
-    let l:local_branches = []
-    let l:special = []
-    let l:tags = []
-
-    let l:i = 0
-    while l:i < len(l:refs)
-      let l:ref = l:refs[l:i]
-
-      if l:ref =~# 'HEAD$\|^refs/'
-        call add(l:special, l:ref)
-      elseif l:original_refs[l:i] =~# '^tag: '
-        call add(l:tags, l:ref)
-      elseif flog#is_remote_ref(l:ref)
-        call add(l:remote_branches, l:ref)
-      else
-        call add(l:local_branches, l:ref)
-      endif
-
-      let l:i += 1
-    endwhile
+    let [l:local_branches, l:remote_branches, l:tags, l:special] = flog#parse_ref_name_list(l:commit)
 
     let l:ref_cache[a:line] = {
           \ 'local_branches': l:local_branches,
