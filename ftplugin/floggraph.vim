@@ -24,7 +24,7 @@ nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitRight) :vertical belowright Fl
 if !hasmapto('<Plug>(FlogVSplitCommitPathsRight)')
   nmap <buffer> <Tab> <Plug>(FlogVSplitCommitPathsRight)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitPathsRight) :<C-U>call flog#run_tmp_command('vertical belowright Git show %h %p')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitPathsRight) :<C-U>call flog#run_tmp_command('vertical belowright Git show %h -- %p')<CR>
 
 if !hasmapto('<Plug>(FlogVDiffSplitRight)')
   nmap <buffer> dd <Plug>(FlogVDiffSplitRight)
