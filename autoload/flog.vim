@@ -521,7 +521,7 @@ endfunction
 
 function! flog#complete_jump(arg_lead, cmd_line, cursor_pos) abort
   let l:state = flog#get_state()
-  return flog#complete_ref(a:arg_lead)
+  return flog#complete_rev(a:arg_lead)
 endfunction
 
 " }}}
@@ -582,7 +582,7 @@ function! flog#complete_limit(arg_lead) abort
   return flog#filter_completions(a:arg_lead, l:completions)
 endfunction
 
-function! flog#complete_ref(arg_lead) abort
+function! flog#complete_rev(arg_lead) abort
   if !flog#is_fugitive_buffer()
     return []
   endif
