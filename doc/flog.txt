@@ -396,6 +396,29 @@ g:flog_permanent_default_arguments        *g:flog_permanent_default_arguments*
 
   Has lower presidence than |g:flog_default_arguments|.
 
+g:flog_build_log_command_fn                      *g:flog_build_log_command_fn*
+
+  A string referring to a function to use to build a custom "git log" command.
+  Through this argument, you can use a custom visualizer.
+
+  Example:
+>
+  " This is the same as the built-in log command (flog#build_log_command)
+  function! FlogBuildLog() abort
+    " Same as "git --git-dir=" . flog#get_fugitive_git_dir()
+    " The git dir will be the current buffer's ".git" directory
+    let l:command = flog#get_fugitive_git_command()
+    let l:command .= ' log'
+    " Args and paths that would normally be passed to "git log" based on Flog options
+    let l:command .= flog#build_log_args()
+    let l:command .= ' -- '
+    let l:command .= flog#build_log_paths()
+
+    return l:command
+  endfunction
+
+  let g:flog_build_log_command_fn = 'FlogBuildLog'
+
 g:flog_use_ansi_esc                                      *g:flog_use_ansi_esc*
 
   By default, Flog uses limited regex syntax highlighting. This option enables

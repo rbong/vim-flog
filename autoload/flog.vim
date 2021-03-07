@@ -1191,7 +1191,8 @@ function! flog#populate_graph_buffer() abort
 
   let l:cursor = flog#get_graph_cursor()
 
-  let l:command = flog#build_log_command()
+  let l:build_log_command_fn = get(g:, 'flog_build_log_command_fn', 'flog#build_log_command')
+  let l:command = call(l:build_log_command_fn, [])
   let l:state.previous_log_command = l:command
 
   let l:output = flog#systemlist(l:command)
