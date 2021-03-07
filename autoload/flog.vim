@@ -780,55 +780,55 @@ function! flog#build_log_paths() abort
   return ' -- ' . join(l:paths, ' ')
 endfunction
 
-function! flog#build_log_command() abort
+function! flog#build_log_args() abort
   let l:state = flog#get_state()
 
-  let l:command = flog#get_fugitive_git_command()
-  let l:command .= ' log'
+  let l:args = ''
+
   if !l:state.no_graph
-    let l:command .= ' --graph'
+    let l:args .= ' --graph'
   endif
-  let l:command .= ' --no-color'
-  let l:command .= ' --pretty=' . flog#create_log_format()
-  let l:command .= ' --date=' . shellescape(l:state.date)
+  let l:args .= ' --no-color'
+  let l:args .= ' --pretty=' . flog#create_log_format()
+  let l:args .= ' --date=' . shellescape(l:state.date)
   if l:state.all && !l:state.limit
-    let l:command .= ' --all'
+    let l:args .= ' --all'
   endif
   if l:state.bisect && !l:state.limit
-    let l:command .= ' --bisect'
+    let l:args .= ' --bisect'
   endif
   if l:state.no_merges
-    let l:command .= ' --no-merges'
+    let l:args .= ' --no-merges'
   endif
   if l:state.reflog && !l:state.limit
-    let l:command .= ' --reflog'
+    let l:args .= ' --reflog'
   endif
   if l:state.no_patch
-    let l:command .= ' --no-patch'
+    let l:args .= ' --no-patch'
   endif
   if l:state.skip != v:null
-    let l:command .= ' --skip=' . shellescape(l:state.skip)
+    let l:args .= ' --skip=' . shellescape(l:state.skip)
   endif
   if l:state.max_count != v:null
-    let l:command .= ' --max-count=' . shellescape(l:state.max_count)
+    let l:args .= ' --max-count=' . shellescape(l:state.max_count)
   endif
   if l:state.search != v:null
     let l:search = shellescape(l:state.search)
-    let l:command .= ' --grep=' . l:search
+    let l:args .= ' --grep=' . l:search
   endif
   if l:state.patch_search != v:null
     let l:patch_search = shellescape(l:state.patch_search)
-    let l:command .= ' -G' . l:patch_search
+    let l:args .= ' -G' . l:patch_search
   endif
   if l:state.author != v:null
-    let l:command .= ' --author=' . shellescape(l:state.author)
+    let l:args .= ' --author=' . shellescape(l:state.author)
   endif
   if l:state.limit != v:null
     let l:limit = shellescape(l:state.limit)
-    let l:command .= ' -L' . l:limit
+    let l:args .= ' -L' . l:limit
   endif
   if l:state.raw_args != v:null
-    let l:command .= ' ' . l:state.raw_args
+    let l:args .= ' ' . l:state.raw_args
   endif
   if len(l:state.rev) >= 1
     if l:state.limit
@@ -836,11 +836,19 @@ function! flog#build_log_command() abort
     else
       let l:rev = join(l:state.rev, ' ')
     endif
-    let l:command .= ' ' . l:rev . ' --'
+    let l:args .= ' ' . l:rev . ' --'
   endif
   if get(g:, 'flog_use_ansi_esc')
-    let l:command .= ' --color'
+    let l:args .= ' --color'
   endif
+
+  return l:args
+endfunction
+
+function! flog#build_log_command() abort
+  let l:command = flog#get_fugitive_git_command()
+  let l:command .= ' log'
+  let l:command .= flog#build_log_args()
   let l:command .= flog#build_log_paths()
 
   return l:command
