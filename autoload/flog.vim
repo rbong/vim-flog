@@ -830,6 +830,9 @@ function! flog#build_log_args() abort
   if l:state.raw_args != v:null
     let l:args .= ' ' . l:state.raw_args
   endif
+  if get(g:, 'flog_use_ansi_esc')
+    let l:args .= ' --color'
+  endif
   if len(l:state.rev) >= 1
     if l:state.limit
       let l:rev = l:state.rev[0]
@@ -837,9 +840,6 @@ function! flog#build_log_args() abort
       let l:rev = join(l:state.rev, ' ')
     endif
     let l:args .= ' ' . l:rev . ' --'
-  endif
-  if get(g:, 'flog_use_ansi_esc')
-    let l:args .= ' --color'
   endif
 
   return l:args
