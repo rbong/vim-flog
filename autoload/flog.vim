@@ -777,7 +777,7 @@ function! flog#build_log_paths() abort
     return ''
   endif
   let l:paths = map(l:state.path, 'fnamemodify(v:val, ":.")')
-  return ' -- ' . join(l:paths, ' ')
+  return join(l:paths, ' ')
 endfunction
 
 function! flog#build_log_args() abort
@@ -839,7 +839,7 @@ function! flog#build_log_args() abort
     else
       let l:rev = join(l:state.rev, ' ')
     endif
-    let l:args .= ' ' . l:rev . ' --'
+    let l:args .= ' ' . l:rev
   endif
 
   return l:args
@@ -849,6 +849,7 @@ function! flog#build_log_command() abort
   let l:command = flog#get_fugitive_git_command()
   let l:command .= ' log'
   let l:command .= flog#build_log_args()
+  let l:command .= ' -- '
   let l:command .= flog#build_log_paths()
 
   return l:command
