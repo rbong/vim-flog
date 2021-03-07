@@ -180,6 +180,10 @@ function! flog#get_fugitive_git_command() abort
   return l:git_command
 endfunction
 
+function! flog#get_fugitive_git_dir() abort
+  return flog#get_state().fugitive_repo.git_dir
+endfunction
+
 function! flog#trigger_fugitive_git_detection() abort
   let b:git_dir = flog#get_state().fugitive_repo.dir()
   let l:workdir = flog#get_fugitive_workdir()
