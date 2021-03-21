@@ -1063,13 +1063,6 @@ endfunction
 
 " Quick navigate operations {{{
 
-" if the star symbol ever changes, this will remain
-" the backwards compatible way of going to the last
-" char that is a part of the graph drawing
-fu! flog#to_commit_start() abort
-  execute 'normal! 0f*'
-endfunction
-
 " If you bind these to j and k,
 " you can more naturally go up and down one commit,
 " while still being able to use your relative
@@ -1080,7 +1073,6 @@ function! flog#up() abort
   else
     execute 'normal! ' . v:count1 . 'k'
   endif
-  call flog#to_commit_start()
 endfunction
 
 function! flog#down() abort
@@ -1089,7 +1081,6 @@ function! flog#down() abort
   else
     execute 'normal! ' . v:count1 . 'j'
   endif
-  call flog#to_commit_start()
 endfunction
 
 " See https://vi.stackexchange.com/questions/29062/how-to-check-if-a-string-starts-with-another-string-in-vimscript/29063#29063
@@ -1119,7 +1110,6 @@ fu! flog#jump_to_commit(commit_hash) abort
   let l:line = index(l:state.line_commits, l:state.commits[l:index]) + 1
   if l:line >= 0
     exec l:line
-    call flog#to_commit_start()
   endif
 endfunction
 
