@@ -240,9 +240,9 @@ gx                                                                   *flog-gx*
   Toggle the "--graph" argument.
 
                                                    *<Plug>(FlogToggleSort)*
-gx                                                                   *flog-gs*
+gs                                                                   *flog-gs*
 
-  Toggle the "--sort-author-date-order" argument.
+  Toggle the "--author-date-order" argument.
 
                                                    *<Plug>(FlogToggleNoPatch)*
 gp                                                                   *flog-gp*

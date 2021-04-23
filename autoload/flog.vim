@@ -810,7 +810,7 @@ function! flog#build_log_args() abort
     let l:args .= ' --no-patch'
   endif
   if l:state.sort_author_date
-    let l:args .= ' --sort_author_date'
+    let l:args .= ' --author-date-order'
   endif
   if l:state.skip != v:null
     let l:args .= ' --skip=' . shellescape(l:state.skip)

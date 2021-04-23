@@ -133,7 +133,7 @@ endif
 nnoremap <buffer> <silent> <Plug>(FlogToggleNoGraph) :call flog#toggle_no_graph_option()<CR>
 
 if !hasmapto('<Plug>(FlogToggleSort)')
-  nmap <buffer> gx <Plug>(FlogToggleSort)
+  nmap <buffer> gs <Plug>(FlogToggleSort)
 endif
 nnoremap <buffer> <silent> <Plug>(FlogToggleSort) :call flog#toggle_sort_option()<CR>
 
