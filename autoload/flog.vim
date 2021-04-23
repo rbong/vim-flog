@@ -207,6 +207,7 @@ function! flog#get_internal_default_args() abort
         \ 'reflog': v:false,
         \ 'no_graph': v:false,
         \ 'no_patch': v:false,
+        \ 'sort_author_date': v:false,
         \ 'skip': v:null,
         \ 'max_count': v:null,
         \ 'open_cmd': 'tabedit',
@@ -312,6 +313,8 @@ function! flog#parse_set_args(args, current_args, defaults) abort
       let a:current_args.no_graph = v:true
     elseif l:arg ==# '-no-patch'
       let a:current_args.no_patch = v:true
+    elseif l:arg ==# '-sort-author-date'
+      let a:current_args.sort_author_date = v:true
     elseif l:arg =~# '^-skip=\d\+'
       let a:current_args.skip = flog#parse_arg_opt(l:arg)
     elseif l:arg ==# '-skip='
@@ -806,6 +809,9 @@ function! flog#build_log_args() abort
   if l:state.no_patch
     let l:args .= ' --no-patch'
   endif
+  if l:state.sort_author_date
+    let l:args .= ' --sort_author_date'
+  endif
   if l:state.skip != v:null
     let l:args .= ' --skip=' . shellescape(l:state.skip)
   endif
@@ -1101,6 +1107,9 @@ function! flog#set_graph_buffer_title() abort
   if l:state.no_patch
     let l:title .= ' [no_patch]'
   endif
+  if l:state.sort_author_date
+    let l:title .= ' [sorted]'
+  endif
   if l:state.skip != v:null
     let l:title .= ' [skip=' . l:state.skip . ']'
   endif
@@ -1263,6 +1272,12 @@ endfunction
 function! flog#toggle_no_graph_option() abort
   let l:state = flog#get_state()
   let l:state.no_graph = l:state.no_graph ? v:false : v:true
+  call flog#populate_graph_buffer()
+endfunction
+
+function! flog#toggle_sort_option() abort
+  let l:state = flog#get_state()
+  let l:state.sort_author_date = l:state.sort_author_date ? v:false : v:true
   call flog#populate_graph_buffer()
 endfunction
 

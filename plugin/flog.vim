@@ -77,11 +77,12 @@ let g:flog_default_completion = [
       \ '-reflog ',
       \ '-rev=',
       \ '-search=',
-      \ '-skip='
+      \ '-skip=',
+      \ '-sort-author-date'
       \ ]
 
 let g:flog_date_formats = [
-      \ 'iso8601', 
+      \ 'iso8601',
       \ 'short',
       \ ]
 
@@ -98,7 +99,7 @@ function! s:LongSpecifierPattern()
 endfunction
 
 let g:flog_eat_specifier_pattern = '^\(%.\|[^%]\)*'
-let g:flog_specifier_partial_char = '[acgGC(]' 
+let g:flog_specifier_partial_char = '[acgGC(]'
 let g:flog_specifier_hex_start = 'x[0-9]\?'
 let g:flog_specifier_bracket_start = '\([Cw<>]\|<|\|>>\|><\)'
 let g:flog_specifier_partial_bracket = '\(\([Cw<>]\|<|\|>>\|><\)(\|(trailers:\)[^\)]*'

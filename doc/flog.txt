@@ -239,6 +239,11 @@ gx                                                                   *flog-gx*
 
   Toggle the "--graph" argument.
 
+                                                   *<Plug>(FlogToggleSort)*
+gx                                                                   *flog-gs*
+
+  Toggle the "--sort-author-date-order" argument.
+
                                                    *<Plug>(FlogToggleNoPatch)*
 gp                                                                   *flog-gp*
 
@@ -498,6 +503,6 @@ COMMAND FORMAT                                           *flog-command-format*
                         Useful for checking out commits for tracking.
   %(l'x)                The local branch at the given mark "x".
   %p                    The arguments passed to the |:Flog| "-path" option, if
-                        any, escaped and joined together by spaces. 
+                        any, escaped and joined together by spaces.
 
  vim:tw=78:ts=8:ft=help
