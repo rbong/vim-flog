@@ -1088,9 +1088,13 @@ fu! flog#starts_with(longer, shorter) abort
   return a:longer[0:len(a:shorter)-1] ==# a:shorter
 endfunction
 
+function! flog#find_all_predicate(haystack, predicate) abort
+  return filter(copy(a:haystack), 'a:predicate(v:val)')
+endfunction
+
 " See https://vi.stackexchange.com/questions/29056/how-to-find-first-item-that-satisfies-predicate/29059#29059
 function! flog#find_predicate(haystack, predicate) abort
-  return get(filter(copy(a:haystack), 'a:predicate(v:val)'), 0, v:null)
+  return get(flog#find_all_predicate(a:haystack, a:predicate), 0, v:null)
 endfunction
 
 fu! flog#find_commit(state, commit_hash) abort
@@ -1164,7 +1168,8 @@ fu! flog#jump_up_N_parents(amount) abort
   endif
   let c = 0
   while c < a:amount
-    let l:parent_commit = system('git rev-list --parents -n 1 ' . l:current_commit)
+    let l:git_parent_command = flog#get_fugitive_git_command() . ' rev-list --parents -n 1 ' . l:current_commit
+    let l:parent_commit = system(l:git_parent_command)
     let l:parents = split(l:parent_commit)[1:]
     if len(l:parents) == 0
       return
@@ -1185,9 +1190,10 @@ fu! flog#jump_down_N_children(amount) abort
     return v:null
   endif
   let c = 0
+  let l:git_log_command = flog#get_fugitive_git_command() . " log --format='%H %P' --all --reflog"
+  let l:parent_log = split(system(l:git_log_command), '\n')
   while c < a:amount
-    let l:child_commit = system("git log --format='%H %P' --all --reflog | grep -F \" " . l:current_commit . "\" | cut -f1 -d' '")
-    let l:children = split(l:child_commit)
+    let l:children = flog#find_all_predicate(l:parent_log, {log_line -> match(log_line, ' ' . l:current_commit) != -1})
     if len(l:children) == 0
       return
     endif
@@ -1212,8 +1218,10 @@ fu! flog#jump_to_offset_head(offset) abort
   endif
   let l:current_head_commit = flog#offset_head_hash()
   if g:flog_head_offset == 0 || l:current_commit == l:current_head_commit
-    let l:reflog_size = str2nr(substitute(system('git reflog | wc -l'), '\v\C\n$', '', '')) - 1
-    let g:flog_head_offset = min([max([0, g:flog_head_offset + a:offset]), l:reflog_size])
+    let l:reflog = system(flog#get_fugitive_git_command() . ' reflog')
+    let l:reflog_lines = split(l:reflog, '\n')
+    let l:reflog_size = len(l:reflog_lines)
+    let g:flog_head_offset = min([max([0, g:flog_head_offset + a:offset]), l:reflog_size - 1])
   else
     let g:flog_head_offset = 0
   endif
