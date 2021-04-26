@@ -1,3 +1,13 @@
+" Plugin boilerplate {{{
+
+if exists("g:loaded_flog")
+  finish
+endif
+
+let g:loaded_flog = 1
+
+" }}}
+
 " Global state {{{
 
 let g:flog_instance_counter = 0
