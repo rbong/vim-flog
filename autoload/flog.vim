@@ -1300,7 +1300,11 @@ function! flog#clear_graph_update_hook() abort
   augroup END
 endfunction
 
-function! flog#do_graph_update_hook() abort
+function! flog#do_graph_update_hook(graph_buff_num) abort
+  if bufnr() != a:graph_buff_num
+    return
+  endif
+
   call flog#clear_graph_update_hook()
   call flog#populate_graph_buffer()
 endfunction
@@ -1310,11 +1314,11 @@ function! flog#initialize_graph_update_hook(graph_buff_num) abort
 
     exec 'autocmd! * <buffer=' . a:graph_buff_num . '>'
     if exists('##SafeState')
-      exec 'autocmd SafeState <buffer=' . a:graph_buff_num . '> call flog#do_graph_update_hook()'
+      exec 'autocmd SafeState <buffer=' . a:graph_buff_num . '> call flog#do_graph_update_hook(' . a:graph_buff_num . ')'
     elseif has('nvim')
-      exec 'autocmd WinEnter <buffer=' . a:graph_buff_num . '> call timer_start(0, {-> flog#do_graph_update_hook()})'
+      exec 'autocmd WinEnter <buffer=' . a:graph_buff_num . '> call timer_start(0, {-> flog#do_graph_update_hook(' . a:graph_buff_num . ')})'
     else
-      exec 'autocmd WinEnter <buffer=' . a:graph_buff_num . '> call flog#do_graph_update_hook()'
+      exec 'autocmd WinEnter <buffer=' . a:graph_buff_num . '> call flog#do_graph_update_hook(' . a:graph_buff_num . ')'
     endif
   augroup END
 endfunction
