@@ -67,6 +67,16 @@ let g:flog_log_data_hash_index = 1
 
 " }}}
 
+" Sorting type data {{{
+
+let g:flog_sort_types = [
+      \ { 'name': 'date', 'args': '--date-order' },
+      \ { 'name': 'author', 'args': '--author-date-order' },
+      \ { 'name': 'topo', 'args': '--topo-order' },
+      \ ]
+
+" }}}
+
 " Completion data {{{
 
 let g:flog_default_completion = [
@@ -88,7 +98,8 @@ let g:flog_default_completion = [
       \ '-rev=',
       \ '-reverse',
       \ '-search=',
-      \ '-skip='
+      \ '-skip=',
+      \ '-sort=',
       \ ]
 
 let g:flog_date_formats = [
