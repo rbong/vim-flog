@@ -672,6 +672,15 @@ function! flog#get_state() abort
   return b:flog_state
 endfunction
 
+function! flog#get_resolved_graph_options() abort
+  let l:opts = copy(flog#get_state())
+
+  let l:opts.bisect = l:opts.bisect && !l:opts.limit
+  let l:opts.reflog = l:opts.reflog && !l:opts.limit
+
+  return l:opts
+endfunction
+
 " }}}
 
 " Log command management {{{
@@ -781,63 +790,64 @@ function! flog#build_log_paths() abort
 endfunction
 
 function! flog#build_log_args() abort
-  let l:state = flog#get_state()
+  let l:opts = flog#get_resolved_graph_options()
 
   let l:args = ''
 
-  if !l:state.no_graph
+  if !l:opts.no_graph
     let l:args .= ' --graph'
   endif
   let l:args .= ' --no-color'
   let l:args .= ' --pretty=' . flog#create_log_format()
-  let l:args .= ' --date=' . shellescape(l:state.date)
-  if l:state.all && !l:state.limit
+  let l:args .= ' --date=' . shellescape(l:opts.date)
+  if l:opts.all && !l:opts.limit
     let l:args .= ' --all'
   endif
-  if l:state.bisect && !l:state.limit
+  if l:opts.bisect
     let l:args .= ' --bisect'
   endif
-  if l:state.no_merges
+  if l:opts.no_merges
     let l:args .= ' --no-merges'
   endif
-  if l:state.reflog && !l:state.limit
+  if l:opts.reflog
     let l:args .= ' --reflog'
   endif
-  if l:state.no_patch
+  if l:opts.no_patch
     let l:args .= ' --no-patch'
   endif
-  if l:state.skip != v:null
-    let l:args .= ' --skip=' . shellescape(l:state.skip)
+  if l:opts.skip != v:null
+    let l:args .= ' --skip=' . shellescape(l:opts.skip)
   endif
-  if l:state.max_count != v:null
-    let l:args .= ' --max-count=' . shellescape(l:state.max_count)
   endif
-  if l:state.search != v:null
-    let l:search = shellescape(l:state.search)
+  if l:opts.max_count != v:null
+    let l:args .= ' --max-count=' . shellescape(l:opts.max_count)
+  endif
+  if l:opts.search != v:null
+    let l:search = shellescape(l:opts.search)
     let l:args .= ' --grep=' . l:search
   endif
-  if l:state.patch_search != v:null
-    let l:patch_search = shellescape(l:state.patch_search)
+  if l:opts.patch_search != v:null
+    let l:patch_search = shellescape(l:opts.patch_search)
     let l:args .= ' -G' . l:patch_search
   endif
-  if l:state.author != v:null
-    let l:args .= ' --author=' . shellescape(l:state.author)
+  if l:opts.author != v:null
+    let l:args .= ' --author=' . shellescape(l:opts.author)
   endif
-  if l:state.limit != v:null
-    let l:limit = shellescape(l:state.limit)
+  if l:opts.limit != v:null
+    let l:limit = shellescape(l:opts.limit)
     let l:args .= ' -L' . l:limit
   endif
-  if l:state.raw_args != v:null
-    let l:args .= ' ' . l:state.raw_args
+  if l:opts.raw_args != v:null
+    let l:args .= ' ' . l:opts.raw_args
   endif
   if get(g:, 'flog_use_ansi_esc')
     let l:args .= ' --color'
   endif
-  if len(l:state.rev) >= 1
-    if l:state.limit
-      let l:rev = l:state.rev[0]
+  if len(l:opts.rev) >= 1
+    if l:opts.limit
+      let l:rev = l:opts.rev[0]
     else
-      let l:rev = join(l:state.rev, ' ')
+      let l:rev = join(l:opts.rev, ' ')
     endif
     let l:args .= ' ' . l:rev
   endif
@@ -1080,54 +1090,54 @@ function! flog#set_graph_buffer_commits(commits) abort
 endfunction
 
 function! flog#set_graph_buffer_title() abort
-  let l:state = flog#get_state()
+  let l:opts = flog#get_resolved_graph_options()
 
-  let l:title = 'flog-' . l:state.instance
-  if l:state.all && !l:state.limit
+  let l:title = 'flog-' . l:opts.instance
+  if l:opts.all && !l:opts.limit
     let l:title .= ' [all]'
   endif
-  if l:state.bisect && !l:state.limit
+  if l:opts.bisect
     let l:title .= ' [bisect]'
   endif
-  if l:state.no_merges
+  if l:opts.no_merges
     let l:title .= ' [no_merges]'
   endif
-  if l:state.reflog && !l:state.limit
+  if l:opts.reflog
     let l:title .= ' [reflog]'
   endif
-  if l:state.no_graph
+  if l:opts.no_graph
     let l:title .= ' [no_graph]'
   endif
-  if l:state.no_patch
+  if l:opts.no_patch
     let l:title .= ' [no_patch]'
   endif
-  if l:state.skip != v:null
-    let l:title .= ' [skip=' . l:state.skip . ']'
+  if l:opts.skip != v:null
+    let l:title .= ' [skip=' . l:opts.skip . ']'
   endif
-  if l:state.max_count != v:null
-    let l:title .= ' [max_count=' . l:state.max_count . ']'
+  if l:opts.max_count != v:null
+    let l:title .= ' [max_count=' . l:opts.max_count . ']'
   endif
-  if l:state.search != v:null
-    let l:title .= ' [search=' . flog#ellipsize(l:state.search) . ']'
+  if l:opts.search != v:null
+    let l:title .= ' [search=' . flog#ellipsize(l:opts.search) . ']'
   endif
-  if l:state.patch_search != v:null
-    let l:title .= ' [patch_search=' . flog#ellipsize(l:state.patch_search) . ']'
+  if l:opts.patch_search != v:null
+    let l:title .= ' [patch_search=' . flog#ellipsize(l:opts.patch_search) . ']'
   endif
-  if l:state.author != v:null
-    let l:title .= ' [author=' . l:state.author . ']'
+  if l:opts.author != v:null
+    let l:title .= ' [author=' . l:opts.author . ']'
   endif
-  if l:state.limit != v:null
-    let l:title .= ' [limit=' . flog#ellipsize(l:state.limit) . ']'
+  if l:opts.limit != v:null
+    let l:title .= ' [limit=' . flog#ellipsize(l:opts.limit) . ']'
   endif
-  if len(l:state.rev) == 1
-    let l:title .= ' [rev=' . flog#ellipsize(l:state.rev[0]) . ']'
+  if len(l:opts.rev) == 1
+    let l:title .= ' [rev=' . flog#ellipsize(l:opts.rev[0]) . ']'
   endif
-  if len(l:state.rev) > 1
+  if len(l:opts.rev) > 1
     let l:title .= ' [rev=...]'
   endif
-  if len(l:state.path) == 1
-    let l:title .= ' [path=' . flog#ellipsize(fnamemodify(l:state.path[0], ':t')) . ']'
-  elseif len(l:state.path) > 1
+  if len(l:opts.path) == 1
+    let l:title .= ' [path=' . flog#ellipsize(fnamemodify(l:opts.path[0], ':t')) . ']'
+  elseif len(l:opts.path) > 1
     let l:title .= ' [path=...]'
   endif
 
