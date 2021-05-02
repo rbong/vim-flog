@@ -86,6 +86,7 @@ let g:flog_default_completion = [
       \ '-raw-args=',
       \ '-reflog ',
       \ '-rev=',
+      \ '-reverse',
       \ '-search=',
       \ '-skip='
       \ ]

@@ -127,6 +127,11 @@ if !hasmapto('<Plug>(FlogToggleReflog)')
 endif
 nnoremap <buffer> <silent> <Plug>(FlogToggleReflog) :call flog#toggle_reflog_option()<CR>
 
+if !hasmapto('<Plug>(FlogToggleReverse)')
+  nmap <buffer> gsr <Plug>(FlogToggleReverse)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogToggleReverse) :call flog#toggle_reverse_option()<CR>
+
 if !hasmapto('<Plug>(FlogToggleNoGraph)')
   nmap <buffer> gx <Plug>(FlogToggleNoGraph)
 endif

@@ -29,6 +29,7 @@ COMMANDS                                                       *flog-commands*
   -bisect               Enable the "--bisect" argument by default.
   -no-merges            Enable the "--no-merges" argument by default.
   -reflog               Enable the "--reflog" argument by default.
+  -reverse              Enable the "--reverse" argument by default.
   -no-graph             Disable the "--graph" argument by default.
   -no-patch             Enable the "--no-patch" argument by default.
   -skip=<number>        Passed to "--skip", skipping that number of commits by
@@ -244,6 +245,12 @@ gp                                                                   *flog-gp*
 
   Toggle the "--no-patch" argument. Useful while the "-limit" option is
   specified.
+
+gsr                                                *<Plug>(FlogToggleReverse)*
+                                                                    *flog-gsr*
+
+  Toggle the "--reverse" argument. Does not conflict with other sort options.
+  Mnemonic: "sort reverse".
 
                                                           *<Plug>(FlogUpdate)*
 u                                                                     *flog-u*

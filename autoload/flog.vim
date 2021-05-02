@@ -205,6 +205,7 @@ function! flog#get_internal_default_args() abort
         \ 'bisect': v:false,
         \ 'no_merges': v:false,
         \ 'reflog': v:false,
+        \ 'reverse': v:false,
         \ 'no_graph': v:false,
         \ 'no_patch': v:false,
         \ 'skip': v:null,
@@ -308,6 +309,8 @@ function! flog#parse_set_args(args, current_args, defaults) abort
       let a:current_args.no_merges = v:true
     elseif l:arg ==# '-reflog'
       let a:current_args.reflog = v:true
+    elseif l:arg ==# '-reverse'
+      let a:current_args.reverse = v:true
     elseif l:arg ==# '-no-graph'
       let a:current_args.no_graph = v:true
     elseif l:arg ==# '-no-patch'
@@ -812,6 +815,9 @@ function! flog#build_log_args() abort
   if l:opts.reflog
     let l:args .= ' --reflog'
   endif
+  if l:opts.reverse
+    let l:args .= ' --reverse'
+  endif
   if l:opts.no_patch
     let l:args .= ' --no-patch'
   endif
@@ -1105,6 +1111,9 @@ function! flog#set_graph_buffer_title() abort
   if l:opts.reflog
     let l:title .= ' [reflog]'
   endif
+  if l:opts.reverse
+    let l:title .= ' [reverse]'
+  endif
   if l:opts.no_graph
     let l:title .= ' [no_graph]'
   endif
@@ -1267,6 +1276,12 @@ endfunction
 function! flog#toggle_reflog_option() abort
   let l:state = flog#get_state()
   let l:state.reflog = l:state.reflog ? v:false : v:true
+  call flog#populate_graph_buffer()
+endfunction
+
+function! flog#toggle_reverse_option() abort
+  let l:state = flog#get_state()
+  let l:state.reverse = l:state.reverse ? v:false : v:true
   call flog#populate_graph_buffer()
 endfunction
 
