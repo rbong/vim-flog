@@ -1191,7 +1191,7 @@ fu! flog#jump_down_N_children(amount) abort
   endif
   let c = 0
   let l:git_log_command = flog#get_fugitive_git_command() . " log --format='%H %P' --all --reflog"
-  let l:parent_log = split(system(l:git_log_command), '\n')
+  let l:parent_log = systemlist(l:git_log_command)
   while c < a:amount
     let l:children = flog#find_all_predicate(l:parent_log, {log_line -> match(log_line, ' ' . l:current_commit) != -1})
     if len(l:children) == 0
@@ -1218,8 +1218,7 @@ fu! flog#jump_to_offset_head(offset) abort
   endif
   let l:current_head_commit = flog#offset_head_hash()
   if g:flog_head_offset == 0 || l:current_commit == l:current_head_commit
-    let l:reflog = system(flog#get_fugitive_git_command() . ' reflog')
-    let l:reflog_lines = split(l:reflog, '\n')
+    let l:reflog_lines = systemlist(flog#get_fugitive_git_command() . ' reflog')
     let l:reflog_size = len(l:reflog_lines)
     let g:flog_head_offset = min([max([0, g:flog_head_offset + a:offset]), l:reflog_size - 1])
   else
