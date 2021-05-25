@@ -1150,14 +1150,20 @@ endfunction
 " giving the function 'stability' when navigating up/down
 " a directed acyclic graph
 fu! flog#stable_select(commit_list, current_commit) abort
-  if index(g:flog_visited_commits, a:current_commit) == -1
-    let g:flog_visited_commits = [a:current_commit]
+  let l:visited_commits = get(b:, "flog_visited_commits", [])
+  if index(l:visited_commits, a:current_commit) == -1
+    " When current commit is new, refresh the list to only contain
+    " this commit (this of course also applies when b:flog_visited_commits
+    " didn't exist yet
+    let b:flog_visited_commits = [a:current_commit]
   endif
-  let pick = flog#find_predicate(a:commit_list, {target_commit -> index(g:flog_visited_commits, target_commit) != -1})
+  let pick = flog#find_predicate(a:commit_list, {target_commit -> index(b:flog_visited_commits, target_commit) != -1})
   if pick == v:null
     let pick = a:commit_list[0]
   endif
-  call add(g:flog_visited_commits, l:pick)
+  if index(b:flog_visited_commits, l:pick) == -1
+    call add(b:flog_visited_commits, l:pick)
+  endif
   return pick
 endfunction
 
@@ -1194,6 +1200,7 @@ fu! flog#jump_down_N_children(amount) abort
   let l:parent_log = systemlist(l:git_log_command)
   while c < a:amount
     let l:children = flog#find_all_predicate(l:parent_log, {log_line -> match(log_line, ' ' . l:current_commit) != -1})
+    call map(l:children, "substitute(v:val, ' [^ ]*$', '', '')")
     if len(l:children) == 0
       return
     endif
