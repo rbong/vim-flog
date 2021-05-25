@@ -1239,6 +1239,7 @@ endfunction
 
 function! flog#populate_graph_buffer() abort
   let l:state = flog#get_state()
+  let b:flog_status_summary = flog#get_status_summary()
 
   let l:cursor = flog#get_graph_cursor()
 
@@ -1379,6 +1380,21 @@ function! flog#clear_graph_update_hook() abort
   augroup FlogGraphUpdate
     autocmd! * <buffer>
   augroup END
+endfunction
+
+function! flog#get_status_summary() abort
+  let l:command = flog#get_fugitive_git_command()
+  let l:changes = len(systemlist(l:command . ' status -s'))
+  if l:changes == 0
+    let l:change_summary = 'no changes'
+  else 
+    let l:change_summary = l:changes . ' changed file'
+  endif
+  if l:changes > 1
+    let l:change_summary = l:change_summary . 's'
+  endif
+  let l:branch = systemlist(l:command . ' rev-parse --abbrev-ref HEAD')[0]
+  return '(' . l:branch . ')' . ' ' . l:change_summary
 endfunction
 
 function! flog#do_graph_update_hook(graph_buff_num) abort
