@@ -8,6 +8,17 @@ let g:loaded_flog = 1
 
 " }}}
 
+" Use forest if present {{{
+
+if !exists("g:flog_build_log_command_fn") && executable('forest')
+  let g:flog_build_log_command_fn = 'flog#build_forest_command'
+  echom "Found forest; using that for the git log"
+else
+  echom "Using default git log"
+endif
+
+" }}}
+
 " Global state {{{
 
 let g:flog_instance_counter = 0

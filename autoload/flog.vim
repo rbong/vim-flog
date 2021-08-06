@@ -19,6 +19,25 @@ function! flog#exclude(list, filters) abort
   return filter(a:list, 'index(a:filters, v:val) < 0')
 endfunction
 
+function! flog#build_forest_command() abort
+    let l:state = flog#get_state()
+
+    if l:state.no_graph
+        return flog#build_log_command()
+    endif
+
+    let l:command = 'export GIT_DIR='
+    let l:command .= shellescape(flog#get_fugitive_git_dir())
+    let l:command .= '; '
+
+    let l:command .= 'forest --style=10'
+    let l:command .= substitute(flog#build_log_args(), ' --graph', '', '')
+    let l:command .= ' -- '
+    let l:command .= flog#build_log_paths()
+
+    return l:command
+endfunction
+
 function! flog#ellipsize(string, ...) abort
   let l:max_len = a:0 >= 1 ? min(a:1, 4) : 15
   let l:dir = a:0 >= 2 ? a:2 : 0
