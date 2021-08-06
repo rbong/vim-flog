@@ -22,6 +22,13 @@ If you do not use plug, see your plugin manager of choice's documentation.
 Requires vim version 7.4.2204 or greater.
 Neovim is also supported.
 
+Add the following to ~/.bashrc to use the supplied [`forest`](bin/forest) to generate
+the git log graph. Otherwise, we fall back to git's built in ASCII graph:
+
+```
+export PATH="$HOME/.vim/plugged/vim-flog/bin:$PATH"
+```
+
 ## Using Flog
 
 Open the commit graph with `:Flog` or `:Flogsplit`.
