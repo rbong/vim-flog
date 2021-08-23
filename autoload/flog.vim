@@ -180,7 +180,7 @@ function! flog#get_fugitive_workdir() abort
 endfunction
 
 function! flog#get_fugitive_git_command() abort
-  let l:git_command = flog#get_state().fugitive_repo.git_command()
+  let l:git_command = FugitiveShellCommand()
   return l:git_command
 endfunction
 
@@ -436,17 +436,17 @@ endfunction
 " Argument commands {{{
 
 function! flog#get_remotes() abort
-  return flog#systemlist(fugitive#repo().git_command() . ' remote')
+  return flog#systemlist(flog#get_fugitive_git_command() . ' remote')
 endfunction
 
 function! flog#get_refs() abort
-  let l:command = fugitive#repo().git_command()
+  let l:command = flog#get_fugitive_git_command()
         \ . ' rev-parse --symbolic --branches --tags --remotes'
   return flog#systemlist(l:command) +  ['HEAD', 'FETCH_HEAD', 'MERGE_HEAD', 'ORIG_HEAD']
 endfunction
 
 function! flog#get_authors() abort
-  let l:command = fugitive#repo().git_command()
+  let l:command = flog#get_fugitive_git_command()
         \ . ' shortlog --all --no-merges -s -n'
   " Filter author commit numbers before returning
   return map(
