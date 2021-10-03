@@ -78,6 +78,10 @@ function! flog#get(dict, key, ...) abort
   return get(a:dict, a:key, l:default)
 endfunction
 
+function! flog#filter_empty(list) abort
+  return filter(copy(a:list), '!empty(v:val)')
+endfunction
+
 " }}}
 
 " Deprecation helpers {{{
@@ -751,7 +755,8 @@ function! flog#parse_log_commit(c) abort
   let l:c.ref_names_unwrapped = l:dat[g:flog_log_data_ref_index]
   let l:c.internal_data = l:dat
 
-  let l:c.ref_name_list = split(l:c.ref_names_unwrapped, ' -> \|, \|tag: ')
+  let l:c.ref_name_list = flog#filter_empty(
+        \ split(l:c.ref_names_unwrapped, ' -> \|, \|tag: '))
 
   let l:end = a:c[l:l  + len(g:flog_format_end):]
   if l:end !=# '' && l:end[0] !=# "\n"
@@ -1534,7 +1539,8 @@ function! flog#get_cache_refs(cache, line) abort
     endif
     let l:refs = l:commit.ref_name_list
 
-    let l:original_refs = split(l:commit.ref_names_unwrapped, ' \ze-> \|, \|\zetag: ')
+    let l:original_refs = flog#filter_empty(
+          \ split(l:commit.ref_names_unwrapped, ' \ze-> \|, \|\zetag: '))
 
     let l:remote_branches = []
     let l:local_branches = []
