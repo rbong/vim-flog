@@ -153,6 +153,10 @@ function! flog#systemlist(command) abort
   return l:output
 endfunction
 
+function! flog#shellescapelist(list) abort
+  return map(copy(a:list), 'shellescape(v:val)')
+endfunction
+
 " }}}
 
 " Fugitive interface {{{
@@ -532,12 +536,12 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
     let l:completions += flog#filter_completions(a:arg_lead, copy(g:flog_git_subcommands[l:command]))
   endif
 
-  return l:completions
+  return flog#shellescapelist(l:completions)
 endfunction
 
 function! flog#complete_jump(arg_lead, cmd_line, cursor_pos) abort
   let l:state = flog#get_state()
-  return flog#complete_rev(a:arg_lead)
+  return flog#shellescapelist(flog#complete_rev(a:arg_lead))
 endfunction
 
 " }}}
@@ -871,9 +875,9 @@ function! flog#build_log_args() abort
   endif
   if len(l:opts.rev) >= 1
     if l:opts.limit
-      let l:rev = l:opts.rev[0]
+      let l:rev = shellescape(l:opts.rev[0])
     else
-      let l:rev = join(l:opts.rev, ' ')
+      let l:rev = join(flog#shellescapelist(l:opts.rev), ' ')
     endif
     let l:args .= ' ' . l:rev
   endif
@@ -1577,7 +1581,12 @@ function! flog#cmd_convert_branch(cache, item, line) abort
   let l:refs = flog#get_cache_refs(a:cache, a:line)
   let l:local_branches = flog#get(l:refs, 'local_branches', [])
   let l:remote_branches = flog#get(l:refs, 'remote_branches', [])
-  return get(l:local_branches, 0, get(l:remote_branches, 0, v:null))
+
+  let l:branch = get(l:local_branches, 0, get(l:remote_branches, 0, v:null))
+  if type(l:branch) != v:t_string
+    return v:null
+  endif
+  return shellescape(l:branch)
 endfunction
 
 function! flog#cmd_convert_local_branch(cache, item, line) abort
@@ -1589,9 +1598,9 @@ function! flog#cmd_convert_local_branch(cache, item, line) abort
     if empty(l:remote_branches)
       return v:null
     endif
-    return substitute(l:remote_branches[0], '.*/', '', '')
+    return shellescape(substitute(l:remote_branches[0], '.*/', '', ''))
   endif
-  return l:local_branches[0]
+  return shellescape(l:local_branches[0])
 endfunction
 
 function! flog#cmd_convert_line(cache, item, Convert) abort
