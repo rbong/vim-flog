@@ -6,6 +6,7 @@ silent setlocal nomodifiable
       \ buftype=nofile
       \ bufhidden=wipe
       \ cursorline
+      \ nomodeline
 
 " Mappings {{{
 
