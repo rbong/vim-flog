@@ -1646,18 +1646,23 @@ function! flog#is_remote_ref(ref) abort
   return index(flog#get_remotes(), l:split_ref[0]) >= 0
 endfunction
 
-function! flog#get_cache_refs(cache, line) abort
+function! flog#get_cache_refs(cache, commit) abort
+  if type(a:commit) != v:t_dict
+    return v:null
+  endif
+
   let l:ref_cache = a:cache['refs']
 
-  if !has_key(l:ref_cache, a:line)
-    let l:commit = flog#get_commit_at_line(a:line)
-    if type(l:commit) != v:t_dict || empty(l:commit.ref_name_list)
+  let l:hash = a:commit.short_commit_hash
+
+  if !has_key(l:ref_cache, l:hash)
+    if empty(a:commit.ref_name_list)
       return v:null
     endif
-    let l:refs = l:commit.ref_name_list
+    let l:refs = a:commit.ref_name_list
 
     let l:original_refs = flog#filter_empty(
-          \ split(l:commit.ref_names_unwrapped, ' \ze-> \|, \|\zetag: '))
+          \ split(a:commit.ref_names_unwrapped, ' \ze-> \|, \|\zetag: '))
 
     let l:remote_branches = []
     let l:local_branches = []
@@ -1681,7 +1686,7 @@ function! flog#get_cache_refs(cache, line) abort
       let l:i += 1
     endwhile
 
-    let l:ref_cache[a:line] = {
+    let l:ref_cache[l:hash] = {
           \ 'local_branches': l:local_branches,
           \ 'remote_branches': l:remote_branches,
           \ 'tags': l:tags,
@@ -1689,19 +1694,19 @@ function! flog#get_cache_refs(cache, line) abort
           \ }
   endif
 
-  return l:ref_cache[a:line]
+  return l:ref_cache[l:hash]
 endfunction
 
 " }}}
 
 " Command format specifier converters {{{
 
-function! flog#cmd_convert_hash(cache, item, line) abort
-  return flog#get(flog#get_commit_at_line(a:line), 'short_commit_hash')
+function! flog#cmd_convert_hash(cache, item, commit) abort
+  return flog#get(a:commit, 'short_commit_hash')
 endfunction
 
-function! flog#cmd_convert_branch(cache, item, line) abort
-  let l:refs = flog#get_cache_refs(a:cache, a:line)
+function! flog#cmd_convert_branch(cache, item, commit) abort
+  let l:refs = flog#get_cache_refs(a:cache, a:commit)
   let l:local_branches = flog#get(l:refs, 'local_branches', [])
   let l:remote_branches = flog#get(l:refs, 'remote_branches', [])
 
@@ -1712,8 +1717,8 @@ function! flog#cmd_convert_branch(cache, item, line) abort
   return shellescape(l:branch)
 endfunction
 
-function! flog#cmd_convert_local_branch(cache, item, line) abort
-  let l:refs = flog#get_cache_refs(a:cache, a:line)
+function! flog#cmd_convert_local_branch(cache, item, commit) abort
+  let l:refs = flog#get_cache_refs(a:cache, a:commit)
   let l:local_branches = flog#get(l:refs, 'local_branches', [])
   let l:remote_branches = flog#get(l:refs, 'remote_branches', [])
 
@@ -1727,11 +1732,16 @@ function! flog#cmd_convert_local_branch(cache, item, line) abort
 endfunction
 
 function! flog#cmd_convert_line(cache, item, Convert) abort
-  return a:Convert(a:cache, a:item, '.')
+  return a:Convert(a:cache, a:item, flog#get_commit_at_line('.'))
 endfunction
 
-function! flog#cmd_convert_mark(cache, item, Convert) abort
-  return a:Convert(a:cache, a:item, a:item[1:])
+function! flog#cmd_convert_commit_mark(cache, item, Convert) abort
+  let l:commit = flog#get_commit_mark(a:item[2:])
+  if type(l:commit) != v:t_dict
+    return v:null
+  endif
+
+  return a:Convert(a:cache, a:item, l:commit)
 endfunction
 
 function! flog#cmd_convert_path(cache, item) abort
@@ -1758,15 +1768,15 @@ function! flog#convert_command_format_item(cache, item) abort
   if a:item ==# 'h'
     let l:converted_item = flog#cmd_convert_line(a:cache, a:item, function('flog#cmd_convert_hash'))
   elseif a:item =~# "^h'."
-    let l:converted_item = flog#cmd_convert_mark(a:cache, a:item, function('flog#cmd_convert_hash'))
+    let l:converted_item = flog#cmd_convert_commit_mark(a:cache, a:item, function('flog#cmd_convert_hash'))
   elseif a:item =~# 'b'
     let l:converted_item = flog#cmd_convert_line(a:cache, a:item, function('flog#cmd_convert_branch'))
   elseif a:item =~# "^b'."
-    let l:converted_item = flog#cmd_convert_mark(a:cache, a:item, function('flog#cmd_convert_branch'))
+    let l:converted_item = flog#cmd_convert_commit_mark(a:cache, a:item, function('flog#cmd_convert_branch'))
   elseif a:item =~# 'l'
     let l:converted_item = flog#cmd_convert_line(a:cache, a:item, function('flog#cmd_convert_local_branch'))
   elseif a:item =~# "^l'."
-    let l:converted_item = flog#cmd_convert_mark(a:cache, a:item, function('flog#cmd_convert_local_branch'))
+    let l:converted_item = flog#cmd_convert_commit_mark(a:cache, a:item, function('flog#cmd_convert_local_branch'))
   elseif a:item =~# 'p'
     let l:converted_item = flog#cmd_convert_path(a:cache, a:item)
   else
