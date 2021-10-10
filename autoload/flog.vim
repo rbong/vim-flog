@@ -1065,6 +1065,14 @@ function! flog#jump_to_ref(ref) abort
   exec l:state.ref_line_lookup[a:ref]
 endfunction
 
+function! flog#jump_to_commit(hash) abort
+  let l:state = flog#get_state()
+  if !has_key(l:state.commit_line_lookup, a:hash)
+    return
+  endif
+  exec l:state.commit_line_lookup[a:hash]
+endfunction
+
 function! flog#next_ref() abort
   call flog#jump_refs(v:count1)
 endfunction
@@ -1237,12 +1245,7 @@ function! flog#restore_graph_cursor(cursor) abort
     return
   endif
 
-  let l:line = get(l:state.commit_line_lookup, l:short_commit_hash, -1)
-  if l:line < 0
-    return
-  endif
-
-  call cursor(l:line, 1)
+  return flog#jump_to_commit(l:short_commit_hash)
 endfunction
 
 function! flog#populate_graph_buffer() abort
