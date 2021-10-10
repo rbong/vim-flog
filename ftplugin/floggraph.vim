@@ -309,6 +309,24 @@ vnoremap <buffer> <Plug>(FlogGitRebase) :Floggit rebase<Space>
 
 " }}}
 
+" Mark mappings {{{
+
+if !hasmapto('<Plug>(FlogSetCommitMark)')
+  nmap <buffer> m <Plug>(FlogSetCommitMark)
+  vmap <buffer> m <Plug>(FlogSetCommitMark)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogSetCommitMark) :<C-U>call flog#set_commit_mark_at_line(nr2char(getchar()), '.')<CR>
+vnoremap <buffer> <silent> <Plug>(FlogSetCommitMark) :<C-U>call flog#set_commit_mark_at_line(nr2char(getchar()), '.')<CR>
+
+if !hasmapto('<Plug>(FlogJumpToCommitMark)')
+  nmap <buffer> ' <Plug>(FlogJumpToCommitMark)
+  vmap <buffer> ' <Plug>(FlogJumpToCommitMark)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogJumpToCommitMark) :<C-U>call flog#jump_to_commit_mark(nr2char(getchar()))<CR>
+vnoremap <buffer> <silent> <Plug>(FlogJumpToCommitMark) :<C-U>call flog#jump_to_commit_mark(nr2char(getchar()))<CR>
+
+" }}}
+
 " Deprecated mappings {{{
 
 call flog#deprecate_mapping('<Plug>Flogvsplitcommitright', '<Plug>(FlogVSplitCommitRight)', 'nmap')
@@ -363,6 +381,8 @@ command! -buffer -range -bang -complete=customlist,flog#complete_git -nargs=* Fl
 command! -buffer -bang -complete=customlist,flog#complete -nargs=* Flogsetargs call flog#update_options([<f-args>], '<bang>' ==# '!')
 
 command! -buffer -bang -complete=customlist,flog#complete_jump -nargs=* Flogjump call flog#jump_to_ref(<q-args>)
+
+command! -buffer Flogmarks call flog#echo_commit_marks()
 
 " Deprecated commands {{{
 
