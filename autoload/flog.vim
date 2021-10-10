@@ -410,6 +410,10 @@ function! flog#escape_completions(lead, completions) abort
   return map(a:completions, "a:lead . substitute(v:val, ' ', '\\\\ ', '')")
 endfunction
 
+function! flog#shellescape_completions(completions) abort
+  return map(a:completions, 'fnameescape(v:val)')
+endfunction
+
 function! flog#split_single_completable_arg(arg) abort
   let l:start_pattern = '^\([^=]*=\)\?'
   let l:start = matchstr(a:arg, l:start_pattern)
@@ -540,12 +544,12 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
     let l:completions += flog#filter_completions(a:arg_lead, copy(g:flog_git_subcommands[l:command]))
   endif
 
-  return flog#shellescapelist(l:completions)
+  return flog#shellescape_completions(l:completions)
 endfunction
 
 function! flog#complete_jump(arg_lead, cmd_line, cursor_pos) abort
   let l:state = flog#get_state()
-  return flog#shellescapelist(flog#complete_rev(a:arg_lead))
+  return flog#shellescape_completions(flog#complete_rev(a:arg_lead))
 endfunction
 
 " }}}
