@@ -1,6 +1,6 @@
 " Plugin boilerplate {{{
 
-if exists("g:loaded_flog")
+if exists('g:loaded_flog')
   finish
 endif
 
