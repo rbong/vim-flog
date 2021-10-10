@@ -216,6 +216,19 @@ go                                                                   *flog-go*
 
   Skip to the commit given by the count, or 0 if no count is given.
 
+                                                   *<Plug>(FlogSetCommitMark)*
+m{a-zA-Z'}                                                            *flog-m*
+
+  Mark the current commit under the cursor. Marked commits persist even when
+  the graph updates. Marked commits can be referenced in commands. See
+  |flog-command-format|.
+
+                                                *<Plug>(FlogJumpToCommitMark)*
+'{a-zA-Z'}                                                            *flog-'*
+
+  Jump to the marked commit. When jumping to a commit using this command, the
+  "'" mark is set, so "''" can be used to jump between commands.
+
 ------------------------------------------------------------------------------
 ARGUMENT MODIFIER MAPPINGS                            *flog-argument-mappings*
 
@@ -507,8 +520,7 @@ TEMPORARY WINDOWS                                           *flog-temp-window*
 COMMAND FORMAT                                           *flog-command-format*
 
   Commands in Flog are converted using a special syntax similar to |printf|.
-  Items prefixed by the "%" character are resolved into commit information and
-  Flog options.
+  Items prefixed by the "%" character are resolved into commit information and Flog options.
 
   If any items cannot be resolved, such as for empty lines or if a path is not
   set, the command will not be run.
@@ -517,18 +529,22 @@ COMMAND FORMAT                                           *flog-command-format*
 
   %%                    A literal "%" character.
   %h                    The hash of the commit under the cursor, if any.
-  %(h'x)                The hash of the commit at the given mark "x". Useful
-                        for getting the hash of the commits at the visual
-                        selection (|'<| and |'>|).
+  %(h'x)                The hash at the given commit mark "x". See |flog-m|.
+  %(h'<)                The hash at the start of the visual selection.
+  %(h'>)                The hash of at the end of the visual selection.
   %b                    The first branch of the commit under the cursor, if
                         any. Local branches prioritized first. Useful for
                         checking out branches.
-  %(b'x)                The branch at the given mark "x".
+  %(b'x)                The branch at the given commit mark "x".
+  %(b'<)                The branch at the start of the visual selection.
+  %(b'>)                The branch at the end of the visual selection.
   %l                    The first branch of the commit under the cursor, if
                         any. Local branches prioritized first. If a remote
                         commit is used, trim the remote name from the branch.
                         Useful for checking out commits for tracking.
   %(l'x)                The local branch at the given mark "x".
+  %(l'<)                The local branch at the start of the visual selection.
+  %(l'>)                The local branch at the end of the visual selection.
   %p                    The arguments passed to the |:Flog| "-path" option, if
                         any, escaped and joined together by spaces. 
 
