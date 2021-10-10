@@ -689,6 +689,7 @@ function! flog#get_initial_state(parsed_args, original_file) abort
         \ 'commit_refs': [],
         \ 'line_commit_refs': [],
         \ 'ref_line_lookup': {},
+        \ 'commit_line_lookup': {},
         \ 'ansi_esc_called': v:false,
         \ })
 endfunction
@@ -1061,7 +1062,7 @@ function! flog#jump_to_ref(ref) abort
   if !has_key(l:state.ref_line_lookup, a:ref)
     return
   endif
-  exec l:state.ref_line_lookup[a:ref] + 1
+  exec l:state.ref_line_lookup[a:ref]
 endfunction
 
 function! flog#next_ref() abort
@@ -1106,11 +1107,13 @@ function! flog#set_graph_buffer_commits(commits) abort
   let l:state.commit_refs = []
   let l:state.line_commit_refs = []
   let l:state.ref_line_lookup = {}
+  let l:state.ref_commit_lookup = {}
 
   let l:cr = v:null
 
   let l:scr = l:state.commit_refs
   let l:srl = l:state.ref_line_lookup
+  let l:scl = l:state.commit_line_lookup
   let l:slc = l:state.line_commits
   let l:slr = l:state.line_commit_refs
 
@@ -1119,9 +1122,11 @@ function! flog#set_graph_buffer_commits(commits) abort
       let l:cr = l:c.ref_name_list
       let l:scr += [l:cr]
       for l:r in l:cr
-        let l:srl[l:r] = len(l:slc)
+        let l:srl[l:r] = len(l:slc) + 1
       endfor
     endif
+
+    let l:scl[l:c.short_commit_hash] = len(slc) + 1
 
     let l:slc += repeat([l:c], len(l:c.display))
     let l:slr += repeat([l:cr], len(l:c.display))
@@ -1232,13 +1237,12 @@ function! flog#restore_graph_cursor(cursor) abort
     return
   endif
 
-  let l:line = v:null
-  for l:commit in l:state.commits
-    if l:commit.short_commit_hash == l:short_commit_hash
-      call cursor(index(l:state.line_commits, l:commit) + 1, 1)
-      return
-    endif
-  endfor
+  let l:line = get(l:state.commit_line_lookup, l:short_commit_hash, -1)
+  if l:line < 0
+    return
+  endif
+
+  call cursor(l:line, 1)
 endfunction
 
 function! flog#populate_graph_buffer() abort
