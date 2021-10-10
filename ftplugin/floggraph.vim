@@ -360,9 +360,9 @@ command! -buffer Flogsplitcommit call flog#run_tmp_command('<mods> Gsplit %h')
 
 command! -buffer -range -bang -complete=customlist,flog#complete_git -nargs=* Floggit call flog#run_raw_command('<mods> Git ' . <q-args>, 1, 1, !empty('<bang>'))
 
-command! -bang -complete=customlist,flog#complete -nargs=* Flogsetargs call flog#update_options([<f-args>], '<bang>' ==# '!')
+command! -buffer -bang -complete=customlist,flog#complete -nargs=* Flogsetargs call flog#update_options([<f-args>], '<bang>' ==# '!')
 
-command! -bang -complete=customlist,flog#complete_jump -nargs=* Flogjump call flog#jump_to_ref(<q-args>)
+command! -buffer -bang -complete=customlist,flog#complete_jump -nargs=* Flogjump call flog#jump_to_ref(<q-args>)
 
 " Deprecated commands {{{
 
