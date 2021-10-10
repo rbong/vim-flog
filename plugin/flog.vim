@@ -223,6 +223,7 @@ let g:flog_no_commits = 'flog: error parsing commits: no commits found'
 let g:flog_missing_commit_start = 'flog: error parsing commits: could not find start of commit'
 let g:flog_unsupported_argument = 'flog: unrecognized argument'
 let g:flog_unsupported_command_format_item = 'flog: unrecognized command format item'
+let g:flog_invalid_mark = 'flog: invalid mark'
 
 " }}}
 

@@ -690,6 +690,7 @@ function! flog#get_initial_state(parsed_args, original_file) abort
         \ 'line_commit_refs': [],
         \ 'ref_line_lookup': {},
         \ 'commit_line_lookup': {},
+        \ 'commit_marks': {},
         \ 'ansi_esc_called': v:false,
         \ })
 endfunction
@@ -1539,6 +1540,95 @@ function! flog#quit() abort
 endfunction
 
 " }}}
+
+" }}}
+
+" Commit marks {{{
+
+function! flog#is_reserved_commit_mark(key) abort
+  return a:key ==# '<' || a:key ==# '>'
+endfunction
+
+function! flog#is_cancel_commit_mark(key) abort
+  " 27 is the code for <Esc>
+  return char2nr(a:key) == 27
+endfunction
+
+function! flog#get_commit_marks() abort
+  return flog#get_state().commit_marks
+endfunction
+
+function! flog#reset_commit_marks() abort
+  let l:state = flog#get_state()
+  let l:state.commit_marks = {}
+endfunction
+
+function! flog#set_commit_mark(key, commit) abort
+  if flog#is_reserved_commit_mark(a:key)
+    throw g:flog_invalid_mark
+  endif
+  if flog#is_cancel_commit_mark(a:key)
+    return
+  endif
+  let l:marks = flog#get_commit_marks()
+  let l:marks[a:key] = a:commit
+endfunction
+
+function! flog#set_commit_mark_at_line(key, line) abort
+  let l:commit = flog#get_commit_at_line(a:line)
+  return flog#set_commit_mark(a:key, l:commit)
+endfunction
+
+function! flog#remove_commit_mark(key) abort
+  let l:marks = flog#get_commit_marks()
+  unlet! l:marks[a:key]
+endfunction
+
+function! flog#has_commit_mark(key) abort
+  if flog#is_reserved_commit_mark(a:key)
+    return 1
+  endif
+  if flog#is_cancel_commit_mark(a:key)
+    throw g:flog_invalid_mark
+  endif
+  let l:marks = flog#get_commit_marks()
+  return has_key(l:marks, a:key)
+endfunction
+
+function! flog#get_commit_mark(key) abort
+  if a:key ==# '<' || a:key ==# '>'
+    return flog#get_commit_at_line("'" . a:key)
+  endif
+  if flog#is_cancel_commit_mark(a:key)
+    throw g:flog_invalid_mark
+  endif
+  if !flog#has_commit_mark(a:key)
+    return v:null
+  endif
+  let l:marks = flog#get_commit_marks()
+  return l:marks[a:key]
+endfunction
+
+function! flog#jump_to_commit_mark(key) abort
+  let l:previous_line = line('.')
+  let l:commit = flog#get_commit_mark(a:key)
+  if type(l:commit) != v:t_dict
+    return
+  endif
+  call flog#jump_to_commit(l:commit.short_commit_hash)
+  call flog#set_commit_mark_at_line("'", l:previous_line)
+endfunction
+
+function! flog#echo_commit_marks() abort
+  let l:marks = flog#get_commit_marks()
+  if empty(l:marks)
+    echo 'No commit marks.'
+    return
+  endif
+  for l:key in sort(keys(l:marks))
+    echo '  ' . l:key . '  ' . l:marks[l:key].short_commit_hash
+  endfor
+endfunction
 
 " }}}
 
