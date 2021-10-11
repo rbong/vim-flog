@@ -906,6 +906,26 @@ function! flog#build_log_command() abort
   return l:command
 endfunction
 
+function! flog#build_git_forest_log_command() abort
+  let l:state = flog#get_state()
+
+  if l:state.no_graph
+      return flog#build_log_command()
+  endif
+
+  let l:command = 'export GIT_DIR='
+  let l:command .= shellescape(flog#get_fugitive_git_dir())
+  let l:command .= ' NO_PRINT_REFS=true'
+  let l:command .= '; '
+
+  let l:command .= 'git-forest '
+  let l:command .= substitute(flog#build_log_args(), ' --graph', '', '')
+  let l:command .= ' -- '
+  let l:command .= flog#build_log_paths()
+
+  return l:command
+endfunction
+
 function! flog#get_log_display(commits) abort
   let l:o = []
   for l:c in a:commits
