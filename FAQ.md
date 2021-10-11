@@ -51,6 +51,49 @@ This may change in the future, so check back.
 
 If you have any feedback about Flog's speed or any of the suggestions above, please see [this ongoing issue](https://github.com/rbong/vim-flog/issues/26).
 
+## How do I get Flog to look nicer?
+
+Flog struggles with highlighting since Vim is not built to highlight vertical columns.
+
+To use the same highlighting that `git log --graph` would use in the shell,
+[download the AnsiEsc.vim plugin](https://github.com/vim-scripts/AnsiEsc.vim),
+then add `let g:flog_use_ansi_esc = 1` to your `.vimrc`.
+
+Note that using `AnsiEsc.vim` with Flog comes with a performance hit.
+
+Another option is to use a custom command to replace `git log --graph`.
+Some users prefer the look of [git-forest](https://github.com/rbong/git-scripts/blob/master/git-forest),
+pictured below.
+
+![git-forest](img/git-forest.png)
+
+To use `git-forest` as a custom log command,
+[download it from here](https://github.com/rbong/git-scripts/blob/master/git-forest),
+and add it to your path, then add this to your `.vimrc`.
+
+```vim
+function FlogBuildLog() abort
+    let l:state = flog#get_state()
+
+    if l:state.no_graph
+        return flog#build_log_command()
+    endif
+
+    let l:command = 'export GIT_DIR='
+    let l:command .= shellescape(flog#get_fugitive_git_dir())
+    let l:command .= ' NO_PRINT_REFS=true'
+    let l:command .= '; '
+
+    let l:command .= 'git-forest '
+    let l:command .= substitute(flog#build_log_args(), ' --graph', '', '')
+    let l:command .= ' -- '
+    let l:command .= flog#build_log_paths()
+
+    return l:command
+endfunction
+let g:flog_build_log_command_fn = 'FlogBuildLog'
+```
+
 ## Why not just use the `git log --graph` command?
 
 To interact with commits.
