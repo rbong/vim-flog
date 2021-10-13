@@ -1,0 +1,23 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    parslet (2.0.0)
+    pastel (0.8.0)
+      tty-color (~> 0.5)
+    rake (13.0.6)
+    thor (1.1.0)
+    tty-color (0.6.0)
+    vim-flavor (4.0.0)
+      parslet (>= 1.8, < 3.0)
+      pastel (~> 0.7)
+      thor (>= 0.20, < 2.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rake (~> 13.0)
+  vim-flavor (~> 4.0)
+
+BUNDLED WITH
+   2.2.25
