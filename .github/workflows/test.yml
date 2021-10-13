@@ -1,0 +1,45 @@
+name: "test status"
+on:
+  - "push"
+jobs:
+  test-vim:
+    runs-on: "ubuntu-18.04"
+    steps:
+      - name: "checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 5
+      - name: "install vim"
+        uses: "./.github/actions/install-vim"
+        with:
+          vim-version: "v8.2.2277"
+      - name: "install ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: "3.0"
+          bundler-cache: true
+      - name: "run tests"
+        run: |
+          source ~/.vvm/etc/login
+          vim --version
+          bundle exec rake test
+  test-neovim:
+    runs-on: "ubuntu-18.04"
+    steps:
+      - name: "checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 5
+      - name: "install neovim"
+        uses: "./.github/actions/install-neovim"
+      - name: "install ruby"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          ruby-version: "3.0"
+          bundler-cache: true
+      - name: "run tests"
+        env:
+          VSPEC_VIM: nvim
+        run: |
+          nvim --version
+          bundle exec rake test

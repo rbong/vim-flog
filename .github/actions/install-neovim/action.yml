@@ -1,0 +1,13 @@
+name: "install neovim"
+runs:
+  using: "composite"
+  steps:
+    - name: "add neovim repository"
+      shell: "bash"
+      run: |
+        sudo add-apt-repository -y ppa:neovim-ppa/stable
+    - name: "install neovim"
+      shell: "bash"
+      run: |
+        sudo apt-get -y update
+        sudo apt-get -y install neovim

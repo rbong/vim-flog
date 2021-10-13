@@ -1,0 +1,18 @@
+name: "install vim"
+inputs:
+  vim-version:
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: "install vvm"
+      shell: "bash"
+      run: |
+        curl https://raw.githubusercontent.com/kana/vim-version-manager/master/bin/vvm | python - setup; true
+        source ~/.vvm/etc/login
+        vvm update_itself
+    - name: "install vim version ${{ inputs.vim-version }}"
+      shell: "bash"
+      run: |
+        source ~/.vvm/etc/login
+        vvm use vimorg--"${{ inputs.vim-version }}" --install --with-features=huge
