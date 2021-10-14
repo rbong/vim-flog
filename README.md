@@ -19,7 +19,7 @@ Plug 'rbong/vim-flog'
 See `:help plug-example` for more information.
 If you do not use plug, see your plugin manager of choice's documentation.
 
-Requires vim version 7.4.2204 or greater.
+Requires vim version 8 or greater.
 Neovim is also supported.
 
 ## Using Flog
