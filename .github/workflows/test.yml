@@ -31,7 +31,7 @@ jobs:
       - name: "run tests"
         run: |
           vim --version
-          VSPEC_VIM="${{ matrix.vspec_vim }}" bundle exec rake test
+          script -qec " VSPEC_VIM=${{ matrix.vspec_vim }} rake test"
   lint:
     runs-on: "ubuntu-18.04"
     steps:
