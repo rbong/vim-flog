@@ -30,7 +30,7 @@ jobs:
           bundler-cache: true
       - name: "run tests"
         run: |
-          vim --version
+          ${{ matrix.vspec_vim }} --version
           script -qec " VSPEC_VIM=${{ matrix.vspec_vim }} rake test"
   lint:
     runs-on: "ubuntu-18.04"
