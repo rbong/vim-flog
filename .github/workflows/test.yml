@@ -2,17 +2,27 @@ name: "test status"
 on:
   - "push"
 jobs:
-  test-vim:
+  test:
     runs-on: "ubuntu-18.04"
+    strategy:
+      matrix:
+        include:
+          - vim_type: "Vim"
+            vim_version: "v8.2.2277"
+            vspec_vim: "vim"
+          - vim_type: "Neovim"
+            vim_version: "stable"
+            vspec_vim: "nvim"
     steps:
       - name: "checkout"
         uses: "actions/checkout@v2"
         with:
           fetch-depth: 5
-      - name: "install vim"
-        uses: "./.github/actions/install-vim"
+      - name: "install ${{ matrix.vim_type }}"
+        uses: "thinca/action-setup-vim@v1"
         with:
-          vim-version: "v8.2.2277"
+          vim_version: "${{ matrix.vim_version }}"
+          vim_type: "${{ matrix.vim_type }}"
       - name: "install ruby"
         uses: "ruby/setup-ruby@v1"
         with:
@@ -20,29 +30,8 @@ jobs:
           bundler-cache: true
       - name: "run tests"
         run: |
-          source ~/.vvm/etc/login
           vim --version
-          bundle exec rake test
-  test-neovim:
-    runs-on: "ubuntu-18.04"
-    steps:
-      - name: "checkout"
-        uses: "actions/checkout@v2"
-        with:
-          fetch-depth: 5
-      - name: "install neovim"
-        uses: "./.github/actions/install-neovim"
-      - name: "install ruby"
-        uses: "ruby/setup-ruby@v1"
-        with:
-          ruby-version: "3.0"
-          bundler-cache: true
-      - name: "run tests"
-        env:
-          VSPEC_VIM: nvim
-        run: |
-          nvim --version
-          bundle exec rake test
+          VSPEC_VIM="${{ matrix.vspec_vim }}" bundle exec rake test
   lint:
     runs-on: "ubuntu-18.04"
     steps:
