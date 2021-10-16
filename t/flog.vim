@@ -130,22 +130,15 @@ end
 " open a temp window with Git -p, which implicitly opens a window
 describe 'flog#run_tmp_command("Git -p status", 1)'
   before
-    if !has('nvim')
-      Flog
-      call flog#run_tmp_command('Git -p status', 1)
-    endif
+    Flog
+    call flog#run_tmp_command('Git -p status', 1)
   end
 
   after
-    if !has('nvim')
-      call flog#quit()
-    endif
+    call flog#quit()
   end
 
   it 'opens in a temp window'
-    if has('nvim')
-      SKIP 'nvim not supported: https://github.com/kana/vim-vspec/issues/65'
-    endif
     Expect &ft !=# 'floggraph'
     Expect winnr('$') == 2
     Expect flog#get_state().tmp_window_ids == [win_getid()]
@@ -155,22 +148,15 @@ end
 " open a temp window with Git diff, which explicitly opens a window
 describe 'flog#run_tmp_command("Git diff", 1)'
   before
-    if !has('nvim')
-      Flog
-      call flog#run_tmp_command('Git diff', 1)
-    endif
+    Flog
+    call flog#run_tmp_command('Git diff', 1)
   end
 
   after
-    if !has('nvim')
-      call flog#quit()
-    endif
+    call flog#quit()
   end
 
   it 'opens in a temp window'
-    if has('nvim')
-      SKIP 'nvim not supported: https://github.com/kana/vim-vspec/issues/65'
-    endif
     Expect &ft !=# 'floggraph'
     Expect winnr('$') == 2
     Expect flog#get_state().tmp_window_ids == [win_getid()]
@@ -180,22 +166,15 @@ end
 " open a temp window with Git -p diff, which implicitly and explicitly opens a window
 describe 'flog#run_tmp_command("Git -p diff", 1)'
   before
-    if !has('nvim')
-      Flog
-      call flog#run_tmp_command('Git -p diff', 1)
-    endif
+    Flog
+    call flog#run_tmp_command('Git -p diff', 1)
   end
 
   after
-    if !has('nvim')
-      call flog#quit()
-    endif
+    call flog#quit()
   end
 
   it 'opens in a temp window'
-    if has('nvim')
-      SKIP 'nvim not supported: https://github.com/kana/vim-vspec/issues/65'
-    endif
     Expect &ft !=# 'floggraph'
     Expect winnr('$') == 2
     Expect flog#get_state().tmp_window_ids == [win_getid()]
