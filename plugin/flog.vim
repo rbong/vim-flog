@@ -8,6 +8,17 @@ let g:loaded_flog = 1
 
 " }}}
 
+" Default mappings {{{
+
+if !exists("g:flog_no_jk_override")
+  augroup flog_jk_updown
+    autocmd FileType floggraph nno <buffer> <silent> j :<C-U>call flog#down()<CR>
+    autocmd FileType floggraph nno <buffer> <silent> k :<C-U>call flog#up()<CR>
+  augroup END
+endif
+
+" }}}
+
 " Global state {{{
 
 let g:flog_instance_counter = 0

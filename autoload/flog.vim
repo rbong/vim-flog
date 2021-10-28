@@ -84,6 +84,31 @@ endfunction
 
 " }}}
 
+" up/down navigate operations {{{
+
+" If you bind these to j and k,
+" you can more naturally go up and down one commit,
+" while still being able to use your relative
+" line numbers as expected
+function! flog#up() abort
+  if v:count1 == 1
+    call flog#previous_commit()
+  else
+    execute 'normal! ' . v:count1 . 'k'
+  endif
+endfunction
+
+function! flog#down() abort
+  if v:count1 == 1
+    call flog#next_commit()
+  else
+    execute 'normal! ' . v:count1 . 'j'
+  endif
+endfunction
+
+" }}}
+
+
 " Deprecation helpers {{{
 
 function! flog#show_deprecation_warning(deprecated_usage, new_usage) abort

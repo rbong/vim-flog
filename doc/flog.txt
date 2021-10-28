@@ -472,6 +472,20 @@ g:flog_use_ansi_esc                                      *g:flog_use_ansi_esc*
   For more details, help and installation, see AnsiEsc:
   <https://github.com/vim-scripts/AnsiEsc.vim>
 
+g:flog_no_jk_override                                  g:flog_no_jk_override
+
+  By default, pressing j and k inside a flog window will go up/down, but skip
+  over graph-only lines, as those aren't generally useful to navigate to. Set
+  this variable to anything disable the mapping.
+
+  For example:
+
+  let g:flog_no_jk_override=1
+  augroup flog_jk_updown
+    autocmd FileType floggraph nno <buffer> <silent> d :<C-U>call flog#down()<CR>
+    autocmd FileType floggraph nno <buffer> <silent> u :<C-U>call flog#up()<CR>
+  augroup END
+
 ==============================================================================
 FUNCTIONS                                                     *flog-functions*
 
