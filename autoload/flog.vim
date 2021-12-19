@@ -96,7 +96,7 @@ function! flog#did_show_deprecation_warning(deprecated_usage) abort
   return has_key(g:flog_shown_deprecation_warnings, a:deprecated_usage)
 endfunction
 
-function! flog#deprecate_mapping(mapping, new_mapping, ...) abort
+function! flog#deprecate_plugin_mapping(mapping, new_mapping, ...) abort
   let l:deprecated_usage = a:mapping
   if hasmapto(a:mapping) && !flog#did_show_deprecation_warning(l:deprecated_usage)
     let l:new_mapping_type = get(a:, 1, '{nmap|vmap}')

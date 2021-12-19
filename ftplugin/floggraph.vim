@@ -327,46 +327,46 @@ vnoremap <buffer> <silent> <Plug>(FlogJumpToCommitMark) :<C-U>call flog#jump_to_
 
 " }}}
 
-" Deprecated mappings {{{
+" Deprecated plugin mappings {{{
 
-call flog#deprecate_mapping('<Plug>Flogvsplitcommitright', '<Plug>(FlogVSplitCommitRight)', 'nmap')
-call flog#deprecate_mapping('<Plug>FlogVsplitcommitright', '<Plug>(FlogVSplitCommitRight)', 'nmap')
-call flog#deprecate_mapping('<Plug>FlogVnextcommitright', '<Plug>(FlogVNextCommitRight)', 'nmap')
-call flog#deprecate_mapping('<Plug>Flogvnextcommitright', '<Plug>(FlogVNextCommitRight)', 'nmap')
-call flog#deprecate_mapping('<Plug>FlogVprevcommitright', '<Plug>(FlogVPrevCommitRight)', 'nmap')
-call flog#deprecate_mapping('<Plug>Flogvprevcommitright', '<Plug>(FlogVPrevCommitRight)', 'nmap')
-call flog#deprecate_mapping('<Plug>FlogVnextrefright', '<Plug>(FlogVNextRefRight)', 'nmap')
-call flog#deprecate_mapping('<Plug>FlogVprevrefright', '<Plug>(FlogVPrevRefRight)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>Flogvsplitcommitright', '<Plug>(FlogVSplitCommitRight)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogVsplitcommitright', '<Plug>(FlogVSplitCommitRight)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogVnextcommitright', '<Plug>(FlogVNextCommitRight)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>Flogvnextcommitright', '<Plug>(FlogVNextCommitRight)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogVprevcommitright', '<Plug>(FlogVPrevCommitRight)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>Flogvprevcommitright', '<Plug>(FlogVPrevCommitRight)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogVnextrefright', '<Plug>(FlogVNextRefRight)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogVprevrefright', '<Plug>(FlogVPrevRefRight)', 'nmap')
 
-call flog#deprecate_mapping('<Plug>FlogToggleall', '<Plug>(FlogToggleAll)', 'nmap')
-call flog#deprecate_mapping('<Plug>Flogtoggleall', '<Plug>(FlogToggleAll)', 'nmap')
-call flog#deprecate_mapping('<Plug>FlogTogglebisect', '<Plug>(FlogToggleBisect)', 'nmap')
-call flog#deprecate_mapping('<Plug>Flogtogglebisect', '<Plug>(FlogToggleBisect)', 'nmap')
-call flog#deprecate_mapping('<Plug>FlogTogglenomerges', '<Plug>(FlogToggleNoMerges)', 'nmap')
-call flog#deprecate_mapping('<Plug>Flogtogglenomerges', '<Plug>(FlogToggleNoMerges)', 'nmap')
-call flog#deprecate_mapping('<Plug>FlogTogglereflog', '<Plug>(FlogToggleReflog)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogToggleall', '<Plug>(FlogToggleAll)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>Flogtoggleall', '<Plug>(FlogToggleAll)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogTogglebisect', '<Plug>(FlogToggleBisect)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>Flogtogglebisect', '<Plug>(FlogToggleBisect)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogTogglenomerges', '<Plug>(FlogToggleNoMerges)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>Flogtogglenomerges', '<Plug>(FlogToggleNoMerges)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogTogglereflog', '<Plug>(FlogToggleReflog)', 'nmap')
 
-call flog#deprecate_mapping('<Plug>FlogUpdate', '<Plug>(FlogUpdate)', 'nmap')
-call flog#deprecate_mapping('<Plug>Flogupdate', '<Plug>(FlogUpdate)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogUpdate', '<Plug>(FlogUpdate)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>Flogupdate', '<Plug>(FlogUpdate)', 'nmap')
 
-call flog#deprecate_mapping('<Plug>FlogGit', '<Plug>(FlogGit)')
-call flog#deprecate_mapping('<Plug>Floggit', '<Plug>(FlogGit)')
+call flog#deprecate_plugin_mapping('<Plug>FlogGit', '<Plug>(FlogGit)')
+call flog#deprecate_plugin_mapping('<Plug>Floggit', '<Plug>(FlogGit)')
 
-call flog#deprecate_mapping('<Plug>FlogYank', '<Plug>(FlogYank)')
-call flog#deprecate_mapping('<Plug>Flogyank', '<Plug>(FlogYank)')
+call flog#deprecate_plugin_mapping('<Plug>FlogYank', '<Plug>(FlogYank)')
+call flog#deprecate_plugin_mapping('<Plug>Flogyank', '<Plug>(FlogYank)')
 
-call flog#deprecate_mapping('<Plug>FlogSearch', '<Plug>(FlogSearch)', 'nmap')
-call flog#deprecate_mapping('<Plug>FlogPatchSearch', '<Plug>(FlogPatchSearch)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogSearch', '<Plug>(FlogSearch)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogPatchSearch', '<Plug>(FlogPatchSearch)', 'nmap')
 
-call flog#deprecate_mapping('<Plug>FlogQuit', '<Plug>(FlogQuit)', 'nmap')
-call flog#deprecate_mapping('<Plug>Flogquit', '<Plug>(FlogQuit)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogQuit', '<Plug>(FlogQuit)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>Flogquit', '<Plug>(FlogQuit)', 'nmap')
 
-call flog#deprecate_mapping('<Plug>FlogHelp', '<Plug>(FlogHelp)', 'nmap')
-call flog#deprecate_mapping('<Plug>Floghelp', '<Plug>(FlogHelp)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogHelp', '<Plug>(FlogHelp)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>Floghelp', '<Plug>(FlogHelp)', 'nmap')
 
-call flog#deprecate_mapping('<Plug>FlogSetskip', '<Plug>(FlogSetSkip)', 'nmap')
-call flog#deprecate_mapping('<Plug>FlogSkipahead', '<Plug>(FlogSkipAhead)', 'nmap')
-call flog#deprecate_mapping('<Plug>FlogSkipback', '<Plug>(FlogSkipBack)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogSetskip', '<Plug>(FlogSetSkip)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogSkipahead', '<Plug>(FlogSkipAhead)', 'nmap')
+call flog#deprecate_plugin_mapping('<Plug>FlogSkipback', '<Plug>(FlogSkipBack)', 'nmap')
 
 " }}}
 
