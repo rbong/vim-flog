@@ -288,7 +288,7 @@ nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractive) :<C-U>call flog#run_com
 if !hasmapto('<Plug>(FlogRebaseInteractiveAutosquash)')
   nmap <buffer> rf <Plug>(FlogRebaseInteractiveAutosquash)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveAutosquash) :<C-U>call flog#run_command('Git rebase --interactive --autosquash %h^', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveAutosquash) :<C-U>call flog#run_command('Git -c sequence.editor=true rebase --interactive --autosquash %h^', 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveUpstream)')
   nmap <buffer> ru <Plug>(FlogRebaseInteractiveUpstream)
