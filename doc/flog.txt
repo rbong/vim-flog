@@ -154,6 +154,11 @@ dp                                                                   *flog-dp*
   Same as |flog-dd|, but use the "-path" argument to only show the diff for
   the currently selected paths.
 
+                                                     *<Plug>(FlogCloseTmpWin)*
+dq                                                                   *flog-dq*
+
+  Close all temporary windows.
+
                                                             *<Plug>(FlogYank)*
 y<C-G>                                                           *flog-y<C-G>*
 

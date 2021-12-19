@@ -45,6 +45,12 @@ vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_c
 nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command('vertical belowright Git diff HEAD %h -- %p')<CR>
 vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command("vertical belowright Git diff HEAD %(h'<) %(h'>) -- %p")<CR>
 
+if !hasmapto('<Plug>(FlogCloseTmpWin)')
+  nmap <buffer> dq <Plug>(FlogCloseTmpWin)
+endif
+
+nnoremap <buffer> <silent> <Plug>(FlogCloseTmpWin) :<C-U>call flog#close_tmp_win()<CR>
+
 if !hasmapto('<Plug>(FlogYank)')
   nmap <buffer> y<C-G> <Plug>(FlogYank)
   vmap <buffer> y<C-G> <Plug>(FlogYank)
