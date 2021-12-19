@@ -188,6 +188,28 @@ nnoremap <buffer> <silent> <Plug>(FlogSortTopo) :call flog#set_sort_option('topo
 
 " Commit/branch mappings {{{
 
+if !hasmapto('<Plug>(FlogFixup)')
+  nmap <buffer> cf <Plug>(FlogFixup)
+endif
+if !hasmapto('<Plug>(FlogFixupRebase)')
+  nmap <buffer> cF <Plug>(FlogFixupRebase)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogFixup) :<C-U>call flog#run_command('Git commit --fixup=%h', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogFixupRebase) :<C-U>call flog#run_command('Git commit --fixup=%h \| Git -c sequence.editor=true rebase --interactive --autosquash %h^', 1, 1)<CR>
+
+if !hasmapto('<Plug>(FlogSquash)')
+  nmap <buffer> cs <Plug>(FlogSquash)
+endif
+if !hasmapto('<Plug>(FlogSquashRebase)')
+  nmap <buffer> cS <Plug>(FlogSquashRebase)
+endif
+if !hasmapto('<Plug>(FlogSquashEdit)')
+  nmap <buffer> cA <Plug>(FlogSquashEdit)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogSquash) :<C-U>call flog#run_command('Git commit --no-edit --squash=%h', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogSquashRebase) :<C-U>call flog#run_command('Git commit --no-edit --squash=%h \| Git -c sequence.editor=true rebase --interactive --autosquash %h^', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogSquashEdit) :<C-U>call flog#run_command('Git commit --edit --squash=%h', 1, 1)<CR>
+
 if !hasmapto('<Plug>(FlogRevert)')
   nmap <buffer> crc <Plug>(FlogRevert)
   vmap <buffer> crc <Plug>(FlogRevert)
@@ -218,6 +240,13 @@ if !hasmapto('<Plug>(FlogCheckoutLocalBranch)')
   nmap <buffer> cot <Plug>(FlogCheckoutLocalBranch)
 endif
 nnoremap <buffer> <silent> <Plug>(FlogCheckoutLocalBranch) :<C-U>call flog#run_command('Git checkout %l', 0, 1)<CR>
+
+if !hasmapto('<Plug>(FlogGitCommit)')
+  nmap <buffer> c<Space> <Plug>(FlogGitCommit)
+  vmap <buffer> c<Space> <Plug>(FlogGitCommit)
+endif
+nnoremap <buffer> <Plug>(FlogGitCommit) :Floggit commti<Space>
+vnoremap <buffer> <Plug>(FlogGitCommit) :Floggit commti<Space>
 
 if !hasmapto('<Plug>(FlogGitRevert)')
   nmap <buffer> cr<Space> <Plug>(FlogGitRevert)

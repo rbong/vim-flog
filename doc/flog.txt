@@ -313,6 +313,32 @@ g\                                                                   *flog-g\*
 ------------------------------------------------------------------------------
 COMMIT AND BRANCH MAPPINGS                              *flog-commit-mappings*
 
+                                                           *<Plug>(FlogFixup)*
+cf                                                                   *flog-cf*
+
+  Create a "--fixup" commit for the commit under the cursor.
+
+                                                     *<Plug>(FlogFixupRebase)*
+cF                                                                   *flog-cF*
+
+  Same as |flog-cf|, but immediately perform a "rebase --autosquash".
+
+                                                          *<Plug>(FlogSquash)*
+cs                                                                   *flog-cs*
+
+  Create a "--squash" commit for the commit under the cursor.
+
+                                                    *<Plug>(FlogSquashRebase)*
+cS                                                                   *flog-cS*
+
+  Same as |flog-cs|, but immediately perform a "rebase --autosquash".
+
+                                                      *<Plug>(FlogSquashEdit)*
+
+cA                                                                   *flog-cA*
+
+  Same as |flog-cs|, but edit the commit message.
+
                                                           *<Plug>(FlogRevert)*
 crc                                                                 *flog-crc*
 
@@ -343,6 +369,11 @@ cot                                                                 *flog-cot*
   tracked locally.
 
   If no branch name was found do nothing.
+
+                                                       *<Plug>(FlogGitCommit)*
+c<Space>                                                       *flog-c<Space>*
+
+  Start a command line with ":Floggit commit ".
 
                                                        *<Plug>(FlogGitRevert)*
 cr<Space>                                                     *flog-cr<space>*
