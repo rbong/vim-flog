@@ -574,11 +574,6 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   return flog#shellescape_completions(l:completions)
 endfunction
 
-function! flog#complete_jump(arg_lead, cmd_line, cursor_pos) abort
-  let l:state = flog#get_state()
-  return flog#shellescape_completions(flog#complete_rev(a:arg_lead))
-endfunction
-
 " }}}
 
 " Flog command argument commpletion {{{
@@ -694,6 +689,11 @@ function! flog#complete(arg_lead, cmd_line, cursor_pos) abort
     return flog#complete_sort(a:arg_lead)
   endif
   return flog#filter_completions(a:arg_lead, copy(g:flog_default_completion))
+endfunction
+
+function! flog#complete_jump(arg_lead, cmd_line, cursor_pos) abort
+  let l:state = flog#get_state()
+  return flog#shellescape_completions(flog#complete_rev(a:arg_lead))
 endfunction
 
 " }}}
