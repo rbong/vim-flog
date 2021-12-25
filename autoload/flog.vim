@@ -559,6 +559,8 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
     let l:state = flog#get_state()
   endif
 
+  let l:is_fugitive = flog#is_fugitive_buffer()
+
   let l:split_args = split(a:cmd_line, '\s', v:true)
   let [l:command_index, l:command] = flog#find_arg_command(l:split_args)
 
@@ -588,12 +590,14 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   " complete options
   let l:completions += flog#filter_completions(a:arg_lead, flog#get_git_options(l:split_args, l:command_index))
 
-  " complete all possible refs
-  let l:completed_refs = flog#filter_completions(a:arg_lead, flog#get_refs())
-  let l:completions += flog#exclude(l:completed_refs, l:completions)
+  if l:is_fugitive
+    " complete all possible refs
+    let l:completed_refs = flog#filter_completions(a:arg_lead, flog#get_refs())
+    let l:completions += flog#exclude(l:completed_refs, l:completions)
 
-  " complete all filenames
-  let l:completions += flog#exclude(getcompletion(a:arg_lead, 'file'), l:completions)
+    " complete all filenames
+    let l:completions += flog#exclude(getcompletion(a:arg_lead, 'file'), l:completions)
+  endif
 
   return flog#shellescape_completions(l:completions)
 endfunction
