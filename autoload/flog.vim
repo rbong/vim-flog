@@ -471,6 +471,10 @@ function! flog#get_git_options(split_args) abort
     let l:options += l:command_spec.subcommands
   endif
 
+  if has_key(l:command_spec, 'options')
+    let l:options += l:command_spec.options
+  endif
+
   return l:options
 endfunction
 

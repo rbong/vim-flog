@@ -258,12 +258,27 @@ let g:flog_git_command_spec = {
                   \ '--quit',
                   \ '--show-current-patch',
                   \ ],
+            \ 'options': [
+                  \ '-i',
+                  \ '--interactive',
+                  \ '--autosquash',
+                  \ '--edit-todo',
+                  \ '--exec',
+                  \ ],
             \ },
       \ 'merge': {
             \ 'subcommands': [
                   \ '--continue',
                   \ '--abort',
                   \ '--quit',
+                  \ ],
+            \ 'options': [
+                  \ '--squash',
+                  \ '--edit',
+                  \ '--no-edit',
+                  \ '--no-verify',
+                  \ '-m',
+                  \ '-F',
                   \ ],
             \ },
       \ 'cherry-pick': {
@@ -272,6 +287,22 @@ let g:flog_git_command_spec = {
                   \ '--skip',
                   \ '--abort',
                   \ '--quit',
+                  \ ],
+            \ },
+      \ 'push': {
+            \ 'options': [
+                  \ '--all',
+                  \ '--mirror',
+                  \ '--tags',
+                  \ '--atomic',
+                  \ '--no-atomic',
+                  \ '--dry-run',
+                  \ '--force',
+                  \ '--delete',
+                  \ '--prune',
+                  \ '--verbose',
+                  \ '--upstream',
+                  \ '--no-verify',
                   \ ],
             \ },
       \ }
