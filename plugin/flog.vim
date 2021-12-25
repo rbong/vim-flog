@@ -235,37 +235,45 @@ let g:flog_shown_deprecation_warnings = {}
 
 " Git command data {{{
 
-let g:flog_git_subcommands = {
-      \ 'bisect': [
-      \ 'start',
-      \ 'new',
-      \ 'bad',
-      \ 'old',
-      \ 'terms',
-      \ 'skip',
-      \ 'reset',
-      \ 'replay',
-      \ 'run',
-      \ 'help',
-      \ ],
-      \ 'rebase': [
-      \ '--continue',
-      \ '--skip',
-      \ '--abort',
-      \ '--quit',
-      \ '--show-current-patch',
-      \ ],
-      \ 'merge': [
-      \ '--continue',
-      \ '--abort',
-      \ '--quit',
-      \ ],
-      \ 'cherry-pick': [
-      \ '--continue',
-      \ '--skip',
-      \ '--abort',
-      \ '--quit',
-      \ ],
+let g:flog_git_command_spec = {
+      \ 'bisect': {
+            \ 'subcommands': [
+                  \ 'start',
+                  \ 'new',
+                  \ 'bad',
+                  \ 'old',
+                  \ 'terms',
+                  \ 'skip',
+                  \ 'reset',
+                  \ 'replay',
+                  \ 'run',
+                  \ 'help',
+                  \ ],
+            \ },
+      \ 'rebase': {
+            \ 'subcommands': [
+                  \ '--continue',
+                  \ '--skip',
+                  \ '--abort',
+                  \ '--quit',
+                  \ '--show-current-patch',
+                  \ ],
+            \ },
+      \ 'merge': {
+            \ 'subcommands': [
+                  \ '--continue',
+                  \ '--abort',
+                  \ '--quit',
+                  \ ],
+            \ },
+      \ 'cherry-pick': {
+            \ 'subcommands': [
+                  \ '--continue',
+                  \ '--skip',
+                  \ '--abort',
+                  \ '--quit',
+                  \ ],
+            \ },
       \ }
 
 " }}}

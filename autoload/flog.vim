@@ -459,6 +459,21 @@ function! flog#get_git_commands() abort
   return flog#systemlist(flog#get_fugitive_git_command() . ' --list-cmds=list-mainporcelain,others,nohelpers,alias,list-complete,config')
 endfunction
 
+function! flog#get_git_options(split_args) abort
+  let l:command = a:split_args[1]
+  let l:current_arg_num = len(a:split_args)
+
+  let l:options = []
+
+  let l:command_spec = get(g:flog_git_command_spec, l:command, {})
+
+  if l:current_arg_num == 3 && has_key(l:command_spec, 'subcommands')
+    let l:options += l:command_spec.subcommands
+  endif
+
+  return l:options
+endfunction
+
 function! flog#get_remotes() abort
   return flog#systemlist(flog#get_fugitive_git_command() . ' remote')
 endfunction
@@ -523,6 +538,7 @@ endfunction
 
 function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   call flog#deprecate_setting('g:flog_git_commands', '(None)')
+  call flog#deprecate_setting('g:flog_git_subcommands', 'g:flog_git_command_spec', '{ "command": { "subcommands": [...] } }')
 
   let l:state = flog#get_state()
   let l:split_args = split(a:cmd_line, '\s', v:true)
@@ -552,11 +568,8 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   " complete all filenames
   let l:completions += flog#exclude(getcompletion(a:arg_lead, 'file'), l:completions)
 
-  " complete subcommands
-  let l:command = l:split_args[1]
-  if l:current_arg_num == 3 && has_key(g:flog_git_subcommands, l:command)
-    let l:completions += flog#filter_completions(a:arg_lead, copy(g:flog_git_subcommands[l:command]))
-  endif
+  " complete options
+  let l:completions += flog#filter_completions(a:arg_lead, flog#get_git_options(l:split_args))
 
   return flog#shellescape_completions(l:completions)
 endfunction
