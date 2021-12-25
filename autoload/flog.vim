@@ -552,10 +552,6 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   " complete line info
   let l:completions = flog#complete_line(a:arg_lead, a:cmd_line, a:cursor_pos)
 
-  " complete all possible refs
-  let l:completed_refs = flog#filter_completions(a:arg_lead, flog#get_refs())
-  let l:completions += flog#exclude(l:completed_refs, l:completions)
-
   " complete limit
   if l:state.limit
     let [l:limit, l:limit_path] = flog#split_limit(l:state.limit)
@@ -565,11 +561,15 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   " complete path
   let l:completions += flog#exclude(flog#filter_completions(a:arg_lead, l:state.path), l:completions)
 
-  " complete all filenames
-  let l:completions += flog#exclude(getcompletion(a:arg_lead, 'file'), l:completions)
-
   " complete options
   let l:completions += flog#filter_completions(a:arg_lead, flog#get_git_options(l:split_args))
+
+  " complete all possible refs
+  let l:completed_refs = flog#filter_completions(a:arg_lead, flog#get_refs())
+  let l:completions += flog#exclude(l:completed_refs, l:completions)
+
+  " complete all filenames
+  let l:completions += flog#exclude(getcompletion(a:arg_lead, 'file'), l:completions)
 
   return flog#shellescape_completions(l:completions)
 endfunction
