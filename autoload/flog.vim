@@ -730,8 +730,12 @@ function! flog#set_buffer_state(state) abort
   let b:flog_state = a:state
 endfunction
 
+function! flog#has_state() abort
+  return exists('b:flog_state')
+endfunction
+
 function! flog#get_state() abort
-  if !exists('b:flog_state')
+  if !flog#has_state()
     throw g:flog_missing_state
   endif
   return b:flog_state
