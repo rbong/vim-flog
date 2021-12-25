@@ -311,7 +311,10 @@ let g:flog_git_command_spec = {
 
 " Commands {{{
 
+command! -range -bang -complete=customlist,flog#complete_git -nargs=* Floggit call flog#run_raw_command('<mods> Git ' . <q-args>, 1, 1, !empty('<bang>'))
+
 command! -range=0 -complete=customlist,flog#complete -nargs=* Flog call flog#open((<count> ? ['-limit=<line1>,<line2>:' . expand('%:p')] : []) + [<f-args>])
+
 command! -range=0 -complete=customlist,flog#complete -nargs=* Flogsplit call flog#open((<count> ? ['-limit=<line1>,<line2>:' . expand('%:p')] : []) + ['-open-cmd=<mods> split', <f-args>])
 
 " }}}

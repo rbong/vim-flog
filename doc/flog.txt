@@ -87,13 +87,10 @@ COMMANDS                                                       *flog-commands*
 
   Open a git command via |:Git|.
 
-  File completion is available from this command, as well as completion for
-  the commits and refs under the cursor. Completion applies to the first and
-  last lines of the currently or previously selected range if the cursor is on
-  the first or last line of the range. Completion is also available for the
-  commit range using the visual selection range, ex. "COMMIT1..COMMIT2".
+  Revision, file, and option completion is available for this command.
 
-  This command can only be run in the |:Flog| window.
+  While in a |:Flog| window, completion is available for the current line or
+  range.
 
 :Floggit!                                                          *:Floggit!*
 

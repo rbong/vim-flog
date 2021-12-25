@@ -544,7 +544,11 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   call flog#deprecate_setting('g:flog_git_commands', '(None)')
   call flog#deprecate_setting('g:flog_git_subcommands', 'g:flog_git_command_spec', '{ "command": { "subcommands": [...] } }')
 
-  let l:state = flog#get_state()
+  let l:is_flog = flog#has_state()
+  if l:is_flog
+    let l:state = flog#get_state()
+  endif
+
   let l:split_args = split(a:cmd_line, '\s', v:true)
 
   " complete commands
@@ -553,17 +557,21 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
     return flog#filter_completions(a:arg_lead, flog#get_git_commands())
   endif
 
-  " complete line info
-  let l:completions = flog#complete_line(a:arg_lead, a:cmd_line, a:cursor_pos)
+  if l:is_flog
+    " complete line info
+    let l:completions = flog#complete_line(a:arg_lead, a:cmd_line, a:cursor_pos)
 
-  " complete limit
-  if l:state.limit
-    let [l:limit, l:limit_path] = flog#split_limit(l:state.limit)
-    let l:completions += flog#filter_completions(a:arg_lead, [l:limit_path])
+    " complete limit
+    if l:state.limit
+      let [l:limit, l:limit_path] = flog#split_limit(l:state.limit)
+      let l:completions += flog#filter_completions(a:arg_lead, [l:limit_path])
+    endif
+
+    " complete path
+    let l:completions += flog#exclude(flog#filter_completions(a:arg_lead, l:state.path), l:completions)
+  else
+    let l:completions = []
   endif
-
-  " complete path
-  let l:completions += flog#exclude(flog#filter_completions(a:arg_lead, l:state.path), l:completions)
 
   " complete options
   let l:completions += flog#filter_completions(a:arg_lead, flog#get_git_options(l:split_args))
@@ -1956,6 +1964,12 @@ function! flog#run_raw_command(command, ...) abort
   let l:keep_focus = get(a:, 1, v:false)
   let l:should_update = get(a:, 2, v:false)
   let l:is_tmp = get(a:, 3, v:false)
+
+  " Not running in a graph buffer
+  if !flog#has_state()
+    exec a:command
+    return
+  endif
 
   let l:graph_window_id = win_getid()
   let l:graph_buff_num = bufnr('')
