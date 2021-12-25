@@ -451,6 +451,18 @@ function! flog#split_completable_arg(arg) abort
   return [l:lead, l:last]
 endfunction
 
+function! flog#find_arg_command(split_args) abort
+  let l:i = 1
+  while l:i < len(a:split_args)
+    let l:arg = a:split_args[l:i]
+    if len(l:arg) && l:arg[0] !=# '-'
+      return [l:i, l:arg]
+    endif
+    let l:i += 1
+  endwhile
+  return [-1, '']
+endfunction
+
 " }}}
 
 " Argument commands {{{
@@ -459,15 +471,13 @@ function! flog#get_git_commands() abort
   return flog#systemlist(flog#get_fugitive_git_command() . ' --list-cmds=list-mainporcelain,others,nohelpers,alias,list-complete,config')
 endfunction
 
-function! flog#get_git_options(split_args) abort
-  let l:command = a:split_args[1]
-  let l:current_arg_num = len(a:split_args)
-
+function! flog#get_git_options(split_args, command_index) abort
   let l:options = []
 
+  let l:command = a:split_args[a:command_index]
   let l:command_spec = get(g:flog_git_command_spec, l:command, {})
 
-  if l:current_arg_num == 3 && has_key(l:command_spec, 'subcommands')
+  if has_key(l:command_spec, 'subcommands') && a:command_index >= len(a:split_args) - 2
     let l:options += l:command_spec.subcommands
   endif
 
@@ -550,10 +560,12 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   endif
 
   let l:split_args = split(a:cmd_line, '\s', v:true)
+  let [l:command_index, l:command] = flog#find_arg_command(l:split_args)
+
+  let g:debug = l:command
 
   " complete commands
-  let l:current_arg_num = len(l:split_args)
-  if l:current_arg_num <= 2
+  if l:command ==# '' || l:command_index == len(l:split_args) - 1
     return flog#filter_completions(a:arg_lead, flog#get_git_commands())
   endif
 
@@ -574,7 +586,7 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   endif
 
   " complete options
-  let l:completions += flog#filter_completions(a:arg_lead, flog#get_git_options(l:split_args))
+  let l:completions += flog#filter_completions(a:arg_lead, flog#get_git_options(l:split_args, l:command_index))
 
   " complete all possible refs
   let l:completed_refs = flog#filter_completions(a:arg_lead, flog#get_refs())
