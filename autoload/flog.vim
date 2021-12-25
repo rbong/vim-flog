@@ -1735,6 +1735,11 @@ endfunction
 
 function! flog#cmd_convert_branch(cache, item, commit) abort
   let l:refs = flog#get_cache_refs(a:cache, a:commit)
+
+  if type(l:refs) != v:t_dict
+    return v:null
+  endif
+
   let l:local_branches = flog#get(l:refs, 'local_branches', [])
   let l:remote_branches = flog#get(l:refs, 'remote_branches', [])
 
@@ -1747,6 +1752,11 @@ endfunction
 
 function! flog#cmd_convert_local_branch(cache, item, commit) abort
   let l:refs = flog#get_cache_refs(a:cache, a:commit)
+
+  if type(l:refs) != v:t_dict
+    return v:null
+  endif
+
   let l:local_branches = flog#get(l:refs, 'local_branches', [])
   let l:remote_branches = flog#get(l:refs, 'remote_branches', [])
 
