@@ -455,6 +455,10 @@ endfunction
 
 " Argument commands {{{
 
+function! flog#get_git_commands() abort
+  return flog#systemlist(flog#get_fugitive_git_command() . ' --list-cmds=list-mainporcelain,others,nohelpers,alias,list-complete,config')
+endfunction
+
 function! flog#get_remotes() abort
   return flog#systemlist(flog#get_fugitive_git_command() . ' remote')
 endfunction
@@ -518,13 +522,15 @@ function! flog#complete_line(arg_lead, cmd_line, cursor_pos) abort
 endfunction
 
 function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
+  call flog#deprecate_setting('g:flog_git_commands', '(None)')
+
   let l:state = flog#get_state()
   let l:split_args = split(a:cmd_line, '\s', v:true)
 
   " complete commands
   let l:current_arg_num = len(l:split_args)
   if l:current_arg_num <= 2
-    return flog#filter_completions(a:arg_lead, copy(g:flog_git_commands))
+    return flog#filter_completions(a:arg_lead, flog#get_git_commands())
   endif
 
   " complete line info
