@@ -1193,6 +1193,7 @@ function! flog#set_graph_buffer_commits(commits) abort
   let l:state.commit_refs = []
   let l:state.line_commit_refs = []
   let l:state.ref_line_lookup = {}
+  let l:state.commit_line_lookup = {}
   let l:state.ref_commit_lookup = {}
 
   let l:cr = v:null
