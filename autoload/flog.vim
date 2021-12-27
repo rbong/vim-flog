@@ -1540,12 +1540,8 @@ endfunction
 
 function! flog#tmp_buffer_settings() abort
   call flog#deprecate_autocmd('FlogPreviewSetup', 'FlogTmpWinSetup')
+  call flog#deprecate_autocmd('FlogTmpCommandWinSetup', 'FlogTmpWinSetup')
   silent doautocmd User FlogTmpWinSetup
-endfunction
-
-function! flog#tmp_command_buffer_settings() abort
-  call flog#deprecate_autocmd('FlogCommitPreviewSetup', 'FlogTmpCommandWinSetup')
-  silent doautocmd User FlogTmpCommandWinSetup
 endfunction
 
 function! flog#initialize_tmp_buffer(state) abort
@@ -2028,7 +2024,6 @@ function! flog#run_raw_command(command, ...) abort
 
   if l:is_tmp
     call flog#open_tmp_win(a:command)
-    silent! call flog#tmp_command_buffer_settings()
     silent! call flog#handle_command_cleanup(
           \ l:keep_focus, l:should_update, l:graph_window_id, l:graph_buff_num)
   else
