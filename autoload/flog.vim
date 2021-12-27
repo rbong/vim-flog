@@ -564,8 +564,6 @@ function! flog#complete_git(arg_lead, cmd_line, cursor_pos) abort
   let l:split_args = split(a:cmd_line, '\s', v:true)
   let [l:command_index, l:command] = flog#find_arg_command(l:split_args)
 
-  let g:debug = l:command
-
   " complete commands
   if l:command ==# '' || l:command_index == len(l:split_args) - 1
     return flog#filter_completions(a:arg_lead, flog#get_git_commands())
