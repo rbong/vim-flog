@@ -1003,6 +1003,28 @@ function! flog#get_commit_at_line(...) abort
   return get(flog#get_state().line_commits, l:line - 1, v:null)
 endfunction
 
+function! flog#get_commit_at_ref(ref) abort
+  let l:state = flog#get_state()
+  if !has_key(l:state.ref_line_lookup, a:ref)
+    return v:null
+  endif
+  return flog#get_commit_at_line(l:state.ref_line_lookup[a:ref])
+endfunction
+
+function! flog#get_commit_at_ref_spec(ref_spec) abort
+  let l:state = flog#get_state()
+
+  let l:command = flog#get_fugitive_git_command()
+        \ . ' rev-parse --short ' . shellescape(a:ref_spec)
+  let l:hash = flog#systemlist(l:command)[0]
+
+  if !has_key(l:state.commit_line_lookup, l:hash)
+    return v:null
+  endif
+
+  return flog#get_commit_at_line(l:state.commit_line_lookup[l:hash])
+endfunction
+
 function! flog#get_commit_selection(...) abort
   let l:firstline = get(a:, 1, v:null)
   let l:lastline = get(a:, 2, v:null)
@@ -1624,7 +1646,7 @@ endfunction
 " Commit marks {{{
 
 function! flog#is_reserved_commit_mark(key) abort
-  return a:key ==# '<' || a:key ==# '>'
+  return a:key =~# '[<>@~^]'
 endfunction
 
 function! flog#is_cancel_commit_mark(key) abort
@@ -1677,12 +1699,23 @@ function! flog#get_commit_mark(key) abort
   if a:key ==# '<' || a:key ==# '>'
     return flog#get_commit_at_line("'" . a:key)
   endif
+
+  if a:key ==# '@'
+    return flog#get_commit_at_ref('HEAD')
+  endif
+
+  if a:key ==# '~' || a:key ==# '^'
+    return flog#get_commit_at_ref_spec('HEAD~')
+  endif
+
   if flog#is_cancel_commit_mark(a:key)
     throw g:flog_invalid_mark
   endif
+
   if !flog#has_commit_mark(a:key)
     return v:null
   endif
+
   let l:marks = flog#get_commit_marks()
   return l:marks[a:key]
 endfunction
