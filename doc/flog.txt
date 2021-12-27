@@ -540,6 +540,23 @@ flog#run_raw_command({command}[, {keep-focus}[, {should-update}[, {is-tmp}]]])
   Same as |flog#run_command()|, but do not format {command}.
 
 ==============================================================================
+AUTOCOMMANDS                                               *flog-autocommands*
+
+                                                     *User_FlogCmdBufferSetup*
+FlogCmdBufferSetup          On initializing any command buffer.
+                            See also |flog#run_command()|.
+
+                                                  *User_FlogTmpCmdBufferSetup*
+FlogTmpCmdBufferSetup       On initializing a temporary command buffer.
+                            Called after |User_FlogCmdBufferSetup|.
+                            See also |flog-temp-window|, |flog#run_command()|.
+
+                                               *User_FlogNonTmpCmdBufferSetup*
+FlogNonTmpCmdBufferSetup    On initializing a non-temporary command buffer.
+                            Called after |User_FlogCmdBufferSetup|.
+                            See also |flog-temp-window|, |flog#run_command()|.
+
+==============================================================================
 ABOUT                                                             *flog-about*
 
 ------------------------------------------------------------------------------

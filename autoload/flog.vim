@@ -736,7 +736,8 @@ function! flog#get_initial_state(parsed_args, original_file) abort
         \ 'fugitive_repo': flog#get_initial_fugitive_repo(),
         \ 'original_file': a:original_file,
         \ 'graph_window_id': v:null,
-        \ 'tmp_window_ids': [],
+        \ 'tmp_cmd_window_ids': [],
+        \ 'last_cmd_window_ids': [],
         \ 'previous_log_command': v:null,
         \ 'line_commits': [],
         \ 'commit_refs': [],
@@ -1536,18 +1537,37 @@ endfunction
 
 " }}}
 
-" Temporary buffers {{{
+" Command buffers {{{
 
 function! flog#tmp_buffer_settings() abort
   call flog#deprecate_autocmd('FlogPreviewSetup', 'FlogTmpWinSetup')
   call flog#deprecate_autocmd('FlogTmpCommandWinSetup', 'FlogTmpWinSetup')
-  silent doautocmd User FlogTmpWinSetup
+  call flog#deprecate_autocmd('FlogTmpWinSetup', 'FlogTmpCmdBufferSetup')
+  silent doautocmd User FlogTmpCmdBufferSetup
 endfunction
 
-function! flog#initialize_tmp_buffer(state) abort
-  let a:state.tmp_window_ids += [win_getid()]
-  call flog#set_buffer_state(a:state)
-  call flog#tmp_buffer_settings()
+function! flog#non_tmp_cmd_buffer_settings() abort
+  silent doautocmd User FlogNonTmpCmdBufferSetup
+endfunction
+
+function! flog#cmd_buffer_settings() abort
+  silent doautocmd User FlogCmdBufferSetup
+endfunction
+
+function! flog#initialize_cmd_buffer(state, is_tmp) abort
+  if a:is_tmp
+    call flog#set_buffer_state(a:state)
+    call flog#cmd_buffer_settings()
+    call flog#tmp_buffer_settings()
+  else
+    call flog#set_buffer_state(a:state)
+    call flog#cmd_buffer_settings()
+    call flog#non_tmp_cmd_buffer_settings()
+  endif
+endfunction
+
+function! flog#initialize_tmp_cmd_buffer(state) abort
+  return flog#initialize_cmd_buffer(a:state, 1)
 endfunction
 
 " }}}
@@ -1556,13 +1576,13 @@ endfunction
 
 " Layout management {{{
 
-" Temporary window layout management {{{
+" Command window layout management {{{
 
 function! flog#close_tmp_win() abort
   let l:state = flog#get_state()
   let l:graph_window_id = win_getid()
 
-  for l:tmp_window_id in l:state.tmp_window_ids
+  for l:tmp_window_id in l:state.tmp_cmd_window_ids
     " temporary buffer is not open
     if win_id2tabwin(l:tmp_window_id) == [0, 0]
       continue
@@ -1573,7 +1593,7 @@ function! flog#close_tmp_win() abort
     close!
   endfor
 
-  let l:state.tmp_window_ids = []
+  let l:state.tmp_cmd_window_ids = []
 
   " go back to the previous window
   call win_gotoid(l:graph_window_id)
@@ -1581,22 +1601,43 @@ function! flog#close_tmp_win() abort
   return
 endfunction
 
-function! flog#open_tmp_win(command) abort
-  let l:graph_window_id = win_getid()
-
+function! flog#open_cmd(cmd, is_tmp) abort
   let l:state = flog#get_state()
 
+  let l:graph_window_id = win_getid()
   let l:saved_window_ids = flog#get_all_window_ids()
-  exec a:command
-  silent! let l:tmp_window_ids = flog#exclude(flog#get_all_window_ids(), l:saved_window_ids)
-  if l:tmp_window_ids != []
+
+  exec a:cmd
+  let l:final_cmd_window_id = win_getid()
+
+  silent! let l:new_window_ids = flog#exclude(flog#get_all_window_ids(), l:saved_window_ids)
+  let l:state.last_cmd_window_ids = l:new_window_ids
+
+  if l:new_window_ids != []
     silent! call win_gotoid(l:graph_window_id)
-    silent! call flog#close_tmp_win()
-    for l:tmp_window_id in l:tmp_window_ids
-      silent! call win_gotoid(l:tmp_window_id)
-      silent! call flog#initialize_tmp_buffer(l:state)
+
+    if a:is_tmp
+      silent! call flog#close_tmp_win()
+      let l:state.tmp_cmd_window_ids = l:new_window_ids
+    endif
+
+    for l:new_window_id in l:new_window_ids
+      silent! call win_gotoid(l:new_window_id)
+      if !flog#has_state()
+        silent! call flog#initialize_cmd_buffer(l:state, a:is_tmp)
+      endif
     endfor
+
+    silent! call win_gotoid(l:final_cmd_window_id)
   endif
+endfunction
+
+function! flog#open_tmp_cmd(cmd) abort
+  return flog#open_cmd(a:cmd, 1)
+endfunction
+
+function! flog#open_tmp_win(...) abort
+  call flog#deprecate_function('flog#open_tmp_win', 'flog#open_tmp_cmd')
 endfunction
 
 " }}}
@@ -1980,7 +2021,7 @@ endfunction
 
 " Command running {{{
 
-function! flog#handle_command_window_cleanup(keep_focus, graph_window_id) abort
+function! flog#handle_cmd_win_cleanup(keep_focus, graph_window_id) abort
   if !a:keep_focus
     call win_gotoid(a:graph_window_id)
     if has('nvim')
@@ -1989,7 +2030,7 @@ function! flog#handle_command_window_cleanup(keep_focus, graph_window_id) abort
   endif
 endfunction
 
-function! flog#handle_command_update_cleanup(should_update, graph_window_id, graph_buff_num) abort
+function! flog#handle_cmd_update_cleanup(should_update, graph_window_id, graph_buff_num) abort
   if a:should_update
     if win_getid() != a:graph_window_id
       call flog#initialize_graph_update_hook(a:graph_buff_num)
@@ -1999,9 +2040,9 @@ function! flog#handle_command_update_cleanup(should_update, graph_window_id, gra
   endif
 endfunction
 
-function! flog#handle_command_cleanup(keep_focus, should_update, graph_window_id, graph_buff_num) abort
-  call flog#handle_command_window_cleanup(a:keep_focus, a:graph_window_id)
-  call flog#handle_command_update_cleanup(a:should_update, a:graph_window_id, a:graph_buff_num)
+function! flog#handle_cmd_cleanup(keep_focus, should_update, graph_window_id, graph_buff_num) abort
+  call flog#handle_cmd_win_cleanup(a:keep_focus, a:graph_window_id)
+  call flog#handle_cmd_update_cleanup(a:should_update, a:graph_window_id, a:graph_buff_num)
 endfunction
 
 function! flog#run_raw_command(command, ...) abort
@@ -2022,15 +2063,9 @@ function! flog#run_raw_command(command, ...) abort
     return
   endif
 
-  if l:is_tmp
-    call flog#open_tmp_win(a:command)
-    silent! call flog#handle_command_cleanup(
-          \ l:keep_focus, l:should_update, l:graph_window_id, l:graph_buff_num)
-  else
-    exec a:command
-    silent! call flog#handle_command_cleanup(
-          \ l:keep_focus, l:should_update, l:graph_window_id, l:graph_buff_num)
-  endif
+  call flog#open_cmd(a:command, l:is_tmp)
+  silent! call flog#handle_cmd_cleanup(
+        \ l:keep_focus, l:should_update, l:graph_window_id, l:graph_buff_num)
 endfunction
 
 function! flog#run_command(command, ...) abort
