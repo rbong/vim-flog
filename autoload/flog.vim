@@ -191,13 +191,11 @@ function! flog#get_initial_fugitive_repo() abort
 endfunction
 
 function! flog#get_fugitive_workdir() abort
-  let l:tree = flog#get_state().fugitive_repo.tree()
-  return l:tree
+  return flog#get_state().fugitive_repo.tree()
 endfunction
 
 function! flog#get_fugitive_git_command() abort
-  let l:git_command = FugitiveShellCommand()
-  return l:git_command
+  return FugitiveShellCommand()
 endfunction
 
 function! flog#get_fugitive_git_dir() abort
@@ -205,7 +203,7 @@ function! flog#get_fugitive_git_dir() abort
 endfunction
 
 function! flog#trigger_fugitive_git_detection() abort
-  let b:git_dir = flog#get_state().fugitive_repo.dir()
+  let b:git_dir = flog#get_fugitive_git_dir()
   let l:workdir = flog#get_fugitive_workdir()
   call FugitiveDetect(l:workdir)
 endfunction
