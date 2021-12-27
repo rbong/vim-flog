@@ -1634,10 +1634,6 @@ function! flog#open_tmp_cmd(cmd) abort
   return flog#open_cmd(a:cmd, 1)
 endfunction
 
-function! flog#open_tmp_win(...) abort
-  call flog#deprecate_function('flog#open_tmp_win', 'flog#open_tmp_cmd')
-endfunction
-
 " }}}
 
 " Graph layout management {{{
@@ -2228,6 +2224,9 @@ function! flog#cmd_item_path(...) range abort
         \ '(cache), (item)')
 endfunction
 
+function! flog#open_tmp_win(...) abort
+  call flog#deprecate_function('flog#open_tmp_win', 'flog#open_tmp_cmd')
+endfunction
 
 " }}}
 
