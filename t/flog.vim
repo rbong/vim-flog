@@ -33,7 +33,7 @@ describe ':Flog'
   end
 
   it 'has empty temporary windows'
-    Expect flog#get_state().tmp_window_ids == []
+    Expect flog#get_state().tmp_cmd_window_ids == []
   end
 end
 
@@ -80,7 +80,7 @@ describe ':Flogsplit'
   end
 
   it 'has empty temp windows'
-    Expect flog#get_state().tmp_window_ids == []
+    Expect flog#get_state().tmp_cmd_window_ids == []
   end
 end
 
@@ -103,7 +103,7 @@ describe 'flog#run_tmp_command("Gsplit %h", 1)'
   it 'opens in a temp window'
     Expect &ft !=# 'floggraph'
     Expect winnr('$') == 2
-    Expect flog#get_state().tmp_window_ids == [win_getid()]
+    Expect flog#get_state().tmp_cmd_window_ids == [win_getid()]
   end
 end
 
@@ -123,7 +123,7 @@ describe 'flog#run_tmp_command("!git status", 1)'
   it 'does not open in a window'
     Expect &ft ==# 'floggraph'
     Expect winnr('$') == 1
-    Expect flog#get_state().tmp_window_ids == []
+    Expect flog#get_state().tmp_cmd_window_ids == []
   end
 end
 
@@ -141,7 +141,7 @@ describe 'flog#run_tmp_command("Git -p status", 1)'
   it 'opens in a temp window'
     Expect &ft !=# 'floggraph'
     Expect winnr('$') == 2
-    Expect flog#get_state().tmp_window_ids == [win_getid()]
+    Expect flog#get_state().tmp_cmd_window_ids == [win_getid()]
   end
 end
 
@@ -159,7 +159,7 @@ describe 'flog#run_tmp_command("Git diff", 1)'
   it 'opens in a temp window'
     Expect &ft !=# 'floggraph'
     Expect winnr('$') == 2
-    Expect flog#get_state().tmp_window_ids == [win_getid()]
+    Expect flog#get_state().tmp_cmd_window_ids == [win_getid()]
   end
 end
 
@@ -177,7 +177,7 @@ describe 'flog#run_tmp_command("Git -p diff", 1)'
   it 'opens in a temp window'
     Expect &ft !=# 'floggraph'
     Expect winnr('$') == 2
-    Expect flog#get_state().tmp_window_ids == [win_getid()]
+    Expect flog#get_state().tmp_cmd_window_ids == [win_getid()]
   end
 end
 
