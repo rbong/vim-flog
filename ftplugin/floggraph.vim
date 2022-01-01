@@ -49,7 +49,7 @@ vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_c
 nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command('vertical belowright Git diff HEAD %h -- %p')<CR>
 vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command("vertical belowright Git diff HEAD %(h'<) %(h'>) -- %p")<CR>
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitRight) :<C-U> call flog#run_tmp_command("vertical belowright Git diff %(h'!) %h")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitRight) :<C-U> call flog#run_tmp_command("vertical belowright Git diff %(h'!) %H")<CR>
 
 if !hasmapto('<Plug>(FlogCloseTmpWin)')
   nmap <buffer> dq <Plug>(FlogCloseTmpWin)
@@ -200,8 +200,8 @@ endif
 if !hasmapto('<Plug>(FlogFixupRebase)')
   nmap <buffer> cF <Plug>(FlogFixupRebase)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogFixup) :<C-U>call flog#run_command('Git commit --fixup=%h', 1, 1)<CR>
-nnoremap <buffer> <silent> <Plug>(FlogFixupRebase) :<C-U>call flog#run_command('Git commit --fixup=%h \| Git -c sequence.editor=true rebase --interactive --autosquash %h^', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogFixup) :<C-U>call flog#run_command('Git commit --fixup=%H', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogFixupRebase) :<C-U>call flog#run_command('Git commit --fixup=%H \| Git -c sequence.editor=true rebase --interactive --autosquash %H^', 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogSquash)')
   nmap <buffer> cs <Plug>(FlogSquash)
@@ -212,9 +212,9 @@ endif
 if !hasmapto('<Plug>(FlogSquashEdit)')
   nmap <buffer> cA <Plug>(FlogSquashEdit)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogSquash) :<C-U>call flog#run_command('Git commit --no-edit --squash=%h', 1, 1)<CR>
-nnoremap <buffer> <silent> <Plug>(FlogSquashRebase) :<C-U>call flog#run_command('Git commit --no-edit --squash=%h \| Git -c sequence.editor=true rebase --interactive --autosquash %h^', 1, 1)<CR>
-nnoremap <buffer> <silent> <Plug>(FlogSquashEdit) :<C-U>call flog#run_command('Git commit --edit --squash=%h', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogSquash) :<C-U>call flog#run_command('Git commit --no-edit --squash=%H', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogSquashRebase) :<C-U>call flog#run_command('Git commit --no-edit --squash=%H \| Git -c sequence.editor=true rebase --interactive --autosquash %H^', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogSquashEdit) :<C-U>call flog#run_command('Git commit --edit --squash=%H', 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogRevert)')
   nmap <buffer> crc <Plug>(FlogRevert)
@@ -226,16 +226,16 @@ if !hasmapto('<Plug>(FlogRevertNoEdit)')
   vmap <buffer> crn <Plug>(FlogRevertNoEdit)
 endif
 
-nnoremap <buffer> <silent> <Plug>(FlogRevert) :<C-U>call flog#run_command('Git revert %h', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRevert) :<C-U>call flog#run_command('Git revert %H', 1, 1)<CR>
 vnoremap <buffer> <silent> <Plug>(FlogRevert) :<C-U>call flog#run_command("Git revert %(h'<)^..%(h'>)", 1, 1)<CR>
 
-nnoremap <buffer> <silent> <Plug>(FlogRevertNoEdit) :<C-U>call flog#run_command('Git revert --no-edit %h', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRevertNoEdit) :<C-U>call flog#run_command('Git revert --no-edit %H', 1, 1)<CR>
 vnoremap <buffer> <silent> <Plug>(FlogRevertNoEdit) :<C-U>call flog#run_command("Git revert --no-edit %(h'<)^..%(h'>)", 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogCheckout)')
   nmap <buffer> coo <Plug>(FlogCheckout)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogCheckout) :<C-U>call flog#run_command('Git checkout %h', 0, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogCheckout) :<C-U>call flog#run_command('Git checkout %H', 0, 1)<CR>
 
 if !hasmapto('<Plug>(FlogCheckoutBranch)')
   nmap <buffer> cob <Plug>(FlogCheckoutBranch)
@@ -289,12 +289,12 @@ vnoremap <buffer> <Plug>(FlogGitBranch) :Floggit branch<Space>
 if !hasmapto('<Plug>(FlogRebaseInteractive)')
   nmap <buffer> ri <Plug>(FlogRebaseInteractive)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractive) :<C-U>call flog#run_command('Git rebase --interactive %h^', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractive) :<C-U>call flog#run_command('Git rebase --interactive %H^', 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveAutosquash)')
   nmap <buffer> rf <Plug>(FlogRebaseInteractiveAutosquash)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveAutosquash) :<C-U>call flog#run_command('Git -c sequence.editor=true rebase --interactive --autosquash %h^', 1, 1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveAutosquash) :<C-U>call flog#run_command('Git -c sequence.editor=true rebase --interactive --autosquash %H^', 1, 1)<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveUpstream)')
   nmap <buffer> ru <Plug>(FlogRebaseInteractiveUpstream)
@@ -329,17 +329,17 @@ nnoremap <buffer> <silent> <Plug>(FlogRebaseEditTodo) :<C-U>call flog#run_comman
 if !hasmapto('<Plug>(FlogRebaseInteractiveReword)')
   nmap <buffer> rw <Plug>(FlogRebaseInteractiveReword)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveReword) :<C-U>call flog#run_command('Git rebase --interactive %h^ \| s/^pick/reword/e', 1, 1)
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveReword) :<C-U>call flog#run_command('Git rebase --interactive %H^ \| s/^pick/reword/e', 1, 1)
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveEdit)')
   nmap <buffer> rm <Plug>(FlogRebaseInteractiveEdit)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveEdit) :<C-U>call flog#run_command('Git rebase --interactive %h^ \| s/^pick/edit/e', 1, 1)
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveEdit) :<C-U>call flog#run_command('Git rebase --interactive %H^ \| s/^pick/edit/e', 1, 1)
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveDrop)')
   nmap <buffer> rd <Plug>(FlogRebaseInteractiveDrop)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveDrop) :<C-U>call flog#run_command('Git rebase --interactive %h^ \| s/^pick/drop/e', 1, 1)
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveDrop) :<C-U>call flog#run_command('Git rebase --interactive %H^ \| s/^pick/drop/e', 1, 1)
 
 if !hasmapto('<Plug>(FlogGitRebase)')
   nmap <buffer> r<Space> <Plug>(FlogGitRebase)

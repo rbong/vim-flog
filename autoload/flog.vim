@@ -1965,6 +1965,8 @@ function! flog#convert_command_format_item(cache, item) abort
   if a:item ==# 'h'
     call flog#set_internal_commit_mark_at_line('!', '.')
     let l:converted_item = flog#cmd_convert_line(a:cache, a:item, function('flog#cmd_convert_hash'))
+  elseif a:item ==# 'H'
+    let l:converted_item = flog#cmd_convert_line(a:cache, a:item, function('flog#cmd_convert_hash'))
   elseif a:item =~# "^h'."
     let l:converted_item = flog#cmd_convert_commit_mark(a:cache, a:item, function('flog#cmd_convert_hash'))
   elseif a:item =~# 'b'
