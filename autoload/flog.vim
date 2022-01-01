@@ -802,7 +802,7 @@ endfunction
 function! flog#parse_log_output(output) abort
   let l:output_len = len(a:output)
   if l:output_len == 0
-    return []
+    return [[], []]
   endif
 
   " Final filtered visual output
