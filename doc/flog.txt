@@ -25,27 +25,58 @@ COMMANDS                                                       *flog-commands*
 
   The following options are supported:
 
+                                                                   *:Flog-all*
   -all                  Enable the "--all" argument by default.
+
+                                                                *:Flog-bisect*
   -bisect               Enable the "--bisect" argument by default.
+
+                                                             *:Flog-no-merges*
   -no-merges            Enable the "--no-merges" argument by default.
+
+                                                                *:Flog-reflog*
   -reflog               Enable the "--reflog" argument by default.
+
+                                                               *:Flog-reverse*
   -reverse              Enable the "--reverse" argument by default.
+
+                                                              *:Flog-no-graph*
   -no-graph             Disable the "--graph" argument by default.
+
+                                                              *:Flog-no-patch*
   -no-patch             Enable the "--no-patch" argument by default.
+
+                                                                  *:Flog-skip*
   -skip=<number>        Passed to "--skip", skipping that number of commits by
                         default.
+
+                                                             *:Flog-max-count*
   -max-count=<number>   Passed to "--max-count", limiting to that number of
                         commits by default.
+
+                                                              *:Flog-open-cmd*
   -open-cmd=<cmd>       The command to use to open the window containing the
                         graph. Must give initial focus to the window. Defaults
                         to |tabedit|.
+
+                                                                *:Flog-format*
   -format=<format>      A format specifier to pass to "--pretty=format:".
                         Multiline formats are supported.
+
+                                                                  *:Flog-date*
   -date=<date>          The date format to pass to "--date=". Currently,
                         "short" and "iso8601" are supported.
+
+                                                                *:Flog-search*
   -search=<rev>         A regex pattern to pass to "--grep=".
+
+                                                          *:Flog-patch-search*
   -patch-search=<rev>   A regex pattern to pass to "-G".
+
+                                                                *:Flog-author*
   -author=<author>      An author name to pass to "--author=".
+
+                                                                 *:Flog-limit*
   -limit=<limit>        A limit to pass to "-L". This will restrict commit
                         history to the specified file/lines. This disables
                         some options.
@@ -57,19 +88,29 @@ COMMANDS                                                       *flog-commands*
                         Instead of manually specifying this argument, you can
                         also use a range or visually select some lines and
                         type ":Flog<CR>".
+
+                                                                  *:Flog-sort*
   -sort=<sort>          Sort by one of <type>, where type is in "date",
                         "author", or "topo". These correspond to the options
                         "--date-order", "--author-order", and "--topo-order"
                         respectfully.
+
+                                                                   *:Flog-rev*
   -rev=<rev>            The git revision to pass to the log command. Can be
                         specified more than once. When "-limit=" is specified,
                         only the first revision is used.
+
+                                                                  *:Flog-path*
   -path=<path>          A path to pass to the log command. This option can be
                         specified multiple times for multiple paths.
+
+                                                              *:Flog-raw-args*
   -raw-args=<args>      Additional args to pass to "git log --graph". No args
                         passed in using this option are guaranteed to work.
                         Can be specified multiple times, which will be
                         combined together.
+
+                                                                     *:Flog--*
   --                    Parse the rest of the arguments as if they were passed
                         to -raw-args. Does not require escaping spaces.
 
@@ -111,7 +152,13 @@ COMMANDS                                                       *flog-commands*
 :Flogjump                                                          *:Flogjump*
 
   Jump to the ref name given by the arguments. Must be a ref name currently in
-  the graph. Can only be run in a |:Flog| window. Supports completion.
+  the graph.
+
+  Can only be run in a |:Flog| window.
+
+  Supports ref name completion.
+
+  Sets |flog-''| to the last commit under the cursor.
 
 ==============================================================================
 MAPPINGS                                                       *flog-mappings*
@@ -130,7 +177,7 @@ g?                                                                   *flog-g?*
 <CR>                                                               *flog-<CR>*
 
   Open the commit under the cursor in a temporary window.
-  Sets |flog-'!|.
+  Sets |flog-'!| to the commit under the cursor.
 
                                            *<Plug>(FlogVSplitCommitRightPath)*
 <Tab>                                                             *flog-<Tab>*
@@ -138,7 +185,7 @@ g?                                                                   *flog-g?*
   Same as |flog-<CR>|, but use the "-path" argument to only show the diff for
   the currently selected paths.
 
-  Sets |flog-'!|.
+  Sets |flog-'!| to the commit under the cursor.
 
                                                  *<Plug>(FlogVDiffSplitRight)*
 dd                                                                   *flog-dd*
@@ -147,7 +194,7 @@ dv                                                                   *flog-dv*
   In normal mode, open a diff in a temporary window comparing the commit under
   the cursor with the current commit.
 
-  Also sets |flog-'!| in normal mode.
+  Also sets |flog-'!| to the commit under the cursor in normal mode.
 
   In visual mode, open a diff in a temporary window comparing the commits at
   the top and bottom of the visual selection.
@@ -204,15 +251,14 @@ NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
 
   Jump to the next commit and open it in a temporary window. Accepts a count.
 
-  Sets |flog-'!|.
+  Sets |flog-''| to the last commit under the cursor.
+  Sets |flog-'!| to the new commit under the cursor.
 
                                                 *<Plug>(FlogVPrevCommitRight)*
 <C-P>                                                            *flog-CTRL-P*
 (                                                                     *flog-(*
 
-  Jump to the previous commit and open it in a temp window. Accepts a count.
-
-  Sets |flog-'!|.
+  Same as |flog-<C-N>|, but jump backwards.
 
                                                    *<Plug>(FlogVNextRefRight)*
 ]r                                                                   *flog-]r*
@@ -220,15 +266,13 @@ NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
   Jump to the next commit with a ref name and open it in a temporary window.
   Accepts a count.
 
-  Sets |flog-'!|.
+  Sets |flog-''| to the last commit under the cursor.
+  Sets |flog-'!| to the new commit under the cursor.
 
                                                    *<Plug>(FlogVPrevRefRight)*
 [r                                                                   *flog-[r*
 
-  Jump to the previous commit with a ref name and open it in a temporary
-  window. Accepts a count.
-
-  Sets |flog-'!|.
+  Same as |flog-]r|, but jump backwards.
 
                                                        *<Plug>(FlogSkipAhead)*
 ]]                                                                   *flog-]]*
@@ -239,8 +283,7 @@ NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
                                                         *<Plug>(FlogSkipBack)*
 [[                                                                   *flog-[[*
 
-  Go back in the commit history by "--max-count" commits, if that argument is
-  set. Accepts a count.
+  Same as |flog-]]|, but go backwards.
 
                                                          *<Plug>(FlogSetSkip)*
 go                                                                   *flog-go*
@@ -250,17 +293,14 @@ go                                                                   *flog-go*
                                                    *<Plug>(FlogSetCommitMark)*
 m{a-zA-Z'}                                                            *flog-m*
 
-  Mark the current commit under the cursor. Marked commits persist even when
-  the graph updates. Marked commits can be referenced in commands.
-
+  Mark the current commit under the cursor.
   See also |flog-commit-marks|.
 
                                                 *<Plug>(FlogJumpToCommitMark)*
 '{a-zA-Z'}                                                            *flog-'*
 
-  Jump to the marked commit. When jumping to a commit using this command, the
-  "'" mark is set, so "''" can be used to jump between commands.
-
+  Jump to the marked commit.
+  Sets |flog-''| to the last commit under the cursor.
   See also |flog-commit-marks|.
 
 ------------------------------------------------------------------------------
@@ -601,11 +641,17 @@ TEMPORARY WINDOWS                                           *flog-temp-window*
 ------------------------------------------------------------------------------
 COMMIT MARKS                                               *flog-commit-marks*
 
-  The following commit marks are reserved.
-  See also |flog-m| and |flog-'|.
+  Flog allows marking commits. Marked commits persist even when the graph
+  buffer updates.
+
+  Marked commits can be referenced using |flog-command-format|. Marked commits
+  can be created with |flog-m|. A commit mark can be jumped to with |flog-'|.
+
+  The following special commit marks exist.
 
                                                                      *flog-''*
   ''                    The last commit before jumping to another commit.
+                        This mark is set by various commands and mappings.
 
                                                                      *flog-'<*
   '<                    The start of the visual selection.
@@ -628,11 +674,14 @@ COMMIT MARKS                                               *flog-commit-marks*
 ------------------------------------------------------------------------------
 COMMAND FORMAT                                           *flog-command-format*
 
-  Commands in Flog are converted using a special syntax similar to |printf|.
-  Items prefixed by the "%" character are resolved into commit information and Flog options.
+  When running commands with |flog#run_command()|, a special syntax similar to
+  |printf| is used to transform the command string.
 
-  If any items cannot be resolved, such as for empty lines or if a path is not
-  set, the command will not be run.
+  Items prefixed by the "%" character are resolved into commit information and
+  Flog options.
+
+  If any items cannot be resolved, such as if the graph buffer is empty or the
+  item uses an option like "-path" that was not set, commands will not be run.
 
   The following items are supported:
 
@@ -641,7 +690,7 @@ COMMAND FORMAT                                           *flog-command-format*
 
                                                                      *flog-%h*
   %h                    The hash of the commit under the cursor, if any.
-                        Using this in a command sets |flog-'!|.
+                        Using this in a command sets |flog-'!| to the commit.
 
                                                                      *flog-%H*
   %H                    Same as %h, but do not set |flog-'!|.
