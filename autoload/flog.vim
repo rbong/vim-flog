@@ -1700,7 +1700,7 @@ endfunction
 " Commit marks {{{
 
 function! flog#is_reserved_commit_mark(key) abort
-  return a:key =~# '[<>@~^]'
+  return a:key =~# '[<>@~^!]'
 endfunction
 
 function! flog#is_cancel_commit_mark(key) abort
@@ -1717,15 +1717,24 @@ function! flog#reset_commit_marks() abort
   let l:state.commit_marks = {}
 endfunction
 
-function! flog#set_commit_mark(key, commit) abort
-  if flog#is_reserved_commit_mark(a:key)
-    throw g:flog_invalid_mark
-  endif
+function! flog#set_internal_commit_mark(key, commit) abort
   if flog#is_cancel_commit_mark(a:key)
     return
   endif
   let l:marks = flog#get_commit_marks()
   let l:marks[a:key] = a:commit
+endfunction
+
+function! flog#set_commit_mark(key, commit) abort
+  if flog#is_reserved_commit_mark(a:key)
+    throw g:flog_invalid_mark
+  endif
+  return flog#set_internal_commit_mark(a:key, a:commit)
+endfunction
+
+function! flog#set_internal_commit_mark_at_line(key, line) abort
+  let l:commit = flog#get_commit_at_line(a:line)
+  return flog#set_internal_commit_mark(a:key, l:commit)
 endfunction
 
 function! flog#set_commit_mark_at_line(key, line) abort
@@ -1941,6 +1950,7 @@ function! flog#convert_command_format_item(cache, item) abort
   let l:converted_item = v:null
 
   if a:item ==# 'h'
+    call flog#set_internal_commit_mark_at_line('!', '.')
     let l:converted_item = flog#cmd_convert_line(a:cache, a:item, function('flog#cmd_convert_hash'))
   elseif a:item =~# "^h'."
     let l:converted_item = flog#cmd_convert_commit_mark(a:cache, a:item, function('flog#cmd_convert_hash'))

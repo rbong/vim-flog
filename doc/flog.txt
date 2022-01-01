@@ -598,5 +598,6 @@ COMMAND FORMAT                                           *flog-command-format*
   '>                    The end of the visual selection.
   '@                    The current HEAD.
   '~ '^                 The parent of the current HEAD.
+  '!                    The commit last used in a command with "%h".
 
  vim:tw=78:ts=8:ft=help
