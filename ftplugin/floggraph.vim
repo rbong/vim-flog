@@ -37,10 +37,10 @@ endif
 if !hasmapto('<Plug>(FlogVDiffSplitPathsRight)')
   nmap <buffer> dp <Plug>(FlogVDiffSplitPathsRight)
   vmap <buffer> dp <Plug>(FlogVDiffSplitPathsRight)
-endif
-
-if !hasmapto('<Plug>(FlogVDiffSplitLastCommitRight)')
-  nmap <buffer> d! <Plug>(FlogVDiffSplitLastCommitRight)
+  nmap <buffer> DD <Plug>(FlogVDiffSplitPathsRight)
+  vmap <buffer> DD <Plug>(FlogVDiffSplitPathsRight)
+  nmap <buffer> DV <Plug>(FlogVDiffSplitPathsRight)
+  vmap <buffer> DV <Plug>(FlogVDiffSplitPathsRight)
 endif
 
 nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command('vertical belowright Git diff HEAD %h')<CR>
@@ -48,6 +48,14 @@ vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_c
 
 nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command('vertical belowright Git diff HEAD %h -- %p')<CR>
 vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command("vertical belowright Git diff HEAD %(h'<) %(h'>) -- %p")<CR>
+
+if !hasmapto('<Plug>(FlogVDiffSplitLastCommitRight)')
+  nmap <buffer> d! <Plug>(FlogVDiffSplitLastCommitRight)
+endif
+
+if !hasmapto('<Plug>(FlogVDiffSplitLastCommitPathsRight)')
+  nmap <buffer> D! <Plug>(FlogVDiffSplitLastCommitRight)
+endif
 
 nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitRight) :<C-U> call flog#run_tmp_command("vertical belowright Git diff %(h'!) %H")<CR>
 

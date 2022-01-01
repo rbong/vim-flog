@@ -154,6 +154,8 @@ dv                                                                   *flog-dv*
 
                                             *<Plug>(FlogVDiffSplitPathsRight)*
 dp                                                                   *flog-dp*
+DD                                                                   *flog-DD*
+DV                                                                   *flog-DV*
 
   Same as |flog-dd|, but use the "-path" argument to only show the diff for
   the currently selected paths.
@@ -163,6 +165,12 @@ d!                                                                   *flog-d!*
 
   Diff the commit under the cursor and the last used commit.
   See also |flog-'!|.
+
+                                  *<Plug>(FlogVDiffSplitLastCommitPathsRight)*
+D!                                                                   *flog-D!*
+
+  Same as |flog-d!|, but use the "-path" argument to only show the diff for
+  the currently selected paths.
 
                                                      *<Plug>(FlogCloseTmpWin)*
 dq                                                                   *flog-dq*
