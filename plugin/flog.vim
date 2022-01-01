@@ -46,24 +46,7 @@ let g:flog_open_cmd_modifiers = [
 
 " used to delineate format specifiers used to retrieve commit data
 let g:flog_format_start = '__FSTART__'
-let g:flog_format_separator = '__FSEP__'
-let g:flog_format_end = '__FEND__'
-" used to delineate which part of the log to display to the user
-let g:flog_display_commit_start = '__DSTART__'
-let g:flog_display_commit_end = '__DEND__'
-" information about specifiers for use with --pretty=format:*
-let g:flog_format_specifiers = {
-      \ 'short_commit_hash': '%h',
-      \ 'ref_names_unwrapped': '%D',
-      \ }
-" the specifiers referring to data
-let g:flog_log_data_format_specifiers = [
-      \ 'ref_names_unwrapped',
-      \ 'short_commit_hash',
-      \ ]
-" the indices to use to retrieve data
-let g:flog_log_data_ref_index = 0
-let g:flog_log_data_hash_index = 1
+let g:flog_data_start = '__DSTART__'
 
 " }}}
 

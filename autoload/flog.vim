@@ -776,61 +776,27 @@ endfunction
 " Log command management {{{
 
 function! flog#create_log_format() abort
+  call flog#deprecate_setting('g:flog_format_separator', '(None)')
+  call flog#deprecate_setting('g:flog_format_end', '(None)')
+  call flog#deprecate_setting('g:flog_display_commit_start', '(None)')
+  call flog#deprecate_setting('g:flog_display_commit_end', '(None)')
+  call flog#deprecate_setting('g:flog_format_specifiers', '(None)')
+  call flog#deprecate_setting('g:flog_log_data_format_specifiers', '(None)')
+
   let l:state = flog#get_state()
 
   " start format
   let l:format = 'format:'
   let l:format .= g:flog_format_start
-
-  " add data specifiers
-  let l:tokens = []
-  for l:specifier in g:flog_log_data_format_specifiers
-    let l:tokens += [g:flog_format_specifiers[l:specifier]]
-  endfor
-  let l:format .= join(l:tokens, g:flog_format_separator)
-
-  " add display specifiers
-  let l:format .= g:flog_format_separator . g:flog_display_commit_start
   let l:format .= l:state.format
-  let l:format .= g:flog_display_commit_end
 
-  " end format
-  let l:format .= g:flog_format_end
+  " add flog data
+  let l:format .= g:flog_data_start
+  " short hash and ref names
+  let l:format .= '%h %D'
+
   " perform string formatting to avoid shell interpolation
   return shellescape(l:format)
-endfunction
-
-function! flog#parse_log_commit(c) abort
-  let l:i = stridx(a:c, g:flog_format_start)
-  if l:i < 0
-    return {}
-  endif
-  let l:j = stridx(a:c, g:flog_display_commit_start)
-  let l:k = stridx(a:c, g:flog_display_commit_end)
-  let l:l = stridx(a:c, g:flog_format_end)
-
-  let l:dat = split(a:c[l:i + len(g:flog_format_start) : l:j - 1], g:flog_format_separator, v:true)
-
-  let l:c = {}
-
-  let l:c.short_commit_hash = l:dat[g:flog_log_data_hash_index]
-  let l:c.ref_names_unwrapped = l:dat[g:flog_log_data_ref_index]
-  let l:c.internal_data = l:dat
-
-  let l:c.ref_name_list = flog#filter_empty(
-        \ split(l:c.ref_names_unwrapped, ' -> \|, \|tag: '))
-
-  let l:end = a:c[l:l  + len(g:flog_format_end):]
-  if l:end !=# '' && l:end[0] !=# "\n"
-    let l:end = "\n" . l:end
-  endif
-  let l:c.display = split(
-        \ (l:i == 0 ? '' : a:c[0 : l:i - 1])
-        \ . a:c[l:j + len(g:flog_display_commit_start) : l:k - 1]
-        \ . l:end,
-        \ "\n")
-
-  return l:c
 endfunction
 
 function! flog#parse_log_output(output) abort
@@ -839,36 +805,104 @@ function! flog#parse_log_output(output) abort
     return []
   endif
 
+  " Final filtered visual output
   let l:o = []
-  let l:raw = []
+  " Output index
   let l:i = 0
-
-  " Group non-commit lines at the start of output with the first commit
-  " See https://github.com/rbong/vim-flog/pull/14
-  while l:i < l:output_len && a:output[l:i] !~# g:flog_format_start
-    let l:raw += [a:output[l:i]]
-    let l:i += 1
-  endwhile
-  if l:raw != []
-    let l:raw += [a:output[l:i]]
-    let l:i += 1
-  endif
+  " Commits
+  let l:cs = []
+  " Number of commits
+  let l:cn = 0
+  " Current commit
+  let l:c = { 'display_len': 0 }
+  " Has found data
+  let l:d = 0
+  " Format start length
+  let l:lf = len(g:flog_format_start)
+  " Data start length
+  let l:ld = len(g:flog_data_start)
 
   while l:i < l:output_len
+    " Get current line
     let l:line = a:output[l:i]
-    if l:line =~# g:flog_format_start && l:raw != []
-      let l:o += [flog#parse_log_commit(join(l:raw, "\n"))]
-      let l:raw = []
+
+    " Data found or no commit parsed, check for format start
+    if l:d || !l:cn
+      " Find format start if any
+      let l:j = stridx(l:line, g:flog_format_start)
+
+      " Start of format found, start new commit
+      if l:j >= 0
+        " Start new commit if at least one parsed
+        if l:cn
+          " Add to list of commits
+          call add(l:cs, l:c)
+
+          " Set new current commit
+          let l:c = { 'display_len': 0 }
+        endif
+
+        " Remove format start from line
+        let l:line = strpart(l:line, 0, l:j)
+              \ . strpart(l:line, l:j + l:lf)
+
+        " Reset data found
+        let l:d = 0
+      endif
     endif
-    let l:raw += [l:line]
+
+    " No commit data, try to find it
+    if !l:d
+      " Find start of data
+      let l:k = stridx(l:line, g:flog_data_start)
+
+      " Start of data found
+      if l:k >= 0
+        let g:debug = [l:line, l:k, l:ld]
+        " Find hash end
+        let l:hend = stridx(l:line, ' ', l:k + l:ld)
+
+        if l:hend > 0
+          " Set hash
+          let l:c.short_commit_hash = strpart(l:line,
+                \ l:k + l:ld, l:hend - l:k - l:ld)
+          " Set ref names
+          let l:c.ref_names_unwrapped = strpart(l:line, l:hend + 1)
+          let l:c.ref_name_list = split(
+                \ l:c.ref_names_unwrapped, '\( -> \|, \|tag: \)\+')
+        else
+          " No space found, no refs
+
+          " Set hash
+          let l:c.short_commit_hash = strpart(l:line, l:k + l:ld)
+          " Set ref names
+          let l:c.ref_names_unwrapped = ''
+          let l:c.ref_name_list = []
+        endif
+
+        " Set data found
+        let l:d = 1
+        " Increment number of commits
+        let l:cn += 1
+
+        " Remove data from line
+        let l:line = strpart(l:line, 0, l:k)
+      endif
+    endif
+
+    " Append line to output
+    call add(l:o, l:line)
+    let l:c.display_len += 1
+
     let l:i += 1
   endwhile
 
-  if l:raw != []
-      let l:o += [flog#parse_log_commit(join(l:raw, "\n"))]
+  " Add last commit if any
+  if l:cn
+    call add(l:cs, l:c)
   endif
 
-  return l:o
+  return [l:o, l:cs]
 endfunction
 
 function! flog#build_log_paths() abort
@@ -980,14 +1014,6 @@ function! flog#build_git_forest_log_command() abort
   let l:command .= flog#build_log_paths()
 
   return l:command
-endfunction
-
-function! flog#get_log_display(commits) abort
-  let l:o = []
-  for l:c in a:commits
-    let l:o += l:c.display
-  endfor
-  return l:o
 endfunction
 
 " }}}
@@ -1196,8 +1222,7 @@ function! flog#modify_graph_buffer_contents(content) abort
   silent setlocal modifiable
   silent setlocal noreadonly
   1,$ d
-  call append(0, a:content)
-  $,$ d
+  call setline(1, a:content)
   call flog#graph_buffer_settings()
 
   exec l:cursor_pos
@@ -1206,8 +1231,6 @@ endfunction
 
 function! flog#set_graph_buffer_commits(commits) abort
   let l:state = flog#get_state()
-
-  call flog#modify_graph_buffer_contents(flog#get_log_display(a:commits))
 
   let l:state.line_commits = []
 
@@ -1236,8 +1259,8 @@ function! flog#set_graph_buffer_commits(commits) abort
 
     let l:scl[l:c.short_commit_hash] = len(slc) + 1
 
-    let l:slc += repeat([l:c], len(l:c.display))
-    let l:slr += repeat([l:cr], len(l:c.display))
+    let l:slc += repeat([l:c], l:c.display_len)
+    let l:slr += repeat([l:cr], l:c.display_len)
   endfor
 endfunction
 
@@ -1359,8 +1382,9 @@ function! flog#populate_graph_buffer() abort
   let l:state.previous_log_command = l:command
 
   let l:output = flog#systemlist(l:command)
-  let l:commits = flog#parse_log_output(l:output)
+  let [l:final_output, l:commits] = flog#parse_log_output(l:output)
 
+  call flog#modify_graph_buffer_contents(l:final_output)
   call flog#set_graph_buffer_commits(l:commits)
   call flog#set_graph_buffer_title()
   call flog#set_graph_buffer_color()
