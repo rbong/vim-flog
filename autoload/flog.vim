@@ -1098,10 +1098,12 @@ function! flog#jump_commits(commits) abort
 endfunction
 
 function! flog#next_commit() abort
+  call flog#set_jump_mark()
   call flog#jump_commits(v:count1)
 endfunction
 
 function! flog#previous_commit() abort
+  call flog#set_jump_mark()
   call flog#jump_commits(-v:count1)
 endfunction
 
@@ -1198,10 +1200,12 @@ function! flog#jump_to_commit(hash) abort
 endfunction
 
 function! flog#next_ref() abort
+  call flog#set_jump_mark()
   call flog#jump_refs(v:count1)
 endfunction
 
 function! flog#previous_ref() abort
+  call flog#set_jump_mark()
   call flog#jump_refs(-v:count1)
 endfunction
 
@@ -1742,6 +1746,11 @@ function! flog#set_commit_mark_at_line(key, line) abort
   return flog#set_commit_mark(a:key, l:commit)
 endfunction
 
+function! flog#set_jump_mark(...) abort
+  let l:line = a:0 >= 1 ? a:1 : line('.')
+  call flog#set_internal_commit_mark_at_line("'", l:line)
+endfunction
+
 function! flog#remove_commit_mark(key) abort
   let l:marks = flog#get_commit_marks()
   unlet! l:marks[a:key]
@@ -1790,7 +1799,7 @@ function! flog#jump_to_commit_mark(key) abort
     return
   endif
   call flog#jump_to_commit(l:commit.short_commit_hash)
-  call flog#set_internal_commit_mark_at_line("'", l:previous_line)
+  call flog#set_jump_mark(l:previous_line)
 endfunction
 
 function! flog#echo_commit_marks() abort
