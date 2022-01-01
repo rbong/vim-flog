@@ -1704,7 +1704,7 @@ endfunction
 " Commit marks {{{
 
 function! flog#is_reserved_commit_mark(key) abort
-  return a:key =~# "[<>'@~^!]"
+  return a:key =~# '[<>@~^!]'
 endfunction
 
 function! flog#is_dynamic_commit_mark(key) abort
@@ -1752,7 +1752,7 @@ endfunction
 
 function! flog#set_jump_mark(...) abort
   let l:line = a:0 >= 1 ? a:1 : line('.')
-  call flog#set_internal_commit_mark_at_line("'", l:line)
+  call flog#set_commit_mark_at_line("'", l:line)
 endfunction
 
 function! flog#remove_commit_mark(key) abort
