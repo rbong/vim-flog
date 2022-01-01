@@ -83,6 +83,8 @@ COMMANDS                                                       *flog-commands*
   Open a commit under the cursor using |:Gsplit| in a |flog-temp-window|. Can
   only be run in the |:Flog| window.
 
+  Sets |flog-'!|.
+
 :Floggit                                                            *:Floggit*
 
   Open a git command via |:Git|.
@@ -128,6 +130,7 @@ g?                                                                   *flog-g?*
 <CR>                                                               *flog-<CR>*
 
   Open the commit under the cursor in a temporary window.
+  Sets |flog-'!|.
 
                                            *<Plug>(FlogVSplitCommitRightPath)*
 <Tab>                                                             *flog-<Tab>*
@@ -135,12 +138,16 @@ g?                                                                   *flog-g?*
   Same as |flog-<CR>|, but use the "-path" argument to only show the diff for
   the currently selected paths.
 
+  Sets |flog-'!|.
+
                                                  *<Plug>(FlogVDiffSplitRight)*
 dd                                                                   *flog-dd*
 dv                                                                   *flog-dv*
 
   In normal mode, open a diff in a temporary window comparing the commit under
   the cursor with the current commit.
+
+  Also sets |flog-'!| in normal mode.
 
   In visual mode, open a diff in a temporary window comparing the commits at
   the top and bottom of the visual selection.
@@ -150,6 +157,12 @@ dp                                                                   *flog-dp*
 
   Same as |flog-dd|, but use the "-path" argument to only show the diff for
   the currently selected paths.
+
+                                       *<Plug>(FlogVDiffSplitLastCommitRight)*
+d!                                                                   *flog-d!*
+
+  Diff the commit under the cursor and the last used commit.
+  See also |flog-'!|.
 
                                                      *<Plug>(FlogCloseTmpWin)*
 dq                                                                   *flog-dq*
@@ -183,11 +196,15 @@ NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
 
   Jump to the next commit and open it in a temporary window. Accepts a count.
 
+  Sets |flog-'!|.
+
                                                 *<Plug>(FlogVPrevCommitRight)*
 <C-P>                                                            *flog-CTRL-P*
 (                                                                     *flog-(*
 
   Jump to the previous commit and open it in a temp window. Accepts a count.
+
+  Sets |flog-'!|.
 
                                                    *<Plug>(FlogVNextRefRight)*
 ]r                                                                   *flog-]r*
@@ -195,11 +212,15 @@ NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
   Jump to the next commit with a ref name and open it in a temporary window.
   Accepts a count.
 
+  Sets |flog-'!|.
+
                                                    *<Plug>(FlogVPrevRefRight)*
 [r                                                                   *flog-[r*
 
   Jump to the previous commit with a ref name and open it in a temporary
   window. Accepts a count.
+
+  Sets |flog-'!|.
 
                                                        *<Plug>(FlogSkipAhead)*
 ]]                                                                   *flog-]]*
@@ -222,14 +243,17 @@ go                                                                   *flog-go*
 m{a-zA-Z'}                                                            *flog-m*
 
   Mark the current commit under the cursor. Marked commits persist even when
-  the graph updates. Marked commits can be referenced in commands. See
-  |flog-command-format|.
+  the graph updates. Marked commits can be referenced in commands.
+
+  See also |flog-commit-marks|.
 
                                                 *<Plug>(FlogJumpToCommitMark)*
 '{a-zA-Z'}                                                            *flog-'*
 
   Jump to the marked commit. When jumping to a commit using this command, the
   "'" mark is set, so "''" can be used to jump between commands.
+
+  See also |flog-commit-marks|.
 
 ------------------------------------------------------------------------------
 ARGUMENT MODIFIER MAPPINGS                            *flog-argument-mappings*
@@ -567,6 +591,33 @@ TEMPORARY WINDOWS                                           *flog-temp-window*
   temp windows. Temp windows will be closed when quitting Flog.
 
 ------------------------------------------------------------------------------
+COMMIT MARKS                                               *flog-commit-marks*
+
+  The following commit marks are reserved.
+  See also |flog-m| and |flog-'|.
+
+                                                                     *flog-''*
+  ''                    The last commit before jumping to another commit.
+
+                                                                     *flog-'<*
+  '<                    The start of the visual selection.
+
+                                                                     *flog-'>*
+  '>                    The end of the visual selection.
+
+                                                                     *flog-'@*
+  '@                    The current HEAD.
+
+                                                                     *flog-'~*
+                                                                     *flog-'^*
+  '~ '^                 The parent of the current HEAD.
+
+                                                                     *flog-'!*
+  '!                    The commit last used in a command with "%h".
+                        This mark is set by various commands and mappings.
+                        Can be thought of as the "last used commit".
+
+------------------------------------------------------------------------------
 COMMAND FORMAT                                           *flog-command-format*
 
   Commands in Flog are converted using a special syntax similar to |printf|.
@@ -577,28 +628,39 @@ COMMAND FORMAT                                           *flog-command-format*
 
   The following items are supported:
 
+                                                                     *flog-%%*
   %%                    A literal "%" character.
+
+                                                                     *flog-%h*
   %h                    The hash of the commit under the cursor, if any.
-  %(h'x)                The hash at the given commit mark "x". See |flog-m|.
+                        Using this in a command sets |flog-'!|.
+
+                                                                     *flog-%H*
+  %H                    Same as %h, but do not set |flog-'!|.
+
+                                                                 *flog-%(h'x)*
+  %(h'x)                The hash at the given commit mark "x".
+                        See also |flog-commit-marks|.
+
+                                                                     *flog-%b*
   %b                    The first branch of the commit under the cursor, if
                         any. Local branches prioritized first. Useful for
                         checking out branches.
+
+                                                                 *flog-%(b'x)*
   %(b'x)                The branch at the given commit mark "x".
+
+                                                                     *flog-%l*
   %l                    The first branch of the commit under the cursor, if
                         any. Local branches prioritized first. If a remote
                         commit is used, trim the remote name from the branch.
                         Useful for checking out commits for tracking.
+
+                                                                 *flog-%(l'x)*
   %(l'x)                The local branch at the given mark "x".
+
+                                                                     *flog-%p*
   %p                    The arguments passed to the |:Flog| "-path" option, if
                         any, escaped and joined together by spaces. 
-
-  There are certain special reserved commit marks:
-
-  ''                    The last commit before jumping to another commit.
-  '<                    The start of the visual selection.
-  '>                    The end of the visual selection.
-  '@                    The current HEAD.
-  '~ '^                 The parent of the current HEAD.
-  '!                    The commit last used in a command with "%h".
 
  vim:tw=78:ts=8:ft=help
