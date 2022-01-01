@@ -1707,6 +1707,10 @@ function! flog#is_reserved_commit_mark(key) abort
   return a:key =~# "[<>'@~^!]"
 endfunction
 
+function! flog#is_dynamic_commit_mark(key) abort
+  return a:key =~# '[<>@~^]'
+endfunction
+
 function! flog#is_cancel_commit_mark(key) abort
   " 27 is the code for <Esc>
   return char2nr(a:key) == 27
@@ -1757,7 +1761,7 @@ function! flog#remove_commit_mark(key) abort
 endfunction
 
 function! flog#has_commit_mark(key) abort
-  if flog#is_reserved_commit_mark(a:key)
+  if flog#is_dynamic_commit_mark(a:key)
     return 1
   endif
   if flog#is_cancel_commit_mark(a:key)
