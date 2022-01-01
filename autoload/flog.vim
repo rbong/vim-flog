@@ -858,7 +858,6 @@ function! flog#parse_log_output(output) abort
 
       " Start of data found
       if l:k >= 0
-        let g:debug = [l:line, l:k, l:ld]
         " Find hash end
         let l:hend = stridx(l:line, ' ', l:k + l:ld)
 
