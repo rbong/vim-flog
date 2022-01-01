@@ -594,6 +594,7 @@ COMMAND FORMAT                                           *flog-command-format*
 
   There are certain special reserved commit marks:
 
+  ''                    The last commit before jumping to another commit.
   '<                    The start of the visual selection.
   '>                    The end of the visual selection.
   '@                    The current HEAD.
