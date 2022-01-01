@@ -57,9 +57,9 @@ if !hasmapto('<Plug>(FlogVDiffSplitLastCommitPathsRight)')
   nmap <buffer> D! <Plug>(FlogVDiffSplitLastCommitPathsRight)
 endif
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitRight) :<C-U> call flog#run_tmp_command("vertical belowright Git diff %H %(h'!)")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitRight) :<C-U> call flog#run_tmp_command("vertical belowright Git diff %(h'!) %H")<CR>
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitPathsRight) :<C-U> call flog#run_tmp_command("vertical belowright Git diff %H %(h'!) -- %p")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitPathsRight) :<C-U> call flog#run_tmp_command("vertical belowright Git diff %(h'!) %H -- %p")<CR>
 
 if !hasmapto('<Plug>(FlogCloseTmpWin)')
   nmap <buffer> dq <Plug>(FlogCloseTmpWin)
