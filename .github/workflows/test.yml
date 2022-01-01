@@ -41,10 +41,10 @@ jobs:
         with:
           python-version: "3.x"
       - name: "run vint"
-        # Must allow failure because of these issues:
+        # Must remove tests before running lint because of these issues:
         # https://github.com/vim-jp/vim-vimlparser/issues/98
         # https://github.com/Vimjas/vint/issues/330
-        continue-on-error: true
         run: |
           sudo python3 -m pip install vim-vint
+          rm -rf t/
           vint --color .
