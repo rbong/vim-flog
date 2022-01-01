@@ -1700,7 +1700,7 @@ endfunction
 " Commit marks {{{
 
 function! flog#is_reserved_commit_mark(key) abort
-  return a:key =~# '[<>@~^!]'
+  return a:key =~# "[<>'@~^!]"
 endfunction
 
 function! flog#is_cancel_commit_mark(key) abort
@@ -1790,7 +1790,7 @@ function! flog#jump_to_commit_mark(key) abort
     return
   endif
   call flog#jump_to_commit(l:commit.short_commit_hash)
-  call flog#set_commit_mark_at_line("'", l:previous_line)
+  call flog#set_internal_commit_mark_at_line("'", l:previous_line)
 endfunction
 
 function! flog#echo_commit_marks() abort
