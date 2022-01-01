@@ -41,10 +41,12 @@ jobs:
         with:
           python-version: "3.x"
       - name: "run vint"
-        # Must remove tests before running lint because of these issues:
+        # Must remove syntax before linting
         # https://github.com/vim-jp/vim-vimlparser/issues/98
+        # Must remove tests before linting
         # https://github.com/Vimjas/vint/issues/330
         run: |
           sudo python3 -m pip install vim-vint
+          sed -i 's/^syntax .*//' syntax/floggraph.vim
           rm -rf t/
           vint --color .
