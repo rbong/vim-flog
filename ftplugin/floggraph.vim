@@ -54,7 +54,7 @@ if !hasmapto('<Plug>(FlogVDiffSplitLastCommitRight)')
 endif
 
 if !hasmapto('<Plug>(FlogVDiffSplitLastCommitPathsRight)')
-  nmap <buffer> D! <Plug>(FlogVDiffSplitLastCommitRight)
+  nmap <buffer> D! <Plug>(FlogVDiffSplitLastCommitPathsRight)
 endif
 
 nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitRight) :<C-U> call flog#run_tmp_command("vertical belowright Git diff %H %(h'!)")<CR>
