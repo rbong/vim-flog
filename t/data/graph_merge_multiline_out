@@ -1,0 +1,19 @@
+🞄 five line 1
+│ five line 2
+│ five line 3
+│ five line 4
+🞄 four - Merge side
+│ four line 2
+│ four line 3
+├─╮
+│ 🞄 side two line 1
+│ │ side two line 2
+│ 🞄 side one line 1
+│ │ side one line 2
+🞄 │ three line 1
+│ │ three line 2
+├─╯
+🞄 two line 1
+│ two line 2
+🞄 one line 1
+  one line 2
