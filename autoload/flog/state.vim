@@ -5,13 +5,20 @@ vim9script
 # object.
 #
 
+g:flog_instance_counter = 0
+
 def flog#state#create(): dict<any>
-  return {
+  var state = {
+    instance_number: g:flog_instance_counter,
     opts: {},
     graph_bufnr: -1,
     fugitive_repo: {},
     commits: [],
     }
+
+  g:flog_instance_counter += 1
+
+  return state
 enddef
 
 def flog#state#get_internal_default_opts(): dict<any>
@@ -53,6 +60,10 @@ def flog#state#get_internal_default_opts(): dict<any>
     defaults.max_count = string(defaults.max_count)
   endif
 
+  if type(defaults.skip) == v:t_number
+    defaults.skip = string(defaults.skip)
+  endif
+
   return defaults
 enddef
 
@@ -72,6 +83,10 @@ def flog#state#get_default_opts(): dict<any>
 
   if type(defaults.max_count) == v:t_number
     defaults.max_count = string(defaults.max_count)
+  endif
+
+  if type(defaults.skip) == v:t_number
+    defaults.skip = string(defaults.skip)
   endif
 
   return defaults
