@@ -22,7 +22,7 @@ def flog#cmd#flog(args: list<string>): void
   const opts = flog#cmd#flog#args#parse(default_opts, workdir, args)
   flog#state#set_opts(state, opts)
 
-  if g:flog_should_write_commit_graph && !flog#git#has_commit_graph()
+  if g:flog_should_write_commit_graph && !flog#utils#git#has_commit_graph()
     flog#utils#git#write_commit_graph()
   endif
 
@@ -32,7 +32,13 @@ def flog#cmd#flog(args: list<string>): void
   const parsed = flog#cmd#flog#git#parse_log_output(flog#utils#shell#run(cmd))
   flog#state#set_commits(state, parsed.commits)
 
-  const graph = flog#graph#generate(parsed.commits, parsed.all_commit_content)
+  var graph = {}
+
+  if opts.graph
+    graph = flog#graph#generate(parsed.commits, parsed.all_commit_content)
+  else
+    graph = flog#graph#generate_commits_only(parsed.commits, parsed.all_commit_content)
+  endif
 
   flog#cmd#flog#buf#set_content(graph.output)
 enddef

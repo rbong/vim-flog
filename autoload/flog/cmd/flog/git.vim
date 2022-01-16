@@ -23,6 +23,10 @@ def flog#cmd#flog#git#build_log_args(): string
   const state = flog#state#get_buf_state()
   const opts = flog#state#get_resolved_opts(state)
 
+  if opts.reverse && opts.graph
+    throw g:flog_reverse_requires_no_graph
+  endif
+
   var args = ''
 
   if opts.graph

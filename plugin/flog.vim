@@ -10,6 +10,7 @@ g:flog_unsupported_argument = 'flog: unrecognized argument'
 g:flog_sort_type_not_found = 'flog: sort type not found'
 g:flog_graph_draw_error = 'flog: internal error drawing graph'
 g:flog_invalid_commit_mark = 'flog: invalid commit mark'
+g:flog_reverse_requires_no_graph = 'flog: -reverse requires -no-graph'
 
 # Options
 

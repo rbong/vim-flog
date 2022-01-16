@@ -414,3 +414,48 @@ def flog#graph#generate(commits: list<dict<any>>, all_commit_content: list<list<
 
   return graph
 enddef
+
+# Generate the commit graph for -no-graph
+def flog#graph#generate_commits_only(commits: list<dict<any>>, all_commit_content: list<list<string>>): dict<any>
+  var graph = flog#graph#create()
+  var output = graph.output
+  var line_commits = graph.line_commits
+  var commit_lines = graph.commit_lines
+  var commit_cols = graph.commit_cols
+
+  var nlines = 0
+  var commit_index = 0
+  const ncommits = len(commits)
+
+  while commit_index < ncommits
+    # Get commit data
+
+    const commit = commits[commit_index]
+    const commit_hash = commit.hash
+    const commit_content = all_commit_content[commit_index]
+    const ncommit_lines = len(commit_content)
+
+    # Add output
+
+    add(commit_cols, 0)
+
+    add(output, get(commit_content, 0, ''))
+    add(line_commits, commit)
+    nlines += 1
+    commit_lines[commit_hash] = nlines
+
+    var i = 1
+    while i < ncommit_lines
+      add(output, commit_content[i])
+      add(line_commits, commit)
+      nlines += 1
+      i += 1
+    endwhile
+
+    # Increment
+
+    commit_index += 1
+  endwhile
+
+  return graph
+enddef
