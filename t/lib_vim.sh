@@ -15,9 +15,7 @@ install_vim() {
   echo "set nocompatible" > "$VIM_DIR/.vimrc"
 
   cd "$BASE_DIR"
-  # TODO: use all directories
-  # cp -rf autoload ftplugin plugin syntax "$FLOG_DIR"
-  cp -rf autoload plugin "$FLOG_DIR"
+  cp -rf autoload ftplugin plugin syntax "$FLOG_DIR"
 
   git clone -q --depth 1 "https://github.com/tpope/vim-fugitive" "$FUGITIVE_DIR"
 }

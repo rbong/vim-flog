@@ -7,7 +7,7 @@ vim9script
 #
 
 # The implementation of ":Flog".
-def flog#cmd#flog(args: list<string>): void
+def flog#cmd#flog(args: list<string>): dict<any>
   if !flog#fugitive#is_fugitive_buffer()
     throw g:flog_not_a_fugitive_buffer
   endif
@@ -27,18 +27,18 @@ def flog#cmd#flog(args: list<string>): void
   endif
 
   flog#cmd#flog#buf#open(state)
+  flog#cmd#flog#buf#update()
 
-  const cmd = flog#cmd#flog#git#build_log_cmd()
-  const parsed = flog#cmd#flog#git#parse_log_output(flog#shell#run(cmd))
-  flog#state#set_commits(state, parsed.commits)
+  return state
+enddef
 
-  var graph = {}
+# The implementation of ":Flogsetargs".
+def flog#cmd#flog_set_args(args: list<string>): dict<any>
+  const state = flog#state#get_buf_state()
 
-  if opts.graph
-    graph = flog#graph#generate(parsed.commits, parsed.all_commit_content)
-  else
-    graph = flog#graph#generate_commits_only(parsed.commits, parsed.all_commit_content)
-  endif
+  const workdir = flog#state#get_fugitive_workdir(state)
+  flog#cmd#flog#args#parse(state.opts, workdir, args)
+  flog#cmd#flog#buf#update()
 
-  flog#cmd#flog#buf#set_content(graph.output)
+  return state
 enddef

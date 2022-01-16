@@ -4,10 +4,8 @@ vim9script
 # This file contains functions for creating and updating the ":Flog" buffer.
 #
 
-def flog#cmd#flog#buf#get_name(state: dict<any>): string
-  const opts = flog#state#get_resolved_opts(state)
-
-  var name = 'flog-' .. string(state.instance_number)
+def flog#cmd#flog#buf#get_name(instance_number: number, opts: dict<any>): string
+  var name = 'flog-' .. string(instance_number)
 
   if opts.all
     name ..= ' [all]'
@@ -68,7 +66,8 @@ def flog#cmd#flog#buf#get_name(state: dict<any>): string
 enddef
 
 def flog#cmd#flog#buf#open(state: dict<any>): number
-  execute state.opts.open_cmd .. ' ' .. flog#cmd#flog#buf#get_name(state)
+  const bufname = ' flog-' .. string(state.instance_number) .. ' [uninitialized]'
+  execute 'silent! ' .. state.opts.open_cmd .. bufname
 
   flog#state#set_buf_state(state)
 
@@ -81,6 +80,29 @@ def flog#cmd#flog#buf#open(state: dict<any>): number
   set ft=floggraph
 
   return bufnr
+enddef
+
+def flog#cmd#flog#buf#update(): number
+  const state = flog#state#get_buf_state()
+  const opts = flog#state#get_resolved_opts(state)
+
+  const cmd = flog#cmd#flog#git#build_log_cmd()
+  const parsed = flog#cmd#flog#git#parse_log_output(flog#shell#run(cmd))
+  flog#state#set_commits(state, parsed.commits)
+
+  var graph = {}
+
+  if opts.graph
+    graph = flog#graph#generate(parsed.commits, parsed.all_commit_content)
+  else
+    graph = flog#graph#generate_commits_only(parsed.commits, parsed.all_commit_content)
+  endif
+
+  flog#cmd#flog#buf#set_content(graph.output)
+
+  exec 'file ' .. flog#cmd#flog#buf#get_name(state.instance_number, opts)
+
+  return state.graph_bufnr
 enddef
 
 def flog#cmd#flog#buf#set_content(content: list<string>): list<string>
