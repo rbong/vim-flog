@@ -106,8 +106,16 @@ def flog#cmd#flog#buf#update(): number
     graph = flog#graph#generate_commits_only(parsed.commits, parsed.all_commit_content)
   endif
 
+  # Record previous commit
+  const last_commit = flog#cmd#flog#nav#get_commit_at_line('.')
+
   flog#state#set_graph(state, graph)
   flog#cmd#flog#buf#set_content(graph.output)
+
+  # Restore commit
+  if !empty(last_commit)
+    flog#cmd#flog#nav#jump_to_commit(last_commit.hash)
+  endif
 
   exec 'file ' .. flog#cmd#flog#buf#get_name(state.instance_number, opts)
 
