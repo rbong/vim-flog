@@ -40,26 +40,26 @@ def flog#cmd#flog#buf#get_name(state: dict<any>): string
     name ..= ' [max_count=' .. opts.max_count .. ']'
   endif
   if !empty(opts.search)
-    name ..= ' [search=' .. flog#utils#str#ellipsize(opts.search, 15) .. ']'
+    name ..= ' [search=' .. flog#str#ellipsize(opts.search, 15) .. ']'
   endif
   if !empty(opts.patch_search)
-    name ..= ' [patch_search=' .. flog#utils#str#ellipsize(opts.patch_search, 15) .. ']'
+    name ..= ' [patch_search=' .. flog#str#ellipsize(opts.patch_search, 15) .. ']'
   endif
   if !empty(opts.author)
     name ..= ' [author=' .. opts.author .. ']'
   endif
   if !empty(opts.limit)
-    const [range, path] = flog#utils#args#split_git_limit_arg(opts.limit)
-    name ..= ' [limit=' .. flog#utils#str#ellipsize(range .. fnamemodify(path, ':t'), 15) .. ']'
+    const [range, path] = flog#args#split_git_limit_arg(opts.limit)
+    name ..= ' [limit=' .. flog#str#ellipsize(range .. fnamemodify(path, ':t'), 15) .. ']'
   endif
   if len(opts.rev) == 1
-    name ..= ' [rev=' .. flog#utils#str#ellipsize(opts.rev[0], 15) .. ']'
+    name ..= ' [rev=' .. flog#str#ellipsize(opts.rev[0], 15) .. ']'
   endif
   if len(opts.rev) > 1
     name ..= ' [rev=...]'
   endif
   if len(opts.path) == 1
-    name ..= ' [path=' .. flog#utils#str#ellipsize(fnamemodify(opts.path[0], ':t'), 15) .. ']'
+    name ..= ' [path=' .. flog#str#ellipsize(fnamemodify(opts.path[0], ':t'), 15) .. ']'
   elseif len(opts.path) > 1
     name ..= ' [path=...]'
   endif

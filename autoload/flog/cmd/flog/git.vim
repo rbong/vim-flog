@@ -57,7 +57,7 @@ def flog#cmd#flog#git#build_log_args(): string
     args ..= ' --skip=' .. shellescape(opts.skip)
   endif
   if !empty(opts.sort)
-    const sort_type = flog#utils#opts#get_sort_type(opts.sort)
+    const sort_type = flog#opts#get_sort_type(opts.sort)
     args ..= ' ' .. sort_type.args
   endif
   if !empty(opts.max_count)
@@ -83,7 +83,7 @@ def flog#cmd#flog#git#build_log_args(): string
     if opts.limit
       rev = shellescape(opts.rev[0])
     else
-      rev = join(flog#utils#shell#escape_list(opts.rev), ' ')
+      rev = join(flog#shell#escape_list(opts.rev), ' ')
     endif
     args ..= ' ' .. rev
   endif
