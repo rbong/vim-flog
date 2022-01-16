@@ -25,11 +25,19 @@ def flog#fugitive#get_repo(): dict<any>
   return fugitive#repo()
 enddef
 
-def flog#fugitive#trigger_detection(workdir: string): string
-  FugitiveDetect(workdir)
-  return workdir
+def flog#fugitive#get_workdir(): string
+  return flog#fugitive#get_repo().tree()
+enddef
+
+def flog#fugitive#get_git_dir(): string
+  return flog#fugitive#get_repo().dir()
 enddef
 
 def flog#fugitive#get_git_command(): string
   return FugitiveShellCommand()
+enddef
+
+def flog#fugitive#trigger_detection(workdir: string): string
+  FugitiveDetect(workdir)
+  return workdir
 enddef

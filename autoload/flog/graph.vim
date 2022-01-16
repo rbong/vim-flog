@@ -336,8 +336,8 @@ def flog#graph#generate(commits: list<dict<any>>, all_commit_content: list<list<
                 merge_line ..= "\u256d"
               else
                 # Merge down
-                # TODO: error
-                merge_line ..= ' '
+                # Not possible to merge down only
+                throw g:flog_graph_error
               endif
             endif
           else
@@ -347,14 +347,14 @@ def flog#graph#generate(commits: list<dict<any>>, all_commit_content: list<list<
                 merge_line ..= "\u2500"
               else
                 # Merge left
-                # TODO: error
-                merge_line ..= ' '
+                # Not possible to merge left only
+                throw g:flog_graph_error
               endif
             else
               if merge_right
                 # Merge right
-                # TODO: error
-                merge_line ..= ' '
+                # Not possible to merge right only
+                throw g:flog_graph_error
               else
                 # No merges
                 merge_line ..= ' '
