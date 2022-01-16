@@ -13,6 +13,10 @@ g:flog_invalid_commit_mark = 'flog: invalid commit mark'
 
 # Options
 
+g:flog_should_write_commit_graph = true
+
+g:flog_write_commit_graph_args = '--reachable --progress'
+
 g:flog_get_author_args = '--all --no-merges --max-count=100000'
 
 g:flog_commit_start_token = '__START'

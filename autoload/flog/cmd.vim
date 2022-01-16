@@ -22,6 +22,10 @@ def flog#cmd#flog(args: list<string>): void
   const opts = flog#cmd#flog#args#parse(default_opts, workdir, args)
   flog#state#set_opts(state, opts)
 
+  if g:flog_should_write_commit_graph && !flog#git#has_commit_graph()
+    flog#utils#git#write_commit_graph()
+  endif
+
   flog#cmd#flog#buf#open(state)
 
   const cmd = flog#cmd#flog#git#build_log_cmd()
