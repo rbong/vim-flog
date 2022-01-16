@@ -4,6 +4,13 @@ vim9script
 # This file contains functions for creating and updating the ":Flog" buffer.
 #
 
+def flog#cmd#flog#buf#assert_flog_buf(): bool
+  if &filetype != 'floggraph'
+    throw g:flog_not_a_flog_buffer
+  endif
+  return true
+enddef
+
 def flog#cmd#flog#buf#get_name(instance_number: number, opts: dict<any>): string
   var name = 'flog-' .. string(instance_number)
 
@@ -77,12 +84,13 @@ def flog#cmd#flog#buf#open(state: dict<any>): number
   flog#fugitive#trigger_detection(flog#state#get_fugitive_workdir(state))
 
   setlocal buftype=nofile nobuflisted nomodifiable nowrap
-  set ft=floggraph
+  setlocal filetype=floggraph
 
   return bufnr
 enddef
 
 def flog#cmd#flog#buf#update(): number
+  flog#cmd#flog#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
   const opts = flog#state#get_resolved_opts(state)
 
@@ -98,6 +106,7 @@ def flog#cmd#flog#buf#update(): number
     graph = flog#graph#generate_commits_only(parsed.commits, parsed.all_commit_content)
   endif
 
+  flog#state#set_graph(state, graph)
   flog#cmd#flog#buf#set_content(graph.output)
 
   exec 'file ' .. flog#cmd#flog#buf#get_name(state.instance_number, opts)
@@ -106,6 +115,8 @@ def flog#cmd#flog#buf#update(): number
 enddef
 
 def flog#cmd#flog#buf#set_content(content: list<string>): list<string>
+  flog#cmd#flog#buf#assert_flog_buf()
+
   set modifiable
   :1,$ delete
   setline(1, content)

@@ -14,6 +14,9 @@ def flog#state#create(): dict<any>
     graph_bufnr: -1,
     fugitive_repo: {},
     commits: [],
+    line_commits: [],
+    commit_lines: {},
+    commit_cols: {},
     }
 
   g:flog_instance_counter += 1
@@ -182,6 +185,14 @@ def flog#state#get_commit_refs(commit: dict<any>): list<dict<any>>
   endfor
 
   return refs
+enddef
+
+def flog#state#set_graph(state: dict<any>, graph: dict<any>): dict<any>
+  # Selectively set graph properties
+  state.line_commits = graph.line_commits
+  state.commit_lines = graph.commit_lines
+  state.commit_cols = graph.commit_cols
+  return graph
 enddef
 
 def flog#state#set_buf_state(state: dict<any>)

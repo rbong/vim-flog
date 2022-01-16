@@ -9,7 +9,7 @@ def flog#graph#create(): dict<any>
     output: [],
     line_commits: [],
     commit_lines: {},
-    commit_cols: [],
+    commit_cols: {},
     }
 enddef
 
@@ -210,7 +210,7 @@ def flog#graph#generate(commits: list<dict<any>>, all_commit_content: list<list<
       if branch_index < ncommit_branches
         if is_commit
           # Record commit col
-          add(commit_cols, ncommit_cols + 1)
+          commit_cols[commit_hash] = ncommit_cols + 1
 
           # Draw current commit
 
@@ -437,7 +437,7 @@ def flog#graph#generate_commits_only(commits: list<dict<any>>, all_commit_conten
 
     # Add output
 
-    add(commit_cols, 0)
+    commit_cols[commit_hash] = 1
 
     add(output, get(commit_content, 0, ''))
     add(line_commits, commit)

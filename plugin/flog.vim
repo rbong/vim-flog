@@ -5,6 +5,7 @@ vim9script
 g:flog_shell_error = 'flog: encountered shell error'
 g:flog_missing_state = 'flog: could not find state'
 g:flog_not_a_fugitive_buffer = 'flog: not a fugitive buffer'
+g:flog_not_a_flog_buffer = 'flog: not a flog buffer'
 g:flog_no_commits_found = 'flog: error parsing commits: no commits found'
 g:flog_unsupported_argument = 'flog: unrecognized argument'
 g:flog_sort_type_not_found = 'flog: sort type not found'
