@@ -13,6 +13,33 @@ def flog#cmd#flog#nav#get_commit_at_line(line: any = '.'): dict<any>
   return get(state.line_commits, lnum - 1, {})
 enddef
 
+def flog#cmd#flog#nav#get_commit_by_hash(hash: string): dict<any>
+  flog#cmd#flog#buf#assert_flog_buf()
+  const state = flog#state#get_buf_state()
+
+  const lnum = get(state.commit_lines, hash, -1)
+  if lnum < 0
+    return {}
+  endif
+
+  return flog#cmd#flog#nav#get_commit_at_line(lnum)
+enddef
+
+def flog#cmd#flog#nav#get_commit_by_ref(ref: string): dict<any>
+  flog#cmd#flog#buf#assert_flog_buf()
+  const state = flog#state#get_buf_state()
+
+  var cmd = flog#fugitive#get_git_command()
+  cmd ..= ' rev-parse --short ' .. shellescape(ref)
+
+  const result = flog#shell#run(cmd)
+  if empty(result)
+    return {}
+  endif
+
+  return flog#cmd#flog#nav#get_commit_by_hash(result[0])
+enddef
+
 def flog#cmd#flog#nav#get_next_commit(offset: number = 1): dict<any>
   flog#cmd#flog#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()

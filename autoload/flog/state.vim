@@ -18,6 +18,7 @@ def flog#state#create(): dict<any>
     line_commits: [],
     commit_lines: {},
     commit_cols: {},
+    commit_marks: {},
     }
 
   g:flog_instance_counter += 1
@@ -199,6 +200,58 @@ def flog#state#set_graph(state: dict<any>, graph: dict<any>): dict<any>
   state.commit_lines = graph.commit_lines
   state.commit_cols = graph.commit_cols
   return graph
+enddef
+
+def flog#state#is_reserved_commit_mark(key: string): bool
+  return key =~ '[<>@~^!]'
+enddef
+
+def flog#state#is_dynamic_commit_mark(key: string): bool
+  return key =~ '[<>@~^]'
+enddef
+
+def flog#state#is_cancel_commit_mark(key: string): bool
+  # 27 is the key code for <Esc>
+  return char2nr(key) == 27
+enddef
+
+def flog#state#reset_commit_marks(state: dict<any>): dict<any>
+  var new_commit_marks = {}
+  state.commit_marks = new_commit_marks
+  return new_commit_marks
+enddef
+
+def flog#state#has_commit_mark(state: dict<any>, key: string): bool
+  if flog#state#is_dynamic_commit_mark(key)
+    return true
+  endif
+  if flog#state#is_cancel_commit_mark(key)
+    throw g:flog_invalid_commit_mark
+  endif
+  return has_key(state.commit_marks, key)
+enddef
+
+def flog#state#set_internal_commit_mark(state: dict<any>, key: string, commit: dict<any>): dict<any>
+  state.commit_marks[key] = commit
+  return commit
+enddef
+
+def flog#state#set_commit_mark(state: dict<any>, key: string, commit: dict<any>): dict<any>
+  if flog#state#is_reserved_commit_mark(key)
+    throw g:flog_invalid_commit_mark
+  endif
+  return flog#state#set_internal_commit_mark(state, key, commit)
+enddef
+
+def flog#state#get_commit_mark(state: dict<any>, key: string): dict<any>
+  return get(state.commit_marks, key, {})
+enddef
+
+def flog#state#remove_commit_mark(state: dict<any>, key: string): dict<any>
+  if !has_key(state.commit_marks, key)
+    return {}
+  endif
+  return remove(state.commit_marks, key)
 enddef
 
 def flog#state#set_buf_state(state: dict<any>)
