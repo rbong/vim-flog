@@ -4,25 +4,25 @@ vim9script
 # This file contains functions for working with commit marks in "floggraph" buffers.
 #
 
-def flog#floggraph#marks#set_internal(key: string, line: any): dict<any>
+def flog#floggraph#mark#set_internal(key: string, line: any): dict<any>
   flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
   const commit = flog#floggraph#commit#get_at_line(line)
   return flog#state#set_internal_commit_mark(state, key, commit)
 enddef
 
-def flog#floggraph#marks#set(key: string, line: any): dict<any>
+def flog#floggraph#mark#set(key: string, line: any): dict<any>
   flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
   const commit = flog#floggraph#commit#get_at_line(line)
   return flog#state#set_commit_mark(state, key, commit)
 enddef
 
-def flog#floggraph#marks#set_jump(line: any = '.'): dict<any>
-  return flog#floggraph#marks#set("'", line)
+def flog#floggraph#mark#set_jump(line: any = '.'): dict<any>
+  return flog#floggraph#mark#set("'", line)
 enddef
 
-def flog#floggraph#marks#get(key: string): dict<any>
+def flog#floggraph#mark#get(key: string): dict<any>
   flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
 
@@ -48,17 +48,17 @@ def flog#floggraph#marks#get(key: string): dict<any>
   return flog#state#get_commit_mark(state, key)
 enddef
 
-def flog#floggraph#marks#jump(key: string): dict<any>
+def flog#floggraph#mark#jump(key: string): dict<any>
   flog#floggraph#buf#assert_flog_buf()
 
-  const commit = flog#floggraph#marks#get(key)
+  const commit = flog#floggraph#mark#get(key)
   if empty(commit)
     return {}
   endif
 
   const prev_line = line('.')
   flog#floggraph#nav#jump_to_commit(commit.hash)
-  call flog#floggraph#marks#set_jump(prev_line)
+  call flog#floggraph#mark#set_jump(prev_line)
 
   return commit
 enddef
