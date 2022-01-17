@@ -54,6 +54,18 @@ def flog#cmd#flog#nav#jump_to_commit(hash: string): list<number>
   return [lnum, col]
 enddef
 
+def flog#cmd#flog#nav#jump_to_commit_at_index(index: number): list<number>
+  flog#cmd#flog#buf#assert_flog_buf()
+  const state = flog#state#get_buf_state()
+
+  const commit = get(state.commits, index, {})
+  if empty(commit)
+    return [-1, -1]
+  endif
+
+  return flog#cmd#flog#nav#jump_to_commit(commit.hash)
+enddef
+
 def flog#cmd#flog#nav#next_commit(offset: number = 1): dict<any>
   flog#cmd#flog#buf#assert_flog_buf()
   
