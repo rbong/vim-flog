@@ -13,7 +13,7 @@ def flog#floggraph#opts#cycle_sort(): string
   if empty(sort)
     sort = g:flog_sort_types[0].name
   else
-    const sort_type = flog#opts#get_sort_type(sort)
+    const sort_type = flog#global_opts#get_sort_type(sort)
     const sort_index = index(g:flog_sort_types, sort_type)
 
     if sort_index == len(g:flog_sort_types) - 1
