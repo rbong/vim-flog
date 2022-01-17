@@ -1,11 +1,11 @@
 vim9script
 
 #
-# This file contains functions for manipulating the register in the ":Flog" buffer.
+# This file contains functions for manipulating the register in "floggraph" buffers.
 #
 
-def flog#cmd#flog#reg#yank_hash(reg: string = '"', line: any = '.', count: number = 1): number
-  flog#cmd#flog#buf#assert_flog_buf()
+def flog#floggraph#reg#yank_hash(reg: string = '"', line: any = '.', count: number = 1): number
+  flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
 
   if count < 1
@@ -13,7 +13,7 @@ def flog#cmd#flog#reg#yank_hash(reg: string = '"', line: any = '.', count: numbe
     return 0
   endif
 
-  var commit = flog#cmd#flog#nav#get_commit_at_line(line)
+  var commit = flog#floggraph#nav#get_commit_at_line(line)
   if empty(commit)
     setreg(reg, [])
     return 0
@@ -39,12 +39,12 @@ def flog#cmd#flog#reg#yank_hash(reg: string = '"', line: any = '.', count: numbe
   return i
 enddef
 
-def flog#cmd#flog#reg#yank_hash_range(reg: string = '"', start_line: any = "'<", end_line: any = "'>"): number
-  flog#cmd#flog#buf#assert_flog_buf()
+def flog#floggraph#reg#yank_hash_range(reg: string = '"', start_line: any = "'<", end_line: any = "'>"): number
+  flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
 
-  var start_commit = flog#cmd#flog#nav#get_commit_at_line(start_line)
-  var end_commit = flog#cmd#flog#nav#get_commit_at_line(end_line)
+  var start_commit = flog#floggraph#nav#get_commit_at_line(start_line)
+  var end_commit = flog#floggraph#nav#get_commit_at_line(end_line)
   if empty(start_commit) || empty(end_commit)
     setreg(reg, [])
     return 0
@@ -57,5 +57,5 @@ def flog#cmd#flog#reg#yank_hash_range(reg: string = '"', start_line: any = "'<",
     return 0
   endif
 
-  return flog#cmd#flog#reg#yank_hash(reg, start_line, end_index - start_index + 1)
+  return flog#floggraph#reg#yank_hash(reg, start_line, end_index - start_index + 1)
 enddef

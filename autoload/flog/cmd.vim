@@ -7,6 +7,7 @@ vim9script
 #
 
 # The implementation of ":Flog".
+# The "floggraph/" folder contains functions for dealing with this filetype.
 def flog#cmd#flog(args: list<string>): dict<any>
   if !flog#fugitive#is_fugitive_buffer()
     throw g:flog_not_a_fugitive_buffer
@@ -26,8 +27,8 @@ def flog#cmd#flog(args: list<string>): dict<any>
     flog#git#write_commit_graph()
   endif
 
-  flog#cmd#flog#buf#open(state)
-  flog#cmd#flog#buf#update()
+  flog#floggraph#buf#open(state)
+  flog#floggraph#buf#update()
 
   return state
 enddef
@@ -38,7 +39,7 @@ def flog#cmd#flog_set_args(args: list<string>): dict<any>
 
   const workdir = flog#state#get_fugitive_workdir(state)
   flog#cmd#flog#args#parse(state.opts, workdir, args)
-  flog#cmd#flog#buf#update()
+  flog#floggraph#buf#update()
 
   return state
 enddef

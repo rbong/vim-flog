@@ -1,10 +1,10 @@
 vim9script
 
 #
-# This file contains functions for working with git for the ":Flog" command.
+# This file contains functions for working with git for "floggraph" buffers.
 #
 
-def flog#cmd#flog#git#build_log_format(): string
+def flog#floggraph#git#build_log_format(): string
   const state = flog#state#get_buf_state()
   const opts = flog#state#get_resolved_opts(state)
 
@@ -19,7 +19,7 @@ def flog#cmd#flog#git#build_log_format(): string
   return shellescape(format)
 enddef
 
-def flog#cmd#flog#git#build_log_args(): string
+def flog#floggraph#git#build_log_args(): string
   const state = flog#state#get_buf_state()
   const opts = flog#state#get_resolved_opts(state)
 
@@ -33,7 +33,7 @@ def flog#cmd#flog#git#build_log_args(): string
     args ..= ' --parents --topo-order'
   endif
   args ..= ' --no-color'
-  args ..= ' --pretty=' .. flog#cmd#flog#git#build_log_format()
+  args ..= ' --pretty=' .. flog#floggraph#git#build_log_format()
   args ..= ' --date=' .. shellescape(opts.date)
   if opts.all && !opts.limit
     args ..= ' --all'
@@ -91,7 +91,7 @@ def flog#cmd#flog#git#build_log_args(): string
   return args
 enddef
 
-def flog#cmd#flog#git#build_log_paths(): string
+def flog#floggraph#git#build_log_paths(): string
   const state = flog#state#get_buf_state()
   const opts = flog#state#get_resolved_opts(state)
 
@@ -103,18 +103,18 @@ def flog#cmd#flog#git#build_log_paths(): string
   return join(paths, ' ')
 enddef
 
-def flog#cmd#flog#git#build_log_cmd(): string
+def flog#floggraph#git#build_log_cmd(): string
   var cmd = flog#fugitive#get_git_command()
 
   cmd ..= ' log'
-  cmd ..= flog#cmd#flog#git#build_log_args()
+  cmd ..= flog#floggraph#git#build_log_args()
   cmd ..= ' -- '
-  cmd ..= flog#cmd#flog#git#build_log_paths()
+  cmd ..= flog#floggraph#git#build_log_paths()
 
   return cmd
 enddef
 
-def flog#cmd#flog#git#parse_log_output(output: list<string>): dict<any>
+def flog#floggraph#git#parse_log_output(output: list<string>): dict<any>
   var commits = []
   var all_commit_content = []
 

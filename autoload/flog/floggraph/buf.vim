@@ -1,17 +1,17 @@
 vim9script
 
 #
-# This file contains functions for creating and updating the ":Flog" buffer.
+# This file contains functions for creating and updating "floggraph" buffers.
 #
 
-def flog#cmd#flog#buf#assert_flog_buf(): bool
+def flog#floggraph#buf#assert_flog_buf(): bool
   if &filetype != 'floggraph'
     throw g:flog_not_a_flog_buffer
   endif
   return true
 enddef
 
-def flog#cmd#flog#buf#get_name(instance_number: number, opts: dict<any>): string
+def flog#floggraph#buf#get_name(instance_number: number, opts: dict<any>): string
   var name = 'flog-' .. string(instance_number)
 
   if opts.all
@@ -72,7 +72,7 @@ def flog#cmd#flog#buf#get_name(instance_number: number, opts: dict<any>): string
   return name
 enddef
 
-def flog#cmd#flog#buf#open(state: dict<any>): number
+def flog#floggraph#buf#open(state: dict<any>): number
   const bufname = ' flog-' .. string(state.instance_number) .. ' [uninitialized]'
   execute 'silent! ' .. state.opts.open_cmd .. bufname
 
@@ -89,14 +89,14 @@ def flog#cmd#flog#buf#open(state: dict<any>): number
   return bufnr
 enddef
 
-def flog#cmd#flog#buf#update(): number
-  flog#cmd#flog#buf#assert_flog_buf()
+def flog#floggraph#buf#update(): number
+  flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
   const opts = flog#state#get_resolved_opts(state)
 
-  const cmd = flog#cmd#flog#git#build_log_cmd()
+  const cmd = flog#floggraph#git#build_log_cmd()
   flog#state#set_prev_log_cmd(state, cmd)
-  const parsed = flog#cmd#flog#git#parse_log_output(flog#shell#run(cmd))
+  const parsed = flog#floggraph#git#parse_log_output(flog#shell#run(cmd))
   flog#state#set_commits(state, parsed.commits)
 
   var graph = {}
@@ -108,23 +108,23 @@ def flog#cmd#flog#buf#update(): number
   endif
 
   # Record previous commit
-  const last_commit = flog#cmd#flog#nav#get_commit_at_line('.')
+  const last_commit = flog#floggraph#nav#get_commit_at_line('.')
 
   flog#state#set_graph(state, graph)
-  flog#cmd#flog#buf#set_content(graph.output)
+  flog#floggraph#buf#set_content(graph.output)
 
   # Restore commit
   if !empty(last_commit)
-    flog#cmd#flog#nav#jump_to_commit(last_commit.hash)
+    flog#floggraph#nav#jump_to_commit(last_commit.hash)
   endif
 
-  exec 'file ' .. flog#cmd#flog#buf#get_name(state.instance_number, opts)
+  exec 'file ' .. flog#floggraph#buf#get_name(state.instance_number, opts)
 
   return state.graph_bufnr
 enddef
 
-def flog#cmd#flog#buf#set_content(content: list<string>): list<string>
-  flog#cmd#flog#buf#assert_flog_buf()
+def flog#floggraph#buf#set_content(content: list<string>): list<string>
+  flog#floggraph#buf#assert_flog_buf()
 
   set modifiable
   :1,$ delete
