@@ -47,18 +47,3 @@ def flog#floggraph#mark#get(key: string): dict<any>
 
   return flog#state#get_commit_mark(state, key)
 enddef
-
-def flog#floggraph#mark#jump(key: string): dict<any>
-  flog#floggraph#buf#assert_flog_buf()
-
-  const commit = flog#floggraph#mark#get(key)
-  if empty(commit)
-    return {}
-  endif
-
-  const prev_line = line('.')
-  flog#floggraph#nav#jump_to_commit(commit.hash)
-  call flog#floggraph#mark#set_jump(prev_line)
-
-  return commit
-enddef

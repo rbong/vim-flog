@@ -39,6 +39,21 @@ def flog#floggraph#nav#jump_to_commit_at_index(index: number): list<number>
   return flog#floggraph#nav#jump_to_commit(commit.hash)
 enddef
 
+def flog#floggraph#nav#jump_to_mark(key: string): list<number>
+  flog#floggraph#buf#assert_flog_buf()
+
+  const commit = flog#floggraph#mark#get(key)
+  if empty(commit)
+    return {}
+  endif
+
+  const prev_line = line('.')
+  const result = flog#floggraph#nav#jump_to_commit(commit.hash)
+  flog#floggraph#mark#set_jump(prev_line)
+
+  return result
+enddef
+
 def flog#floggraph#nav#next_commit(offset: number = 1): dict<any>
   flog#floggraph#buf#assert_flog_buf()
   
