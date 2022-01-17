@@ -13,7 +13,7 @@ def flog#floggraph#reg#yank_hash(reg: string = '"', line: any = '.', count: numb
     return 0
   endif
 
-  var commit = flog#floggraph#nav#get_commit_at_line(line)
+  var commit = flog#floggraph#commit#get_at_line(line)
   if empty(commit)
     setreg(reg, [])
     return 0
@@ -43,8 +43,8 @@ def flog#floggraph#reg#yank_hash_range(reg: string = '"', start_line: any = "'<"
   flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
 
-  var start_commit = flog#floggraph#nav#get_commit_at_line(start_line)
-  var end_commit = flog#floggraph#nav#get_commit_at_line(end_line)
+  var start_commit = flog#floggraph#commit#get_at_line(start_line)
+  var end_commit = flog#floggraph#commit#get_at_line(end_line)
   if empty(start_commit) || empty(end_commit)
     setreg(reg, [])
     return 0

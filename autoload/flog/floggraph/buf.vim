@@ -108,7 +108,7 @@ def flog#floggraph#buf#update(): number
   endif
 
   # Record previous commit
-  const last_commit = flog#floggraph#nav#get_commit_at_line('.')
+  const last_commit = flog#floggraph#commit#get_at_line('.')
 
   flog#state#set_graph(state, graph)
   flog#floggraph#buf#set_content(graph.output)

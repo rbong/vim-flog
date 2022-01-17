@@ -7,14 +7,14 @@ vim9script
 def flog#floggraph#marks#set_internal(key: string, line: any): dict<any>
   flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
-  const commit = flog#floggraph#nav#get_commit_at_line(line)
+  const commit = flog#floggraph#commit#get_at_line(line)
   return flog#state#set_internal_commit_mark(state, key, commit)
 enddef
 
 def flog#floggraph#marks#set(key: string, line: any): dict<any>
   flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
-  const commit = flog#floggraph#nav#get_commit_at_line(line)
+  const commit = flog#floggraph#commit#get_at_line(line)
   return flog#state#set_commit_mark(state, key, commit)
 enddef
 
@@ -27,14 +27,14 @@ def flog#floggraph#marks#get(key: string): dict<any>
   const state = flog#state#get_buf_state()
 
   if key =~ '[<>]'
-    return flog#floggraph#nav#get_commit_at_line("'" .. key)
+    return flog#floggraph#commit#get_at_line("'" .. key)
   endif
 
   if key == '@'
-    return flog#floggraph#nav#get_commit_by_ref('HEAD')
+    return flog#floggraph#commit#get_by_ref('HEAD')
   endif
   if key =~ '[~^]'
-    return flog#floggraph#nav#get_commit_by_ref('HEAD~')
+    return flog#floggraph#commit#get_by_ref('HEAD~')
   endif
 
   if flog#state#is_cancel_commit_mark(key)
