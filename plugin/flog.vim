@@ -92,8 +92,13 @@ g:flog_format_specifiers = [
   ]
 
 g:flog_date_formats = [
-  'iso8601', 
+  'human',
+  'local',
+  'relative',
   'short',
+  'iso', 
+  'iso-strict',
+  'rfc',
   ]
 
 g:flog_open_cmds = [

@@ -28,7 +28,7 @@ def flog#state#get_internal_default_opts(): dict<any>
   var defaults = {
         'raw_args': '',
         'format': '%ad [%h] {%an}%d %s',
-        'date': 'iso8601',
+        'date': 'iso',
         'all': false,
         'bisect': false,
         'merges': true,

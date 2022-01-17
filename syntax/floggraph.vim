@@ -16,7 +16,24 @@ syntax cluster flogCommitInfo contains=flogHash,flogAuthor,flogRef,flogDate
 syntax match flogHash   contained nextgroup=flogAuthor,flogRef,flogDate  /\v(\].*)@<!\[[0-9a-f]{4,}\]( |$)/
 syntax match flogAuthor contained nextgroup=flogHash,flogRef,flogDate    /\v(\}.*)@<!\{.{-}\}( |$)/
 syntax match flogRef    contained nextgroup=flogHash,flogAuthor,flogDate /\().*\)\@<!(\(tag: \| -> \|, \|[^ \\)?*[]\+\)\+)\( \|$\)/
-syntax match flogDate   contained nextgroup=flogHash,flogAuthor,flogRef  /\v<\zs\d{4}-\d\d-\d\d( \d\d:\d\d(:\d\d( [+-]\d{4})?)?)?( |$)/
+
+" Date patterns
+let weekday_name_pattern = '(Mon|Monday|Tue|Tuesday|Wed|Wednesday|Thu|Thursday|Fri|Friday|Sat|Saturday|Sun|Sunday)'
+let month_name_pattern = '(Jan|January|Feb|February|Mar|March|Apr|April|May|Jun|June|Jul|July|Aug|August|Sep|September|Oct|October|Nov|November|Dec|December)'
+let iso_date_pattern = '(\d{4}-\d\d-\d\d|())'
+let iso_time_pattern = '(\d\d:\d\d(:\d\d( ?[+-]\d\d:?\d\d)?)?)'
+
+" ISO format
+exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . iso_date_pattern . '([T ]' . iso_time_pattern . ')?( |$)/'
+" RFC format
+exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . weekday_name_pattern . ', \d{1,2} ' . month_name_pattern . ' \d{4}( ' . iso_time_pattern . ')?( |$)/'
+" Local format
+exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . weekday_name_pattern . ' ' . month_name_pattern . ' \d{1,2}( ' . iso_time_pattern . ')? \d{4}' . '( |$)/'
+" Relative format
+exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v(\d+ (year|month|week|day|hour|minute|second)s? ago)( |$)/'
+" Human formats
+exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . weekday_name_pattern . ' ' . iso_time_pattern . '( |$)/'
+exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . month_name_pattern . ' \d{1,2} \d{4}' . '( |$)/'
 
 highlight default link flogHash   Statement
 highlight default link flogAuthor String
