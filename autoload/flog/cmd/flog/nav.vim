@@ -68,3 +68,54 @@ enddef
 def flog#cmd#flog#nav#prev_commit(offset: number = 1): dict<any>
   return flog#cmd#flog#nav#next_commit(-offset)
 enddef
+
+def flog#cmd#flog#nav#get_next_ref_commit(count: number = 1): list<any>
+  flog#cmd#flog#buf#assert_flog_buf()
+  const state = flog#state#get_buf_state()
+
+  if count == 0
+    return [0, {}]
+  endif
+
+  const step = count > 0 ? 1 : -1
+
+  const commits = state.commits
+  const ncommits = len(commits)
+
+  var ref_commit = {}
+  var commit = flog#cmd#flog#nav#get_commit_at_line('.')
+
+  var nrefs = 0
+  var i = index(state.commits, commit) + step
+  while i >= 0 && i < ncommits && nrefs != count
+    commit = commits[i]
+    if !empty(commit.refs)
+      ref_commit = commit
+      nrefs += step
+    endif
+
+    i += step
+  endwhile
+
+  return [nrefs, ref_commit]
+enddef
+
+def flog#cmd#flog#nav#get_prev_ref_commit(count: number = 1): list<any>
+  return flog#cmd#flog#nav#get_next_commit(-count)
+enddef
+
+def flog#cmd#flog#nav#next_ref_commit(count: number = 1): number
+  flog#cmd#flog#buf#assert_flog_buf()
+
+  const [nrefs, commit] = flog#cmd#flog#nav#get_next_ref_commit(count)
+
+  if !empty(commit)
+    call flog#cmd#flog#nav#jump_to_commit(commit.hash)
+  endif
+
+  return nrefs
+enddef
+
+def flog#cmd#flog#nav#prev_ref_commit(count: number = 1): number
+  return flog#cmd#flog#nav#next_ref_commit(-count)
+enddef
