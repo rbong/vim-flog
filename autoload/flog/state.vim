@@ -11,6 +11,7 @@ def flog#state#create(): dict<any>
   var state = {
     instance_number: g:flog_instance_counter,
     opts: {},
+    prev_log_cmd: '',
     graph_bufnr: -1,
     fugitive_repo: {},
     commits: [],
@@ -111,6 +112,11 @@ def flog#state#get_resolved_opts(state: dict<any>): dict<any>
   opts.reflog = opts.reflog && !opts.limit
 
   return opts
+enddef
+
+def flog#state#set_prev_log_cmd(state: dict<any>, prev_log_cmd: string): string
+  state.prev_log_cmd = prev_log_cmd
+  return prev_log_cmd
 enddef
 
 def flog#state#set_graph_bufnr(state: dict<any>, bufnr: number): number

@@ -95,6 +95,7 @@ def flog#cmd#flog#buf#update(): number
   const opts = flog#state#get_resolved_opts(state)
 
   const cmd = flog#cmd#flog#git#build_log_cmd()
+  flog#state#set_prev_log_cmd(state, cmd)
   const parsed = flog#cmd#flog#git#parse_log_output(flog#shell#run(cmd))
   flog#state#set_commits(state, parsed.commits)
 
