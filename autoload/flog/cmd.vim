@@ -9,7 +9,7 @@ vim9script
 # The implementation of ":Flog".
 # The "floggraph/" folder contains functions for dealing with this filetype.
 def flog#cmd#flog(args: list<string>): dict<any>
-  if !flog#fugitive#is_fugitive_buffer()
+  if !flog#fugitive#is_fugitive_buf()
     throw g:flog_not_a_fugitive_buffer
   endif
 

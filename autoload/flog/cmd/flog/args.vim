@@ -213,7 +213,7 @@ def flog#cmd#flog#args#complete_open_cmd(arg_lead: string): list<string>
 enddef
 
 def flog#cmd#flog#args#complete_author(arg_lead: string): list<string>
-  if !flog#fugitive#is_fugitive_buffer()
+  if !flog#fugitive#is_fugitive_buf()
     return []
   endif
 
@@ -240,7 +240,7 @@ def flog#cmd#flog#args#complete_limit(arg_lead: string): list<string>
 enddef
 
 def flog#cmd#flog#args#complete_rev(arg_lead: string): list<string>
-  if !flog#fugitive#is_fugitive_buffer()
+  if !flog#fugitive#is_fugitive_buf()
     return []
   endif
   const [lead, _] = flog#args#split_arg(arg_lead)

@@ -4,7 +4,7 @@ vim9script
 # This file contains functions for working with fugitive.
 #
 
-def flog#fugitive#is_fugitive_buffer(): bool
+def flog#fugitive#is_fugitive_buf(): bool
   try
     fugitive#repo()
   catch /not a Git repository/
