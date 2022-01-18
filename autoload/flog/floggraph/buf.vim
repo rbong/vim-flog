@@ -82,6 +82,7 @@ def flog#floggraph#buf#open(state: dict<any>): number
   flog#state#set_graph_bufnr(state, bufnr)
 
   flog#fugitive#trigger_detection(flog#state#get_fugitive_workdir(state))
+  exec 'lcd ' .. flog#fugitive#get_workdir()
 
   setlocal buftype=nofile nobuflisted nomodifiable nowrap
   setlocal filetype=floggraph

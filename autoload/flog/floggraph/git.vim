@@ -16,7 +16,7 @@ def flog#floggraph#git#build_log_format(): string
   # Add user format
   format ..= opts.format
 
-  return shellescape(format)
+  return flog#shell#escape(format)
 enddef
 
 def flog#floggraph#git#build_log_args(): string
@@ -34,7 +34,7 @@ def flog#floggraph#git#build_log_args(): string
   endif
   args ..= ' --no-color'
   args ..= ' --pretty=' .. flog#floggraph#git#build_log_format()
-  args ..= ' --date=' .. shellescape(opts.date)
+  args ..= ' --date=' .. flog#shell#escape(opts.date)
   if opts.all && !opts.limit
     args ..= ' --all'
   endif
@@ -54,26 +54,26 @@ def flog#floggraph#git#build_log_args(): string
     args ..= ' --no-patch'
   endif
   if !empty(opts.skip)
-    args ..= ' --skip=' .. shellescape(opts.skip)
+    args ..= ' --skip=' .. flog#shell#escape(opts.skip)
   endif
   if !empty(opts.sort)
     const sort_type = flog#global_opts#get_sort_type(opts.sort)
     args ..= ' ' .. sort_type.args
   endif
   if !empty(opts.max_count)
-    args ..= ' --max-count=' .. shellescape(opts.max_count)
+    args ..= ' --max-count=' .. flog#shell#escape(opts.max_count)
   endif
   if !empty(opts.search)
-    args ..= ' --grep=' .. shellescape(opts.search)
+    args ..= ' --grep=' .. flog#shell#escape(opts.search)
   endif
   if !empty(opts.patch_search)
-    args ..= ' -G' .. shellescape(opts.patch_search)
+    args ..= ' -G' .. flog#shell#escape(opts.patch_search)
   endif
   if !empty(opts.author)
-    args ..= ' --author=' .. shellescape(opts.author)
+    args ..= ' --author=' .. flog#shell#escape(opts.author)
   endif
   if !empty(opts.limit)
-    args ..= ' -L' .. shellescape(opts.limit)
+    args ..= ' -L' .. flog#shell#escape(opts.limit)
   endif
   if !empty(opts.raw_args)
     args ..= ' ' .. opts.raw_args
@@ -81,7 +81,7 @@ def flog#floggraph#git#build_log_args(): string
   if len(opts.rev) >= 1
     var rev = ''
     if opts.limit
-      rev = shellescape(opts.rev[0])
+      rev = flog#shell#escape(opts.rev[0])
     else
       rev = join(flog#shell#escape_list(opts.rev), ' ')
     endif
@@ -99,8 +99,7 @@ def flog#floggraph#git#build_log_paths(): string
     return ''
   endif
 
-  const paths = map(opts.path, (_, val) => shellescape(fnamemodify(val, ":.")))
-  return join(paths, ' ')
+  return join(flog#shell#escape_list(opts.path), ' ')
 enddef
 
 def flog#floggraph#git#build_log_cmd(): string

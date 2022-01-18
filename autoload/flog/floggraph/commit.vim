@@ -30,7 +30,7 @@ def flog#floggraph#commit#get_by_ref(ref: string): dict<any>
   const state = flog#state#get_buf_state()
 
   var cmd = flog#fugitive#get_git_command()
-  cmd ..= ' rev-parse --short ' .. shellescape(ref)
+  cmd ..= ' rev-parse --short ' .. flog#shell#escape(ref)
 
   const result = flog#shell#run(cmd)
   if empty(result)

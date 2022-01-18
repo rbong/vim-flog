@@ -45,13 +45,12 @@ def flog#args#parse_git_limit_arg(workdir: string, arg: string): string
     return arg_opt
   endif
 
-  return range .. fnameescape(flog#fugitive#get_relative_path(workdir, expand(path)))
+  return range .. flog#fugitive#get_relative_path(workdir, expand(path))
 enddef
 
 def flog#args#parse_git_path_arg(workdir: string, arg: string): string
   const arg_opt = flog#args#parse_arg(arg)
-  const path = flog#fugitive#get_relative_path(workdir, expand(arg_opt))
-  return fnameescape(path)
+  return flog#fugitive#get_relative_path(workdir, expand(arg_opt))
 enddef
 
 def flog#args#filter_completions(arg_lead: string, completions: list<string>): list<string>

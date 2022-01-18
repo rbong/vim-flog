@@ -89,7 +89,7 @@ def flog#exec#format_path(): string
     return ''
   endif
 
-  return join(path, ' ')
+  return join(flog#shell#escape_list(path), ' ')
 enddef
 
 def flog#exec#format_item(cache: dict<any>, item: string): string
