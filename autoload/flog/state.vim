@@ -19,6 +19,7 @@ def flog#state#create(): dict<any>
     commit_lines: {},
     commit_cols: {},
     commit_marks: {},
+    tmp_side_wins: [],
     }
 
   g:flog_instance_counter += 1
@@ -252,6 +253,15 @@ def flog#state#remove_commit_mark(state: dict<any>, key: string): dict<any>
     return {}
   endif
   return remove(state.commit_marks, key)
+enddef
+
+def flog#state#set_tmp_side_wins(state: dict<any>, tmp_side_wins: list<number>): list<number>
+  state.tmp_side_wins = tmp_side_wins
+  return tmp_side_wins
+enddef
+
+def flog#state#reset_tmp_side_wins(state: dict<any>): list<number>
+  return flog#state#set_tmp_side_wins(state, [])
 enddef
 
 def flog#state#set_buf_state(state: dict<any>)
