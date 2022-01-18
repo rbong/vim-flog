@@ -42,14 +42,19 @@ enddef
 def flog#floggraph#nav#jump_to_mark(key: string): list<number>
   flog#floggraph#buf#assert_flog_buf()
 
+  const prev_line = line('.')
+  const prev_commit = flog#floggraph#commit#get_at_line(prev_line)
+
   const commit = flog#floggraph#mark#get(key)
   if empty(commit)
     return [-1, -1]
   endif
 
-  const prev_line = line('.')
   const result = flog#floggraph#nav#jump_to_commit(commit.hash)
-  flog#floggraph#mark#set_jump(prev_line)
+
+  if commit != prev_commit
+    flog#floggraph#mark#set_jump(prev_line)
+  endif
 
   return result
 enddef
