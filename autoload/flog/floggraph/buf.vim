@@ -162,3 +162,18 @@ def flog#floggraph#buf#set_content(content: list<string>): list<string>
 
   return content
 enddef
+
+def flog#floggraph#buf#close(): number
+  flog#floggraph#buf#assert_flog_buf()
+  const state = flog#state#get_buf_state()
+
+  const graph_win_id = win_getid()
+  flog#floggraph#side_win#close_tmp()
+
+  win_gotoid(graph_win_id)
+  if win_getid() == graph_win_id
+    silent! bdelete!
+  endif
+
+  return graph_win_id
+enddef
