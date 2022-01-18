@@ -43,3 +43,8 @@ def flog#cmd#flog_set_args(args: list<string>): dict<any>
 
   return state
 enddef
+
+# The implementation of ":Floggit".
+def flog#cmd#flog_git(mods: string, args: string, bang: string): string
+  return flog#exec_raw(mods .. ' Git ' .. args, true, true, !empty(bang))
+enddef

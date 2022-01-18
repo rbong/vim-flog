@@ -5,8 +5,10 @@ vim9script
 #
 
 def flog#exec_raw(cmd: string, keep_focus: bool, should_update: bool, is_tmp: bool): string
-  flog#floggraph#buf#assert_flog_buf()
-  const state = flog#state#get_buf_state()
+  if !flog#floggraph#buf#is_flog_buf()
+    exec cmd
+    return cmd
+  endif
 
   const bufnr = bufnr()
   const graph_win_id = win_getid()

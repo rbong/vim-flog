@@ -41,3 +41,7 @@ def flog#fugitive#trigger_detection(workdir: string): string
   FugitiveDetect(workdir)
   return workdir
 enddef
+
+def flog#fugitive#complete(arg_lead: string, cmd_line: string, cursor_pos: number): list<string>
+  return fugitive#Complete(arg_lead, cmd_line, cursor_pos)
+enddef

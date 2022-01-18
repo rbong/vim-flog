@@ -4,8 +4,12 @@ vim9script
 # This file contains functions for creating and updating "floggraph" buffers.
 #
 
+def flog#floggraph#buf#is_flog_buf(): bool
+  return &filetype == 'floggraph'
+enddef
+
 def flog#floggraph#buf#assert_flog_buf(): bool
-  if &filetype != 'floggraph'
+  if !flog#floggraph#buf#is_flog_buf()
     throw g:flog_not_a_flog_buffer
   endif
   return true
