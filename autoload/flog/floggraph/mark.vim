@@ -47,3 +47,18 @@ def flog#floggraph#mark#get(key: string): dict<any>
 
   return flog#state#get_commit_mark(state, key)
 enddef
+
+def flog#floggraph#mark#print_all(): dict<any>
+  const marks = flog#state#get_buf_state().commit_marks
+
+  if empty(marks)
+    echo 'No commit marks.'
+    return marks
+  endif
+
+  for key in sort(keys(marks))
+    echo '  ' .. key .. '  ' .. marks[key].hash
+  endfor
+
+  return marks
+enddef
