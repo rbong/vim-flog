@@ -44,7 +44,7 @@ def flog#floggraph#nav#jump_to_mark(key: string): list<number>
 
   const commit = flog#floggraph#mark#get(key)
   if empty(commit)
-    return {}
+    return [-1, -1]
   endif
 
   const prev_line = line('.')
