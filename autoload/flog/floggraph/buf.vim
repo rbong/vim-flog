@@ -88,7 +88,6 @@ def flog#floggraph#buf#open(state: dict<any>): number
   flog#fugitive#trigger_detection(flog#state#get_fugitive_workdir(state))
   exec 'lcd ' .. flog#fugitive#get_workdir()
 
-  setlocal buftype=nofile nobuflisted nomodifiable nowrap
   setlocal filetype=floggraph
 
   return bufnr
@@ -160,10 +159,10 @@ enddef
 def flog#floggraph#buf#set_content(content: list<string>): list<string>
   flog#floggraph#buf#assert_flog_buf()
 
-  set modifiable
+  set modifiable noreadonly
   :1,$ delete
   setline(1, content)
-  set nomodifiable
+  set nomodifiable readonly
 
   return content
 enddef
