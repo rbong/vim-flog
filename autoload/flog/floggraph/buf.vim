@@ -159,10 +159,10 @@ enddef
 def flog#floggraph#buf#set_content(content: list<string>): list<string>
   flog#floggraph#buf#assert_flog_buf()
 
-  set modifiable noreadonly
+  setlocal modifiable noreadonly
   :1,$ delete
   setline(1, content)
-  set nomodifiable readonly
+  setlocal nomodifiable readonly
 
   return content
 enddef
