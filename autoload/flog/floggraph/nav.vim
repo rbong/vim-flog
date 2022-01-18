@@ -84,3 +84,44 @@ enddef
 def flog#floggraph#nav#prev_ref_commit(count: number = 1): number
   return flog#floggraph#nav#next_ref_commit(-count)
 enddef
+
+def flog#floggraph#nav#skip_to(skip: number): number
+  flog#floggraph#buf#assert_flog_buf()
+  const state = flog#state#get_buf_state()
+
+  var skip_opt = string(skip)
+  if skip_opt == '0'
+    skip_opt = ''
+  endif
+
+  if state.opts.skip == skip_opt
+    return skip
+  endif
+
+  state.opts.skip = skip_opt
+
+  flog#floggraph#buf#update()
+
+  return skip
+enddef
+
+def flog#floggraph#nav#skip_ahead(count: number): number
+  flog#floggraph#buf#assert_flog_buf()
+  const opts = flog#state#get_buf_state().opts
+
+  if empty(opts.max_count)
+    return -1
+  endif
+
+  var skip = empty(opts.skip) ? 0 : str2nr(opts.skip)
+  skip += str2nr(opts.max_count) * count
+  if skip < 0
+    skip = 0
+  endif
+
+  return flog#floggraph#nav#skip_to(skip)
+enddef
+
+def flog#floggraph#nav#skip_back(count: number): number
+  return flog#floggraph#nav#skip_ahead(-count)
+enddef
