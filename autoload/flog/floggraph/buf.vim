@@ -118,9 +118,38 @@ def flog#floggraph#buf#update(): number
     flog#floggraph#nav#jump_to_commit(last_commit.hash)
   endif
 
-  exec 'file ' .. flog#floggraph#buf#get_name(state.instance_number, opts)
+  silent! exec 'file ' .. flog#floggraph#buf#get_name(state.instance_number, opts)
 
   return state.graph_bufnr
+enddef
+
+def flog#floggraph#buf#finish_update_hook(bufnr: number): number
+  if bufnr() != bufnr
+    return -1
+  endif
+
+  augroup FlogGraphBufUpdate
+    exec 'autocmd! * <buffer=' .. string(bufnr) .. '>'
+  augroup END
+
+  flog#floggraph#buf#update()
+
+  return bufnr
+enddef
+
+def flog#floggraph#buf#init_update_hook(bufnr: number): number
+  const buf = string(bufnr)
+
+  augroup FlogGraphBufUpdate
+    exec 'autocmd! * <buffer=' .. buf .. '>'
+    if exists('##SafeState')
+      exec 'autocmd SafeState <buffer=' .. buf .. '> call flog#floggraph#buf#finish_update_hook(' .. buf .. ')'
+    else
+      exec 'autocmd WinEnter <buffer=' .. buf .. '> call flog#floggraph#buf#finish_update_hook(' .. buf .. ')'
+    endif
+  augroup END
+
+  return bufnr
 enddef
 
 def flog#floggraph#buf#set_content(content: list<string>): list<string>
