@@ -37,6 +37,10 @@ def flog#fugitive#get_git_command(): string
   return FugitiveShellCommand()
 enddef
 
+def flog#fugitive#get_head(): string
+  return fugitive#head()
+enddef
+
 def flog#fugitive#trigger_detection(workdir: string): string
   FugitiveDetect(workdir)
   return workdir

@@ -15,6 +15,30 @@ def flog#floggraph#buf#assert_flog_buf(): bool
   return true
 enddef
 
+def flog#floggraph#buf#update_status(): string
+  flog#floggraph#buf#assert_flog_buf()
+
+  var cmd = flog#fugitive#get_git_command()
+  cmd ..= ' status -s'
+  const changes = len(flog#shell#run(cmd))
+
+  if changes == 0
+    b:flog_status_summary = 'No changes'
+  elseif changes == 1
+    b:flog_status_summary = '1 file changed'
+  else
+    b:flog_status_summary = string(changes) .. ' files changed'
+  endif
+
+  const head = flog#fugitive#get_head()
+
+  if !empty(head)
+    b:flog_status_summary ..= ' (' .. head .. ')'
+  endif
+
+  return b:flog_status_summary
+enddef
+
 def flog#floggraph#buf#get_name(instance_number: number, opts: dict<any>): string
   var name = 'flog-' .. string(instance_number)
 
@@ -97,6 +121,8 @@ def flog#floggraph#buf#update(): number
   flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
   const opts = flog#state#get_resolved_opts(state)
+
+  flog#floggraph#buf#update_status()
 
   const cmd = flog#floggraph#git#build_log_cmd()
   flog#state#set_prev_log_cmd(state, cmd)
