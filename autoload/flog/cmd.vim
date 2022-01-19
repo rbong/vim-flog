@@ -34,11 +34,15 @@ def flog#cmd#flog(args: list<string>): dict<any>
 enddef
 
 # The implementation of ":Flogsetargs".
-def flog#cmd#flog_set_args(args: list<string>): dict<any>
+def flog#cmd#flog_set_args(args: list<string>, force: bool): dict<any>
   const state = flog#state#get_buf_state()
 
   const workdir = flog#state#get_fugitive_workdir(state)
-  flog#cmd#flog#args#parse(state.opts, workdir, args)
+  var opts = force ? flog#state#get_internal_default_opts() : state.opts
+
+  flog#cmd#flog#args#parse(opts, workdir, args)
+  flog#state#set_opts(state, opts)
+
   flog#floggraph#buf#update()
 
   return state

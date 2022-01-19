@@ -13,7 +13,7 @@ silent setlocal
 
 " Commands
 
-command! -buffer -range=0 -complete=customlist,flog#cmd#flog#args#complete -nargs=* Flogsetargs call flog#cmd#flog_set_args([<f-args>])
+command! -buffer -bang -range=0 -complete=customlist,flog#cmd#flog#args#complete -nargs=* Flogsetargs call flog#cmd#flog_set_args([<f-args>], !empty('<bang>'))
 command! -buffer Flogsplitcommit call flog#exec('<mods> Gsplit %h', 0, 0, 1)
 command! -buffer Flogmarks call flog#floggraph#mark#print_all()
 
