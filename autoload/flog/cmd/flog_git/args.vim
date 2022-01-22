@@ -48,13 +48,15 @@ def flog#cmd#flog_git#args#complete_commit_refs(commit: dict<any>): list<string>
       endif
 
       # Add remote branch
-      add(completions, ref.full)
+      if index(completions, ref.full) < 0
+        add(completions, ref.full)
+      endif
 
       # Add local branch
       if index(completions, ref.tail) < 0
         add(completions, ref.tail)
       endif
-    else
+    elseif index(completions, ref.full) < 0
       # Add special/tag/branch
       add(completions, ref.full)
     endif
