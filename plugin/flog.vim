@@ -100,6 +100,7 @@ g:flog_date_formats = [
   'iso', 
   'iso-strict',
   'rfc',
+  'format:',
   ]
 
 g:flog_open_cmds = [
