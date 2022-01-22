@@ -127,9 +127,11 @@ def flog#cmd#flog_git#args#complete(arg_lead: string, cmd_line: string, cursor_p
   const is_flog = flog#floggraph#buf#is_flog_buf()
   const has_state = flog#state#has_buf_state()
 
-  const [_, command_index, command, is_command] = flog#cmd#flog_git#args#parse(arg_lead, cmd_line, cursor_pos)
+  const [_, command_index, command, is_command] = flog#cmd#flog_git#args#parse(
+    arg_lead, cmd_line, cursor_pos)
 
-  const fugitive_completions = flog#fugitive#complete(arg_lead, cmd_line, cursor_pos)
+  const fugitive_completions = flog#fugitive#complete(
+    flog#shell#escape(arg_lead), cmd_line, cursor_pos)
 
   # Complete git/command args only
   if is_command || command_index < 0
@@ -140,7 +142,8 @@ def flog#cmd#flog_git#args#complete(arg_lead: string, cmd_line: string, cursor_p
 
   # Complete line
   if is_flog
-    completions += flog#cmd#flog_git#args#complete_flog(arg_lead, cmd_line, cursor_pos)
+    completions += flog#shell#escape_list(
+      flog#cmd#flog_git#args#complete_flog(arg_lead, cmd_line, cursor_pos))
   endif
 
   # Complete state
