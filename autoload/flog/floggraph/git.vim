@@ -80,7 +80,7 @@ def flog#floggraph#git#build_log_args(): string
   endif
   if len(opts.rev) >= 1
     var rev = ''
-    if opts.limit
+    if !empty(opts.limit)
       rev = flog#shell#escape(opts.rev[0])
     else
       rev = join(flog#shell#escape_list(opts.rev), ' ')
