@@ -133,8 +133,12 @@ def flog#floggraph#nav#set_rev(rev: string): string
   flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
 
-  state.opts.skip = ''
-  state.opts.rev = [rev]
+  if empty(rev)
+    state.opts.rev = []
+  else
+    state.opts.skip = ''
+    state.opts.rev = [rev]
+  endif
 
   flog#floggraph#buf#update()
 
