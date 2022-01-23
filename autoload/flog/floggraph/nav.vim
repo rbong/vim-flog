@@ -130,3 +130,15 @@ enddef
 def flog#floggraph#nav#skip_back(count: number): number
   return flog#floggraph#nav#skip_ahead(-count)
 enddef
+
+def flog#floggraph#nav#set_rev(rev: string): string
+  flog#floggraph#buf#assert_flog_buf()
+  const state = flog#state#get_buf_state()
+
+  state.opts.skip = ''
+  state.opts.rev = [rev]
+
+  flog#floggraph#buf#update()
+
+  return rev
+enddef
