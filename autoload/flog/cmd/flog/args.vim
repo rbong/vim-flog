@@ -68,9 +68,9 @@ def flog#cmd#flog#args#parse(current_opts: dict<any>, workdir: string, args: lis
       current_opts.skip = flog#args#parse_arg(arg)
     elseif arg == '-skip='
       current_opts.skip = defaults.skip
-    elseif arg =~ '^-sort=.\+'
+    elseif arg =~ '^-\(sort\|order\)=.\+'
       current_opts.sort = flog#args#parse_arg(arg)
-    elseif arg == '-sort='
+    elseif arg == '-sort=' || arg == '-order='
       current_opts.sort = defaults.sort
     elseif arg =~ '^-max-count=\d\+'
       current_opts.max_count = flog#args#parse_arg(arg)
@@ -308,6 +308,7 @@ def flog#cmd#flog#args#complete(arg_lead: string, cmd_line: string, cursor_pos: 
     '-grep=',
     '-skip=',
     '-sort=',
+    '-order=',
     ]
 
   if arg_lead == ''
@@ -328,7 +329,7 @@ def flog#cmd#flog#args#complete(arg_lead: string, cmd_line: string, cursor_pos: 
     return flog#cmd#flog#args#complete_rev(arg_lead)
   elseif arg_lead =~ '^-path='
     return flog#cmd#flog#args#complete_path(arg_lead)
-  elseif arg_lead =~ '^-sort='
+  elseif arg_lead =~ '^-\(sort\|order\)='
     return flog#cmd#flog#args#complete_sort(arg_lead)
   endif
   return flog#args#filter_completions(arg_lead, default_completion)
