@@ -85,7 +85,15 @@ def flog#exec#format_path(): string
   const state = flog#state#get_buf_state()
   var path = state.opts.path
 
-  if empty(path)
+  if !empty(state.opts.limit)
+    const [range, limit_path] = flog#args#split_git_limit_arg(state.opts.limit)
+
+    if empty(limit_path)
+      return ''
+    endif
+
+    path = [limit_path]
+  elseif empty(path)
     return ''
   endif
 

@@ -35,7 +35,7 @@ def flog#floggraph#git#build_log_args(): string
   args ..= ' --no-color'
   args ..= ' --pretty=' .. flog#floggraph#git#build_log_format()
   args ..= ' --date=' .. flog#shell#escape(opts.date)
-  if opts.all && !opts.limit
+  if opts.all && empty(opts.limit)
     args ..= ' --all'
   endif
   if opts.bisect
@@ -94,6 +94,10 @@ enddef
 def flog#floggraph#git#build_log_paths(): string
   const state = flog#state#get_buf_state()
   const opts = flog#state#get_resolved_opts(state)
+
+  if !empty(opts.limit)
+    return ''
+  endif
 
   if empty(opts.path)
     return ''
