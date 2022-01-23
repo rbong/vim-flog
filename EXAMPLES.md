@@ -4,24 +4,23 @@
 
 1. Launch the graph with `:Flog` (if this runs slowly for you, see [FAQ](FAQ.md)).
 2. Make sure your commit is in the graph by pressing `a` to toggle showing all commits.
-3. Navigate to your branch. There are a few ways to do this:
+3. Navigate to your branch. There are a couple ways to do this:
   - Use builtin VIM navigation like `/`, `j`, `k`, etc.
   - Use `]r`/`[r` to jump between commits with refs.
-  - Use `:Flogjump` to jump towards the commit with completion.
 4. Checkout the branch. There are also a few ways to do this:
   - Use `:Floggit checkout <Tab>`. This will complete the commit name.
   - Use the `git` mapping to prepopulate the command line with `:Floggit<Space>`, or use `co<Space>` for `:Floggit checkout<Space>`.
   - Use `cob` to checkout the first local branch name, or remote branch if it is not available.
-  - Use `cot` to checkout the first branch name, setting it up to be tracked locally if it is a remote branch.
+  - Use `col` to checkout the first branch name, setting it up to be tracked locally if it is a remote branch.
 
 ## Adding Default Arguments
 
-Put this inside of your `.vimrc` to always launch Flog with the `-all` and `-max-count=2000` options:
+Put this inside of your `.vimrc` to always launch Flog with the `-no-merges` and `-max-count=2000` options:
 
 ```vim
-let g:flog_default_arguments = {
+let g:flog_default_opts = {
             \ 'max_count': 2000,
-            \ 'all': 1,
+            \ 'merges': 0,
             \ }
 ```
 
@@ -32,15 +31,17 @@ You can use `:Flogsetargs` after the graph has launched to override these option
 Flogsetargs -max-count=
 # Increase the max count to 3000
 Flogsetargs -max-count=3000
+# Remove -no-merges
+Flogsetargs -merges
 # Clear out options
 Flogsetargs!
 ```
 
-If you don't want options to be cleared when you run `:Flogsetargs!` you can use `g:flog_permanent_default_arguments`.
+If you don't want options to be cleared when you run `:Flogsetargs!` you can use `g:flog_permanent_default_opts`.
 For example, if you want to always use the short date format:
 
 ```vim
-let g:flog_permanent_default_arguments = {
+let g:flog_permanent_default_opts = {
             \ 'date': 'short',
             \ }
 ```
@@ -48,26 +49,27 @@ let g:flog_permanent_default_arguments = {
 ## Diffing Commits
 
 There are several different ways to diff commits after launching Flog:
-  - Press `dd` in normal mode to diff the commit under the cursor.
+  - Press `dd` in normal mode to diff the commit under the cursor with `HEAD`.
   - Visually select the commits and use `:Floggit diff <Tab>` to complete the commits at the beginning and end of the selection.
   - Press `dd` in visual mode to diff the commits at the beginning and end of the selection
+  - Press `d!` to diff the commit at the cursor and the commit that was previously opened with `<CR>`.
 
 ## Extension Example: Switch Diff Order
 
-Instead of trying to provide settings for everything, Flog provides utility functions for customization.
+Flog has utility functions that allow for customization.
 This example shows how to switch the order of commits when diffing with `dd`.
 
 Put this code inside of your `.vimrc`:
 
 ```vim
 augroup flog
-  autocmd FileType floggraph nno <buffer> dd :<C-U>call flog#run_tmp_command('vertical belowright Git diff HEAD %h')<CR>
-  autocmd FileType floggraph vno <buffer> dd :<C-U>call flog#run_tmp_command("vertical belowright Git diff %(h'>) %(h'<)")<CR>
+  autocmd FileType floggraph nno <buffer> dd :<C-U>call flog#exec_tmp('vertical belowright Git diff HEAD %h', 0, 0)<CR>
+  autocmd FileType floggraph vno <buffer> dd :<C-U>call flog#exec_tmp("vertical belowright Git diff %(h'>) %(h'<)", 0, 0)<CR>
 augroup END
 ```
 
-`flog#run_tmp_command` tells flog to run the command and treat any windows it opens as temporary.
-You can also use `flog#run_command`, which runs a command using the same syntax without temporary windows.
+`flog#exec_tmp` tells flog to run the command and treat any windows it opens as temporary side windows.
+You can also use `flog#exec`, which runs a command using the same syntax without temporary side windows.
 
 This function can use different special format specifiers, similar to `printf()`.
 In this case, `%h` will resolve to the hash on the current line, and `%(h'>) %(h'<)` will resolve to the hashes at the end and beginning of the visual selection.
@@ -75,6 +77,7 @@ In this case, `%h` will resolve to the hash on the current line, and `%(h'>) %(h
 When diffing with `dd`, Flog will now show a diff from bottom-to-top, instead of top-to-bottom.
 This is because `%(h'<)` and `%(h'>)` have been swapped from the default command.
 
+See `:help flog#exec` for function arguments.
 See `:help flog-command-format` for more format specifiers.
 See `:help flog-functions` for more details about calling command functions.
 You can also view [the floggraph filetype script](https://github.com/rbong/vim-flog/blob/master/ftplugin/floggraph.vim), which effectively serves as further examples of Flog's utility functions.
