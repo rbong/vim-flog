@@ -116,7 +116,7 @@ hi default link flogDiffRemoved   diffRemoved
 " Graph Highlighting
 
 " Entry point for branches
-syntax match flogGraphBranch0 nextgroup=flogGraphBranch2,flogDiff,flogCommitInfo /\v^( |%u2502|%u251c|%U1f784)/
+syntax match flogGraphBranch0 nextgroup=flogGraphBranch2,flogDiff,flogCommitInfo /\v^( |%u2502|%u250a|%u251c|%u256d|%u2570|%U1f784)/
 
 " Color cycle for branches
 let branch_pattern = '/\v( |%u2500|%u252c|%u2570)( |%u2500|%u2502|%u250a|%u251c|%u2524|%u252c|%u2534|%u253c|%u256d|%u256e|%u256f|%u2570|%U1f784)/'
