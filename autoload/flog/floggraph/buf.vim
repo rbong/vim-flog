@@ -126,16 +126,7 @@ def flog#floggraph#buf#update(): number
 
   const cmd = flog#floggraph#git#build_log_cmd()
   flog#state#set_prev_log_cmd(state, cmd)
-  const parsed = flog#floggraph#git#parse_log_output(flog#shell#run(cmd))
-  flog#state#set_commits(state, parsed.commits)
-
-  var graph = {}
-
-  if opts.graph
-    graph = flog#graph#generate(parsed.commits, parsed.all_commit_content)
-  else
-    graph = flog#graph#generate_commits_only(parsed.commits, parsed.all_commit_content)
-  endif
+  const graph = flog#lua#get_graph(cmd)
 
   # Record previous commit
   const last_commit = flog#floggraph#commit#get_at_line('.')

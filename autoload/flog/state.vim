@@ -15,9 +15,8 @@ def flog#state#create(): dict<any>
     graph_bufnr: -1,
     fugitive_repo: {},
     commits: [],
+    commits_by_hash: {},
     line_commits: [],
-    commit_lines: {},
-    commit_cols: {},
     commit_marks: {},
     tmp_side_wins: [],
     }
@@ -135,39 +134,6 @@ def flog#state#get_fugitive_workdir(state: dict<any>): string
   return state.fugitive_repo.tree()
 enddef
 
-def flog#state#set_commits(state: dict<any>, commits: list<dict<any>>): list<dict<any>>
-  state.commits = commits
-  return commits
-enddef
-
-def flog#state#create_commit(): dict<any>
-  return {
-    hash: '',
-    # Ordered parent hashes
-    parents: [],
-    refs: ''
-    }
-enddef
-
-def flog#state#set_commit_hash(commit: dict<any>, hash: string): string
-  commit.hash = hash
-  return hash
-enddef
-
-def flog#state#set_commit_parents(commit: dict<any>, raw_parents: string): list<string>
-  const parents = split(raw_parents)
-  const nparents = len(parents)
-
-  commit.parents = parents
-
-  return parents
-enddef
-
-def flog#state#set_commit_refs(commit: dict<any>, refs: string): string
-  commit.refs = refs
-  return refs
-enddef
-
 def flog#state#get_commit_refs(commit: dict<any>): list<dict<any>>
   var refs = []
 
@@ -197,9 +163,9 @@ enddef
 
 def flog#state#set_graph(state: dict<any>, graph: dict<any>): dict<any>
   # Selectively set graph properties
+  state.commits = graph.commits
+  state.commits_by_hash = graph.commits_by_hash
   state.line_commits = graph.line_commits
-  state.commit_lines = graph.commit_lines
-  state.commit_cols = graph.commit_cols
   return graph
 enddef
 

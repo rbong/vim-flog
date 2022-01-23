@@ -17,12 +17,12 @@ def flog#floggraph#commit#get_by_hash(hash: string): dict<any>
   flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
 
-  const lnum = get(state.commit_lines, hash, -1)
-  if lnum < 0
+  const commit = get(state.commits_by_hash, hash, {})
+  if empty(commit)
     return {}
   endif
 
-  return flog#floggraph#commit#get_at_line(lnum)
+  return commit
 enddef
 
 def flog#floggraph#commit#get_by_ref(ref: string): dict<any>

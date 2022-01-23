@@ -13,12 +13,17 @@ g:flog_sort_type_not_found = 'flog: sort type not found'
 g:flog_graph_draw_error = 'flog: internal error drawing graph'
 g:flog_invalid_commit_mark = 'flog: invalid commit mark'
 g:flog_reverse_requires_no_graph = 'flog: -reverse requires -no-graph'
+g:flog_lua_not_found = 'flog: Lua not found'
 
 # Options
 
 g:flog_should_write_commit_graph = true
 
+g:flog_check_lua_version = true
+
 g:flog_write_commit_graph_args = '--reachable --progress'
+
+g:flog_check_lua_version = true
 
 g:flog_get_author_args = '--all --no-merges --max-count=100000'
 
@@ -31,6 +36,8 @@ g:flog_sort_types = [
   ]
 
 # Data
+
+g:flog_root_dir = fnamemodify(resolve(expand('<sfile>:p')), ':h:h')
 
 g:flog_format_specifiers = [
   '%H',

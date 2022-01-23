@@ -12,17 +12,15 @@ def flog#floggraph#nav#jump_to_commit(hash: string): list<number>
     return [-1, -1]
   endif
 
-  const lnum = get(state.commit_lines, hash, -1)
-  if lnum < 0
+  const commit = get(state.commits_by_hash, hash, {})
+  if empty(commit)
     return [-1, -1]
   endif
 
-  const col = get(state.commit_cols, hash, -1)
-  if col < 0
-    setcharpos('.', [bufnr(), lnum, 1, 1])
-  else
-    setcharpos('.', [bufnr(), lnum, col, col])
-  endif
+  const lnum = max([commit.line, 1])
+  const col = max([commit.col, 1])
+
+  setcharpos('.', [bufnr(), lnum, col, col])
 
   return [lnum, col]
 enddef
