@@ -80,13 +80,13 @@ def flog#cmd#flog#args#parse(current_opts: dict<any>, workdir: string, args: lis
       current_opts.open_cmd = flog#args#parse_arg(arg)
     elseif arg == '-open-cmd='
       current_opts.open_cmd = defaults.open_cmd
-    elseif arg =~ '^-search=.\+'
+    elseif arg =~ '^-\(search\|grep\)=.\+'
       current_opts.search = flog#args#parse_arg(arg)
-    elseif arg == '-search='
+    elseif arg == '-search=' || arg == '-grep='
       current_opts.search = defaults.search
-    elseif arg =~ '^-patch-search=.\+'
+    elseif arg =~ '^-patch-\(search\|grep\)=.\+'
       current_opts.patch_search = flog#args#parse_arg(arg)
-    elseif arg == '-patch-search='
+    elseif arg == '-patch-search=' || arg == '-patch-grep='
       current_opts.patch_search = defaults.patch_search
     elseif arg =~ '^-author=.\+'
       current_opts.author = flog#args#parse_arg(arg)
@@ -296,6 +296,7 @@ def flog#cmd#flog#args#complete(arg_lead: string, cmd_line: string, cursor_pos: 
     '-patch ',
     '-no-patch ',
     '-patch-search=',
+    '-patch-grep=',
     '-path=',
     '-raw-args=',
     '-reflog ',
@@ -304,6 +305,7 @@ def flog#cmd#flog#args#complete(arg_lead: string, cmd_line: string, cursor_pos: 
     '-reverse ',
     '-no-reverse ',
     '-search=',
+    '-grep=',
     '-skip=',
     '-sort=',
     ]
@@ -316,7 +318,7 @@ def flog#cmd#flog#args#complete(arg_lead: string, cmd_line: string, cursor_pos: 
     return flog#cmd#flog#args#complete_date(arg_lead)
   elseif arg_lead =~ '^-open-cmd='
     return flog#cmd#flog#args#complete_open_cmd(arg_lead)
-  elseif arg_lead =~ '^-\(patch-\)\?search='
+  elseif arg_lead =~ '^-\(patch-\)\?\(search\|grep\)='
     return []
   elseif arg_lead =~ '^-author='
     return flog#cmd#flog#args#complete_author(arg_lead)
