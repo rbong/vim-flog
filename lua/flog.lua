@@ -6,7 +6,8 @@ local graph_error = 'flog: internal error drawing graph'
 
 -- Parse args
 local graph_opt = arg[1] == '1'
-local cmd = arg[2]
+local start_token_opt = arg[2]
+local cmd = arg[3]
 
 -- Init commit parsing data
 local commits = {}
@@ -16,7 +17,7 @@ local ncommits = 0
 -- Run command
 local handle = io.popen(cmd)
 
--- Skip first line (__START)
+-- Skip first line (start token)
 handle:read()
 
 -- Read hashes until EOF
@@ -40,12 +41,12 @@ for hash in handle:lines() do
   -- Read refs
   local refs = handle:read()
 
-  -- Read output until EOF or __START
+  -- Read output until EOF or start token
   local out = {}
   local nlines = 0
   for line in handle:lines() do
     nlines = nlines + 1
-    if line == '__START' then
+    if line == start_token_opt then
       break
     end
     out[nlines] = line

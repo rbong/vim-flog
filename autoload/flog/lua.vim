@@ -44,10 +44,11 @@ def flog#lua#get_graph(git_cmd: string): dict<any>
   cmd ..= flog#lua#get_lua_script()
   cmd ..= ' '
   cmd ..= state.opts.graph ? '1 ' : '0 '
+  cmd ..= g:flog_commit_start_token
+  cmd ..= ' '
   cmd ..= shellescape(git_cmd)
 
   # Run command
-  g:debug = cmd
   const out = flog#shell#run(cmd)
 
   # Parse number of commits
