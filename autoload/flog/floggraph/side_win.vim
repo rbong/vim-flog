@@ -35,12 +35,12 @@ def flog#floggraph#side_win#initialize(state: dict<any>, is_tmp: bool): number
     flog#state#set_buf_state(state)
   endif
 
-  silent! doautocmd User FlogSideWinSetmp
+  silent! doautocmd User FlogSideWinSetup
 
   if is_tmp
-    silent! doautocmd User FlogTmpSideWinSetmp
+    silent! doautocmd User FlogTmpSideWinSetup
   else
-    silent! doautocmd User FlogNonTmpSideWinSetmp
+    silent! doautocmd User FlogNonTmpSideWinSetup
   endif
 
   b:flog_side_win_initialized = true
