@@ -53,7 +53,9 @@ def flog#exec#format_commit_branch(cache: dict<any>, commit: dict<any>): string
     endif
   endfor
 
-  return empty(local_branch) ? remote_branch : local_branch
+  const branch = empty(local_branch) ? remote_branch : local_branch
+
+  return flog#shell#escape(branch)
 enddef
 
 def flog#exec#format_branch(cache: dict<any>): string
