@@ -291,6 +291,14 @@ D!                                                                   *flog-D!*
 ------------------------------------------------------------------------------
 NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
 
+                                                 *<Plug>(FlogJumpToCommitCol)*
+^                                                                     *flog-^*
+
+  Move the cursor to the column containing the commit branch.
+
+  If the column is already on or to the left of the commit branch, jumps to
+  the column which marks the start of the commit format.
+
                                                 *<Plug>(FlogVNextCommitRight)*
 <C-N>                                                            *flog-CTRL-N*
 )                                                                     *flog-)*
