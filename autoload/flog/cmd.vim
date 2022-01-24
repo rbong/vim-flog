@@ -23,7 +23,7 @@ def flog#cmd#flog(args: list<string>): dict<any>
   const opts = flog#cmd#flog#args#parse(default_opts, workdir, args)
   flog#state#set_opts(state, opts)
 
-  if g:flog_should_write_commit_graph && !flog#git#has_commit_graph()
+  if g:flog_write_commit_graph && !flog#git#has_commit_graph()
     flog#git#write_commit_graph()
   endif
 

@@ -17,9 +17,7 @@ g:flog_lua_not_found = 'flog: Lua not found'
 
 # Options
 
-g:flog_should_write_commit_graph = true
-
-g:flog_check_lua_version = true
+g:flog_write_commit_graph = true
 
 g:flog_write_commit_graph_args = '--reachable --progress'
 
