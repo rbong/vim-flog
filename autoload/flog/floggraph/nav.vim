@@ -57,10 +57,10 @@ def flog#floggraph#nav#jump_to_mark(key: string): list<number>
   return result
 enddef
 
-def flog#floggraph#nav#next_commit(offset: number = 1): dict<any>
+def flog#floggraph#nav#next_commit(count: number = 1): dict<any>
   flog#floggraph#buf#assert_flog_buf()
   
-  const commit = flog#floggraph#commit#get_next(offset)
+  const commit = flog#floggraph#commit#get_next(count)
   if !empty(commit)
     flog#floggraph#nav#jump_to_commit(commit.hash)
   endif
@@ -68,8 +68,8 @@ def flog#floggraph#nav#next_commit(offset: number = 1): dict<any>
   return commit
 enddef
 
-def flog#floggraph#nav#prev_commit(offset: number = 1): dict<any>
-  return flog#floggraph#nav#next_commit(-offset)
+def flog#floggraph#nav#prev_commit(count: number = 1): dict<any>
+  return flog#floggraph#nav#next_commit(-count)
 enddef
 
 def flog#floggraph#nav#next_ref_commit(count: number = 1): number

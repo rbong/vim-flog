@@ -114,8 +114,8 @@ endif
 if !hasmapto('<Plug>(FlogPrevCommit)')
   nmap <buffer> ( <Plug>(FlogPrevCommit)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogNextCommit) :<C-U>call flog#floggraph#nav#next_commit()<CR>
-nnoremap <buffer> <silent> <Plug>(FlogPrevCommit) :<C-U>call flog#floggraph#nav#prev_commit()<CR>
+nnoremap <buffer> <silent> <Plug>(FlogNextCommit) :<C-U>call flog#floggraph#nav#next_commit(max([1, v:count]))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogPrevCommit) :<C-U>call flog#floggraph#nav#prev_commit(max([1, v:count]))<CR>
 
 if !hasmapto('<Plug>(FlogVNextCommitRight)')
   nmap <buffer> <C-N> <Plug>(FlogVNextCommitRight)
@@ -123,8 +123,8 @@ endif
 if !hasmapto('<Plug>(FlogVPrevCommitRight)')
   nmap <buffer> <C-P> <Plug>(FlogVPrevCommitRight)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogVNextCommitRight) :<C-U>call flog#floggraph#nav#next_commit() \| vertical belowright Flogsplitcommit<CR>
-nnoremap <buffer> <silent> <Plug>(FlogVPrevCommitRight) :<C-U>call flog#floggraph#nav#prev_commit() \| vertical belowright Flogsplitcommit<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVNextCommitRight) :<C-U>call flog#floggraph#nav#next_commit(max([1, v:count])) \| vertical belowright Flogsplitcommit<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVPrevCommitRight) :<C-U>call flog#floggraph#nav#prev_commit(max([1, v:count])) \| vertical belowright Flogsplitcommit<CR>
 
 if !hasmapto('<Plug>(FlogVNextRefRight)')
   nmap <buffer> ]r <Plug>(FlogVNextRefRight)
@@ -132,8 +132,8 @@ endif
 if !hasmapto('<Plug>(FlogVPrevRefRight)')
   nmap <buffer> [r <Plug>(FlogVPrevRefRight)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogVNextRefRight) :<C-U>call flog#floggraph#nav#next_ref_commit()<CR>
-nnoremap <buffer> <silent> <Plug>(FlogVPrevRefRight) :<C-U>call flog#floggraph#nav#prev_ref_commit()<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVNextRefRight) :<C-U>call flog#floggraph#nav#next_ref_commit(max([1, v:count]))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVPrevRefRight) :<C-U>call flog#floggraph#nav#prev_ref_commit(max([1, v:count]))<CR>
 
 if !hasmapto('<Plug>(FlogSkipAhead)')
   nmap <buffer> ]] <Plug>(FlogSkipAhead)
