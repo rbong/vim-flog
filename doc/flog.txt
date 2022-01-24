@@ -110,13 +110,13 @@ COMMANDS                                                       *flog-commands*
 
     Passes the "--skip=<number>" argument to "git log".
 
-  -grep=<pattern>                                                 *:Flog-grep*
   -search=<pattern>                                             *:Flog-search*
+  -grep=<pattern>                                                 *:Flog-grep*
 
     Passes the "--grep=<pattern>" argument to "git log".
 
-  -patch-grep=<pattern>                                     *:Flog-patch-grep*
   -patch-search=<pattern>                                 *:Flog-patch-search*
+  -patch-grep=<pattern>                                     *:Flog-patch-grep*
 
     Passes the "-G=<pattern>" argument to "git log".
 
