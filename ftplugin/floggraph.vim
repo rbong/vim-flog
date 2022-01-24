@@ -29,6 +29,11 @@ if !hasmapto('<Plug>(FlogVSplitCommitRight)')
 endif
 nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitRight) :vertical belowright Flogsplitcommit<CR>
 
+if !hasmapto('<Plug>(FlogVSplitCommitPathsRight)')
+  nmap <buffer> <Tab> <Plug>(FlogVSplitCommitPathsRight)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitPathsRight) :<C-U>call flog#exec_tmp('vertical belowright Git show %h -- %p', 0, 0)<CR>
+
 if !hasmapto('<Plug>(FlogGit)')
   nmap <buffer> git <Plug>(FlogGit)
   vmap <buffer> git <Plug>(FlogGit)
@@ -61,11 +66,6 @@ endif
 nnoremap <buffer> <silent> <Plug>(FlogQuit) :<C-U>call flog#floggraph#buf#close()<CR>
 
 " Diff mappings
-
-if !hasmapto('<Plug>(FlogVSplitCommitPathsRight)')
-  nmap <buffer> <Tab> <Plug>(FlogVSplitCommitPathsRight)
-endif
-nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitPathsRight) :<C-U>call flog#exec_tmp('vertical belowright Git show %h -- %p', 0, 0)<CR>
 
 if !hasmapto('<Plug>(FlogVDiffSplitRight)')
   nmap <buffer> dd <Plug>(FlogVDiffSplitRight)
@@ -168,11 +168,6 @@ if !hasmapto('<Plug>(FlogToggleReflog)')
 endif
 nnoremap <buffer> <silent> <Plug>(FlogToggleReflog) :<C-U>call flog#floggraph#opts#toggle_reflog()<CR>
 
-if !hasmapto('<Plug>(FlogToggleReverse)')
-  nmap <buffer> gsr <Plug>(FlogToggleReverse)
-endif
-nnoremap <buffer> <silent> <Plug>(FlogToggleReverse) :<C-U>call flog#floggraph#opts#toggle_reverse()<CR>
-
 if !hasmapto('<Plug>(FlogToggleGraph)')
   nmap <buffer> gx <Plug>(FlogToggleGraph)
 endif
@@ -212,6 +207,11 @@ if !hasmapto('<Plug>(FlogSortTopo)')
   nmap <buffer> gst <Plug>(FlogSortTopo)
 endif
 nnoremap <buffer> <silent> <Plug>(FlogSortTopo) :<C-U>Flogsetargs -sort=topo<CR>
+
+if !hasmapto('<Plug>(FlogToggleReverse)')
+  nmap <buffer> gsr <Plug>(FlogToggleReverse)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogToggleReverse) :<C-U>call flog#floggraph#opts#toggle_reverse()<CR>
 
 " Commit/branch mappings
 
@@ -303,6 +303,22 @@ endif
 nnoremap <buffer> <Plug>(FlogGitBranch) :Floggit branch<Space>
 vnoremap <buffer> <Plug>(FlogGitBranch) :Floggit branch<Space>
 
+" Mark mappings
+
+if !hasmapto('<Plug>(FlogSetCommitMark)')
+  nmap <buffer> m <Plug>(FlogSetCommitMark)
+  vmap <buffer> m <Plug>(FlogSetCommitMark)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogSetCommitMark) :<C-U>call flog#floggraph#mark#set(nr2char(getchar()), '.')<CR>
+vnoremap <buffer> <silent> <Plug>(FlogSetCommitMark) :<C-U>call flog#floggraph#mark#set(nr2char(getchar()), '.')<CR>
+
+if !hasmapto('<Plug>(FlogJumpToCommitMark)')
+  nmap <buffer> ' <Plug>(FlogJumpToCommitMark)
+  vmap <buffer> ' <Plug>(FlogJumpToCommitMark)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogJumpToCommitMark) :<C-U>call flog#floggraph#nav#jump_to_mark(nr2char(getchar()))<CR>
+vnoremap <buffer> <silent> <Plug>(FlogJumpToCommitMark) :<C-U>call flog#floggraph#nav#jump_to_mark(nr2char(getchar()))<CR>
+
 " Rebase mappings
 
 if !hasmapto('<Plug>(FlogRebaseInteractive)')
@@ -366,19 +382,3 @@ if !hasmapto('<Plug>(FlogGitRebase)')
 endif
 nnoremap <buffer> <Plug>(FlogGitRebase) :Floggit rebase<Space>
 vnoremap <buffer> <Plug>(FlogGitRebase) :Floggit rebase<Space>
-
-" Mark mappings
-
-if !hasmapto('<Plug>(FlogSetCommitMark)')
-  nmap <buffer> m <Plug>(FlogSetCommitMark)
-  vmap <buffer> m <Plug>(FlogSetCommitMark)
-endif
-nnoremap <buffer> <silent> <Plug>(FlogSetCommitMark) :<C-U>call flog#floggraph#mark#set(nr2char(getchar()), '.')<CR>
-vnoremap <buffer> <silent> <Plug>(FlogSetCommitMark) :<C-U>call flog#floggraph#mark#set(nr2char(getchar()), '.')<CR>
-
-if !hasmapto('<Plug>(FlogJumpToCommitMark)')
-  nmap <buffer> ' <Plug>(FlogJumpToCommitMark)
-  vmap <buffer> ' <Plug>(FlogJumpToCommitMark)
-endif
-nnoremap <buffer> <silent> <Plug>(FlogJumpToCommitMark) :<C-U>call flog#floggraph#nav#jump_to_mark(nr2char(getchar()))<CR>
-vnoremap <buffer> <silent> <Plug>(FlogJumpToCommitMark) :<C-U>call flog#floggraph#nav#jump_to_mark(nr2char(getchar()))<CR>
