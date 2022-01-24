@@ -85,7 +85,7 @@ def flog#cmd#flog_git#args#complete_flog(arg_lead: string, cmd_line: string, cur
     is_range = first_commit != last_commit
   endif
 
-  var completions = []
+  var completions: list<string> = []
 
   if is_range
     # Complete range
@@ -122,7 +122,8 @@ def flog#cmd#flog_git#args#complete_flog(arg_lead: string, cmd_line: string, cur
     completions = [commit.hash] + flog#cmd#flog_git#args#complete_commit_refs(commit)
   endif
 
-  return flog#args#filter_completions(arg_lead, completions)
+  completions = flog#args#filter_completions(arg_lead, completions)
+  return completions
 enddef
 
 def flog#cmd#flog_git#args#complete(arg_lead: string, cmd_line: string, cursor_pos: number): list<string>
