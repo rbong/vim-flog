@@ -299,9 +299,21 @@ NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
   If the column is already on or to the left of the commit branch, jumps to
   the column which marks the start of the commit format.
 
+                                                      *<Plug>(FlogNextCommit)*
+)                                                                     *flog-)*
+
+  Jump to the next commit.
+
+  Accepts a count.
+  Sets |flog-''| to the last commit under the cursor.
+
+                                                      *<Plug>(FlogPrevCommit)*
+(                                                                     *flog-(*
+
+  Same as |flog-)|, but jump backwards.
+
                                                 *<Plug>(FlogVNextCommitRight)*
 <C-N>                                                            *flog-CTRL-N*
-)                                                                     *flog-)*
 
   Jump to the next commit and open it in a temporary |flog-side-window|.
 
@@ -311,19 +323,16 @@ NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
 
                                                 *<Plug>(FlogVPrevCommitRight)*
 <C-P>                                                            *flog-CTRL-P*
-(                                                                     *flog-(*
 
   Same as |flog-<C-N>|, but jump backwards.
 
                                                    *<Plug>(FlogVNextRefRight)*
 ]r                                                                   *flog-]r*
 
-  Jump to the next commit with a ref name and open it in a temporary
-  |flog-side-window|.
+  Jump to the next commit with a ref name.
 
   Accepts a count.
   Sets |flog-''| to the last commit under the cursor.
-  Sets |flog-'!| to the new commit under the cursor.
 
                                                    *<Plug>(FlogVPrevRefRight)*
 [r                                                                   *flog-[r*
