@@ -60,9 +60,13 @@ enddef
 def flog#floggraph#nav#next_commit(count: number = 1): dict<any>
   flog#floggraph#buf#assert_flog_buf()
   
+  const prev_line = line('.')
+
   const commit = flog#floggraph#commit#get_next(count)
+
   if !empty(commit)
     flog#floggraph#nav#jump_to_commit(commit.hash)
+    flog#floggraph#mark#set_jump(prev_line)
   endif
 
   return commit
@@ -75,10 +79,13 @@ enddef
 def flog#floggraph#nav#next_ref_commit(count: number = 1): number
   flog#floggraph#buf#assert_flog_buf()
 
+  const prev_line = line('.')
+
   const [nrefs, commit] = flog#floggraph#commit#get_next_ref(count)
 
   if !empty(commit)
-    call flog#floggraph#nav#jump_to_commit(commit.hash)
+    flog#floggraph#nav#jump_to_commit(commit.hash)
+    flog#floggraph#mark#set_jump(prev_line)
   endif
 
   return nrefs
