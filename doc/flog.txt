@@ -828,7 +828,7 @@ COMMAND FORMAT                                           *flog-command-format*
                                                                      *flog-%H*
   %H                    Same as %h, but do not set |flog-'!|.
 
-                                                                 *flog-%(h'x)*
+                                                      *flog-%(h'* *flog-%(h')*
   %(h'x)                The hash at the given commit mark "x".
                         See also |flog-commit-marks|.
 
@@ -837,7 +837,7 @@ COMMAND FORMAT                                           *flog-command-format*
                         any. Local branches prioritized first. Useful for
                         checking out branches.
 
-                                                                 *flog-%(b'x)*
+                                                      *flog-%(b'* *flog-%(b')*
   %(b'x)                The branch at the given commit mark "x".
 
                                                                      *flog-%l*
@@ -846,7 +846,7 @@ COMMAND FORMAT                                           *flog-command-format*
                         commit is used, trim the remote name from the branch.
                         Useful for checking out commits for tracking.
 
-                                                                 *flog-%(l'x)*
+                                                      *flog-%(l'* *flog-%(l')*
   %(l'x)                The local branch at the given mark "x".
 
                                                                      *flog-%p*
