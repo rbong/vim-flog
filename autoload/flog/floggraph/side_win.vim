@@ -35,6 +35,10 @@ def flog#floggraph#side_win#initialize(state: dict<any>, is_tmp: bool): number
     flog#state#set_buf_state(state)
   endif
 
+  flog#deprecate#autocmd('FlogCmdBufferSetup', 'FlogSideWinSetup')
+  flog#deprecate#autocmd('FlogTmpCmdBufferSetup', 'FlogTmpSideWinSetup')
+  flog#deprecate#autocmd('FlogNonTmpCmdBufferSetup', 'FlogNonTmpSideWinSetup')
+
   silent! doautocmd User FlogSideWinSetup
 
   if is_tmp

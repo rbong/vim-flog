@@ -32,3 +32,21 @@ def flog#deprecate#function(old_func: string, new_func: string, new_args = '...'
   const new_usage = printf('call %s(%s)', new_func, new_args)
   flog#deprecate#show_warning(old_usage, new_usage)
 enddef
+
+def flog#deprecate#command(old_cmd: string, new_usage: string)
+  flog#deprecate#show_warning(old_cmd, new_usage)
+enddef
+
+def flog#deprecate#autocmd(old_autocmd: string, new_autocmd: string, new_args = '...')
+  if !exists(printf('#User#%s', old_autocmd))
+    return
+  endif
+
+  const old_usage = printf('autocmd User %s', old_autocmd)
+  if flog#deprecate#did_show_warning(old_usage)
+    return
+  endif
+
+  const new_usage = printf('autocmd User %s %s', new_autocmd, new_args)
+  flog#deprecate#show_warning(old_usage, new_usage)
+enddef
