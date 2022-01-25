@@ -50,6 +50,12 @@ def flog#state#get_internal_default_opts(): dict<any>
         'path': [],
         }
 
+  # Show deprecation warning for old setting
+  flog#deprecate#setting(
+    'g:flog_permanent_default_arguments',
+    'g:flog_permanent_default_opts'
+    )
+
   # Read the user immutable defaults
   if exists('g:flog_permanent_default_opts')
     for [key, value] in items(g:flog_permanent_default_opts)
@@ -74,6 +80,12 @@ enddef
 
 def flog#state#get_default_opts(): dict<any>
   var defaults = flog#state#get_internal_default_opts()
+
+  # Show deprecation warning for old setting
+  flog#deprecate#setting(
+    'g:flog_default_arguments',
+    'g:flog_default_opts'
+    )
 
   # Read the user defaults
   if exists('g:flog_default_opts')

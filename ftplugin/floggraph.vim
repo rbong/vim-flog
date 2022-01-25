@@ -279,6 +279,10 @@ nnoremap <buffer> <silent> <Plug>(FlogCheckoutBranch) :<C-U>call flog#exec('Git 
 
 if !hasmapto('<Plug>(FlogCheckoutLocalBranch)')
   nmap <buffer> col <Plug>(FlogCheckoutLocalBranch)
+
+  if !hasmapto('cot')
+    nnoremap <buffer> <silent> cot :<C-U>call flog#deprecate#default_mapping('cot', 'col')<CR>
+  endif
 endif
 nnoremap <buffer> <silent> <Plug>(FlogCheckoutLocalBranch) :<C-U>call flog#exec('Git checkout %l', 0, 1, 0)<CR>
 
