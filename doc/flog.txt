@@ -638,7 +638,7 @@ r<Space>                                                       *flog-r<Space>*
   See also "git rebase --help".
 
 ==============================================================================
-OPTIONS                                                         *flog-options*
+SETTINGS                                                       *flog-settings*
 
 g:flog_default_opts                                      *g:flog_default_opts*
 

@@ -15,7 +15,7 @@ g:flog_invalid_commit_mark = 'flog: invalid commit mark'
 g:flog_reverse_requires_no_graph = 'flog: -reverse requires -no-graph'
 g:flog_lua_not_found = 'flog: Lua not found'
 
-# Options
+# Settings
 
 g:flog_write_commit_graph = true
 
