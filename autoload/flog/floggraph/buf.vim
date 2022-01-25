@@ -39,6 +39,10 @@ def flog#floggraph#buf#update_status(): string
   return b:flog_status_summary
 enddef
 
+def flog#floggraph#buf#get_initial_name(instance_number: number): string
+  return ' flog-' .. string(instance_number) .. ' [uninitialized]'
+enddef
+
 def flog#floggraph#buf#get_name(instance_number: number, opts: dict<any>): string
   var name = 'flog-' .. string(instance_number)
 
@@ -101,7 +105,7 @@ def flog#floggraph#buf#get_name(instance_number: number, opts: dict<any>): strin
 enddef
 
 def flog#floggraph#buf#open(state: dict<any>): number
-  const bufname = ' flog-' .. string(state.instance_number) .. ' [uninitialized]'
+  const bufname = flog#floggraph#buf#get_initial_name(state.instance_number)
   execute 'silent! ' .. state.opts.open_cmd .. bufname
 
   flog#state#set_buf_state(state)
