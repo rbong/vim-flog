@@ -4,6 +4,55 @@ vim9script
 # This file contains functions which allow vim to communicate with Lua.
 #
 
+def flog#lua#should_use_internal(): bool
+  const use_lua = get(g:, 'flog_use_internal_lua', false)
+
+  if use_lua && !has('lua')
+    echoerr 'flog: warning: internal Lua is enabled but unavailable'
+    return false
+  endif
+
+  return use_lua
+enddef
+
+g:flog_did_check_lua_internal_version = false
+
+def flog#lua#check_internal_version(): bool
+  if g:flog_check_lua_version && !g:flog_did_check_lua_internal_version
+    g:flog_did_check_lua_internal_version = true
+
+    if luaeval('_VERSION') !~ '\c^lua 5\.1\(\.\|$\)'
+      echoerr 'flog: warning: only Lua 5.1 and LuaJIT 2.1 are supported'
+    elseif empty(luaeval('jit and jit.version'))
+      echoerr 'flog: warning: for speed improvements, please compile Vim with LuaJIT 2.1'
+    endif
+
+    return true
+  endif
+
+  return false
+enddef
+
+g:flog_did_check_lua_bin_version = false
+
+def flog#lua#check_bin_version(bin: string): bool
+  if g:flog_check_lua_version && !g:flog_did_check_lua_bin_version
+    g:flog_did_check_lua_bin_version = true
+
+    const out = flog#shell#run(bin .. ' -v')[0]
+
+    if out =~ '\c^lua 5\.1\(\.\|$\)'
+      echoerr 'flog: warning: for speed improvements, please install LuaJIT 2.1'
+    elseif out !~ '\c^luajit 2\.1\(\.\|$\)'
+      echoerr 'flog: warning: only Lua 5.1 and LuaJIT 2.1 are supported'
+    endif
+
+    return true
+  endif
+
+  return false
+enddef
+
 def flog#lua#get_bin(): string
   var bin = ''
 
@@ -16,35 +65,70 @@ def flog#lua#get_bin(): string
     bin = 'luajit'
   endif
 
-  if g:flog_check_lua_version
-    g:flog_check_lua_version = false
+  flog#lua#check_bin_version(bin)
 
-    const out = flog#shell#run(bin .. ' -v')[0]
-    if out =~ '\c^lua 5\.1\.'
-      echoerr 'flog: warning: for speed improvements, please install LuaJIT 2.1'
-    elseif out !~ '\c^luajit 2\.1\.'
-      echoerr 'flog: warning: only Lua 5.1 and LuaJIT 2.1 are supported'
-    endif
-  endif
-
-  return 'luajit'
+  return bin
 enddef
 
-def flog#lua#get_lua_script(): string
-  return shellescape(g:flog_root_dir .. '/lua/flog.lua')
+def flog#lua#get_lib_path(lib: string): string
+  return g:flog_root_dir .. '/lua/flog/' .. lib
 enddef
 
-def flog#lua#get_graph(git_cmd: string): dict<any>
+def flog#lua#get_graph_internal(git_cmd: string): dict<any>
   flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
+
+  # Check version
+  flog#lua#check_internal_version()
+
+  # Load graph lib
+  const graph_lib = flog#lua#get_lib_path('graph.lua')
+  exec 'luafile ' .. fnameescape(graph_lib)
+
+  # Set temporary vars
+  g:flog_tmp_enable_graph = state.opts.graph
+  g:flog_tmp_git_cmd = git_cmd
+
+  # Build command
+  var cmd = 'flog_get_graph('
+  cmd ..= 'true, '
+  cmd ..= 'vim.eval("g:flog_commit_start_token"), '
+  cmd ..= 'vim.eval("g:flog_tmp_enable_graph"), '
+  cmd ..= 'vim.eval("g:flog_tmp_git_cmd"))'
+
+  # Evaluate command
+  var result = luaeval(cmd)
+
+  # Cleanup
+  unlet! g:flog_tmp_enable_graph
+  unlet! g:flog_tmp_git_cmd
+
+  return {
+    output: result.output,
+    commits: result.commits,
+    commits_by_hash: result.commits_by_hash,
+    line_commits: result.line_commits,
+    }
+enddef
+
+def flog#lua#get_graph_bin(git_cmd: string): dict<any>
+  flog#floggraph#buf#assert_flog_buf()
+  const state = flog#state#get_buf_state()
+
+  # Get paths
+  const script_path = flog#lua#get_lib_path('graph_bin.lua')
+  const graph_lib_path = flog#lua#get_lib_path('graph.lua')
 
   # Build command
   var cmd = flog#lua#get_bin()
   cmd ..= ' '
-  cmd ..= flog#lua#get_lua_script()
+  cmd ..= shellescape(script_path)
   cmd ..= ' '
-  cmd ..= state.opts.graph ? '1 ' : '0 '
-  cmd ..= g:flog_commit_start_token
+  cmd ..= shellescape(graph_lib_path)
+  cmd ..= ' '
+  cmd ..= shellescape(g:flog_commit_start_token)
+  cmd ..= ' '
+  cmd ..= state.opts.graph ? 'true' : 'false'
   cmd ..= ' '
   cmd ..= shellescape(git_cmd)
 
@@ -119,4 +203,14 @@ def flog#lua#get_graph(git_cmd: string): dict<any>
     commits_by_hash: commits_by_hash,
     line_commits: line_commits,
     }
+enddef
+
+def flog#lua#get_graph(git_cmd: string): dict<any>
+  flog#floggraph#buf#assert_flog_buf()
+
+  if flog#lua#should_use_internal()
+    return flog#lua#get_graph_internal(git_cmd)
+  endif
+
+  return flog#lua#get_graph_bin(git_cmd)
 enddef

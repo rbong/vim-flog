@@ -20,6 +20,9 @@ Flog requires the |fugitive| plugin to be installed.
 
 Flog also requires LuaJIT 2.1 to be installed on the system.
 
+See also |g:flog_lua_bin|, |g:flog_use_internal_lua|,
+|g:flog_check_lua_version|.
+
 ==============================================================================
 COMMANDS                                                       *flog-commands*
 
@@ -679,6 +682,36 @@ g:flog_write_commit_graph_args                *g:flog_write_commit_graph_args*
   Defaults to "--reachable --progress".
 
   See also "git commit-graph --help".
+
+g:flog_check_lua_version                            *g:flog_check_lua_version*
+
+  When enabled, check that the installed version of Lua is supported.
+
+  Defaults to true.
+
+g:flog_lua_bin                                                *g:flog_lua_bin*
+
+  The Lua interpretter to use when |g:flog_use_internal_lua| is disabled.
+
+  Defaults to "luajit".
+
+g:flog_use_internal_lua                              *g:flog_use_internal_lua*
+
+  When enabled, use the version of Lua included with Vim rather than calling
+  Lua directly.
+
+  In most cases, this requires compiling Vim with:
+>
+  ./configure \
+    ...
+    --enable-luainterp=dynamic \
+    --with-luajit
+<
+
+  See |install| for information on compiling Vim.
+  See also "./configure --help".
+
+  Defaults to false.
 
 g:flog_get_author_args                                *g:flog_get_author_args*
 
