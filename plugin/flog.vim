@@ -21,6 +21,8 @@ g:flog_write_commit_graph = true
 
 g:flog_write_commit_graph_args = '--reachable --progress'
 
+g:flog_enable_status = false
+
 g:flog_check_lua_version = true
 
 g:flog_get_author_args = '--all --no-merges --max-count=100000'

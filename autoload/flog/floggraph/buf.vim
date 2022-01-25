@@ -126,7 +126,9 @@ def flog#floggraph#buf#update(): number
   const state = flog#state#get_buf_state()
   const opts = flog#state#get_resolved_opts(state)
 
-  flog#floggraph#buf#update_status()
+  if g:flog_enable_status
+    flog#floggraph#buf#update_status()
+  endif
 
   const cmd = flog#floggraph#git#build_log_cmd()
   flog#state#set_prev_log_cmd(state, cmd)
