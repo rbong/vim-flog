@@ -35,11 +35,23 @@ function flog_get_graph(enable_vim, start_token, enable_graph, cmd)
   local ncommits = 0
 
   -- Init vim output
-  local vim_out = {}
+  local vim_out
   local vim_out_index = 1
-  local vim_commits = {}
-  local vim_commits_by_hash = {}
-  local vim_line_commits = {}
+  local vim_commits
+  local vim_commits_by_hash
+  local vim_line_commits
+
+  if enable_vim then
+    vim_out = vim.list()
+    vim_commits = vim.list()
+    vim_commits_by_hash = vim.dict()
+    vim_line_commits = vim.list()
+  else
+    vim_out = {}
+    vim_commits = {}
+    vim_commits_by_hash = {}
+    vim_line_commits = {}
+  end
 
   -- Run command
   local handle = io.popen(cmd)
@@ -138,13 +150,19 @@ function flog_get_graph(enable_vim, start_token, enable_graph, cmd)
     -- The visual column which the commit branch is on
     local commit_branch_col = 0
     -- The parents in the order they appear in the graph
-    local visual_parents = {}
+    local visual_parents
     -- The number of visual parents
     local nvisual_parents = 0
     -- The number of complex merges (octopus)
     local ncomplex_merges = 0
     -- The number of missing parents
     local nmissing_parents = 0
+
+    if enable_vim then
+      visual_parents = vim.list()
+    else
+      visual_parents = {}
+    end
 
     -- Init graph data
 
@@ -539,7 +557,7 @@ function flog_get_graph(enable_vim, start_token, enable_graph, cmd)
 
       -- Set commit details
       vim_commit.hash = commit_hash
-      vim_commit.parents = vim.list(visual_parents)
+      vim_commit.parents = visual_parents
       vim_commit.refs = commit.refs
       vim_commit.line = vim_out_index
       vim_commit.col = commit_branch_col
@@ -682,10 +700,10 @@ function flog_get_graph(enable_vim, start_token, enable_graph, cmd)
 
   if enable_vim then
     return vim.dict({
-        output = vim.list(vim_out),
-        commits = vim.list(vim_commits),
-        commits_by_hash = vim.dict(vim_commits_by_hash),
-        line_commits = vim.list(vim_line_commits),
+        output = vim_out,
+        commits = vim_commits,
+        commits_by_hash = vim_commits_by_hash,
+        line_commits = vim_line_commits,
       })
   end
 end
