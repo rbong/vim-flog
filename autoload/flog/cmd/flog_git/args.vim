@@ -167,7 +167,7 @@ def flog#cmd#flog_git#args#complete(arg_lead: string, cmd_line: string, cursor_p
     endif
   endif
 
-  # Complete fugitive
+  # Complete Fugitive
   completions += flog#list#exclude(fugitive_completions, completions)
 
   return completions

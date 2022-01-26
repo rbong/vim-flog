@@ -36,7 +36,7 @@ Quit with `gq`.
 
 See more mappings with `g?`.
 
-Many of the mappings that work in the fugitive `:Git` status window will work in Flog.
+Many of the mappings that work in the Fugitive `:Git` status window will work in Flog.
 
 Run `:Git` commands in a split next to the graph using `:Floggit -p`.
 Command line completion is provided to do any git command with the commits and refs under the cursor.

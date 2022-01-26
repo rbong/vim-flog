@@ -1,7 +1,7 @@
 # Contributing
 
 The idea behind this plugin is to provide a fully featured Vim branch viewer as light as possible.
-Take advantage of Vim and fugitive's builtin features instead of recreating them whenever possible.
+Take advantage of Vim and Fugitive's builtin features instead of recreating them whenever possible.
 Let users customize how they use Flog so they can use their personal workflows and preferred interface.
 
 ## Running Tests

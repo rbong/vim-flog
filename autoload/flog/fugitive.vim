@@ -1,7 +1,7 @@
 vim9script
 
 #
-# This file contains functions for working with fugitive.
+# This file contains functions for working with Fugitive.
 #
 
 def flog#fugitive#is_fugitive_buf(): bool
