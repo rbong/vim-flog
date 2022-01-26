@@ -101,6 +101,10 @@ def flog#cmd#flog_git#args#complete_flog(arg_lead: string, cmd_line: string, cur
       add(completions, last_commit.hash)
     endif
 
+    if has_first && has_last
+      add(completions, last_commit.hash .. '^..' .. first_commit.hash)
+    endif
+
     if has_first
       completions += flog#cmd#flog_git#args#complete_commit_refs(first_commit)
       if has_last
