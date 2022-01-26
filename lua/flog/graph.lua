@@ -5,7 +5,7 @@
 local graph_error = 'flog: internal error drawing graph'
 
 -- Init graph strings
-local current_commit_str = '🞄 '
+local current_commit_str = '• '
 local commit_branch_str = '│ '
 local commit_empty_str = '  '
 local complex_merge_str_1 = '┬┊'

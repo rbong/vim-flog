@@ -10,7 +10,7 @@ syntax match flogEmptyStart /^/ nextgroup=@flogDiff,@flogCommitInfo
 
 " Commit Highlighting
 
-syntax match flogCommitInfo contained nextgroup=@flogCommitInfo /\v%(%U1f784.{-})@<= /
+syntax match flogCommitInfo contained nextgroup=@flogCommitInfo /\v%(%U2022.{-})@<= /
 syntax cluster flogCommitInfo contains=flogHash,flogAuthor,flogRef,flogDate
 
 syntax match flogHash   contained nextgroup=flogAuthor,flogRef,flogDate  /\v%(\].*)@<!\[[0-9a-f]{4,}\]%( |$)/
@@ -59,7 +59,7 @@ highlight default link flogRefHeadBranch Special
 " Diff Highlighting
 " Copied from syntax/diff.vim
 
-syntax match flogDiff contained nextgroup=@flogDiff /\v%(%U1f784.*)@<! /
+syntax match flogDiff contained nextgroup=@flogDiff /\v%(%U2022.*)@<! /
 syntax cluster flogDiff contains=flogDiffAdded,flogDiffBDiffer,flogDiffChanged,flogDiffComment,flogDiffCommon,flogDiffDiffer,flogDiffFile,flogDiffIdentical,flogDiffIndexLine,flogDiffIsA,flogDiffLine,flogDiffNewFile,flogDiffNoEOL,flogDiffOldFile,flogDiffOnly,flogDiffRemoved
 
 syntax match flogDiffEmptyStart /^ \+/ nextgroup=@flogDiff
@@ -116,10 +116,10 @@ hi default link flogDiffRemoved   diffRemoved
 " Graph Highlighting
 
 " Entry point for branches
-syntax match flogGraphBranch0 nextgroup=flogGraphBranch2,flogDiff,flogCommitInfo /\v^%( |%u2502|%u250a|%u251c|%u256d|%u2570|%U1f784)/
+syntax match flogGraphBranch0 nextgroup=flogGraphBranch2,flogDiff,flogCommitInfo /\v^%( |%u2502|%u250a|%u251c|%u256d|%u2570|%U2022)/
 
 " Color cycle for branches
-let branch_pattern = '/\v%( |%u2500|%u252c|%u2570)%( |%u2500|%u2502|%u250a|%u251c|%u2524|%u252c|%u2534|%u253c|%u256d|%u256e|%u256f|%u2570|%U1f784)/'
+let branch_pattern = '/\v%( |%u2500|%u252c|%u2570)%( |%u2500|%u2502|%u250a|%u251c|%u2524|%u252c|%u2534|%u253c|%u256d|%u256e|%u256f|%u2570|%U2022)/'
 exec 'syntax match flogGraphBranch9 contained nextgroup=flogGraphBranch1,flogDiff,flogCommitInfo ' . branch_pattern
 exec 'syntax match flogGraphBranch8 contained nextgroup=flogGraphBranch9,flogDiff,flogCommitInfo ' . branch_pattern
 exec 'syntax match flogGraphBranch7 contained nextgroup=flogGraphBranch8,flogDiff,flogCommitInfo ' . branch_pattern
@@ -132,8 +132,8 @@ exec 'syntax match flogGraphBranch1 contained nextgroup=flogGraphBranch2,flogDif
 
 syntax cluster flogGraphBranch contains=flogGraphBranch0,flogGraphBranch1,flogGraphBranch2,flogGraphBranch3,flogGraphBranch4,flogGraphBranch5,flogGraphBranch6,flogGraphBranch7,flogGraphBranch8,flogGraphBranch9
 
-syntax match flogGraphCommit /\v%U1f784/ contained containedin=@flogGraphBranch
-syntax match flogGraphMerge /\v%(%u2500|%u252c\ze%U1f784|%u2534)/ contained containedin=@flogGraphBranch
+syntax match flogGraphCommit /\v%U2022/ contained containedin=@flogGraphBranch
+syntax match flogGraphMerge /\v%(%u2500|%u252c\ze%U2022|%u2534)/ contained containedin=@flogGraphBranch
 
 if &background ==# 'dark'
   highlight default flogGraphBranch1 ctermfg=magenta     guifg=green1
