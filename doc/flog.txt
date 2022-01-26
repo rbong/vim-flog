@@ -1,4 +1,4 @@
-*flog.txt*  A git branch viewer for vim
+*flog.txt*  A git branch viewer for Vim
 Flog                                                                    *flog*
 
 Author:  Roger Bongers <https://github.com/rbong>
@@ -7,7 +7,7 @@ License: Same terms as Vim itself (see |license|)
 ==============================================================================
 INTRODUCTION                                                      *flog-intro*
 
-Flog is a lightweight git branch viewer for vim. It provides several helpful
+Flog is a lightweight git branch viewer for Vim. It provides several helpful
 commands and mappings to interact with the graph.
 
 

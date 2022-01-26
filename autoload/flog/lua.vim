@@ -1,7 +1,7 @@
 vim9script
 
 #
-# This file contains functions which allow vim to communicate with Lua.
+# This file contains functions which allow Flog to communicate with Lua.
 #
 
 def flog#lua#should_use_internal(): bool

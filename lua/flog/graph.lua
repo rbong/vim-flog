@@ -29,7 +29,7 @@ local missing_parent_branch_str = '│ '
 local missing_parent_empty_str = '  '
 
 function flog_get_graph(enable_vim, start_token, enable_graph, cmd)
-  -- Resolve vim values
+  -- Resolve Vim values
   enable_graph = enable_graph and enable_graph ~= 0
 
   -- Init commit parsing data
@@ -37,7 +37,7 @@ function flog_get_graph(enable_vim, start_token, enable_graph, cmd)
   local commit_hashes = {}
   local ncommits = 0
 
-  -- Init vim output
+  -- Init Vim output
   local vim_out
   local vim_out_index = 1
   local vim_commits
@@ -553,9 +553,9 @@ function flog_get_graph(enable_vim, start_token, enable_graph, cmd)
     local should_out_missing_parents = nmissing_parents > 0
 
     if enable_vim then
-      -- Output using vim
+      -- Output using Vim
 
-      -- Init vim commit
+      -- Init Vim commit
       local vim_commit = vim.dict()
 
       -- Set commit details

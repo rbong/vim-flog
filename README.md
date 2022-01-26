@@ -2,7 +2,7 @@
 
 [![test status](https://github.com/rbong/vim-flog/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/rbong/vim-flog/actions)
 
-Flog is a fast, beautiful, and powerful git branch viewer for vim.
+Flog is a fast, beautiful, and powerful git branch viewer for Vim.
 
 ![flog in action](img/screen-graph.png)
 
