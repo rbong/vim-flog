@@ -72,7 +72,7 @@ Flog is more customizable and flexible than gitv.
 gv.vim does not have any customization or flexibility by design.
 
 Flog has features which have no equivalent in either of the other branch viewers.
-This includes commit marks, some navigation bindings, and contextually aware command completion.
+This includes commit marks, some navigation mappings, and contextually aware command completion.
 
 ## How can I learn how to use flog?
 

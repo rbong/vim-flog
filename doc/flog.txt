@@ -8,7 +8,7 @@ License: Same terms as Vim itself (see |license|)
 INTRODUCTION                                                      *flog-intro*
 
 Flog is a lightweight git branch viewer for vim. It provides several helpful
-commands and bindings to interact with the graph.
+commands and mappings to interact with the graph.
 
 
 ==============================================================================
