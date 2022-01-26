@@ -10,6 +10,5 @@ def flog#global_opts#get_sort_type(name: string): dict<any>
       return sort_type
     endif
   endfor
-  throw g:flog_sort_type_not_found
   return {}
 enddef

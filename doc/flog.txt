@@ -131,7 +131,7 @@ COMMANDS                                                       *flog-commands*
     These pass either the argument "--date-order", "--author-order", or
     "--topo-order" to "git log", respectfully.
 
-    Defaults to "topo".
+    Defaults to "topo" when |:Flog-graph| is enabled and "date" otherwise.
 
   -rev=<rev>                                                       *:Flog-rev*
 

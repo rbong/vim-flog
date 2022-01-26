@@ -70,7 +70,7 @@ def flog#floggraph#buf#get_name(instance_number: number, opts: dict<any>): strin
   if !empty(opts.skip)
     name ..= ' [skip=' .. opts.skip .. ']'
   endif
-  if !empty(opts.sort) && opts.sort != 'topo'
+  if !empty(opts.sort)
     name ..= ' [sort=' .. opts.sort .. ']'
   endif
   if !empty(opts.max_count)

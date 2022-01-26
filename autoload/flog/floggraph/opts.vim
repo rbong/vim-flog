@@ -46,14 +46,20 @@ enddef
 
 def flog#floggraph#opts#cycle_sort(): string
   flog#floggraph#buf#assert_flog_buf()
-  const state = flog#state#get_buf_state()
+  const opts = flog#state#get_buf_state().opts
 
-  var sort = state.opts.sort
+  const default_sort = opts.graph ? 'topo' : 'date'
 
+  var sort = opts.sort
   if empty(sort)
+    sort = default_sort
+  endif
+
+  const sort_type = flog#global_opts#get_sort_type(sort)
+
+  if empty(sort_type)
     sort = g:flog_sort_types[0].name
   else
-    const sort_type = flog#global_opts#get_sort_type(sort)
     const sort_index = index(g:flog_sort_types, sort_type)
 
     if sort_index == len(g:flog_sort_types) - 1
@@ -63,7 +69,7 @@ def flog#floggraph#opts#cycle_sort(): string
     endif
   endif
 
-  state.opts.sort = sort
+  opts.sort = sort
 
   flog#floggraph#buf#update()
 
