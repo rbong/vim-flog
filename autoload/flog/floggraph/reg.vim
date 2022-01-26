@@ -9,13 +9,13 @@ def flog#floggraph#reg#yank_hash(reg: string = '"', line: any = '.', count: numb
   const state = flog#state#get_buf_state()
 
   if count < 1
-    setreg(reg, [])
+    setreg(reg, [], 'v')
     return 0
   endif
 
   var commit = flog#floggraph#commit#get_at_line(line)
   if empty(commit)
-    setreg(reg, [])
+    setreg(reg, [], 'v')
     return 0
   endif
 
@@ -34,7 +34,7 @@ def flog#floggraph#reg#yank_hash(reg: string = '"', line: any = '.', count: numb
     i += 1
   endwhile
 
-  setreg(reg, hashes)
+  setreg(reg, hashes, 'v')
 
   return i
 enddef
