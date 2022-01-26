@@ -183,7 +183,7 @@ def flog#floggraph#buf#set_content(content: list<string>): list<string>
   flog#floggraph#buf#assert_flog_buf()
 
   setlocal modifiable noreadonly
-  :1,$ delete
+  silent! :1,$ delete
   setline(1, content)
   setlocal nomodifiable readonly
 
