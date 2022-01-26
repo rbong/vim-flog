@@ -569,7 +569,7 @@ ri                                                                   *flog-ri*
                                      *<Plug>(FlogRebaseInteractiveAutosquash)*
 rf                                                                   *flog-rf*
 
-  Same as |flog-ri|, but use the "--autosquash" argument if it is available.
+  Perform an autosquash rebase without editing the TODO list.
   See also "git rebase --help".
 
 
