@@ -29,6 +29,9 @@ local missing_parent_branch_str = '│ '
 local missing_parent_empty_str = '  '
 
 function flog_get_graph(enable_vim, start_token, enable_graph, cmd)
+  -- Resolve vim values
+  enable_graph = enable_graph and enable_graph ~= 0
+
   -- Init commit parsing data
   local commits = {}
   local commit_hashes = {}
