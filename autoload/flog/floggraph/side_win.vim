@@ -8,7 +8,7 @@ def flog#floggraph#side_win#close_tmp(): list<number>
   flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
 
-  const prev_win_id = win_getid()
+  const prev_win = flog#win#save()
 
   for tmp_id in state.tmp_side_wins
     # Buffer is not open
@@ -21,7 +21,7 @@ def flog#floggraph#side_win#close_tmp(): list<number>
     silent! close!
   endfor
 
-  silent! call win_gotoid(prev_win_id)
+  flog#win#restore(prev_win)
 
   return flog#state#reset_tmp_side_wins(state)
 enddef
@@ -56,17 +56,17 @@ def flog#floggraph#side_win#open(cmd: string, keep_focus: bool, is_tmp: bool): n
   flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
 
-  const graph_win_id = win_getid()
+  const graph_win = flog#win#save()
   const saved_win_ids = flog#win#get_all_ids()
 
   exec cmd
-  const final_win_id = win_getid()
+  const final_win = flog#win#save()
 
   var new_win_ids = flog#win#get_all_ids()
   new_win_ids = flog#list#exclude(new_win_ids, saved_win_ids)
 
   if !empty(new_win_ids)
-    silent! call win_gotoid(graph_win_id)
+    flog#win#restore(graph_win)
 
     if is_tmp
       flog#floggraph#side_win#close_tmp()
@@ -79,7 +79,7 @@ def flog#floggraph#side_win#open(cmd: string, keep_focus: bool, is_tmp: bool): n
       endif
     endfor
 
-    silent! call win_gotoid(final_win_id)
+    flog#win#restore(final_win)
 
     if is_tmp
       flog#state#set_tmp_side_wins(state, new_win_ids)
@@ -87,10 +87,10 @@ def flog#floggraph#side_win#open(cmd: string, keep_focus: bool, is_tmp: bool): n
   endif
 
   if !keep_focus
-    silent! call win_gotoid(graph_win_id)
+    flog#win#restore(graph_win)
   endif
 
-  return final_win_id
+  return flog#win#get_saved_id(final_win)
 enddef
 
 def flog#floggraph#side_win#open_tmp(cmd: string, keep_focus: bool): number

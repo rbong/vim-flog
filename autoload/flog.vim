@@ -10,15 +10,14 @@ def flog#exec_raw(cmd: string, keep_focus: bool, should_update: bool, is_tmp: bo
     return cmd
   endif
 
-  const bufnr = bufnr()
-  const graph_win_id = win_getid()
+  const graph_win = flog#win#save()
   flog#floggraph#side_win#open(cmd, keep_focus, is_tmp)
 
   if should_update
-    if win_getid() == graph_win_id
+    if flog#win#is(graph_win)
       flog#floggraph#buf#update()
     else
-      flog#floggraph#buf#init_update_hook(bufnr)
+      flog#floggraph#buf#init_update_hook(flog#win#get_saved_bufnr(graph_win))
     endif
   endif
 

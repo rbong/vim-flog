@@ -11,3 +11,37 @@ def flog#win#get_all_ids(): list<number>
   endfor
   return windows
 enddef
+
+def flog#win#save(): list<any>
+  return [win_getid(), bufnr(), winsaveview()]
+enddef
+
+def flog#win#get_saved_id(saved_win: list<any>): number
+  return saved_win[0]
+enddef
+
+def flog#win#get_saved_bufnr(saved_win: list<any>): number
+  return saved_win[1]
+enddef
+
+def flog#win#get_saved_view(saved_win: list<any>): number
+  return saved_win[2]
+enddef
+
+def flog#win#is(saved_win: list<any>): bool
+  return win_getid() == saved_win[0]
+enddef
+
+def flog#win#restore(saved_win: list<any>): number
+  const [win_id, bufnr, view] = saved_win
+
+  silent! call win_gotoid(win_id)
+
+  const new_win_id = win_getid()
+
+  if flog#win#is(saved_win)
+    call winrestview(view)
+  endif
+
+  return new_win_id
+enddef

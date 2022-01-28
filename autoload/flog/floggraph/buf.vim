@@ -194,13 +194,13 @@ def flog#floggraph#buf#close(): number
   flog#floggraph#buf#assert_flog_buf()
   const state = flog#state#get_buf_state()
 
-  const graph_win_id = win_getid()
+  const graph_win = flog#win#save()
   flog#floggraph#side_win#close_tmp()
 
-  win_gotoid(graph_win_id)
-  if win_getid() == graph_win_id
+  flog#win#restore(graph_win)
+  if flog#win#is(graph_win)
     silent! bdelete!
   endif
 
-  return graph_win_id
+  return flog#win#get_saved_id(graph_win)
 enddef
