@@ -154,7 +154,7 @@ def flog#floggraph#buf#update(): number
   else
     # Otherwise, restore the relative position
     flog#win#restore_topline(graph_win)
-    flog#win#restore_col(graph_win)
+    flog#win#restore_vcol(graph_win)
   endif
 
   silent! exec 'file ' .. flog#floggraph#buf#get_name(state.instance_number, opts)
