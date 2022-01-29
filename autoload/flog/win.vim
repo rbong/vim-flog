@@ -40,7 +40,7 @@ def flog#win#restore(saved_win: list<any>): number
   const new_win_id = win_getid()
 
   if flog#win#is(saved_win)
-    call winrestview(view)
+    winrestview(view)
   endif
 
   return new_win_id
