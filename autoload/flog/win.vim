@@ -71,6 +71,6 @@ enddef
 
 def flog#win#restore_vcol(saved_win: list<any>): number
   var vcol = flog#win#get_saved_vcol(saved_win)
-  setcharpos('.', [bufnr(), line('.'), vcol, vcol])
+  setcursorcharpos('.', vcol)
   return vcol
 enddef

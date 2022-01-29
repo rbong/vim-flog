@@ -116,7 +116,7 @@ def flog#floggraph#commit#restore_offset(saved_win: list<any>, saved_commit: dic
     endif
 
     if new_col > 0
-      setcharpos('.', [0, line('.'), new_col, 0])
+      setcursorcharpos('.', new_col)
     endif
 
     return [0, new_col]
@@ -129,7 +129,7 @@ def flog#floggraph#commit#restore_offset(saved_win: list<any>, saved_commit: dic
     return [-1, -1]
   endif
 
-  setpos('.', [0, new_line, col('.'), 0])
+  cursor(new_line, col('.'))
 
   return [line_offset, 0]
 enddef

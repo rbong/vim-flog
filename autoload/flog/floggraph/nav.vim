@@ -20,7 +20,7 @@ def flog#floggraph#nav#jump_to_commit(hash: string): list<number>
   const lnum = max([commit.line, 1])
   const col = max([commit.col, 1])
 
-  setcharpos('.', [bufnr(), lnum, col, col])
+  setcursorcharpos(lnum, col)
 
   return [lnum, col]
 enddef
@@ -152,7 +152,7 @@ def flog#floggraph#nav#jump_to_commit_col(): number
   var new_col = curr_col <= col ? format_col : col
 
   if new_col != curr_col
-    setcursorcharpos('.', new_col, new_col)
+    setcursorcharpos('.', new_col)
   endif
 
   return new_col
