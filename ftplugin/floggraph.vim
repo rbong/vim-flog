@@ -105,12 +105,12 @@ nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitPathsRight) :<C-U> cal
 
 " Navigation mappings
 
-if !hasmapto('<Plug>(FlogJumpToCommitCol)')
-  nmap <buffer> ^ <Plug>(FlogJumpToCommitCol)
-  vmap <buffer> ^ <Plug>(FlogJumpToCommitCol)
+if !hasmapto('<Plug>(FlogJumpToCommitStart)')
+  nmap <buffer> ^ <Plug>(FlogJumpToCommitStart)
+  vmap <buffer> ^ <Plug>(FlogJumpToCommitStart)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogJumpToCommitCol) :<C-U>call flog#floggraph#nav#jump_to_commit_col()<CR>
-vnoremap <buffer> <silent> <Plug>(FlogJumpToCommitCol) :<C-U>call flog#floggraph#nav#jump_to_commit_col()<CR>
+nnoremap <buffer> <silent> <Plug>(FlogJumpToCommitStart) :<C-U>call flog#floggraph#nav#jump_to_commit_start()<CR>
+vnoremap <buffer> <silent> <Plug>(FlogJumpToCommitStart) :<C-U>call flog#floggraph#nav#jump_to_commit_start()<CR>
 
 if !hasmapto('<Plug>(FlogNextCommit)')
   nmap <buffer> ) <Plug>(FlogNextCommit)

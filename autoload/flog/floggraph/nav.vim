@@ -140,20 +140,22 @@ def flog#floggraph#nav#set_rev(rev: string): string
   return rev
 enddef
 
-def flog#floggraph#nav#jump_to_commit_col(): number
+def flog#floggraph#nav#jump_to_commit_start(): number
   flog#floggraph#buf#assert_flog_buf()
 
   const curr_col = virtcol('.')
 
   const commit = flog#floggraph#commit#get_at_line('.')
-  const col = commit.col
-  const format_col = commit.format_col
-
-  var new_col = curr_col <= col ? format_col : col
-
-  if new_col != curr_col
-    setcursorcharpos('.', new_col)
+  if empty(commit)
+    return -1
   endif
+
+  var new_col = commit.col
+  if commit.line == line('.') && curr_col <= commit.col
+    new_col = commit.format_col
+  endif
+
+  setcursorcharpos(commit.line, new_col)
 
   return new_col
 enddef
