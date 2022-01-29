@@ -71,13 +71,6 @@ enddef
 
 def flog#win#restore_vcol(saved_win: list<any>): number
   var vcol = flog#win#get_saved_vcol(saved_win)
-  const vcols = flog#win#get_saved_vcols(saved_win)
-
-  if vcol > 1 && vcol >= vcols - 1
-    vcol = virtcol('$') - 1
-  endif
-
   setcharpos('.', [bufnr(), line('.'), vcol, vcol])
-
   return vcol
 enddef
