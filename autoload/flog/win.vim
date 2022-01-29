@@ -24,7 +24,7 @@ def flog#win#get_saved_bufnr(saved_win: list<any>): number
   return saved_win[1]
 enddef
 
-def flog#win#get_saved_view(saved_win: list<any>): number
+def flog#win#get_saved_view(saved_win: list<any>): dict<any>
   return saved_win[2]
 enddef
 
