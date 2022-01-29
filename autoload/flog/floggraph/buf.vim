@@ -126,6 +126,8 @@ def flog#floggraph#buf#update(): number
   const state = flog#state#get_buf_state()
   const opts = flog#state#get_resolved_opts(state)
 
+  const graph_win = flog#win#save()
+
   if g:flog_enable_status
     flog#floggraph#buf#update_status()
   endif
@@ -141,8 +143,14 @@ def flog#floggraph#buf#update(): number
   flog#floggraph#buf#set_content(graph.output)
 
   # Restore commit
+  var commit_line = -1
   if !empty(last_commit)
-    flog#floggraph#nav#jump_to_commit(last_commit.hash)
+    commit_line = flog#floggraph#nav#jump_to_commit(last_commit.hash)[0]
+  endif
+
+  # If commit was not found, restore window position
+  if commit_line < 0
+    flog#win#restore(graph_win)
   endif
 
   silent! exec 'file ' .. flog#floggraph#buf#get_name(state.instance_number, opts)
