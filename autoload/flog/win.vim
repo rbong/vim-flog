@@ -55,3 +55,17 @@ def flog#win#restore_topline(saved_win: list<any>): number
 
   return topline
 enddef
+
+def flog#win#restore_col(saved_win: list<any>): number
+  const view = flog#win#get_saved_view(saved_win)
+
+  winrestview({
+    col: view.col,
+    coladd: view.coladd,
+    curswant: view.curswant,
+    leftcol: view.leftcol,
+    skipcall: view.skipcol,
+    })
+
+  return view.col
+enddef

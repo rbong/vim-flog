@@ -148,9 +148,13 @@ def flog#floggraph#buf#update(): number
     commit_line = flog#floggraph#nav#jump_to_commit(last_commit.hash)[0]
   endif
 
-  # If commit was not found, restore window position
   if commit_line < 0
+    # If commit was not found, restore window position
     flog#win#restore(graph_win)
+  else
+    # Otherwise, restore the relative position
+    flog#win#restore_topline(graph_win)
+    flog#win#restore_col(graph_win)
   endif
 
   silent! exec 'file ' .. flog#floggraph#buf#get_name(state.instance_number, opts)
