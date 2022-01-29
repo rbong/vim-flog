@@ -92,3 +92,44 @@ enddef
 def flog#floggraph#commit#get_prev_ref(count: number = 1): list<any>
   return flog#floggraph#commit#get_next(-count)
 enddef
+
+def flog#floggraph#commit#restore_offset(saved_win: list<any>, saved_commit: dict<any>): list<number>
+  if empty(saved_commit)
+    return [-1, -1]
+  endif
+
+  const saved_view = flog#win#get_saved_view(saved_win)
+
+  const line_offset = saved_view.lnum - saved_commit.line
+  if line_offset < 0
+    return [-1, -1]
+  endif
+
+  if line_offset == 0
+    var new_col = 0
+    const saved_vcol = flog#win#get_saved_vcol(saved_win)
+
+    if saved_vcol == saved_commit.col
+      new_col = flog#floggraph#commit#get_at_line('.').col
+    elseif saved_vcol == saved_commit.format_col
+      new_col = flog#floggraph#commit#get_at_line('.').format_col
+    endif
+
+    if new_col > 0
+      setcharpos('.', [0, line('.'), new_col, 0])
+    endif
+
+    return [0, new_col]
+  endif
+
+  const new_line = line('.') + line_offset
+
+  const new_line_commit = flog#floggraph#commit#get_at_line(new_line)
+  if empty(new_line_commit) || new_line_commit.hash != saved_commit.hash
+    return [-1, -1]
+  endif
+
+  setpos('.', [0, new_line, col('.'), 0])
+
+  return [line_offset, 0]
+enddef

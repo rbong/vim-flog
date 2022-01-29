@@ -152,9 +152,15 @@ def flog#floggraph#buf#update(): number
     # If commit was not found, restore window position
     flog#win#restore(graph_win)
   else
-    # Otherwise, restore the relative position
+    # Otherwise, try restoring the relative position
+    const [line_offset, new_col] = flog#floggraph#commit#restore_offset(
+      graph_win,
+      last_commit)
+
     flog#win#restore_topline(graph_win)
-    flog#win#restore_vcol(graph_win)
+    if new_col == 0
+      flog#win#restore_vcol(graph_win)
+    endif
   endif
 
   silent! exec 'file ' .. flog#floggraph#buf#get_name(state.instance_number, opts)
