@@ -159,6 +159,8 @@ def flog#floggraph#buf#update(): number
 
   silent! exec 'file ' .. flog#floggraph#buf#get_name(state.instance_number, opts)
 
+  silent doautocmd User FlogUpdate
+
   return state.graph_bufnr
 enddef
 

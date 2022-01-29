@@ -780,6 +780,9 @@ flog#exec_raw({command}[, {keep-focus}[, {should-update}[, {is-tmp}]]])
 ==============================================================================
 AUTOCOMMANDS                                               *flog-autocommands*
 
+                                                             *User_FlogUpdate*
+FlogUpdate                On updating a |:Flog| window.
+
                                                        *User_FlogSideWinSetup*
 FlogSideWinSetup          On initializing any |flog-side-window|.
 
