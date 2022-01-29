@@ -48,6 +48,10 @@ enddef
 
 def flog#win#restore_topline(saved_win: list<any>): number
   const view = flog#win#get_saved_view(saved_win)
+
+  if view.topline == 1
+    return -1
+  endif
   
   const topline = view.topline - view.lnum + line('.')
 
