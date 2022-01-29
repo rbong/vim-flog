@@ -45,3 +45,13 @@ def flog#win#restore(saved_win: list<any>): number
 
   return new_win_id
 enddef
+
+def flog#win#restore_topline(saved_win: list<any>): number
+  const view = flog#win#get_saved_view(saved_win)
+  
+  const topline = view.topline - view.lnum + line('.')
+
+  winrestview({ topline: topline })
+
+  return topline
+enddef

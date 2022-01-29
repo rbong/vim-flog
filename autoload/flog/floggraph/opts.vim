@@ -8,10 +8,14 @@ def flog#floggraph#opts#toggle(name: string): bool
   flog#floggraph#buf#assert_flog_buf()
   const opts = flog#state#get_buf_state().opts
 
+  const graph_win = flog#win#save()
+
   const val = !opts[name]
   opts[name] = val
 
   flog#floggraph#buf#update()
+
+  flog#win#restore_topline(graph_win)
 
   return val
 enddef
@@ -48,6 +52,8 @@ def flog#floggraph#opts#cycle_sort(): string
   flog#floggraph#buf#assert_flog_buf()
   const opts = flog#state#get_buf_state().opts
 
+  const graph_win = flog#win#save()
+
   const default_sort = opts.graph ? 'topo' : 'date'
 
   var sort = opts.sort
@@ -72,6 +78,8 @@ def flog#floggraph#opts#cycle_sort(): string
   opts.sort = sort
 
   flog#floggraph#buf#update()
+
+  flog#win#restore_topline(graph_win)
 
   return sort
 enddef
