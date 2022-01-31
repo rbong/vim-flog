@@ -62,7 +62,7 @@ def flog#floggraph#side_win#open(cmd: string, keep_focus: bool, is_tmp: bool): n
   exec cmd
   const final_win = flog#win#save()
 
-  var new_win_ids = flog#win#get_all_ids()
+  var new_win_ids: list<number> = flog#win#get_all_ids()
   new_win_ids = flog#list#exclude(new_win_ids, saved_win_ids)
 
   if !empty(new_win_ids)
