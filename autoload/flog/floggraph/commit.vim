@@ -133,3 +133,30 @@ def flog#floggraph#commit#restore_offset(saved_win: list<any>, saved_commit: dic
 
   return [line_offset, 0]
 enddef
+
+def flog#floggraph#commit#restore_position(saved_win: list<any>, saved_commit: dict<any>): dict<any>
+  # Restore commit
+  var commit_line = -1
+  if !empty(saved_commit)
+    commit_line = flog#floggraph#nav#jump_to_commit(saved_commit.hash)[0]
+  endif
+
+  if commit_line < 0
+    # If commit was not found, restore full window position
+    flog#win#restore(saved_win)
+    return {}
+  endif
+
+  # Try restoring the relative position
+  const [line_offset, new_col] = flog#floggraph#commit#restore_offset(
+    saved_win,
+    saved_commit)
+
+  # Restore parts of window position
+  flog#win#restore_topline(saved_win)
+  if new_col == 0
+    flog#win#restore_vcol(saved_win)
+  endif
+
+  return saved_commit
+enddef

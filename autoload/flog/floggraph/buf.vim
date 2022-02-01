@@ -139,29 +139,12 @@ def flog#floggraph#buf#update(): number
   # Record previous commit
   const last_commit = flog#floggraph#commit#get_at_line('.')
 
+  # Update graph
   flog#state#set_graph(state, graph)
   flog#floggraph#buf#set_content(graph.output)
 
-  # Restore commit
-  var commit_line = -1
-  if !empty(last_commit)
-    commit_line = flog#floggraph#nav#jump_to_commit(last_commit.hash)[0]
-  endif
-
-  if commit_line < 0
-    # If commit was not found, restore window position
-    flog#win#restore(graph_win)
-  else
-    # Otherwise, try restoring the relative position
-    const [line_offset, new_col] = flog#floggraph#commit#restore_offset(
-      graph_win,
-      last_commit)
-
-    flog#win#restore_topline(graph_win)
-    if new_col == 0
-      flog#win#restore_vcol(graph_win)
-    endif
-  endif
+  # Restore commit position
+  flog#floggraph#commit#restore_position(graph_win, last_commit)
 
   silent! exec 'file ' .. flog#floggraph#buf#get_name(state.instance_number, opts)
 
