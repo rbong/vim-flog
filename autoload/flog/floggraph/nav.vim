@@ -124,20 +124,43 @@ def flog#floggraph#nav#skip_back(count: number): number
   return flog#floggraph#nav#skip_ahead(-count)
 enddef
 
-def flog#floggraph#nav#set_rev(rev: string): string
+def flog#floggraph#nav#set_rev_to_commit_at_line(line: any = '.'): string
   flog#floggraph#buf#assert_flog_buf()
-  const state = flog#state#get_buf_state()
+  var state = flog#state#get_buf_state()
 
-  if empty(rev)
-    state.opts.rev = []
-  else
-    state.opts.skip = ''
-    state.opts.rev = [rev]
+  const commit = flog#floggraph#commit#get_at_line(line)
+
+  if empty(commit)
+    return ''
   endif
 
+  const hash = commit.hash
+  const rev = [hash]
+  
+  if state.opts.rev == rev
+    return ''
+  endif
+
+  state.opts.skip = ''
+  state.opts.rev = rev
+
+  flog#floggraph#buf#update()
+  
+  return hash
+enddef
+
+def flog#floggraph#nav#clear_rev(): bool
+  flog#floggraph#buf#assert_flog_buf()
+  var state = flog#state#get_buf_state()
+
+  if empty(state.opts.rev)
+    return false
+  endif
+
+  state.opts.rev = []
   flog#floggraph#buf#update()
 
-  return rev
+  return true
 enddef
 
 def flog#floggraph#nav#jump_to_commit_start(): number

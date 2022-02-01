@@ -157,12 +157,12 @@ nnoremap <buffer> <silent> <Plug>(FlogSetSkip) :<C-U>call flog#floggraph#nav#ski
 if !hasmapto('<Plug>(FlogSetRev)')
   nmap <buffer> gct <Plug>(FlogSetRev)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogSetRev) :<C-U>call flog#exec("call flog#floggraph#nav#set_rev('%h')", 0, 0, 0)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogSetRev) :<C-U>call flog#floggraph#nav#set_rev_to_commit_at_line('.')<CR>
 
 if !hasmapto('<Plug>(FlogClearRev)')
   nmap <buffer> gcc <Plug>(FlogClearRev)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogClearRev) :<C-U>call flog#floggraph#nav#set_rev('')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogClearRev) :<C-U>call flog#floggraph#nav#clear_rev()<CR>
 
 " Argument modifier mappings
 
