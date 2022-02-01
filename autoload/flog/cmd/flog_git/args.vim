@@ -145,7 +145,7 @@ def flog#cmd#flog_git#args#complete(arg_lead: string, cmd_line: string, cursor_p
     return fugitive_completions
   endif
 
-  var completions = []
+  var completions: list<string> = []
 
   # Complete line
   if is_flog
