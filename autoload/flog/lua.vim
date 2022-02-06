@@ -58,11 +58,13 @@ def flog#lua#get_bin(): string
 
   if exists('g:flog_lua_bin')
     bin = shellescape(g:flog_lua_bin)
-  elseif !executable('luajit')
+  elseif executable('luajit')
+    bin = 'luajit'
+  elseif executable('lua')
+    bin = 'lua'
+  else
     echoerr 'flog: please install LuaJIT 2.1 it or set it with g:flog_lua_bin'
     throw g:flog_lua_not_found
-  else
-    bin = 'luajit'
   endif
 
   flog#lua#check_bin_version(bin)
