@@ -4,16 +4,16 @@ set -e
 
 TEST_DIR=$(realpath -- "$(dirname -- "$0")")
 
-source "$TEST_DIR/lib_dir.sh"
-source "$TEST_DIR/lib_print.sh"
-source "$TEST_DIR/lib_vim.sh"
+. "$TEST_DIR/lib_dir.sh"
+. "$TEST_DIR/lib_print.sh"
+. "$TEST_DIR/lib_vim.sh"
 
 # Setup
 cd "$BASE_DIR"
 install_vim
 
 # Get args
-if [[ "$1" != "" ]]; then
+if [ "$1" != "" ]; then
   TESTS="$TEST_DIR/$1"
 else
   TESTS=$(ls "$TEST_DIR"/t_*)
@@ -34,14 +34,14 @@ for TEST in $TESTS; do
   set -e
 
   # Process result
-  if [[ $RESULT == 0 ]]; then
+  if [ $RESULT -eq 0 ]; then
     print_success
   else
     print_fail
-    let FAILED_TESTS+=1
+    FAILED_TESTS=$(expr "$FAILED_TESTS" + 1)
   fi
 done
 
-if [[ $FAILED_TESTS > 0 ]]; then
+if [ $FAILED_TESTS -gt 0 ]; then
   exit 1
 fi

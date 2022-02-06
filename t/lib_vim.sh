@@ -1,6 +1,6 @@
 TEST_DIR=$(realpath -- "$(dirname -- "$0")")
 
-source "$TEST_DIR/lib_dir.sh"
+. "$TEST_DIR/lib_dir.sh"
 
 VIM_DIR=$(get_dir "vim/")
 FLOG_DIR="${VIM_DIR}/vim-flog"
@@ -34,7 +34,7 @@ run_vim_command() {
   STATUS=$?
   set -e
 
-  if [[ -s "$_OUT" ]]; then
+  if [ -s "$_OUT" ]; then
     tail -n +2 "$_OUT"
     echo
   fi

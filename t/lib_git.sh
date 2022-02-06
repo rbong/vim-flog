@@ -1,6 +1,6 @@
 TEST_DIR=$(realpath -- "$(dirname -- "$0")")
 
-source "$TEST_DIR/lib_dir.sh"
+. "$TEST_DIR/lib_dir.sh"
 
 git_init() {
   _WORKTREE=$(create_tmp_dir "repo/$1")

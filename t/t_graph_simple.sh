@@ -4,10 +4,10 @@ set -e
 
 TEST_DIR=$(realpath -- "$(dirname -- "$0")")
 
-source "$TEST_DIR/lib_dir.sh"
-source "$TEST_DIR/lib_diff.sh"
-source "$TEST_DIR/lib_git.sh"
-source "$TEST_DIR/lib_vim.sh"
+. "$TEST_DIR/lib_dir.sh"
+. "$TEST_DIR/lib_diff.sh"
+. "$TEST_DIR/lib_git.sh"
+. "$TEST_DIR/lib_vim.sh"
 
 TMP=$(create_tmp_dir graph_simple)
 
