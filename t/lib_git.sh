@@ -4,7 +4,10 @@ TEST_DIR=$(realpath -- "$(dirname -- "$0")")
 
 git_init() {
   _WORKTREE=$(create_tmp_dir "repo/$1")
-  git --git-dir="$_WORKTREE/.git" init -q -b main
+  _GIT_DIR="$_WORKTREE/.git"
+  git --git-dir="$_GIT_DIR" init -q -b main
+  git --git-dir="$_GIT_DIR" config user.email flog@test.com
+  git --git-dir="$_GIT_DIR" config user.name flog
   echo $_WORKTREE
 }
 
