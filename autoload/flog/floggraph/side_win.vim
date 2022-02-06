@@ -39,12 +39,18 @@ def flog#floggraph#side_win#initialize(state: dict<any>, is_tmp: bool): number
   flog#deprecate#autocmd('FlogTmpCmdBufferSetup', 'FlogTmpSideWinSetup')
   flog#deprecate#autocmd('FlogNonTmpCmdBufferSetup', 'FlogNonTmpSideWinSetup')
 
-  silent doautocmd User FlogSideWinSetup
+  if exists('#User#FlogSideWinSetup')
+    doautocmd User FlogSideWinSetup
+  endif
 
   if is_tmp
-    silent doautocmd User FlogTmpSideWinSetup
+    if exists('#User#FlogTmpSideWinSetup')
+      doautocmd User FlogTmpSideWinSetup
+    endif
   else
-    silent doautocmd User FlogNonTmpSideWinSetup
+    if exists('#User#FlogNonTmpSideWinSetup')
+      doautocmd User FlogNonTmpSideWinSetup
+    endif
   endif
 
   b:flog_side_win_initialized = true
