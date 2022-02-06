@@ -3,7 +3,6 @@
 set -e
 
 TEST_DIR=$(realpath -- "$(dirname -- "$0")")
-BASE_DIR=$(realpath -- "$(dirname -- "$0")/..")
 
 source "$TEST_DIR/lib_dir.sh"
 source "$TEST_DIR/lib_print.sh"

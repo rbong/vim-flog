@@ -3,37 +3,33 @@
 set -e
 
 TEST_DIR=$(realpath -- "$(dirname -- "$0")")
-DATA_DIR=$(realpath -- "$(dirname -- "$0")/data")
 
 source "$TEST_DIR/lib_dir.sh"
+source "$TEST_DIR/lib_diff.sh"
+source "$TEST_DIR/lib_git.sh"
 source "$TEST_DIR/lib_vim.sh"
 
 TMP=$(create_tmp_dir graph_merge)
 
-GRAPH="[
-  { 'hash': 'e', 'parents': ['d'] },
-  { 'hash': 'd', 'parents': ['c', 'side-b'] },
-  { 'hash': 'side-b', 'parents': ['side-a'] },
-  { 'hash': 'side-a', 'parents': ['b'] },
-  { 'hash': 'c', 'parents': ['b'] },
-  { 'hash': 'b', 'parents': ['a'] },
-  { 'hash': 'a', 'parents': [] },
-]"
+WORKTREE=$(git_init graph_merge)
+cd "$WORKTREE"
 
-CONTENT="[
-  ['five'],
-  ['four - Merge side'],
-  ['side two'],
-  ['side one'],
-  ['three'],
-  ['two'],
-  ['one']
-]"
+git_commit -m a
+git_commit -m b
+git_tag b
+git_commit -m c
+git_tag c
 
-cd "$TMP"
-run_vim_command "call writefile(
-  flog#graph#generate($GRAPH, $CONTENT).output,
-  'out'
-)"
+git_checkout b
+git_commit -m side-a
+git_commit -m side-b
+git_tag side-b
 
-diff "out" "$DATA_DIR/graph_merge_out"
+git_checkout c
+git_merge -m d side-b
+git_commit -m e
+
+VIM_OUT=$(get_relative_dir "$TMP")/out
+run_vim_command "exec 'Flog -format=%s' | silent w $VIM_OUT"
+
+diff_data "$TMP/out" "graph_merge_out"

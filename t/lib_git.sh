@@ -3,19 +3,23 @@ TEST_DIR=$(realpath -- "$(dirname -- "$0")")
 source "$TEST_DIR/lib_dir.sh"
 
 git_init() {
-  GIT_DIR=$(create_tmp_dir "repo/$1")
-  git --git-dir="$GIT_DIR" init -q -b main
-  echo $GIT_DIR
+  _WORKTREE=$(create_tmp_dir "repo/$1")
+  git --git-dir="$_WORKTREE/.git" init -q -b main
+  echo $_WORKTREE
 }
 
 git_checkout() {
-  git checkout $@
+  git checkout -q "$@"
 }
 
 git_commit() {
-  git commit -q --allow-empty $@
+  git commit -q --allow-empty "$@"
 }
 
 git_merge() {
-  git merge -q --no-edit $@
+  git merge -q --no-edit "$@"
+}
+
+git_tag() {
+  git tag "$@"
 }

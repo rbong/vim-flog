@@ -1,5 +1,6 @@
-TEST_DIR=$(realpath -- "$(dirname -- "$0")")
-BASE_DIR=$(realpath -- "$(dirname -- "$0")/..")
+export TEST_DIR=$(realpath -- "$(dirname -- "$0")")
+export BASE_DIR=$(realpath -- "$(dirname -- "$0")/..")
+export DATA_DIR=$(realpath -- "$(dirname -- "$0")/data")
 
 get_dir() {
   echo "$BASE_DIR/.test/$1"
@@ -7,6 +8,10 @@ get_dir() {
 
 get_tmp_dir() {
   echo "$BASE_DIR/.test/tmp/$1"
+}
+
+get_relative_dir() {
+  realpath --relative-to="." -- "$1"
 }
 
 create_abs_dir() {

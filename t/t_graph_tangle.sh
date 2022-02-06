@@ -3,63 +3,67 @@
 set -e
 
 TEST_DIR=$(realpath -- "$(dirname -- "$0")")
-DATA_DIR=$(realpath -- "$(dirname -- "$0")/data")
 
 source "$TEST_DIR/lib_dir.sh"
+source "$TEST_DIR/lib_diff.sh"
+source "$TEST_DIR/lib_git.sh"
 source "$TEST_DIR/lib_vim.sh"
 
 TMP=$(create_tmp_dir graph_tangle)
 
-GRAPH="[
-  { 'hash': 'l', 'parents': ['k', 'reach-a'] },
-  { 'hash': 'reach-a', 'parents': ['i'] },
-  { 'hash': 'k', 'parents': ['j', 'octopus-a', 'octopus-b'] },
-  { 'hash': 'octopus-b', 'parents': ['i'] },
-  { 'hash': 'octopus-a', 'parents': ['i'] },
-  { 'hash': 'j', 'parents': ['i'] },
-  { 'hash': 'i', 'parents': ['h', 'side-b', 'tangle-c'] },
-  { 'hash': 'tangle-c', 'parents': ['tangle-b', 'side-a'] },
-  { 'hash': 'tangle-b', 'parents': ['tangle-a', 'e'] },
-  { 'hash': 'tangle-a', 'parents': ['b'] },
-  { 'hash': 'h', 'parents': ['g', 'side-b'] },
-  { 'hash': 'side-b', 'parents': ['side-a'] },
-  { 'hash': 'side-a', 'parents': ['c'] },
-  { 'hash': 'g', 'parents': ['f'] },
-  { 'hash': 'f', 'parents': ['e'] },
-  { 'hash': 'e', 'parents': ['d'] },
-  { 'hash': 'd', 'parents': ['c'] },
-  { 'hash': 'c', 'parents': ['b'] },
-  { 'hash': 'b', 'parents': ['a'] },
-  { 'hash': 'a', 'parents': [] }
-]"
+WORKTREE=$(git_init graph_merge_tangle)
+cd "$WORKTREE"
 
-CONTENT="[
-  ['commit l'],
-  ['commit reach-a'],
-  ['commit k'],
-  ['commit octopus-b'],
-  ['commit octopus-a'],
-  ['commit j'],
-  ['commit i'],
-  ['commit tangle-c'],
-  ['commit tangle-b'],
-  ['commit tangle-a'],
-  ['commit h'],
-  ['commit side-b'],
-  ['commit side-a'],
-  ['commit g'],
-  ['commit f'],
-  ['commit e'],
-  ['commit d'],
-  ['commit c'],
-  ['commit b'],
-  ['commit a']
-]"
+git_commit -m a
+git_commit -m b
+git_tag b
+git_commit -m c
+git_tag c
+git_commit -m d
+git_commit -m e
+git_tag e
+git_commit -m f
+git_commit -m g
+git_tag g
 
-cd "$TMP"
-run_vim_command "call writefile(
-  flog#graph#generate($GRAPH, $CONTENT).output,
-  'out'
-)"
+git_checkout c
+git_commit -m side-a
+git_tag side-a
+git_commit -m side-b
+git_tag side-b
 
-diff "out" "$DATA_DIR/graph_tangle_out"
+git_checkout g
+git_merge -m h side-b
+git_tag h
+
+git_checkout b
+git_commit -m tangle-a
+git_merge -m tangle-b e
+git_merge -m tangle-c side-a
+git_tag tangle-c
+
+git_checkout h
+git_merge -m i tangle-c
+git_tag i
+git_commit -m j
+git_tag j
+
+git_checkout i
+git_commit -m octopus-a
+git_tag octopus-a
+git_checkout i
+git_commit -m octopus-b
+git_tag octopus-b
+
+git_checkout i
+git_commit -m reach-a
+git_tag reach-a
+
+git_checkout j
+git_merge -m k octopus-a octopus-b
+git_merge -m l reach-a
+
+VIM_OUT=$(get_relative_dir "$TMP")/out
+run_vim_command "exec 'Flog -sort=date -format=%s' | silent w $VIM_OUT"
+
+diff_data "$TMP/out" "graph_tangle_out"

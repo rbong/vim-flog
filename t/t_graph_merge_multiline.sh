@@ -1,39 +1,35 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 set -e
 
 TEST_DIR=$(realpath -- "$(dirname -- "$0")")
-DATA_DIR=$(realpath -- "$(dirname -- "$0")/data")
 
 source "$TEST_DIR/lib_dir.sh"
+source "$TEST_DIR/lib_diff.sh"
+source "$TEST_DIR/lib_git.sh"
 source "$TEST_DIR/lib_vim.sh"
 
 TMP=$(create_tmp_dir graph_merge_multiline)
 
-GRAPH="[
-  { 'hash': 'e', 'parents': ['d'] },
-  { 'hash': 'd', 'parents': ['c', 'side-b'] },
-  { 'hash': 'side-b', 'parents': ['side-a'] },
-  { 'hash': 'side-a', 'parents': ['b'] },
-  { 'hash': 'c', 'parents': ['b'] },
-  { 'hash': 'b', 'parents': ['a'] },
-  { 'hash': 'a', 'parents': [] },
-]"
+WORKTREE=$(git_init graph_merge_multiline)
+cd "$WORKTREE"
 
-CONTENT="[
-  ['five line 1', 'five line 2', 'five line 3', 'five line 4'],
-  ['four - Merge side', 'four line 2', 'four line 3'],
-  ['side two line 1', 'side two line 2'],
-  ['side one line 1', 'side one line 2'],
-  ['three line 1', 'three line 2'],
-  ['two line 1', 'two line 2'],
-  ['one line 1', 'one line 2']
-]"
+git_commit -m a
+git_commit -m b
+git_tag b
+git_commit -m c
+git_tag c
 
-cd "$TMP"
-run_vim_command "call writefile(
-  flog#graph#generate($GRAPH, $CONTENT).output,
-  'out'
-)"
+git_checkout b
+git_commit -m side-a
+git_commit -m side-b
+git_tag side-b
 
-diff "out" "$DATA_DIR/graph_merge_multiline_out"
+git_checkout c
+git_merge -m d side-b
+git_commit -m e
+
+VIM_OUT=$(get_relative_dir "$TMP")/out
+run_vim_command "exec 'Flog -format=%s%n%s' | silent w $VIM_OUT"
+
+diff_data "$TMP/out" "graph_merge_multiline_out"

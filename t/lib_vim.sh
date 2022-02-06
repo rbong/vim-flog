@@ -15,27 +15,27 @@ install_vim() {
   echo "set nocompatible" > "$VIM_DIR/.vimrc"
 
   cd "$BASE_DIR"
-  cp -rf autoload ftplugin plugin syntax "$FLOG_DIR"
+  cp -rf autoload ftplugin plugin syntax lua "$FLOG_DIR"
 
   git clone -q --depth 1 "https://github.com/tpope/vim-fugitive" "$FUGITIVE_DIR"
 }
 
 run_vim_command() {
-  TMP=$(create_tmp_dir "vim/")
-  OUT=$TMP/_messages
+  _TMP=$(create_tmp_dir "vim/")
+  _OUT=$_TMP/_messages
 
   set +e
   VIMRUNTIME="$FLOG_DIR,$FUGITIVE_DIR" vim \
     -u "$VIM_DIR/.vimrc" \
     -e -s \
-    -c "redir > $OUT" \
+    -c "redir > $_OUT" \
     -c "$1" \
     -c "qa!"
   STATUS=$?
   set -e
 
-  if [[ -s "$OUT" ]]; then
-    tail -n +2 "$OUT"
+  if [[ -s "$_OUT" ]]; then
+    tail -n +2 "$_OUT"
     echo
   fi
 
