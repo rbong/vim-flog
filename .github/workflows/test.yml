@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: 5
       - name: "install lua"
-        uses: leafo/gh-actions-lua@v8.0.0
+        uses: "leafo/gh-actions-lua@v8.0.0"
         with:
           luaVersion: "${{ matrix.lua_version }}"
       - name: "install ${{ matrix.vim_type }}"
