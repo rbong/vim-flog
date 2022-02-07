@@ -35,8 +35,8 @@ git_tag left-a
 git_commit -m left-b
 git_tag left-b
 
-git_checkout a
-git_merge -m octopus side-1 side-2 side-3 left-a
+git_checkout side-1
+git_merge -m octopus side-2 side-3 left-a
 git_tag octopus
 
 VIM_OUT=$(get_relative_dir "$TMP")/out

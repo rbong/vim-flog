@@ -30,7 +30,7 @@ git_tag branch-4-a
 git_checkout branch-1-b
 git_commit -m branch-1-c
 git_tag branch-1-c
-git_merge -m branch-2-a --no-ff branch-3-a branch-4-a
+git_merge -m branch-2-a branch-3-a branch-4-a
 git_tag branch-2-a
 
 git_checkout branch-4-a
@@ -47,7 +47,7 @@ git_tag branch-2-b
 
 git_checkout branch-1-c
 git_tag branch-1-d
-git_merge -m branch-1-e --no-ff branch-2-b branch-3-b branch-4-b
+git_merge -m branch-1-e branch-2-b branch-3-b branch-4-b
 
 VIM_OUT=$(get_relative_dir "$TMP")/out
 run_vim_command "exec 'Flog -order=date -format=%s' | silent w $VIM_OUT"

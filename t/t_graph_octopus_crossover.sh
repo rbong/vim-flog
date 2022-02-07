@@ -33,8 +33,8 @@ git_checkout a
 git_commit -m side-4
 git_tag side-4
 
-git_checkout a
-git_merge -m octopus side-1 side-2 side-3 side-4
+git_checkout side-1
+git_merge -m octopus side-2 side-3 side-4
 git_tag octopus
 
 git_checkout a
