@@ -18,8 +18,6 @@ git_commit -m branch-1-a
 git_tag branch-1-a
 git_commit -m branch-1-b
 git_tag branch-1-b
-git_commit -m branch-1-c
-git_tag branch-1-c
 
 git_checkout branch-1-a
 git_commit -m branch-3-a
@@ -29,7 +27,9 @@ git_checkout branch-1-a
 git_commit -m branch-4-a
 git_tag branch-4-a
 
-git_checkout branch-1-c
+git_checkout branch-1-b
+git_commit -m branch-1-c
+git_tag branch-1-c
 git_merge -m branch-2-a --no-ff branch-3-a branch-4-a
 git_tag branch-2-a
 
