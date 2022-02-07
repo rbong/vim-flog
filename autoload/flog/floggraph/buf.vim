@@ -101,7 +101,7 @@ def flog#floggraph#buf#get_name(instance_number: number, opts: dict<any>): strin
     name ..= ' [path=...]'
   endif
 
-  return name
+  return fnameescape(name)
 enddef
 
 def flog#floggraph#buf#open(state: dict<any>): number
