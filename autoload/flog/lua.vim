@@ -4,7 +4,7 @@ vim9script
 # This file contains functions which allow Flog to communicate with Lua.
 #
 
-def flog#lua#should_use_internal(): bool
+export def ShouldUseInternal(): bool
   const use_lua = get(g:, 'flog_use_internal_lua', false)
 
   if use_lua && !has('lua')
@@ -17,7 +17,7 @@ enddef
 
 g:flog_did_check_lua_internal_version = false
 
-def flog#lua#check_internal_version(): bool
+export def CheckInternalVersion(): bool
   if g:flog_check_lua_version && !g:flog_did_check_lua_internal_version
     g:flog_did_check_lua_internal_version = true
 
@@ -35,11 +35,11 @@ enddef
 
 g:flog_did_check_lua_bin_version = false
 
-def flog#lua#check_bin_version(bin: string): bool
+export def CheckBinVersion(bin: string): bool
   if g:flog_check_lua_version && !g:flog_did_check_lua_bin_version
     g:flog_did_check_lua_bin_version = true
 
-    const out = flog#shell#run(bin .. ' -v')[0]
+    const out = flog#shell#Run(bin .. ' -v')[0]
 
     if out =~ '\c^lua 5\.1\(\.\|$\)'
       echoerr 'flog: warning: for speed improvements, please install LuaJIT 2.1'
@@ -53,7 +53,7 @@ def flog#lua#check_bin_version(bin: string): bool
   return false
 enddef
 
-def flog#lua#get_bin(): string
+export def GetBin(): string
   var bin = ''
 
   if exists('g:flog_lua_bin')
@@ -67,24 +67,24 @@ def flog#lua#get_bin(): string
     throw g:flog_lua_not_found
   endif
 
-  flog#lua#check_bin_version(bin)
+  flog#lua#CheckBinVersion(bin)
 
   return bin
 enddef
 
-def flog#lua#get_lib_path(lib: string): string
+export def GetLibPath(lib: string): string
   return g:flog_root_dir .. '/lua/flog/' .. lib
 enddef
 
-def flog#lua#get_graph_internal(git_cmd: string): dict<any>
-  flog#floggraph#buf#assert_flog_buf()
-  const state = flog#state#get_buf_state()
+export def GetGraphInternal(git_cmd: string): dict<any>
+  flog#floggraph#buf#AssertFlogBuf()
+  const state = flog#state#GetBufState()
 
   # Check version
-  flog#lua#check_internal_version()
+  flog#lua#CheckInternalVersion()
 
   # Load graph lib
-  const graph_lib = flog#lua#get_lib_path('graph.lua')
+  const graph_lib = flog#lua#GetLibPath('graph.lua')
   exec 'luafile ' .. fnameescape(graph_lib)
 
   # Set temporary vars
@@ -113,16 +113,16 @@ def flog#lua#get_graph_internal(git_cmd: string): dict<any>
     }
 enddef
 
-def flog#lua#get_graph_bin(git_cmd: string): dict<any>
-  flog#floggraph#buf#assert_flog_buf()
-  const state = flog#state#get_buf_state()
+export def GetGraphBin(git_cmd: string): dict<any>
+  flog#floggraph#buf#AssertFlogBuf()
+  const state = flog#state#GetBufState()
 
   # Get paths
-  const script_path = flog#lua#get_lib_path('graph_bin.lua')
-  const graph_lib_path = flog#lua#get_lib_path('graph.lua')
+  const script_path = flog#lua#GetLibPath('graph_bin.lua')
+  const graph_lib_path = flog#lua#GetLibPath('graph.lua')
 
   # Build command
-  var cmd = flog#lua#get_bin()
+  var cmd = flog#lua#GetBin()
   cmd ..= ' '
   cmd ..= shellescape(script_path)
   cmd ..= ' '
@@ -135,7 +135,7 @@ def flog#lua#get_graph_bin(git_cmd: string): dict<any>
   cmd ..= shellescape(git_cmd)
 
   # Run command
-  const out = flog#shell#run(cmd)
+  const out = flog#shell#Run(cmd)
 
   # Parse number of commits
   const ncommits = str2nr(out[0])
@@ -207,12 +207,12 @@ def flog#lua#get_graph_bin(git_cmd: string): dict<any>
     }
 enddef
 
-def flog#lua#get_graph(git_cmd: string): dict<any>
-  flog#floggraph#buf#assert_flog_buf()
+export def GetGraph(git_cmd: string): dict<any>
+  flog#floggraph#buf#AssertFlogBuf()
 
-  if flog#lua#should_use_internal()
-    return flog#lua#get_graph_internal(git_cmd)
+  if flog#lua#ShouldUseInternal()
+    return flog#lua#GetGraphInternal(git_cmd)
   endif
 
-  return flog#lua#get_graph_bin(git_cmd)
+  return flog#lua#GetGraphBin(git_cmd)
 enddef

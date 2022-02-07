@@ -8,47 +8,47 @@ vim9script
 
 # The implementation of ":Flog".
 # The "floggraph/" folder contains functions for dealing with this filetype.
-def flog#cmd#flog(args: list<string>): dict<any>
-  if !flog#fugitive#is_fugitive_buf()
+export def Flog(args: list<string>): dict<any>
+  if !flog#fugitive#IsFugitiveBuf()
     throw g:flog_not_a_fugitive_buffer
   endif
 
-  var state = flog#state#create()
+  var state = flog#state#Create()
 
-  const fugitive_repo = flog#fugitive#get_repo()
-  flog#state#set_fugitive_repo(state, fugitive_repo)
-  const workdir = flog#state#get_fugitive_workdir(state)
+  const fugitive_repo = flog#fugitive#GetRepo()
+  flog#state#SetFugitiveRepo(state, fugitive_repo)
+  const workdir = flog#state#GetFugitiveWorkdir(state)
 
-  var default_opts = flog#state#get_default_opts()
-  const opts = flog#cmd#flog#args#parse(default_opts, workdir, args)
-  flog#state#set_opts(state, opts)
+  var default_opts = flog#state#GetDefaultOpts()
+  const opts = flog#cmd#flog#args#Parse(default_opts, workdir, args)
+  flog#state#SetOpts(state, opts)
 
-  if g:flog_write_commit_graph && !flog#git#has_commit_graph()
-    flog#git#write_commit_graph()
+  if g:flog_write_commit_graph && !flog#git#HasCommitGraph()
+    flog#git#WriteCommitGraph()
   endif
 
-  flog#floggraph#buf#open(state)
-  flog#floggraph#buf#update()
+  flog#floggraph#buf#Open(state)
+  flog#floggraph#buf#Update()
 
   return state
 enddef
 
 # The implementation of ":Flogsetargs".
-def flog#cmd#flog_set_args(args: list<string>, force: bool): dict<any>
-  const state = flog#state#get_buf_state()
+export def FlogSetArgs(args: list<string>, force: bool): dict<any>
+  const state = flog#state#GetBufState()
 
-  const workdir = flog#state#get_fugitive_workdir(state)
-  var opts = force ? flog#state#get_internal_default_opts() : state.opts
+  const workdir = flog#state#GetFugitiveWorkdir(state)
+  var opts = force ? flog#state#GetInternalDefaultOpts() : state.opts
 
-  flog#cmd#flog#args#parse(opts, workdir, args)
-  flog#state#set_opts(state, opts)
+  flog#cmd#flog#args#Parse(opts, workdir, args)
+  flog#state#SetOpts(state, opts)
 
-  flog#floggraph#buf#update()
+  flog#floggraph#buf#Update()
 
   return state
 enddef
 
 # The implementation of ":Floggit".
-def flog#cmd#flog_git(mods: string, args: string, bang: string): string
-  return flog#exec_raw(mods .. ' Git ' .. args, true, true, !empty(bang))
+export def FlogGit(mods: string, args: string, bang: string): string
+  return flog#ExecRaw(mods .. ' Git ' .. args, true, true, !empty(bang))
 enddef

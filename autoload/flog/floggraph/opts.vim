@@ -4,49 +4,49 @@ vim9script
 # This file contains functions for modifying options in "floggraph" buffers.
 #
 
-def flog#floggraph#opts#toggle(name: string): bool
-  flog#floggraph#buf#assert_flog_buf()
-  const opts = flog#state#get_buf_state().opts
+export def Toggle(name: string): bool
+  flog#floggraph#buf#AssertFlogBuf()
+  const opts = flog#state#GetBufState().opts
 
   const val = !opts[name]
   opts[name] = val
 
-  flog#floggraph#buf#update()
+  flog#floggraph#buf#Update()
 
   return val
 enddef
 
-def flog#floggraph#opts#toggle_all(): bool
-  return flog#floggraph#opts#toggle('all')
+export def ToggleAll(): bool
+  return flog#floggraph#opts#Toggle('all')
 enddef
 
-def flog#floggraph#opts#toggle_bisect(): bool
-  return flog#floggraph#opts#toggle('bisect')
+export def ToggleBisect(): bool
+  return flog#floggraph#opts#Toggle('bisect')
 enddef
 
-def flog#floggraph#opts#toggle_merges(): bool
-  return flog#floggraph#opts#toggle('merges')
+export def ToggleMerges(): bool
+  return flog#floggraph#opts#Toggle('merges')
 enddef
 
-def flog#floggraph#opts#toggle_reflog(): bool
-  return flog#floggraph#opts#toggle('reflog')
+export def ToggleReflog(): bool
+  return flog#floggraph#opts#Toggle('reflog')
 enddef
 
-def flog#floggraph#opts#toggle_reverse(): bool
-  return flog#floggraph#opts#toggle('reverse')
+export def ToggleReverse(): bool
+  return flog#floggraph#opts#Toggle('reverse')
 enddef
 
-def flog#floggraph#opts#toggle_graph(): bool
-  return flog#floggraph#opts#toggle('graph')
+export def ToggleGraph(): bool
+  return flog#floggraph#opts#Toggle('graph')
 enddef
 
-def flog#floggraph#opts#toggle_patch(): bool
-  return flog#floggraph#opts#toggle('patch')
+export def TogglePatch(): bool
+  return flog#floggraph#opts#Toggle('patch')
 enddef
 
-def flog#floggraph#opts#cycle_sort(): string
-  flog#floggraph#buf#assert_flog_buf()
-  const opts = flog#state#get_buf_state().opts
+export def CycleSort(): string
+  flog#floggraph#buf#AssertFlogBuf()
+  const opts = flog#state#GetBufState().opts
 
   const default_sort = opts.graph ? 'topo' : 'date'
 
@@ -55,7 +55,7 @@ def flog#floggraph#opts#cycle_sort(): string
     sort = default_sort
   endif
 
-  const sort_type = flog#global_opts#get_sort_type(sort)
+  const sort_type = flog#global_opts#GetSortType(sort)
 
   if empty(sort_type)
     sort = g:flog_sort_types[0].name
@@ -71,7 +71,7 @@ def flog#floggraph#opts#cycle_sort(): string
 
   opts.sort = sort
 
-  flog#floggraph#buf#update()
+  flog#floggraph#buf#Update()
 
   return sort
 enddef

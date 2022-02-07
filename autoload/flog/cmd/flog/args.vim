@@ -5,8 +5,8 @@ vim9script
 #
 
 # Parse ":Flog" args into the options object.
-def flog#cmd#flog#args#parse(current_opts: dict<any>, workdir: string, args: list<string>): dict<any>
-  const defaults = flog#state#get_internal_default_opts()
+export def Parse(current_opts: dict<any>, workdir: string, args: list<string>): dict<any>
+  const defaults = flog#state#GetInternalDefaultOpts()
 
   var has_set_path = false
 
@@ -23,16 +23,16 @@ def flog#cmd#flog#args#parse(current_opts: dict<any>, workdir: string, args: lis
     elseif arg == '--'
       got_raw_args_token = true
     elseif arg =~ '^-format=.\+'
-      current_opts.format = flog#args#parse_arg(arg)
+      current_opts.format = flog#args#ParseArg(arg)
     elseif arg == '-format='
       current_opts.format = defaults.format
     elseif arg =~ '^-date=.\+'
-      current_opts.date = flog#args#parse_arg(arg)
+      current_opts.date = flog#args#ParseArg(arg)
     elseif arg == '-date='
       current_opts.date = defaults.date
     elseif arg =~ '^-raw-args=.\+'
       has_set_raw_args = true
-      raw_args += [flog#args#parse_arg(arg)]
+      raw_args += [flog#args#ParseArg(arg)]
     elseif arg == '-raw-args='
       has_set_raw_args = false
       current_opts.raw_args = defaults.raw_args
@@ -65,35 +65,35 @@ def flog#cmd#flog#args#parse(current_opts: dict<any>, workdir: string, args: lis
     elseif arg == '-no-patch'
       current_opts.patch = false
     elseif arg =~ '^-skip=\d\+'
-      current_opts.skip = flog#args#parse_arg(arg)
+      current_opts.skip = flog#args#ParseArg(arg)
     elseif arg == '-skip='
       current_opts.skip = defaults.skip
     elseif arg =~ '^-\(sort\|order\)=.\+'
-      current_opts.sort = flog#args#parse_arg(arg)
+      current_opts.sort = flog#args#ParseArg(arg)
     elseif arg == '-sort=' || arg == '-order='
       current_opts.sort = defaults.sort
     elseif arg =~ '^-max-count=\d\+'
-      current_opts.max_count = flog#args#parse_arg(arg)
+      current_opts.max_count = flog#args#ParseArg(arg)
     elseif arg == '-max-count='
       current_opts.max_count = defaults.max_count
     elseif arg =~ '^-open-cmd=.\+'
-      current_opts.open_cmd = flog#args#parse_arg(arg)
+      current_opts.open_cmd = flog#args#ParseArg(arg)
     elseif arg == '-open-cmd='
       current_opts.open_cmd = defaults.open_cmd
     elseif arg =~ '^-\(search\|grep\)=.\+'
-      current_opts.search = flog#args#parse_arg(arg)
+      current_opts.search = flog#args#ParseArg(arg)
     elseif arg == '-search=' || arg == '-grep='
       current_opts.search = defaults.search
     elseif arg =~ '^-patch-\(search\|grep\)=.\+'
-      current_opts.patch_search = flog#args#parse_arg(arg)
+      current_opts.patch_search = flog#args#ParseArg(arg)
     elseif arg == '-patch-search=' || arg == '-patch-grep='
       current_opts.patch_search = defaults.patch_search
     elseif arg =~ '^-author=.\+'
-      current_opts.author = flog#args#parse_arg(arg)
+      current_opts.author = flog#args#ParseArg(arg)
     elseif arg == '-author='
       current_opts.author = defaults.author
     elseif arg =~ '^-limit=.\+'
-      current_opts.limit = flog#args#parse_git_limit_arg(workdir, arg)
+      current_opts.limit = flog#args#ParseGitLimitArg(workdir, arg)
     elseif arg == '-limit='
       current_opts.limit = defaults.limit
     elseif arg =~ '^-rev=.\+'
@@ -101,7 +101,7 @@ def flog#cmd#flog#args#parse(current_opts: dict<any>, workdir: string, args: lis
         current_opts.rev = []
         has_set_rev = true
       endif
-      add(current_opts.rev, flog#args#parse_arg(arg))
+      add(current_opts.rev, flog#args#ParseArg(arg))
     elseif arg == '-rev='
       has_set_rev = false
       current_opts.rev = defaults.rev
@@ -110,7 +110,7 @@ def flog#cmd#flog#args#parse(current_opts: dict<any>, workdir: string, args: lis
         current_opts.path = []
         has_set_path = true
       endif
-      add(current_opts.path, flog#args#parse_git_path_arg(workdir, arg))
+      add(current_opts.path, flog#args#ParseGitPathArg(workdir, arg))
     elseif arg == '-path='
       current_opts.path = defaults.path
       has_set_path = false
@@ -127,7 +127,7 @@ def flog#cmd#flog#args#parse(current_opts: dict<any>, workdir: string, args: lis
   return current_opts
 enddef
 
-def flog#cmd#flog#args#complete_format(arg_lead: string): list<string>
+export def CompleteFormat(arg_lead: string): list<string>
   var is_escaped = false
   var current_specifier = ''
   var current_parens = ''
@@ -189,14 +189,14 @@ def flog#cmd#flog#args#complete_format(arg_lead: string): list<string>
   return completions
 enddef
 
-def flog#cmd#flog#args#complete_date(arg_lead: string): list<string>
-  const [lead, _] = flog#args#split_arg(arg_lead)
+export def CompleteDate(arg_lead: string): list<string>
+  const [lead, _] = flog#args#SplitArg(arg_lead)
   var completions = map(copy(g:flog_date_formats), (_, val) => lead .. val)
-  return flog#args#filter_completions(arg_lead, completions)
+  return flog#args#FilterCompletions(arg_lead, completions)
 enddef
 
-def flog#cmd#flog#args#complete_open_cmd(arg_lead: string): list<string>
-  const [lead, _] = flog#args#split_arg(arg_lead)
+export def CompleteOpenCmd(arg_lead: string): list<string>
+  const [lead, _] = flog#args#SplitArg(arg_lead)
 
   var completions = g:flog_open_cmds + g:flog_open_cmd_modifiers
 
@@ -207,73 +207,73 @@ def flog#cmd#flog#args#complete_open_cmd(arg_lead: string): list<string>
     endfor
   endfor
 
-  completions = flog#args#escape_completions(lead, completions)
+  completions = flog#args#EscapeCompletions(lead, completions)
 
-  return flog#args#filter_completions(arg_lead, completions)
+  return flog#args#FilterCompletions(arg_lead, completions)
 enddef
 
-def flog#cmd#flog#args#complete_author(arg_lead: string): list<string>
-  if !flog#fugitive#is_fugitive_buf()
+export def CompleteAuthor(arg_lead: string): list<string>
+  if !flog#fugitive#IsFugitiveBuf()
     return []
   endif
 
-  const [lead, _] = flog#args#split_arg(arg_lead)
-  var completions = flog#git#get_authors()
-  return flog#args#filter_completions(
+  const [lead, _] = flog#args#SplitArg(arg_lead)
+  var completions = flog#git#GetAuthors()
+  return flog#args#FilterCompletions(
     arg_lead,
-    flog#args#escape_completions(lead, completions)
+    flog#args#EscapeCompletions(lead, completions)
   )
 enddef
 
-def flog#cmd#flog#args#complete_limit(arg_lead: string): list<string>
-  const [lead, limit] = flog#args#split_arg(arg_lead)
+export def CompleteLimit(arg_lead: string): list<string>
+  const [lead, limit] = flog#args#SplitArg(arg_lead)
 
-  var [range, path] = flog#args#split_git_limit_arg(limit)
+  var [range, path] = flog#args#SplitGitLimitArg(limit)
   if range !~ ':$'
     return []
   endif
-  path = flog#args#unescape_arg(path)
+  path = flog#args#UnescapeArg(path)
 
   var completions = getcompletion(path, 'file')
-  completions = flog#args#escape_completions(lead .. range, completions)
-  return flog#args#filter_completions(arg_lead, completions)
+  completions = flog#args#EscapeCompletions(lead .. range, completions)
+  return flog#args#FilterCompletions(arg_lead, completions)
 enddef
 
-def flog#cmd#flog#args#complete_rev(arg_lead: string): list<string>
-  if !flog#fugitive#is_fugitive_buf()
+export def CompleteRev(arg_lead: string): list<string>
+  if !flog#fugitive#IsFugitiveBuf()
     return []
   endif
-  const [lead, _] = flog#args#split_arg(arg_lead)
+  const [lead, _] = flog#args#SplitArg(arg_lead)
 
-  var refs = flog#git#get_refs()
+  var refs = flog#git#GetRefs()
 
-  var completions = flog#args#escape_completions(lead, refs)
-  return flog#args#filter_completions(arg_lead, completions)
+  var completions = flog#args#EscapeCompletions(lead, refs)
+  return flog#args#FilterCompletions(arg_lead, completions)
 enddef
 
-def flog#cmd#flog#args#complete_path(arg_lead: string): list<string>
-  var [lead, path] = flog#args#split_arg(arg_lead)
-  path = flog#args#unescape_arg(path)
+export def CompletePath(arg_lead: string): list<string>
+  var [lead, path] = flog#args#SplitArg(arg_lead)
+  path = flog#args#UnescapeArg(path)
 
   var files = getcompletion(path, 'file')
 
-  var completions = flog#args#escape_completions(lead, files)
-  return flog#args#filter_completions(arg_lead, completions)
+  var completions = flog#args#EscapeCompletions(lead, files)
+  return flog#args#FilterCompletions(arg_lead, completions)
 enddef
 
-def flog#cmd#flog#args#complete_sort(arg_lead: string): list<string>
-  const [lead, _] = flog#args#split_arg(arg_lead)
+export def CompleteSort(arg_lead: string): list<string>
+  const [lead, _] = flog#args#SplitArg(arg_lead)
 
   var sort_types = []
   for sort_type in g:flog_sort_types
     add(sort_types, sort_type.name)
   endfor
 
-  var completions = flog#args#escape_completions(lead, sort_types)
-  return flog#args#filter_completions(arg_lead, completions)
+  var completions = flog#args#EscapeCompletions(lead, sort_types)
+  return flog#args#FilterCompletions(arg_lead, completions)
 enddef
 
-def flog#cmd#flog#args#complete(arg_lead: string, cmd_line: string, cursor_pos: number): list<string>
+export def Complete(arg_lead: string, cmd_line: string, cursor_pos: number): list<string>
   if cmd_line[ : cursor_pos] =~ ' -- '
     return []
   endif
@@ -312,25 +312,25 @@ def flog#cmd#flog#args#complete(arg_lead: string, cmd_line: string, cursor_pos: 
     ]
 
   if arg_lead == ''
-    return flog#args#filter_completions(arg_lead, default_completion)
+    return flog#args#FilterCompletions(arg_lead, default_completion)
   elseif arg_lead =~ '^-format='
-    return flog#cmd#flog#args#complete_format(arg_lead)
+    return flog#cmd#flog#args#CompleteFormat(arg_lead)
   elseif arg_lead =~ '^-date='
-    return flog#cmd#flog#args#complete_date(arg_lead)
+    return flog#cmd#flog#args#CompleteDate(arg_lead)
   elseif arg_lead =~ '^-open-cmd='
-    return flog#cmd#flog#args#complete_open_cmd(arg_lead)
+    return flog#cmd#flog#args#CompleteOpenCmd(arg_lead)
   elseif arg_lead =~ '^-\(patch-\)\?\(search\|grep\)='
     return []
   elseif arg_lead =~ '^-author='
-    return flog#cmd#flog#args#complete_author(arg_lead)
+    return flog#cmd#flog#args#CompleteAuthor(arg_lead)
   elseif arg_lead =~ '^-limit='
-    return flog#cmd#flog#args#complete_limit(arg_lead)
+    return flog#cmd#flog#args#CompleteLimit(arg_lead)
   elseif arg_lead =~ '^-rev='
-    return flog#cmd#flog#args#complete_rev(arg_lead)
+    return flog#cmd#flog#args#CompleteRev(arg_lead)
   elseif arg_lead =~ '^-path='
-    return flog#cmd#flog#args#complete_path(arg_lead)
+    return flog#cmd#flog#args#CompletePath(arg_lead)
   elseif arg_lead =~ '^-\(sort\|order\)='
-    return flog#cmd#flog#args#complete_sort(arg_lead)
+    return flog#cmd#flog#args#CompleteSort(arg_lead)
   endif
-  return flog#args#filter_completions(arg_lead, default_completion)
+  return flog#args#FilterCompletions(arg_lead, default_completion)
 enddef

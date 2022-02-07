@@ -4,52 +4,52 @@ vim9script
 # This file contains functions for working with commit marks in "floggraph" buffers.
 #
 
-def flog#floggraph#mark#set_internal(key: string, line: any): dict<any>
-  flog#floggraph#buf#assert_flog_buf()
-  const state = flog#state#get_buf_state()
-  const commit = flog#floggraph#commit#get_at_line(line)
-  return flog#state#set_internal_commit_mark(state, key, commit)
+export def SetInternal(key: string, line: any): dict<any>
+  flog#floggraph#buf#AssertFlogBuf()
+  const state = flog#state#GetBufState()
+  const commit = flog#floggraph#commit#GetAtLine(line)
+  return flog#state#SetInternalCommitMark(state, key, commit)
 enddef
 
-def flog#floggraph#mark#set(key: string, line: any): dict<any>
-  flog#floggraph#buf#assert_flog_buf()
-  const state = flog#state#get_buf_state()
-  const commit = flog#floggraph#commit#get_at_line(line)
-  return flog#state#set_commit_mark(state, key, commit)
+export def Set(key: string, line: any): dict<any>
+  flog#floggraph#buf#AssertFlogBuf()
+  const state = flog#state#GetBufState()
+  const commit = flog#floggraph#commit#GetAtLine(line)
+  return flog#state#SetCommitMark(state, key, commit)
 enddef
 
-def flog#floggraph#mark#set_jump(line: any = '.'): dict<any>
-  return flog#floggraph#mark#set("'", line)
+export def SetJump(line: any = '.'): dict<any>
+  return flog#floggraph#mark#Set("'", line)
 enddef
 
-def flog#floggraph#mark#get(key: string): dict<any>
-  flog#floggraph#buf#assert_flog_buf()
-  const state = flog#state#get_buf_state()
+export def Get(key: string): dict<any>
+  flog#floggraph#buf#AssertFlogBuf()
+  const state = flog#state#GetBufState()
 
   if key =~ '[<>]'
-    return flog#floggraph#commit#get_at_line("'" .. key)
+    return flog#floggraph#commit#GetAtLine("'" .. key)
   endif
 
   if key == '@'
-    return flog#floggraph#commit#get_by_ref('HEAD')
+    return flog#floggraph#commit#GetByRef('HEAD')
   endif
   if key =~ '[~^]'
-    return flog#floggraph#commit#get_by_ref('HEAD~')
+    return flog#floggraph#commit#GetByRef('HEAD~')
   endif
 
-  if flog#state#is_cancel_commit_mark(key)
+  if flog#state#IsCancelCommitMark(key)
     throw g:flog_invalid_mark
   endif
 
-  if !flog#state#has_commit_mark(state, key)
+  if !flog#state#HasCommitMark(state, key)
     return {}
   endif
 
-  return flog#state#get_commit_mark(state, key)
+  return flog#state#GetCommitMark(state, key)
 enddef
 
-def flog#floggraph#mark#print_all(): dict<any>
-  const marks = flog#state#get_buf_state().commit_marks
+export def PrintAll(): dict<any>
+  const marks = flog#state#GetBufState().commit_marks
 
   if empty(marks)
     echo 'No commit marks.'

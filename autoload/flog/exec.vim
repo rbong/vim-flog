@@ -1,24 +1,24 @@
 vim9script
 
 #
-# This file contains utility functions for "flog#exec()".
+# This file contains utility functions for "flog#Exec()".
 #
 
-def flog#exec#get_cache_refs(cache: dict<any>, commit: dict<any>): list<dict<any>>
+export def GetCacheRefs(cache: dict<any>, commit: dict<any>): list<dict<any>>
   var ref_cache = cache.refs
 
-  const refs = flog#state#get_commit_refs(commit)
+  const refs = flog#state#GetCommitRefs(commit)
 
   ref_cache[commit.hash] = refs
   return refs
 enddef
 
-def flog#exec#format_hash(save: bool): string
-  const commit = flog#floggraph#commit#get_at_line('.')
+export def FormatHash(save: bool): string
+  const commit = flog#floggraph#commit#GetAtLine('.')
   
   if !empty(commit)
     if save
-      flog#floggraph#mark#set_internal('!', '.')
+      flog#floggraph#mark#SetInternal('!', '.')
     endif
     return commit.hash
   endif
@@ -26,16 +26,16 @@ def flog#exec#format_hash(save: bool): string
   return ''
 enddef
 
-def flog#exec#format_mark_hash(key: string): string
-  const commit = flog#floggraph#mark#get(key)
+export def FormatMarkHash(key: string): string
+  const commit = flog#floggraph#mark#Get(key)
   return empty(commit) ? '' : commit.hash
 enddef
 
-def flog#exec#format_commit_branch(cache: dict<any>, commit: dict<any>): string
+export def FormatCommitBranch(cache: dict<any>, commit: dict<any>): string
   var local_branch = ''
   var remote_branch = ''
 
-  for ref in flog#exec#get_cache_refs(cache, commit)
+  for ref in flog#exec#GetCacheRefs(cache, commit)
     # Skip non-branches
     if ref.tag || ref.tail =~ 'HEAD$'
       continue
@@ -55,40 +55,40 @@ def flog#exec#format_commit_branch(cache: dict<any>, commit: dict<any>): string
 
   const branch = empty(local_branch) ? remote_branch : local_branch
 
-  return flog#shell#escape(branch)
+  return flog#shell#Escape(branch)
 enddef
 
-def flog#exec#format_branch(cache: dict<any>): string
-  const commit = flog#floggraph#commit#get_at_line('.')
-  return flog#exec#format_commit_branch(cache, commit)
+export def FormatBranch(cache: dict<any>): string
+  const commit = flog#floggraph#commit#GetAtLine('.')
+  return flog#exec#FormatCommitBranch(cache, commit)
 enddef
 
-def flog#exec#format_mark_branch(cache: dict<any>, key: string): string
-  const commit = flog#floggraph#mark#get(key)
-  return flog#exec#format_commit_branch(cache, commit)
+export def FormatMarkBranch(cache: dict<any>, key: string): string
+  const commit = flog#floggraph#mark#Get(key)
+  return flog#exec#FormatCommitBranch(cache, commit)
 enddef
 
-def flog#exec#format_commit_local_branch(cache: dict<any>, commit: dict<any>): string
-  var branch = flog#exec#format_commit_branch(cache, commit)
+export def FormatCommitLocalBranch(cache: dict<any>, commit: dict<any>): string
+  var branch = flog#exec#FormatCommitBranch(cache, commit)
   return substitute(branch, '.*/', '', '')
 enddef
 
-def flog#exec#format_local_branch(cache: dict<any>): string
-  const commit = flog#floggraph#commit#get_at_line('.')
-  return flog#exec#format_commit_local_branch(cache, commit)
+export def FormatLocalBranch(cache: dict<any>): string
+  const commit = flog#floggraph#commit#GetAtLine('.')
+  return flog#exec#FormatCommitLocalBranch(cache, commit)
 enddef
 
-def flog#exec#format_mark_local_branch(cache: dict<any>, key: string): string
-  const commit = flog#floggraph#mark#get(key)
-  return flog#exec#format_commit_local_branch(cache, commit)
+export def FormatMarkLocalBranch(cache: dict<any>, key: string): string
+  const commit = flog#floggraph#mark#Get(key)
+  return flog#exec#FormatCommitLocalBranch(cache, commit)
 enddef
 
-def flog#exec#format_path(): string
-  const state = flog#state#get_buf_state()
+export def FormatPath(): string
+  const state = flog#state#GetBufState()
   var path = state.opts.path
 
   if !empty(state.opts.limit)
-    const [range, limit_path] = flog#args#split_git_limit_arg(state.opts.limit)
+    const [range, limit_path] = flog#args#SplitGitLimitArg(state.opts.limit)
 
     if empty(limit_path)
       return ''
@@ -99,10 +99,10 @@ def flog#exec#format_path(): string
     return ''
   endif
 
-  return join(flog#shell#escape_list(path), ' ')
+  return join(flog#shell#EscapeList(path), ' ')
 enddef
 
-def flog#exec#format_item(cache: dict<any>, item: string): string
+export def FormatItem(cache: dict<any>, item: string): string
   var item_cache = cache.items
 
   # Return cached items
@@ -116,21 +116,21 @@ def flog#exec#format_item(cache: dict<any>, item: string): string
   var formatted_item = ''
 
   if item == 'h'
-    formatted_item = flog#exec#format_hash(true)
+    formatted_item = flog#exec#FormatHash(true)
   elseif item == 'H'
-    formatted_item = flog#exec#format_hash(false)
+    formatted_item = flog#exec#FormatHash(false)
   elseif item =~ "^h'."
-    formatted_item = flog#exec#format_mark_hash(item[2 : ])
+    formatted_item = flog#exec#FormatMarkHash(item[2 : ])
   elseif item =~ 'b'
-    formatted_item = flog#exec#format_branch(cache)
+    formatted_item = flog#exec#FormatBranch(cache)
   elseif item =~ "^b'."
-    formatted_item = flog#exec#format_mark_branch(cache, item[2 : ])
+    formatted_item = flog#exec#FormatMarkBranch(cache, item[2 : ])
   elseif item =~ 'l'
-    formatted_item = flog#exec#format_local_branch(cache)
+    formatted_item = flog#exec#FormatLocalBranch(cache)
   elseif item =~ "^l'."
-    formatted_item = flog#exec#format_mark_local_branch(cache, item[2 : ])
+    formatted_item = flog#exec#FormatMarkLocalBranch(cache, item[2 : ])
   elseif item == 'p'
-    formatted_item = flog#exec#format_path()
+    formatted_item = flog#exec#FormatPath()
   else
     echoerr printf('error converting "%s"', item)
     throw g:flog_unsupported_exec_format_item
@@ -141,8 +141,8 @@ def flog#exec#format_item(cache: dict<any>, item: string): string
   return formatted_item
 enddef
 
-def flog#exec#format(str: string): string
-  flog#floggraph#buf#assert_flog_buf()
+export def Format(str: string): string
+  flog#floggraph#buf#AssertFlogBuf()
 
   # Special token flags
   var is_in_item = false
@@ -166,7 +166,7 @@ def flog#exec#format(str: string): string
 
       if char == ')'
         # End long specifier
-        const formatted_item = flog#exec#format_item(cache, long_item)
+        const formatted_item = flog#exec#FormatItem(cache, long_item)
         if empty(formatted_item)
           return ''
         endif
@@ -185,7 +185,7 @@ def flog#exec#format(str: string): string
         is_in_long_item = true
       else
         # Parse specifier character
-        const formatted_item = flog#exec#format_item(cache, char)
+        const formatted_item = flog#exec#FormatItem(cache, char)
         if empty(formatted_item)
           return ''
         endif

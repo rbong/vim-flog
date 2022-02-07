@@ -4,7 +4,7 @@ vim9script
 # This file contains functions for working with strings.
 #
 
-def flog#str#ellipsize(str: string, max_len: number = 15): string
+export def Ellipsize(str: string, max_len: number = 15): string
   if len(str) > max_len
     return str[ : max_len - 4] .. '...'
   endif

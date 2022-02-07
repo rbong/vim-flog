@@ -4,49 +4,49 @@ vim9script
 # This file contains public Flog API functions.
 #
 
-def flog#exec_raw(cmd: string, keep_focus: bool, should_update: bool, is_tmp: bool): string
-  if !flog#floggraph#buf#is_flog_buf()
+export def ExecRaw(cmd: string, keep_focus: bool, should_update: bool, is_tmp: bool): string
+  if !flog#floggraph#buf#IsFlogBuf()
     exec cmd
     return cmd
   endif
 
-  const graph_win = flog#win#save()
-  flog#floggraph#side_win#open(cmd, keep_focus, is_tmp)
+  const graph_win = flog#win#Save()
+  flog#floggraph#side_win#Open(cmd, keep_focus, is_tmp)
 
   if should_update
-    if flog#win#is(graph_win)
-      flog#floggraph#buf#update()
+    if flog#win#Is(graph_win)
+      flog#floggraph#buf#Update()
     else
-      flog#floggraph#buf#init_update_hook(flog#win#get_saved_bufnr(graph_win))
+      flog#floggraph#buf#InitUpdateHook(flog#win#GetSavedBufnr(graph_win))
     endif
   endif
 
   return cmd
 enddef
 
-def flog#run_raw_command(...args: list<any>)
-  flog#deprecate#function('flog#run_raw_command', 'flog#exec_raw')
+export def RunRawCommand(...args: list<any>)
+  flog#deprecate#Function('flog#run_raw_command', 'flog#ExecRaw')
 enddef
 
-def flog#exec(cmd: string, keep_focus: bool, should_update: bool, is_tmp: bool): string
-  flog#floggraph#buf#assert_flog_buf()
+export def Exec(cmd: string, keep_focus: bool, should_update: bool, is_tmp: bool): string
+  flog#floggraph#buf#AssertFlogBuf()
 
-  const formatted_cmd = flog#exec#format(cmd)
+  const formatted_cmd = flog#exec#Format(cmd)
   if empty(formatted_cmd)
     return ''
   endif
 
-  return flog#exec_raw(formatted_cmd, keep_focus, should_update, is_tmp)
+  return flog#ExecRaw(formatted_cmd, keep_focus, should_update, is_tmp)
 enddef
 
-def flog#run_command(...args: list<any>)
-  flog#deprecate#function('flog#run_command', 'flog#exec')
+export def RunCommand(...args: list<any>)
+  flog#deprecate#Function('flog#run_command', 'flog#Exec')
 enddef
 
-def flog#exec_tmp(cmd: string, keep_focus: bool, should_update: bool): string
-  return flog#exec(cmd, keep_focus, should_update, true)
+export def ExecTmp(cmd: string, keep_focus: bool, should_update: bool): string
+  return flog#Exec(cmd, keep_focus, should_update, true)
 enddef
 
-def flog#run_tmp_command(...args: list<any>)
-  flog#deprecate#function('flog#run_tmp_command', 'flog#exec_tmp')
+export def RunTmpCommand(...args: list<any>)
+  flog#deprecate#Function('flog#run_tmp_command', 'flog#ExecTmp')
 enddef

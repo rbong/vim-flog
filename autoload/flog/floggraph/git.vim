@@ -4,9 +4,9 @@ vim9script
 # This file contains functions for working with git for "floggraph" buffers.
 #
 
-def flog#floggraph#git#build_log_format(): string
-  const state = flog#state#get_buf_state()
-  const opts = flog#state#get_resolved_opts(state)
+export def BuildLogFormat(): string
+  const state = flog#state#GetBufState()
+  const opts = flog#state#GetResolvedOpts(state)
 
   var format = 'format:'
   # Add token so we can find commits
@@ -16,12 +16,12 @@ def flog#floggraph#git#build_log_format(): string
   # Add user format
   format ..= opts.format
 
-  return flog#shell#escape(format)
+  return flog#shell#Escape(format)
 enddef
 
-def flog#floggraph#git#build_log_args(): string
-  const state = flog#state#get_buf_state()
-  const opts = flog#state#get_resolved_opts(state)
+export def BuildLogArgs(): string
+  const state = flog#state#GetBufState()
+  const opts = flog#state#GetResolvedOpts(state)
 
   if opts.reverse && opts.graph
     throw g:flog_reverse_requires_no_graph
@@ -33,8 +33,8 @@ def flog#floggraph#git#build_log_args(): string
     args ..= ' --parents --topo-order'
   endif
   args ..= ' --no-color'
-  args ..= ' --pretty=' .. flog#floggraph#git#build_log_format()
-  args ..= ' --date=' .. flog#shell#escape(opts.date)
+  args ..= ' --pretty=' .. flog#floggraph#git#BuildLogFormat()
+  args ..= ' --date=' .. flog#shell#Escape(opts.date)
   if opts.all && empty(opts.limit)
     args ..= ' --all'
   endif
@@ -54,26 +54,26 @@ def flog#floggraph#git#build_log_args(): string
     args ..= ' --no-patch'
   endif
   if !empty(opts.skip)
-    args ..= ' --skip=' .. flog#shell#escape(opts.skip)
+    args ..= ' --skip=' .. flog#shell#Escape(opts.skip)
   endif
   if !empty(opts.sort)
-    const sort_type = flog#global_opts#get_sort_type(opts.sort)
+    const sort_type = flog#global_opts#GetSortType(opts.sort)
     args ..= ' ' .. sort_type.args
   endif
   if !empty(opts.max_count)
-    args ..= ' --max-count=' .. flog#shell#escape(opts.max_count)
+    args ..= ' --max-count=' .. flog#shell#Escape(opts.max_count)
   endif
   if !empty(opts.search)
-    args ..= ' --grep=' .. flog#shell#escape(opts.search)
+    args ..= ' --grep=' .. flog#shell#Escape(opts.search)
   endif
   if !empty(opts.patch_search)
-    args ..= ' -G' .. flog#shell#escape(opts.patch_search)
+    args ..= ' -G' .. flog#shell#Escape(opts.patch_search)
   endif
   if !empty(opts.author)
-    args ..= ' --author=' .. flog#shell#escape(opts.author)
+    args ..= ' --author=' .. flog#shell#Escape(opts.author)
   endif
   if !empty(opts.limit)
-    args ..= ' -L' .. flog#shell#escape(opts.limit)
+    args ..= ' -L' .. flog#shell#Escape(opts.limit)
   endif
   if !empty(opts.raw_args)
     args ..= ' ' .. opts.raw_args
@@ -81,9 +81,9 @@ def flog#floggraph#git#build_log_args(): string
   if len(opts.rev) >= 1
     var rev = ''
     if !empty(opts.limit)
-      rev = flog#shell#escape(opts.rev[0])
+      rev = flog#shell#Escape(opts.rev[0])
     else
-      rev = join(flog#shell#escape_list(opts.rev), ' ')
+      rev = join(flog#shell#EscapeList(opts.rev), ' ')
     endif
     args ..= ' ' .. rev
   endif
@@ -91,9 +91,9 @@ def flog#floggraph#git#build_log_args(): string
   return args
 enddef
 
-def flog#floggraph#git#build_log_paths(): string
-  const state = flog#state#get_buf_state()
-  const opts = flog#state#get_resolved_opts(state)
+export def BuildLogPaths(): string
+  const state = flog#state#GetBufState()
+  const opts = flog#state#GetResolvedOpts(state)
 
   if !empty(opts.limit)
     return ''
@@ -103,16 +103,16 @@ def flog#floggraph#git#build_log_paths(): string
     return ''
   endif
 
-  return join(flog#shell#escape_list(opts.path), ' ')
+  return join(flog#shell#EscapeList(opts.path), ' ')
 enddef
 
-def flog#floggraph#git#build_log_cmd(): string
-  var cmd = flog#fugitive#get_git_command()
+export def BuildLogCmd(): string
+  var cmd = flog#fugitive#GetGitCommand()
 
   cmd ..= ' log'
-  cmd ..= flog#floggraph#git#build_log_args()
+  cmd ..= flog#floggraph#git#BuildLogArgs()
   cmd ..= ' -- '
-  cmd ..= flog#floggraph#git#build_log_paths()
+  cmd ..= flog#floggraph#git#BuildLogPaths()
 
   return cmd
 enddef

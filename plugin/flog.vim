@@ -135,6 +135,6 @@ g:flog_open_cmd_modifiers = [
 
 # Commands
 
-command! -range=0 -complete=customlist,flog#cmd#flog#args#complete -nargs=* Flog call flog#cmd#flog((<count> > 1 ? ['-limit=<line1>,<line2>:' .. expand('%:p')] : []) + [<f-args>])
-command! -range=0 -complete=customlist,flog#cmd#flog#args#complete -nargs=* Flogsplit call flog#cmd#flog((<count> > 1 ? ['-limit=<line1>,<line2>:' .. expand('%:p')] : []) + ['-open-cmd=<mods> split', <f-args>])
-command! -range -bang -complete=customlist,flog#cmd#flog_git#args#complete -nargs=* Floggit call flog#cmd#flog_git('<mods>', '<args>', '<bang>')
+command! -range=0 -complete=customlist,flog#cmd#flog#args#Complete -nargs=* Flog call flog#cmd#Flog((<count> > 1 ? ['-limit=<line1>,<line2>:' .. expand('%:p')] : []) + [<f-args>])
+command! -range=0 -complete=customlist,flog#cmd#flog#args#Complete -nargs=* Flogsplit call flog#cmd#Flog((<count> > 1 ? ['-limit=<line1>,<line2>:' .. expand('%:p')] : []) + ['-open-cmd=<mods> split', <f-args>])
+command! -range -bang -complete=customlist,flog#cmd#flog_git#args#Complete -nargs=* Floggit call flog#cmd#FlogGit('<mods>', '<args>', '<bang>')

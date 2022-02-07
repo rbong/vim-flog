@@ -4,9 +4,9 @@ vim9script
 # This file contains functions for navigating in "floggraph" buffers.
 #
 
-def flog#floggraph#nav#jump_to_commit(hash: string): list<number>
-  flog#floggraph#buf#assert_flog_buf()
-  const state = flog#state#get_buf_state()
+export def JumpToCommit(hash: string): list<number>
+  flog#floggraph#buf#AssertFlogBuf()
+  const state = flog#state#GetBufState()
 
   if empty(hash)
     return [-1, -1]
@@ -25,67 +25,67 @@ def flog#floggraph#nav#jump_to_commit(hash: string): list<number>
   return [lnum, col]
 enddef
 
-def flog#floggraph#nav#jump_to_mark(key: string): list<number>
-  flog#floggraph#buf#assert_flog_buf()
+export def JumpToMark(key: string): list<number>
+  flog#floggraph#buf#AssertFlogBuf()
 
   const prev_line = line('.')
-  const prev_commit = flog#floggraph#commit#get_at_line(prev_line)
+  const prev_commit = flog#floggraph#commit#GetAtLine(prev_line)
 
-  const commit = flog#floggraph#mark#get(key)
+  const commit = flog#floggraph#mark#Get(key)
   if empty(commit)
     return [-1, -1]
   endif
 
-  const result = flog#floggraph#nav#jump_to_commit(commit.hash)
+  const result = flog#floggraph#nav#JumpToCommit(commit.hash)
 
   if commit != prev_commit
-    flog#floggraph#mark#set_jump(prev_line)
+    flog#floggraph#mark#SetJump(prev_line)
   endif
 
   return result
 enddef
 
-def flog#floggraph#nav#next_commit(count: number = 1): dict<any>
-  flog#floggraph#buf#assert_flog_buf()
+export def NextCommit(count: number = 1): dict<any>
+  flog#floggraph#buf#AssertFlogBuf()
   
   const prev_line = line('.')
 
-  const commit = flog#floggraph#commit#get_next(count)
+  const commit = flog#floggraph#commit#GetNext(count)
 
   if !empty(commit)
-    flog#floggraph#nav#jump_to_commit(commit.hash)
-    flog#floggraph#mark#set_jump(prev_line)
+    flog#floggraph#nav#JumpToCommit(commit.hash)
+    flog#floggraph#mark#SetJump(prev_line)
   endif
 
   return commit
 enddef
 
-def flog#floggraph#nav#prev_commit(count: number = 1): dict<any>
-  return flog#floggraph#nav#next_commit(-count)
+export def PrevCommit(count: number = 1): dict<any>
+  return flog#floggraph#nav#NextCommit(-count)
 enddef
 
-def flog#floggraph#nav#next_ref_commit(count: number = 1): number
-  flog#floggraph#buf#assert_flog_buf()
+export def NextRefCommit(count: number = 1): number
+  flog#floggraph#buf#AssertFlogBuf()
 
   const prev_line = line('.')
 
-  const [nrefs, commit] = flog#floggraph#commit#get_next_ref(count)
+  const [nrefs, commit] = flog#floggraph#commit#GetNextRef(count)
 
   if !empty(commit)
-    flog#floggraph#nav#jump_to_commit(commit.hash)
-    flog#floggraph#mark#set_jump(prev_line)
+    flog#floggraph#nav#JumpToCommit(commit.hash)
+    flog#floggraph#mark#SetJump(prev_line)
   endif
 
   return nrefs
 enddef
 
-def flog#floggraph#nav#prev_ref_commit(count: number = 1): number
-  return flog#floggraph#nav#next_ref_commit(-count)
+export def PrevRefCommit(count: number = 1): number
+  return flog#floggraph#nav#NextRefCommit(-count)
 enddef
 
-def flog#floggraph#nav#skip_to(skip: number): number
-  flog#floggraph#buf#assert_flog_buf()
-  const state = flog#state#get_buf_state()
+export def SkipTo(skip: number): number
+  flog#floggraph#buf#AssertFlogBuf()
+  const state = flog#state#GetBufState()
 
   var skip_opt = string(skip)
   if skip_opt == '0'
@@ -98,14 +98,14 @@ def flog#floggraph#nav#skip_to(skip: number): number
 
   state.opts.skip = skip_opt
 
-  flog#floggraph#buf#update()
+  flog#floggraph#buf#Update()
 
   return skip
 enddef
 
-def flog#floggraph#nav#skip_ahead(count: number): number
-  flog#floggraph#buf#assert_flog_buf()
-  const opts = flog#state#get_buf_state().opts
+export def SkipAhead(count: number): number
+  flog#floggraph#buf#AssertFlogBuf()
+  const opts = flog#state#GetBufState().opts
 
   if empty(opts.max_count)
     return -1
@@ -117,18 +117,18 @@ def flog#floggraph#nav#skip_ahead(count: number): number
     skip = 0
   endif
 
-  return flog#floggraph#nav#skip_to(skip)
+  return flog#floggraph#nav#SkipTo(skip)
 enddef
 
-def flog#floggraph#nav#skip_back(count: number): number
-  return flog#floggraph#nav#skip_ahead(-count)
+export def SkipBack(count: number): number
+  return flog#floggraph#nav#SkipAhead(-count)
 enddef
 
-def flog#floggraph#nav#set_rev_to_commit_at_line(line: any = '.'): string
-  flog#floggraph#buf#assert_flog_buf()
-  var state = flog#state#get_buf_state()
+export def SetRevToCommitAtLine(line: any = '.'): string
+  flog#floggraph#buf#AssertFlogBuf()
+  var state = flog#state#GetBufState()
 
-  const commit = flog#floggraph#commit#get_at_line(line)
+  const commit = flog#floggraph#commit#GetAtLine(line)
 
   if empty(commit)
     return ''
@@ -144,31 +144,31 @@ def flog#floggraph#nav#set_rev_to_commit_at_line(line: any = '.'): string
   state.opts.skip = ''
   state.opts.rev = rev
 
-  flog#floggraph#buf#update()
+  flog#floggraph#buf#Update()
   
   return hash
 enddef
 
-def flog#floggraph#nav#clear_rev(): bool
-  flog#floggraph#buf#assert_flog_buf()
-  var state = flog#state#get_buf_state()
+export def ClearRev(): bool
+  flog#floggraph#buf#AssertFlogBuf()
+  var state = flog#state#GetBufState()
 
   if empty(state.opts.rev)
     return false
   endif
 
   state.opts.rev = []
-  flog#floggraph#buf#update()
+  flog#floggraph#buf#Update()
 
   return true
 enddef
 
-def flog#floggraph#nav#jump_to_commit_start(): number
-  flog#floggraph#buf#assert_flog_buf()
+export def JumpToCommitStart(): number
+  flog#floggraph#buf#AssertFlogBuf()
 
   const curr_col = virtcol('.')
 
-  const commit = flog#floggraph#commit#get_at_line('.')
+  const commit = flog#floggraph#commit#GetAtLine('.')
   if empty(commit)
     return -1
   endif

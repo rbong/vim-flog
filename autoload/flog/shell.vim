@@ -4,15 +4,15 @@ vim9script
 # This file contains functions for working with shell commands.
 #
 
-def flog#shell#escape(str: string): string
+export def Escape(str: string): string
   return fnameescape(str)
 enddef
 
-def flog#shell#escape_list(list: list<string>): list<string>
-  return map(copy(list), (_, val) => flog#shell#escape(val))
+export def EscapeList(list: list<string>): list<string>
+  return map(copy(list), (_, val) => flog#shell#Escape(val))
 enddef
 
-def flog#shell#run(cmd: string): list<string>
+export def Run(cmd: string): list<string>
   const output = systemlist(cmd)
   if !empty(v:shell_error)
     echoerr join(output, "\n")

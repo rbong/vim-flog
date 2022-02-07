@@ -7,7 +7,7 @@ vim9script
 
 g:flog_instance_counter = 0
 
-def flog#state#create(): dict<any>
+export def Create(): dict<any>
   var state = {
     instance_number: g:flog_instance_counter,
     opts: {},
@@ -26,7 +26,7 @@ def flog#state#create(): dict<any>
   return state
 enddef
 
-def flog#state#get_internal_default_opts(): dict<any>
+export def GetInternalDefaultOpts(): dict<any>
   var defaults = {
         'raw_args': '',
         'format': '%ad [%h] {%an}%d %s',
@@ -51,7 +51,7 @@ def flog#state#get_internal_default_opts(): dict<any>
         }
 
   # Show deprecation warning for old setting
-  flog#deprecate#setting(
+  flog#deprecate#Setting(
     'g:flog_permanent_default_arguments',
     'g:flog_permanent_default_opts'
     )
@@ -78,11 +78,11 @@ def flog#state#get_internal_default_opts(): dict<any>
   return defaults
 enddef
 
-def flog#state#get_default_opts(): dict<any>
-  var defaults = flog#state#get_internal_default_opts()
+export def GetDefaultOpts(): dict<any>
+  var defaults = flog#state#GetInternalDefaultOpts()
 
   # Show deprecation warning for old setting
-  flog#deprecate#setting(
+  flog#deprecate#Setting(
     'g:flog_default_arguments',
     'g:flog_default_opts'
     )
@@ -109,16 +109,16 @@ def flog#state#get_default_opts(): dict<any>
   return defaults
 enddef
 
-def flog#state#set_opts(state: dict<any>, opts: dict<any>): dict<any>
+export def SetOpts(state: dict<any>, opts: dict<any>): dict<any>
   state.opts = opts
   return opts
 enddef
 
-def flog#state#get_opts(state: dict<any>): dict<any>
+export def GetOpts(state: dict<any>): dict<any>
   return state.opts
 enddef
 
-def flog#state#get_resolved_opts(state: dict<any>): dict<any>
+export def GetResolvedOpts(state: dict<any>): dict<any>
   var opts = copy(state.opts)
 
   opts.bisect = opts.bisect && !opts.limit
@@ -127,26 +127,26 @@ def flog#state#get_resolved_opts(state: dict<any>): dict<any>
   return opts
 enddef
 
-def flog#state#set_prev_log_cmd(state: dict<any>, prev_log_cmd: string): string
+export def SetPrevLogCmd(state: dict<any>, prev_log_cmd: string): string
   state.prev_log_cmd = prev_log_cmd
   return prev_log_cmd
 enddef
 
-def flog#state#set_graph_bufnr(state: dict<any>, bufnr: number): number
+export def SetGraphBufnr(state: dict<any>, bufnr: number): number
   state.graph_bufnr = bufnr
   return bufnr
 enddef
 
-def flog#state#set_fugitive_repo(state: dict<any>, fugitive_repo: dict<any>): dict<any>
+export def SetFugitiveRepo(state: dict<any>, fugitive_repo: dict<any>): dict<any>
   state.fugitive_repo = fugitive_repo
   return fugitive_repo
 enddef
 
-def flog#state#get_fugitive_workdir(state: dict<any>): string
+export def GetFugitiveWorkdir(state: dict<any>): string
   return state.fugitive_repo.tree()
 enddef
 
-def flog#state#get_commit_refs(commit: dict<any>): list<dict<any>>
+export def GetCommitRefs(commit: dict<any>): list<dict<any>>
   var refs = []
 
   for ref in split(commit.refs, ', ')
@@ -173,7 +173,7 @@ def flog#state#get_commit_refs(commit: dict<any>): list<dict<any>>
   return refs
 enddef
 
-def flog#state#set_graph(state: dict<any>, graph: dict<any>): dict<any>
+export def SetGraph(state: dict<any>, graph: dict<any>): dict<any>
   # Selectively set graph properties
   state.commits = graph.commits
   state.commits_by_hash = graph.commits_by_hash
@@ -181,77 +181,77 @@ def flog#state#set_graph(state: dict<any>, graph: dict<any>): dict<any>
   return graph
 enddef
 
-def flog#state#is_reserved_commit_mark(key: string): bool
+export def IsReservedCommitMark(key: string): bool
   return key =~ '[<>@~^!]'
 enddef
 
-def flog#state#is_dynamic_commit_mark(key: string): bool
+export def IsDynamicCommitMark(key: string): bool
   return key =~ '[<>@~^]'
 enddef
 
-def flog#state#is_cancel_commit_mark(key: string): bool
+export def IsCancelCommitMark(key: string): bool
   # 27 is the key code for <Esc>
   return char2nr(key) == 27
 enddef
 
-def flog#state#reset_commit_marks(state: dict<any>): dict<any>
+export def ResetCommitMarks(state: dict<any>): dict<any>
   var new_commit_marks = {}
   state.commit_marks = new_commit_marks
   return new_commit_marks
 enddef
 
-def flog#state#has_commit_mark(state: dict<any>, key: string): bool
-  if flog#state#is_dynamic_commit_mark(key)
+export def HasCommitMark(state: dict<any>, key: string): bool
+  if flog#state#IsDynamicCommitMark(key)
     return true
   endif
-  if flog#state#is_cancel_commit_mark(key)
+  if flog#state#IsCancelCommitMark(key)
     throw g:flog_invalid_commit_mark
   endif
   return has_key(state.commit_marks, key)
 enddef
 
-def flog#state#set_internal_commit_mark(state: dict<any>, key: string, commit: dict<any>): dict<any>
+export def SetInternalCommitMark(state: dict<any>, key: string, commit: dict<any>): dict<any>
   state.commit_marks[key] = commit
   return commit
 enddef
 
-def flog#state#set_commit_mark(state: dict<any>, key: string, commit: dict<any>): dict<any>
-  if flog#state#is_reserved_commit_mark(key)
+export def SetCommitMark(state: dict<any>, key: string, commit: dict<any>): dict<any>
+  if flog#state#IsReservedCommitMark(key)
     throw g:flog_invalid_commit_mark
   endif
-  return flog#state#set_internal_commit_mark(state, key, commit)
+  return flog#state#SetInternalCommitMark(state, key, commit)
 enddef
 
-def flog#state#get_commit_mark(state: dict<any>, key: string): dict<any>
+export def GetCommitMark(state: dict<any>, key: string): dict<any>
   return get(state.commit_marks, key, {})
 enddef
 
-def flog#state#remove_commit_mark(state: dict<any>, key: string): dict<any>
+export def RemoveCommitMark(state: dict<any>, key: string): dict<any>
   if !has_key(state.commit_marks, key)
     return {}
   endif
   return remove(state.commit_marks, key)
 enddef
 
-def flog#state#set_tmp_side_wins(state: dict<any>, tmp_side_wins: list<number>): list<number>
+export def SetTmpSideWins(state: dict<any>, tmp_side_wins: list<number>): list<number>
   state.tmp_side_wins = tmp_side_wins
   return tmp_side_wins
 enddef
 
-def flog#state#reset_tmp_side_wins(state: dict<any>): list<number>
-  return flog#state#set_tmp_side_wins(state, [])
+export def ResetTmpSideWins(state: dict<any>): list<number>
+  return flog#state#SetTmpSideWins(state, [])
 enddef
 
-def flog#state#set_buf_state(state: dict<any>)
+export def SetBufState(state: dict<any>)
   b:flog_state = state
 enddef
 
-def flog#state#has_buf_state(): bool
+export def HasBufState(): bool
   return exists('b:flog_state')
 enddef
 
-def flog#state#get_buf_state(): dict<any>
-  if !flog#state#has_buf_state()
+export def GetBufState(): dict<any>
+  if !flog#state#HasBufState()
     throw g:flog_missing_state
   endif
   return b:flog_state

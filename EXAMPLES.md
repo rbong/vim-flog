@@ -63,13 +63,13 @@ Put this code inside of your `.vimrc`:
 
 ```vim
 augroup flog
-  autocmd FileType floggraph nno <buffer> dd :<C-U>call flog#exec_tmp('vertical belowright Git diff HEAD %h', 0, 0)<CR>
-  autocmd FileType floggraph vno <buffer> dd :<C-U>call flog#exec_tmp("vertical belowright Git diff %(h'>) %(h'<)", 0, 0)<CR>
+  autocmd FileType floggraph nno <buffer> dd :<C-U>call flog#ExecTmp('vertical belowright Git diff HEAD %h', 0, 0)<CR>
+  autocmd FileType floggraph vno <buffer> dd :<C-U>call flog#ExecTmp("vertical belowright Git diff %(h'>) %(h'<)", 0, 0)<CR>
 augroup END
 ```
 
-`flog#exec_tmp` tells flog to run the command and treat any windows it opens as temporary side windows.
-You can also use `flog#exec`, which runs a command using the same syntax without temporary side windows.
+`flog#ExecTmp` tells flog to run the command and treat any windows it opens as temporary side windows.
+You can also use `flog#Exec`, which runs a command using the same syntax without temporary side windows.
 
 This function can use different special format specifiers, similar to `printf()`.
 In this case, `%h` will resolve to the hash on the current line, and `%(h'>) %(h'<)` will resolve to the hashes at the end and beginning of the visual selection.
@@ -77,7 +77,7 @@ In this case, `%h` will resolve to the hash on the current line, and `%(h'>) %(h
 When diffing with `dd`, Flog will now show a diff from bottom-to-top, instead of top-to-bottom.
 This is because `%(h'<)` and `%(h'>)` have been swapped from the default command.
 
-See `:help flog#exec` for function arguments.
+See `:help flog#Exec` for function arguments.
 See `:help flog-command-format` for more format specifiers.
 See `:help flog-functions` for more details about calling command functions.
 You can also view [the floggraph filetype script](https://github.com/rbong/vim-flog/blob/master/ftplugin/floggraph.vim), which effectively serves as further examples of Flog's utility functions.

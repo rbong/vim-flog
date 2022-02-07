@@ -746,8 +746,8 @@ g:flog_sort_types                                          *g:flog_sort_types*
 ==============================================================================
 FUNCTIONS                                                     *flog-functions*
 
-                                                                 *flog#exec()*
-flog#exec({command}[, {keep-focus}[, {should-update}[, {is-tmp}]]])
+                                                                 *flog#Exec()*
+flog#Exec({command}[, {keep-focus}[, {should-update}[, {is-tmp}]]])
 
   Runs {command}.
 
@@ -763,19 +763,19 @@ flog#exec({command}[, {keep-focus}[, {should-update}[, {is-tmp}]]])
 
   Example:
 >
-    flog#exec('Git show %h')
+    flog#Exec('Git show %h')
 <
 
-                                                             *flog#exec_tmp()*
-flog#exec_tmp({command}[, {keep-focus}[, {should-update}]])
+                                                             *flog#ExecTmp()*
+flog#ExecTmp({command}[, {keep-focus}[, {should-update}]])
 
-  Same as |flog#exec()|, but always open the command in a temporary
+  Same as |flog#Exec()|, but always open the command in a temporary
   |flog-side-window|.
 
-                                                             *flog#exec_raw()*
-flog#exec_raw({command}[, {keep-focus}[, {should-update}[, {is-tmp}]]])
+                                                             *flog#ExecRaw()*
+flog#ExecRaw({command}[, {keep-focus}[, {should-update}[, {is-tmp}]]])
 
-  Same as |flog#exec()|, but do not format {command}.
+  Same as |flog#Exec()|, but do not format {command}.
 
 ==============================================================================
 AUTOCOMMANDS                                               *flog-autocommands*
@@ -802,7 +802,7 @@ SIDE WINDOWS                                                *flog-side-window*
 
   Flog can open windows beside the graph to show more commit info.
 
-  Side windows are opened with |flog#exec()|.
+  Side windows are opened with |flog#Exec()|.
 
   These windows can be set to temporary. Temporary windows will close when
   other temporary windows are opened. Temporary windows close when Flog
@@ -843,7 +843,7 @@ COMMIT MARKS                                               *flog-commit-marks*
 ------------------------------------------------------------------------------
 COMMAND FORMAT                                           *flog-command-format*
 
-  When running commands with |flog#exec()|, a special syntax similar to
+  When running commands with |flog#Exec()|, a special syntax similar to
   |printf| is used to transform the command string.
 
   Items prefixed by the "%" character are resolved into commit information and

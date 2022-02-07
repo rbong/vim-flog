@@ -4,7 +4,7 @@ vim9script
 # This file contains functions for handling args to the ":Floggit" command.
 #
 
-def flog#cmd#flog_git#args#parse(arg_lead: string, cmd_line: string, cursor_pos: number): list<any>
+export def Parse(arg_lead: string, cmd_line: string, cursor_pos: number): list<any>
   const split_args = split(cmd_line[ : cursor_pos], '\s', true)
   const nargs = len(split_args)
 
@@ -36,10 +36,10 @@ def flog#cmd#flog_git#args#parse(arg_lead: string, cmd_line: string, cursor_pos:
   return [split_args, command_index, command, is_command]
 enddef
 
-def flog#cmd#flog_git#args#complete_commit_refs(commit: dict<any>): list<string>
+export def CompleteCommitRefs(commit: dict<any>): list<string>
   var completions = []
 
-  for ref in flog#state#get_commit_refs(commit)
+  for ref in flog#state#GetCommitRefs(commit)
     if !empty(ref.remote)
       # Add remote
       const remote = ref.prefix .. ref.remote
@@ -70,7 +70,7 @@ def flog#cmd#flog_git#args#complete_commit_refs(commit: dict<any>): list<string>
   return completions
 enddef
 
-def flog#cmd#flog_git#args#complete_flog(arg_lead: string, cmd_line: string, cursor_pos: number): list<string>
+export def CompleteFlog(arg_lead: string, cmd_line: string, cursor_pos: number): list<string>
   const line = line('.')
   const firstline = line("'<")
   const lastline = line("'>")
@@ -80,8 +80,8 @@ def flog#cmd#flog_git#args#complete_flog(arg_lead: string, cmd_line: string, cur
   var last_commit = {}
 
   if is_range
-    first_commit = flog#floggraph#commit#get_at_line(firstline)
-    last_commit = flog#floggraph#commit#get_at_line(lastline)
+    first_commit = flog#floggraph#commit#GetAtLine(firstline)
+    last_commit = flog#floggraph#commit#GetAtLine(lastline)
     is_range = first_commit != last_commit
   endif
 
@@ -106,39 +106,39 @@ def flog#cmd#flog_git#args#complete_flog(arg_lead: string, cmd_line: string, cur
     endif
 
     if has_first
-      completions += flog#cmd#flog_git#args#complete_commit_refs(first_commit)
+      completions += flog#cmd#flogGit#args#CompleteCommitRefs(first_commit)
       if has_last
-        var last_completions = flog#cmd#flog_git#args#complete_commit_refs(last_commit)
-        completions += flog#list#exclude(last_completions, completions)
+        var last_completions = flog#cmd#flogGit#args#CompleteCommitRefs(last_commit)
+        completions += flog#list#Exclude(last_completions, completions)
       endif
     else
-      completions += flog#cmd#flog_git#args#complete_commit_refs(last_commit)
+      completions += flog#cmd#flogGit#args#CompleteCommitRefs(last_commit)
     endif
 
     return completions
   else
     # Complete single line
 
-    const commit = flog#floggraph#commit#get_at_line('.')
+    const commit = flog#floggraph#commit#GetAtLine('.')
     if empty(commit)
       return []
     endif
-    completions = [commit.hash] + flog#cmd#flog_git#args#complete_commit_refs(commit)
+    completions = [commit.hash] + flog#cmd#flogGit#args#CompleteCommitRefs(commit)
   endif
 
-  completions = flog#args#filter_completions(arg_lead, completions)
+  completions = flog#args#FilterCompletions(arg_lead, completions)
   return completions
 enddef
 
-def flog#cmd#flog_git#args#complete(arg_lead: string, cmd_line: string, cursor_pos: number): list<string>
-  const is_flog = flog#floggraph#buf#is_flog_buf()
-  const has_state = flog#state#has_buf_state()
+export def Complete(arg_lead: string, cmd_line: string, cursor_pos: number): list<string>
+  const is_flog = flog#floggraph#buf#IsFlogBuf()
+  const has_state = flog#state#HasBufState()
 
-  const [_, command_index, command, is_command] = flog#cmd#flog_git#args#parse(
+  const [_, command_index, command, is_command] = flog#cmd#flogGit#args#Parse(
     arg_lead, cmd_line, cursor_pos)
 
-  const fugitive_completions = flog#fugitive#complete(
-    flog#shell#escape(arg_lead), cmd_line, cursor_pos)
+  const fugitive_completions = flog#fugitive#Complete(
+    flog#shell#Escape(arg_lead), cmd_line, cursor_pos)
 
   # Complete git/command args only
   if is_command || command_index < 0
@@ -149,30 +149,30 @@ def flog#cmd#flog_git#args#complete(arg_lead: string, cmd_line: string, cursor_p
 
   # Complete line
   if is_flog
-    completions += flog#shell#escape_list(
-      flog#cmd#flog_git#args#complete_flog(arg_lead, cmd_line, cursor_pos))
+    completions += flog#shell#EscapeList(
+      flog#cmd#flogGit#args#CompleteFlog(arg_lead, cmd_line, cursor_pos))
   endif
 
   # Complete state
   if has_state
-    const opts = flog#state#get_buf_state().opts
+    const opts = flog#state#GetBufState().opts
 
     if !empty(opts.limit)
-      const [range, path] = flog#args#split_git_limit_arg(opts.limit)
-      var paths = flog#args#filter_completions(arg_lead, [path])
-      paths = flog#shell#escape_list(paths)
-      completions += flog#list#exclude(paths, completions)
+      const [range, path] = flog#args#SplitGitLimitArg(opts.limit)
+      var paths = flog#args#FilterCompletions(arg_lead, [path])
+      paths = flog#shell#EscapeList(paths)
+      completions += flog#list#Exclude(paths, completions)
     endif
 
     if !empty(opts.path)
-      var paths = flog#filter_completions(arg_lead, opts.paths)
-      paths = flog#shell#escape_list(paths)
-      completions += flog#list#exclude(paths, completions)
+      var paths = flog#FilterCompletions(arg_lead, opts.paths)
+      paths = flog#shell#EscapeList(paths)
+      completions += flog#list#Exclude(paths, completions)
     endif
   endif
 
   # Complete Fugitive
-  completions += flog#list#exclude(fugitive_completions, completions)
+  completions += flog#list#Exclude(fugitive_completions, completions)
 
   return completions
 enddef
