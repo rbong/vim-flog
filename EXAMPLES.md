@@ -8,10 +8,14 @@
   - Use builtin VIM navigation like `/`, `j`, `k`, etc.
   - Use `]r`/`[r` to jump between commits with refs.
 4. Checkout the branch. There are also a few ways to do this:
-  - Use `:Floggit checkout <Tab>`. This will complete the commit name.
-  - Use the `git` mapping to prepopulate the command line with `:Floggit<Space>`, or use `co<Space>` for `:Floggit checkout<Space>`.
   - Use `cob` to checkout the first local branch name, or remote branch if it is not available.
   - Use `col` to checkout the first branch name, setting it up to be tracked locally if it is a remote branch.
+  - Use `:Floggit checkout <Tab>`.
+    - Use the `git` mapping to prepopulate the command line with `:Floggit`, or use `co<Space>` for `:Floggit checkout<Space>`.
+    - Using `:Floggit` lets you use completion for:
+      - Options for git commands.
+      - Git objects.
+      - Contextual Flog items, such as branch names on the current line.
 
 ## Adding Default Arguments
 
@@ -56,7 +60,7 @@ There are several different ways to diff commits after launching Flog:
 
 ## Extension Example: Switch Diff Order
 
-Flog has utility functions that allow for customization.
+Flog has functions that allow you to easily define your own mappings and commands.
 This example shows how to switch the order of commits when diffing with `dd`.
 
 Put this code inside of your `.vimrc`:
@@ -71,16 +75,17 @@ augroup END
 `flog#ExecTmp` tells flog to run the command and treat any windows it opens as temporary side windows.
 You can also use `flog#Exec`, which runs a command using the same syntax without temporary side windows.
 
-This function can use different special format specifiers, similar to `printf()`.
-In this case, `%h` will resolve to the hash on the current line, and `%(h'>) %(h'<)` will resolve to the hashes at the end and beginning of the visual selection.
+These functions can use special format specifier items, similar to `printf()`, to get contextual information from Flog.
+
+The `%h` format specifier item used here will resolve to the hash on the current line.
+`%(h'>) %(h'<)` will resolve to the hashes at the end and beginning of the visual selection.
 
 When diffing with `dd`, Flog will now show a diff from bottom-to-top, instead of top-to-bottom.
-This is because `%(h'<)` and `%(h'>)` have been swapped from the default command.
+This is because `HEAD`/`%h` have been swapped in normal mode from the default command, and `%(h'<)`/`%(h'>)` have been swapped in visual mode.
 
-See `:help flog#Exec` for function arguments.
 See `:help flog-command-format` for more format specifiers.
 See `:help flog-functions` for more details about calling command functions.
-You can also view [the floggraph filetype script](https://github.com/rbong/vim-flog/blob/master/ftplugin/floggraph.vim), which effectively serves as further examples of Flog's utility functions.
+You can also view [the floggraph filetype script](https://github.com/rbong/vim-flog/blob/master/ftplugin/floggraph.vim), which contains more examples.
 Finally, if you would like to view user-created commands, check out the [Wiki](https://github.com/rbong/vim-flog/wiki/Custom-Commands).
 
 ## Additional Examples
@@ -94,5 +99,5 @@ Here are some brief ideas.
 - You can start/manage a bisect with `:Floggit` commands, taking advantage of completion, and toggle seeing the current commits in the bisect with `gb`.
 - You can view the history of a file next to the file itself with `:Flogsplit -path=%`.
 - You can view the history for a particular range of lines in a file by visually selecting it and then typing `:Flog`.
-  This will display an inline patch, which you can trigger with `gp`.
-- If you haven't already, look through `:help flog`. There are many commands that still haven't been covered here.
+  - This will display an inline patch, which you can trigger with `gp`.
+- If you haven't already, look through `:help flog`. There is much that still hasn't been covered here.
