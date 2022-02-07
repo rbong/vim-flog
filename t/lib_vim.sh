@@ -12,7 +12,12 @@ install_vim() {
   remove_dir "vim/"
   create_dir "vim/vim-flog" > /dev/null
 
-  echo "set nocompatible" > "$VIM_DIR/.vimrc"
+  cat <<EOF > "$VIM_DIR/.vimrc"
+set nocompatible
+filetype plugin indent on
+exec 'set rtp+=' . fnameescape("$FLOG_DIR")
+exec 'set rtp+=' . fnameescape("$FUGITIVE_DIR")
+EOF
 
   cd "$BASE_DIR"
   cp -rf autoload ftplugin plugin syntax lua "$FLOG_DIR"
@@ -25,7 +30,7 @@ run_vim_command() {
   _OUT=$_TMP/_messages
 
   set +e
-  VIMRUNTIME="$FLOG_DIR,$FUGITIVE_DIR" vim \
+  vim \
     -u "$VIM_DIR/.vimrc" \
     -e -s \
     -c "redir > $_OUT" \
