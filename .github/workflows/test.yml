@@ -8,7 +8,7 @@ jobs:
       matrix:
         include:
           - vim_type: "Vim"
-            vim_version: "v8.2.4212"
+            vim_version: "v8.2.4318"
             lua_version: "luajit-2.1.0-beta3"
           # - vim_type: "Neovim"
           #   vim_version: "stable"
