@@ -9,4 +9,4 @@ local start_token = arg[2]
 local enable_graph = arg[3] == 'true'
 local cmd = arg[4]
 
-flog_get_graph(enable_vim, start_token, enable_graph, cmd)
+flog_get_graph(enable_vim, true, start_token, enable_graph, cmd)

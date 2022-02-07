@@ -99,6 +99,7 @@ export def GetGraphInternal(git_cmd: string): dict<any>
   # Build command
   var cmd = 'flog_get_graph('
   cmd ..= 'true, '
+  cmd ..= 'true, '
   cmd ..= 'vim.eval("g:flog_commit_start_token"), '
   cmd ..= 'vim.eval("g:flog_tmp_enable_graph"), '
   cmd ..= 'vim.eval("g:flog_tmp_git_cmd"))'

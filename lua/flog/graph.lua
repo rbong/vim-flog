@@ -28,7 +28,7 @@ local missing_parent_str = '┊ '
 local missing_parent_branch_str = '│ '
 local missing_parent_empty_str = '  '
 
-function flog_get_graph(enable_vim, start_token, enable_graph, cmd)
+function flog_get_graph(enable_vim, enable_porcelain, start_token, enable_graph, cmd)
   -- Resolve Vim values
   enable_graph = enable_graph and enable_graph ~= 0
 
@@ -622,39 +622,41 @@ function flog_get_graph(enable_vim, start_token, enable_graph, cmd)
     else
       -- Output using stdout
 
-      -- Calculate total lines out
+      if enable_porcelain then
+        -- Calculate total lines out
 
-      local total_lines = (ncommit_lines
-        + (should_out_merge and 1 or 0)
-        + (should_out_complex and 1 or 0)
-        + (should_out_missing_parents and 2 or 0))
+        local total_lines = (ncommit_lines
+          + (should_out_merge and 1 or 0)
+          + (should_out_complex and 1 or 0)
+          + (should_out_missing_parents and 2 or 0))
 
-      -- Print commit hash
+        -- Print commit hash
 
-      print(commit_hash)
+        print(commit_hash)
 
-      -- Print commit visual parents
+        -- Print commit visual parents
 
-      print(nvisual_parents)
-      for _, parent in ipairs(visual_parents) do
-        print(parent)
+        print(nvisual_parents)
+        for _, parent in ipairs(visual_parents) do
+          print(parent)
+        end
+
+        -- Print commit refs
+
+        print(commit.refs)
+
+        -- Print commit col
+
+        print(commit_branch_col)
+
+        -- Print commit format start
+
+        print(ncommit_cols + 1)
+
+        -- Print total lines out
+
+        print(total_lines)
       end
-
-      -- Print commit refs
-
-      print(commit.refs)
-
-      -- Print commit col
-
-      print(commit_branch_col)
-
-      -- Print commit format start
-
-      print(ncommit_cols + 1)
-
-      -- Print total lines out
-
-      print(total_lines)
 
       -- Print commit out
 
