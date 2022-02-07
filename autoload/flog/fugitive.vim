@@ -26,11 +26,11 @@ export def GetRepo(): dict<any>
 enddef
 
 export def GetWorkdir(): string
-  return flog#fugitive#GetRepo().tree()
+  return GetRepo().tree()
 enddef
 
 export def GetGitDir(): string
-  return flog#fugitive#GetRepo().dir()
+  return GetRepo().dir()
 enddef
 
 export def GetGitCommand(): string

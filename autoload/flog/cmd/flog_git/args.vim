@@ -106,13 +106,13 @@ export def CompleteFlog(arg_lead: string, cmd_line: string, cursor_pos: number):
     endif
 
     if has_first
-      completions += flog#cmd#flogGit#args#CompleteCommitRefs(first_commit)
+      completions += CompleteCommitRefs(first_commit)
       if has_last
-        var last_completions = flog#cmd#flogGit#args#CompleteCommitRefs(last_commit)
+        var last_completions = CompleteCommitRefs(last_commit)
         completions += flog#list#Exclude(last_completions, completions)
       endif
     else
-      completions += flog#cmd#flogGit#args#CompleteCommitRefs(last_commit)
+      completions += CompleteCommitRefs(last_commit)
     endif
 
     return completions
@@ -123,7 +123,7 @@ export def CompleteFlog(arg_lead: string, cmd_line: string, cursor_pos: number):
     if empty(commit)
       return []
     endif
-    completions = [commit.hash] + flog#cmd#flogGit#args#CompleteCommitRefs(commit)
+    completions = [commit.hash] + CompleteCommitRefs(commit)
   endif
 
   completions = flog#args#FilterCompletions(arg_lead, completions)
@@ -134,7 +134,7 @@ export def Complete(arg_lead: string, cmd_line: string, cursor_pos: number): lis
   const is_flog = flog#floggraph#buf#IsFlogBuf()
   const has_state = flog#state#HasBufState()
 
-  const [_, command_index, command, is_command] = flog#cmd#flogGit#args#Parse(
+  const [_, command_index, command, is_command] = Parse(
     arg_lead, cmd_line, cursor_pos)
 
   const fugitive_completions = flog#fugitive#Complete(
@@ -150,7 +150,7 @@ export def Complete(arg_lead: string, cmd_line: string, cursor_pos: number): lis
   # Complete line
   if is_flog
     completions += flog#shell#EscapeList(
-      flog#cmd#flogGit#args#CompleteFlog(arg_lead, cmd_line, cursor_pos))
+      CompleteFlog(arg_lead, cmd_line, cursor_pos))
   endif
 
   # Complete state

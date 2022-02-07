@@ -47,16 +47,16 @@ export def Restore(saved_win: list<any>): number
 
   const new_win_id = win_getid()
 
-  if flog#win#Is(saved_win)
+  if Is(saved_win)
     winrestview(view)
-    flog#win#RestoreVcol(saved_win)
+    RestoreVcol(saved_win)
   endif
 
   return new_win_id
 enddef
 
 export def RestoreTopline(saved_win: list<any>): number
-  const view = flog#win#GetSavedView(saved_win)
+  const view = GetSavedView(saved_win)
 
   if view.topline == 1
     return -1
@@ -70,7 +70,7 @@ export def RestoreTopline(saved_win: list<any>): number
 enddef
 
 export def RestoreVcol(saved_win: list<any>): number
-  var vcol = flog#win#GetSavedVcol(saved_win)
+  var vcol = GetSavedVcol(saved_win)
   setcursorcharpos('.', vcol)
   return vcol
 enddef

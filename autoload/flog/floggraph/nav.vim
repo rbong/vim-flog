@@ -36,7 +36,7 @@ export def JumpToMark(key: string): list<number>
     return [-1, -1]
   endif
 
-  const result = flog#floggraph#nav#JumpToCommit(commit.hash)
+  const result = JumpToCommit(commit.hash)
 
   if commit != prev_commit
     flog#floggraph#mark#SetJump(prev_line)
@@ -53,7 +53,7 @@ export def NextCommit(count: number = 1): dict<any>
   const commit = flog#floggraph#commit#GetNext(count)
 
   if !empty(commit)
-    flog#floggraph#nav#JumpToCommit(commit.hash)
+    JumpToCommit(commit.hash)
     flog#floggraph#mark#SetJump(prev_line)
   endif
 
@@ -61,7 +61,7 @@ export def NextCommit(count: number = 1): dict<any>
 enddef
 
 export def PrevCommit(count: number = 1): dict<any>
-  return flog#floggraph#nav#NextCommit(-count)
+  return NextCommit(-count)
 enddef
 
 export def NextRefCommit(count: number = 1): number
@@ -72,7 +72,7 @@ export def NextRefCommit(count: number = 1): number
   const [nrefs, commit] = flog#floggraph#commit#GetNextRef(count)
 
   if !empty(commit)
-    flog#floggraph#nav#JumpToCommit(commit.hash)
+    JumpToCommit(commit.hash)
     flog#floggraph#mark#SetJump(prev_line)
   endif
 
@@ -80,7 +80,7 @@ export def NextRefCommit(count: number = 1): number
 enddef
 
 export def PrevRefCommit(count: number = 1): number
-  return flog#floggraph#nav#NextRefCommit(-count)
+  return NextRefCommit(-count)
 enddef
 
 export def SkipTo(skip: number): number
@@ -117,11 +117,11 @@ export def SkipAhead(count: number): number
     skip = 0
   endif
 
-  return flog#floggraph#nav#SkipTo(skip)
+  return SkipTo(skip)
 enddef
 
 export def SkipBack(count: number): number
-  return flog#floggraph#nav#SkipAhead(-count)
+  return SkipAhead(-count)
 enddef
 
 export def SetRevToCommitAtLine(line: any = '.'): string

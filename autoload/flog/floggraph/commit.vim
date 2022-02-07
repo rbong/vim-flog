@@ -37,14 +37,14 @@ export def GetByRef(ref: string): dict<any>
     return {}
   endif
 
-  return flog#floggraph#commit#GetByHash(result[0])
+  return GetByHash(result[0])
 enddef
 
 export def GetNext(offset: number = 1): dict<any>
   flog#floggraph#buf#AssertFlogBuf()
   const state = flog#state#GetBufState()
 
-  const commit = flog#floggraph#commit#GetAtLine('.')
+  const commit = GetAtLine('.')
   const commit_index = index(state.commits, commit)
 
   if commit_index < 0 || commit_index + offset < 0
@@ -55,7 +55,7 @@ export def GetNext(offset: number = 1): dict<any>
 enddef
 
 export def GetPrev(offset: number = 1): dict<any>
-  return flog#floggraph#commit#GetNext(-offset)
+  return GetNext(-offset)
 enddef
 
 export def GetNextRef(count: number = 1): list<any>
@@ -72,7 +72,7 @@ export def GetNextRef(count: number = 1): list<any>
   const ncommits = len(commits)
 
   var ref_commit = {}
-  var commit = flog#floggraph#commit#GetAtLine('.')
+  var commit = GetAtLine('.')
 
   var nrefs = 0
   var i = index(state.commits, commit) + step
@@ -90,7 +90,7 @@ export def GetNextRef(count: number = 1): list<any>
 enddef
 
 export def GetPrevRef(count: number = 1): list<any>
-  return flog#floggraph#commit#GetNext(-count)
+  return GetNext(-count)
 enddef
 
 export def RestoreOffset(saved_win: list<any>, saved_commit: dict<any>): list<number>
@@ -110,9 +110,9 @@ export def RestoreOffset(saved_win: list<any>, saved_commit: dict<any>): list<nu
     const saved_vcol = flog#win#GetSavedVcol(saved_win)
 
     if saved_vcol == saved_commit.col
-      new_col = flog#floggraph#commit#GetAtLine('.').col
+      new_col = GetAtLine('.').col
     elseif saved_vcol == saved_commit.format_col
-      new_col = flog#floggraph#commit#GetAtLine('.').format_col
+      new_col = GetAtLine('.').format_col
     endif
 
     if new_col > 0
@@ -124,7 +124,7 @@ export def RestoreOffset(saved_win: list<any>, saved_commit: dict<any>): list<nu
 
   const new_line = line('.') + line_offset
 
-  const new_line_commit = flog#floggraph#commit#GetAtLine(new_line)
+  const new_line_commit = GetAtLine(new_line)
   if empty(new_line_commit) || new_line_commit.hash != saved_commit.hash
     return [-1, -1]
   endif
@@ -148,7 +148,7 @@ export def RestorePosition(saved_win: list<any>, saved_commit: dict<any>): dict<
   endif
 
   # Try restoring the relative position
-  const [line_offset, new_col] = flog#floggraph#commit#RestoreOffset(
+  const [line_offset, new_col] = RestoreOffset(
     saved_win,
     saved_commit)
 

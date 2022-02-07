@@ -9,14 +9,14 @@ export def IsFlogBuf(): bool
 enddef
 
 export def AssertFlogBuf(): bool
-  if !flog#floggraph#buf#IsFlogBuf()
+  if !IsFlogBuf()
     throw g:flog_not_a_flog_buffer
   endif
   return true
 enddef
 
 export def UpdateStatus(): string
-  flog#floggraph#buf#AssertFlogBuf()
+  AssertFlogBuf()
 
   var cmd = flog#fugitive#GetGitCommand()
   cmd ..= ' status -s'
@@ -105,7 +105,7 @@ export def GetName(instance_number: number, opts: dict<any>): string
 enddef
 
 export def Open(state: dict<any>): number
-  const bufname = flog#floggraph#buf#GetInitialName(state.instance_number)
+  const bufname = GetInitialName(state.instance_number)
   execute 'silent! ' .. state.opts.open_cmd .. bufname
 
   flog#state#SetBufState(state)
@@ -122,14 +122,14 @@ export def Open(state: dict<any>): number
 enddef
 
 export def Update(): number
-  flog#floggraph#buf#AssertFlogBuf()
+  AssertFlogBuf()
   const state = flog#state#GetBufState()
   const opts = flog#state#GetResolvedOpts(state)
 
   const graph_win = flog#win#Save()
 
   if g:flog_enable_status
-    flog#floggraph#buf#UpdateStatus()
+    UpdateStatus()
   endif
 
   const cmd = flog#floggraph#git#BuildLogCmd()
@@ -141,12 +141,12 @@ export def Update(): number
 
   # Update graph
   flog#state#SetGraph(state, graph)
-  flog#floggraph#buf#SetContent(graph.output)
+  SetContent(graph.output)
 
   # Restore commit position
   flog#floggraph#commit#RestorePosition(graph_win, last_commit)
 
-  silent! exec 'file ' .. flog#floggraph#buf#GetName(state.instance_number, opts)
+  silent! exec 'file ' .. GetName(state.instance_number, opts)
 
   if exists('#User#FlogUpdate')
     doautocmd User FlogUpdate
@@ -164,7 +164,7 @@ export def FinishUpdateHook(bufnr: number): number
     exec 'autocmd! * <buffer=' .. string(bufnr) .. '>'
   augroup END
 
-  flog#floggraph#buf#Update()
+  Update()
 
   return bufnr
 enddef
@@ -185,7 +185,7 @@ export def InitUpdateHook(bufnr: number): number
 enddef
 
 export def SetContent(content: list<string>): list<string>
-  flog#floggraph#buf#AssertFlogBuf()
+  AssertFlogBuf()
 
   setlocal modifiable noreadonly
   silent! :1,$ delete
@@ -196,7 +196,7 @@ export def SetContent(content: list<string>): list<string>
 enddef
 
 export def Close(): number
-  flog#floggraph#buf#AssertFlogBuf()
+  AssertFlogBuf()
   const state = flog#state#GetBufState()
 
   const graph_win = flog#win#Save()

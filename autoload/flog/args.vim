@@ -10,7 +10,7 @@ export def SplitArg(arg: string): list<string>
 enddef
 
 export def ParseArg(arg: string): string
-  return flog#args#SplitArg(arg)[1]
+  return SplitArg(arg)[1]
 enddef
 
 export def UnescapeArg(arg: string): string
@@ -38,8 +38,8 @@ export def SplitGitLimitArg(limit: string): list<string>
 enddef
 
 export def ParseGitLimitArg(workdir: string, arg: string): string
-  const arg_opt = flog#args#ParseArg(arg)
-  var [range, path] = flog#args#SplitGitLimitArg(arg_opt)
+  const arg_opt = ParseArg(arg)
+  var [range, path] = SplitGitLimitArg(arg_opt)
 
   if empty(path)
     return arg_opt
@@ -49,7 +49,7 @@ export def ParseGitLimitArg(workdir: string, arg: string): string
 enddef
 
 export def ParseGitPathArg(workdir: string, arg: string): string
-  const arg_opt = flog#args#ParseArg(arg)
+  const arg_opt = ParseArg(arg)
   return flog#fugitive#GetRelativePath(workdir, expand(arg_opt))
 enddef
 

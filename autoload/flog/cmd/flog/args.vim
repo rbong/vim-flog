@@ -314,23 +314,23 @@ export def Complete(arg_lead: string, cmd_line: string, cursor_pos: number): lis
   if arg_lead == ''
     return flog#args#FilterCompletions(arg_lead, default_completion)
   elseif arg_lead =~ '^-format='
-    return flog#cmd#flog#args#CompleteFormat(arg_lead)
+    return CompleteFormat(arg_lead)
   elseif arg_lead =~ '^-date='
-    return flog#cmd#flog#args#CompleteDate(arg_lead)
+    return CompleteDate(arg_lead)
   elseif arg_lead =~ '^-open-cmd='
-    return flog#cmd#flog#args#CompleteOpenCmd(arg_lead)
+    return CompleteOpenCmd(arg_lead)
   elseif arg_lead =~ '^-\(patch-\)\?\(search\|grep\)='
     return []
   elseif arg_lead =~ '^-author='
-    return flog#cmd#flog#args#CompleteAuthor(arg_lead)
+    return CompleteAuthor(arg_lead)
   elseif arg_lead =~ '^-limit='
-    return flog#cmd#flog#args#CompleteLimit(arg_lead)
+    return CompleteLimit(arg_lead)
   elseif arg_lead =~ '^-rev='
-    return flog#cmd#flog#args#CompleteRev(arg_lead)
+    return CompleteRev(arg_lead)
   elseif arg_lead =~ '^-path='
-    return flog#cmd#flog#args#CompletePath(arg_lead)
+    return CompletePath(arg_lead)
   elseif arg_lead =~ '^-\(sort\|order\)='
-    return flog#cmd#flog#args#CompleteSort(arg_lead)
+    return CompleteSort(arg_lead)
   endif
   return flog#args#FilterCompletions(arg_lead, default_completion)
 enddef

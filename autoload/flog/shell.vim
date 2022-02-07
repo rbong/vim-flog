@@ -9,7 +9,7 @@ export def Escape(str: string): string
 enddef
 
 export def EscapeList(list: list<string>): list<string>
-  return map(copy(list), (_, val) => flog#shell#Escape(val))
+  return map(copy(list), (_, val) => Escape(val))
 enddef
 
 export def Run(cmd: string): list<string>

@@ -57,5 +57,5 @@ export def YankHashRange(reg: string = '"', start_line: any = "'<", end_line: an
     return 0
   endif
 
-  return flog#floggraph#reg#YankHash(reg, start_line, end_index - start_index + 1)
+  return YankHash(reg, start_line, end_index - start_index + 1)
 enddef

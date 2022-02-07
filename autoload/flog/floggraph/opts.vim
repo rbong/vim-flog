@@ -17,31 +17,31 @@ export def Toggle(name: string): bool
 enddef
 
 export def ToggleAll(): bool
-  return flog#floggraph#opts#Toggle('all')
+  return Toggle('all')
 enddef
 
 export def ToggleBisect(): bool
-  return flog#floggraph#opts#Toggle('bisect')
+  return Toggle('bisect')
 enddef
 
 export def ToggleMerges(): bool
-  return flog#floggraph#opts#Toggle('merges')
+  return Toggle('merges')
 enddef
 
 export def ToggleReflog(): bool
-  return flog#floggraph#opts#Toggle('reflog')
+  return Toggle('reflog')
 enddef
 
 export def ToggleReverse(): bool
-  return flog#floggraph#opts#Toggle('reverse')
+  return Toggle('reverse')
 enddef
 
 export def ToggleGraph(): bool
-  return flog#floggraph#opts#Toggle('graph')
+  return Toggle('graph')
 enddef
 
 export def TogglePatch(): bool
-  return flog#floggraph#opts#Toggle('patch')
+  return Toggle('patch')
 enddef
 
 export def CycleSort(): string

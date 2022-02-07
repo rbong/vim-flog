@@ -17,24 +17,24 @@ export def DidShowWarning(old_usage: string): bool
 enddef
 
 export def DefaultMapping(old_mapping: string, new_mapping: string)
-  flog#deprecate#ShowWarning(old_mapping, new_mapping)
+  ShowWarning(old_mapping, new_mapping)
 enddef
 
 export def Setting(old_setting: string, new_setting: string, new_value = '...')
-  if exists(old_setting) && !flog#deprecate#DidShowWarning(old_setting)
+  if exists(old_setting) && !DidShowWarning(old_setting)
     const new_usage = printf('let %s = %s', new_setting, new_value)
-    flog#deprecate#ShowWarning(old_setting, new_usage)
+    ShowWarning(old_setting, new_usage)
   endif
 enddef
 
 export def Function(old_func: string, new_func: string, new_args = '...')
   const old_usage = printf('%s()', old_func)
   const new_usage = printf('call %s(%s)', new_func, new_args)
-  flog#deprecate#ShowWarning(old_usage, new_usage)
+  ShowWarning(old_usage, new_usage)
 enddef
 
 export def Command(old_cmd: string, new_usage: string)
-  flog#deprecate#ShowWarning(old_cmd, new_usage)
+  ShowWarning(old_cmd, new_usage)
 enddef
 
 export def Autocmd(old_autocmd: string, new_autocmd: string, new_args = '...')
@@ -43,10 +43,10 @@ export def Autocmd(old_autocmd: string, new_autocmd: string, new_args = '...')
   endif
 
   const old_usage = printf('autocmd User %s', old_autocmd)
-  if flog#deprecate#DidShowWarning(old_usage)
+  if DidShowWarning(old_usage)
     return
   endif
 
   const new_usage = printf('autocmd User %s %s', new_autocmd, new_args)
-  flog#deprecate#ShowWarning(old_usage, new_usage)
+  ShowWarning(old_usage, new_usage)
 enddef

@@ -33,7 +33,7 @@ export def BuildLogArgs(): string
     args ..= ' --parents --topo-order'
   endif
   args ..= ' --no-color'
-  args ..= ' --pretty=' .. flog#floggraph#git#BuildLogFormat()
+  args ..= ' --pretty=' .. BuildLogFormat()
   args ..= ' --date=' .. flog#shell#Escape(opts.date)
   if opts.all && empty(opts.limit)
     args ..= ' --all'
@@ -110,9 +110,9 @@ export def BuildLogCmd(): string
   var cmd = flog#fugitive#GetGitCommand()
 
   cmd ..= ' log'
-  cmd ..= flog#floggraph#git#BuildLogArgs()
+  cmd ..= BuildLogArgs()
   cmd ..= ' -- '
-  cmd ..= flog#floggraph#git#BuildLogPaths()
+  cmd ..= BuildLogPaths()
 
   return cmd
 enddef

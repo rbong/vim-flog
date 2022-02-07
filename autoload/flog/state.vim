@@ -79,7 +79,7 @@ export def GetInternalDefaultOpts(): dict<any>
 enddef
 
 export def GetDefaultOpts(): dict<any>
-  var defaults = flog#state#GetInternalDefaultOpts()
+  var defaults = GetInternalDefaultOpts()
 
   # Show deprecation warning for old setting
   flog#deprecate#Setting(
@@ -201,10 +201,10 @@ export def ResetCommitMarks(state: dict<any>): dict<any>
 enddef
 
 export def HasCommitMark(state: dict<any>, key: string): bool
-  if flog#state#IsDynamicCommitMark(key)
+  if IsDynamicCommitMark(key)
     return true
   endif
-  if flog#state#IsCancelCommitMark(key)
+  if IsCancelCommitMark(key)
     throw g:flog_invalid_commit_mark
   endif
   return has_key(state.commit_marks, key)
@@ -216,10 +216,10 @@ export def SetInternalCommitMark(state: dict<any>, key: string, commit: dict<any
 enddef
 
 export def SetCommitMark(state: dict<any>, key: string, commit: dict<any>): dict<any>
-  if flog#state#IsReservedCommitMark(key)
+  if IsReservedCommitMark(key)
     throw g:flog_invalid_commit_mark
   endif
-  return flog#state#SetInternalCommitMark(state, key, commit)
+  return SetInternalCommitMark(state, key, commit)
 enddef
 
 export def GetCommitMark(state: dict<any>, key: string): dict<any>
@@ -239,7 +239,7 @@ export def SetTmpSideWins(state: dict<any>, tmp_side_wins: list<number>): list<n
 enddef
 
 export def ResetTmpSideWins(state: dict<any>): list<number>
-  return flog#state#SetTmpSideWins(state, [])
+  return SetTmpSideWins(state, [])
 enddef
 
 export def SetBufState(state: dict<any>)
@@ -251,7 +251,7 @@ export def HasBufState(): bool
 enddef
 
 export def GetBufState(): dict<any>
-  if !flog#state#HasBufState()
+  if !HasBufState()
     throw g:flog_missing_state
   endif
   return b:flog_state

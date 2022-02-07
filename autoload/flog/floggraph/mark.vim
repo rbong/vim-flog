@@ -19,7 +19,7 @@ export def Set(key: string, line: any): dict<any>
 enddef
 
 export def SetJump(line: any = '.'): dict<any>
-  return flog#floggraph#mark#Set("'", line)
+  return Set("'", line)
 enddef
 
 export def Get(key: string): dict<any>

@@ -67,7 +67,7 @@ export def GetBin(): string
     throw g:flog_lua_not_found
   endif
 
-  flog#lua#CheckBinVersion(bin)
+  CheckBinVersion(bin)
 
   return bin
 enddef
@@ -81,10 +81,10 @@ export def GetGraphInternal(git_cmd: string): dict<any>
   const state = flog#state#GetBufState()
 
   # Check version
-  flog#lua#CheckInternalVersion()
+  CheckInternalVersion()
 
   # Load graph lib
-  const graph_lib = flog#lua#GetLibPath('graph.lua')
+  const graph_lib = GetLibPath('graph.lua')
   exec 'luafile ' .. fnameescape(graph_lib)
 
   # Set temporary vars
@@ -118,11 +118,11 @@ export def GetGraphBin(git_cmd: string): dict<any>
   const state = flog#state#GetBufState()
 
   # Get paths
-  const script_path = flog#lua#GetLibPath('graph_bin.lua')
-  const graph_lib_path = flog#lua#GetLibPath('graph.lua')
+  const script_path = GetLibPath('graph_bin.lua')
+  const graph_lib_path = GetLibPath('graph.lua')
 
   # Build command
-  var cmd = flog#lua#GetBin()
+  var cmd = GetBin()
   cmd ..= ' '
   cmd ..= shellescape(script_path)
   cmd ..= ' '
@@ -210,9 +210,9 @@ enddef
 export def GetGraph(git_cmd: string): dict<any>
   flog#floggraph#buf#AssertFlogBuf()
 
-  if flog#lua#ShouldUseInternal()
-    return flog#lua#GetGraphInternal(git_cmd)
+  if ShouldUseInternal()
+    return GetGraphInternal(git_cmd)
   endif
 
-  return flog#lua#GetGraphBin(git_cmd)
+  return GetGraphBin(git_cmd)
 enddef

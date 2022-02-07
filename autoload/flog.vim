@@ -36,7 +36,7 @@ export def Exec(cmd: string, keep_focus: bool, should_update: bool, is_tmp: bool
     return ''
   endif
 
-  return flog#ExecRaw(formatted_cmd, keep_focus, should_update, is_tmp)
+  return ExecRaw(formatted_cmd, keep_focus, should_update, is_tmp)
 enddef
 
 export def RunCommand(...args: list<any>)
@@ -44,7 +44,7 @@ export def RunCommand(...args: list<any>)
 enddef
 
 export def ExecTmp(cmd: string, keep_focus: bool, should_update: bool): string
-  return flog#Exec(cmd, keep_focus, should_update, true)
+  return Exec(cmd, keep_focus, should_update, true)
 enddef
 
 export def RunTmpCommand(...args: list<any>)
