@@ -10,7 +10,7 @@ import autoload 'flog/win.vim'
 import autoload 'flog/floggraph/buf.vim'
 import autoload 'flog/floggraph/side_win.vim'
 
-export def ExecRaw(cmd: string, keep_focus: bool, should_update: bool, is_tmp: bool): string
+export def ExecRaw(cmd: string, keep_focus: bool = 0, should_update: bool = 0, is_tmp: bool = 0): string
   if !buf.IsFlogBuf()
     exec cmd
     return cmd
@@ -34,7 +34,7 @@ export def RunRawCommand(...args: list<any>)
   deprecate.Function('flog#run_raw_command', 'flog#ExecRaw')
 enddef
 
-export def Exec(cmd: string, keep_focus: bool, should_update: bool, is_tmp: bool): string
+export def Exec(cmd: string, keep_focus: bool = 0, should_update: bool = 0, is_tmp: bool = 0): string
   buf.AssertFlogBuf()
 
   const formatted_cmd = exec.Format(cmd)
@@ -49,7 +49,7 @@ export def RunCommand(...args: list<any>)
   deprecate.Function('flog#run_command', 'flog#Exec')
 enddef
 
-export def ExecTmp(cmd: string, keep_focus: bool, should_update: bool): string
+export def ExecTmp(cmd: string, keep_focus: bool = 0, should_update: bool = 0): string
   return Exec(cmd, keep_focus, should_update, true)
 enddef
 
