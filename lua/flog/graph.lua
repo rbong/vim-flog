@@ -246,9 +246,14 @@ function flog_get_graph(enable_vim, start_token, enable_graph, cmd)
             -- There is only one remaining parent, to the right
             -- Move it under the commit
 
+            -- Find parent to right
+            parent_index = nparents
+            while (branch_indexes[parents[parent_index]] or -1) < branch_index do
+              parent_index = parent_index - 1
+            end
+
             -- Get parent data
-            parent_index = 1
-            local parent_hash = parents[1]
+            local parent_hash = parents[parent_index]
             local parent_branch_index = branch_indexes[parent_hash]
 
             -- Remove old parent branch
