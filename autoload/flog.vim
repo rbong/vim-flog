@@ -30,10 +30,6 @@ export def ExecRaw(cmd: string, keep_focus: bool = 0, should_update: bool = 0, i
   return cmd
 enddef
 
-export def RunRawCommand(...args: list<any>)
-  deprecate.Function('flog#run_raw_command', 'flog#ExecRaw')
-enddef
-
 export def Exec(cmd: string, keep_focus: bool = 0, should_update: bool = 0, is_tmp: bool = 0): string
   buf.AssertFlogBuf()
 
@@ -45,14 +41,6 @@ export def Exec(cmd: string, keep_focus: bool = 0, should_update: bool = 0, is_t
   return ExecRaw(formatted_cmd, keep_focus, should_update, is_tmp)
 enddef
 
-export def RunCommand(...args: list<any>)
-  deprecate.Function('flog#run_command', 'flog#Exec')
-enddef
-
 export def ExecTmp(cmd: string, keep_focus: bool = 0, should_update: bool = 0): string
   return Exec(cmd, keep_focus, should_update, true)
-enddef
-
-export def RunTmpCommand(...args: list<any>)
-  deprecate.Function('flog#run_tmp_command', 'flog#ExecTmp')
 enddef
