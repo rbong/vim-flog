@@ -1,0 +1,17 @@
+• branch-1-e
+├─┬─┬─╮
+│ • │ │ branch-2-b
+│ │ • │ branch-3-b
+│ │ │ • branch-4-b
+│ • │ │ branch-2-a
+├─┴┬┊─┤
+│  ╰┤ │
+•   │ │ branch-1-c
+│   • │ branch-3-a
+│ ╭─╯ │
+│ │   • branch-4-a
+│ ├───╯
+• │ branch-1-b
+├─╯
+• branch-1-a
+ 
