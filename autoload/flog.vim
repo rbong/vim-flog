@@ -44,3 +44,17 @@ enddef
 export def ExecTmp(cmd: string, keep_focus: bool = 0, should_update: bool = 0): string
   return Exec(cmd, keep_focus, should_update, true)
 enddef
+
+# Deprecations
+
+legacy function flog#run_raw_command(...) abort
+  call flog#deprecate#Function('flog#run_raw_command', 'flog#ExecRaw')
+endfunction
+
+legacy function flog#run_command(...) abort
+  call flog#deprecate#Function('flog#run_command', 'flog#Exec')
+endfunction
+
+legacy function flog#run_tmp_command(...) abort
+  call flog#deprecate#Function('flog#run_tmp_command', 'flog#ExecTmp')
+endfunction
