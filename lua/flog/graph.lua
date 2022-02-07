@@ -242,8 +242,8 @@ function flog_get_graph(enable_vim, start_token, enable_graph, cmd)
             branch_hash = nil
           end
 
-          if nparents == 1 and parent_index == 2 and nmerges_right == 1 then
-            -- There is only one parent, to the right
+          if parent_index > nparents and nmerges_right == 1 then
+            -- There is only one remaining parent, to the right
             -- Move it under the commit
 
             -- Get parent data
