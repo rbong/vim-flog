@@ -4,21 +4,29 @@ vim9script
 # This file contains utility functions for "flog#Exec()".
 #
 
+import autoload 'flog/args.vim' as flog_args
+import autoload 'flog/shell.vim'
+import autoload 'flog/state.vim' as flog_state
+
+import autoload 'flog/floggraph/buf.vim'
+import autoload 'flog/floggraph/commit.vim' as floggraph_commit
+import autoload 'flog/floggraph/mark.vim'
+
 export def GetCacheRefs(cache: dict<any>, commit: dict<any>): list<dict<any>>
   var ref_cache = cache.refs
 
-  const refs = flog#state#GetCommitRefs(commit)
+  const refs = flog_state.GetCommitRefs(commit)
 
   ref_cache[commit.hash] = refs
   return refs
 enddef
 
 export def FormatHash(save: bool): string
-  const commit = flog#floggraph#commit#GetAtLine('.')
+  const commit = floggraph_commit.GetAtLine('.')
   
   if !empty(commit)
     if save
-      flog#floggraph#mark#SetInternal('!', '.')
+      mark.SetInternal('!', '.')
     endif
     return commit.hash
   endif
@@ -27,7 +35,7 @@ export def FormatHash(save: bool): string
 enddef
 
 export def FormatMarkHash(key: string): string
-  const commit = flog#floggraph#mark#Get(key)
+  const commit = mark.Get(key)
   return empty(commit) ? '' : commit.hash
 enddef
 
@@ -35,7 +43,7 @@ export def FormatCommitBranch(cache: dict<any>, commit: dict<any>): string
   var local_branch = ''
   var remote_branch = ''
 
-  for ref in flog#exec#GetCacheRefs(cache, commit)
+  for ref in GetCacheRefs(cache, commit)
     # Skip non-branches
     if ref.tag || ref.tail =~ 'HEAD$'
       continue
@@ -55,40 +63,40 @@ export def FormatCommitBranch(cache: dict<any>, commit: dict<any>): string
 
   const branch = empty(local_branch) ? remote_branch : local_branch
 
-  return flog#shell#Escape(branch)
+  return shell.Escape(branch)
 enddef
 
 export def FormatBranch(cache: dict<any>): string
-  const commit = flog#floggraph#commit#GetAtLine('.')
-  return flog#exec#FormatCommitBranch(cache, commit)
+  const commit = floggraph_commit.GetAtLine('.')
+  return FormatCommitBranch(cache, commit)
 enddef
 
 export def FormatMarkBranch(cache: dict<any>, key: string): string
-  const commit = flog#floggraph#mark#Get(key)
-  return flog#exec#FormatCommitBranch(cache, commit)
+  const commit = mark.Get(key)
+  return FormatCommitBranch(cache, commit)
 enddef
 
 export def FormatCommitLocalBranch(cache: dict<any>, commit: dict<any>): string
-  var branch = flog#exec#FormatCommitBranch(cache, commit)
+  var branch = FormatCommitBranch(cache, commit)
   return substitute(branch, '.*/', '', '')
 enddef
 
 export def FormatLocalBranch(cache: dict<any>): string
-  const commit = flog#floggraph#commit#GetAtLine('.')
-  return flog#exec#FormatCommitLocalBranch(cache, commit)
+  const commit = floggraph_commit.GetAtLine('.')
+  return FormatCommitLocalBranch(cache, commit)
 enddef
 
 export def FormatMarkLocalBranch(cache: dict<any>, key: string): string
-  const commit = flog#floggraph#mark#Get(key)
-  return flog#exec#FormatCommitLocalBranch(cache, commit)
+  const commit = mark.Get(key)
+  return FormatCommitLocalBranch(cache, commit)
 enddef
 
 export def FormatPath(): string
-  const state = flog#state#GetBufState()
+  const state = flog_state.GetBufState()
   var path = state.opts.path
 
   if !empty(state.opts.limit)
-    const [range, limit_path] = flog#args#SplitGitLimitArg(state.opts.limit)
+    const [range, limit_path] = flog_args.SplitGitLimitArg(state.opts.limit)
 
     if empty(limit_path)
       return ''
@@ -99,7 +107,7 @@ export def FormatPath(): string
     return ''
   endif
 
-  return join(flog#shell#EscapeList(path), ' ')
+  return join(shell.EscapeList(path), ' ')
 enddef
 
 export def FormatItem(cache: dict<any>, item: string): string
@@ -116,21 +124,21 @@ export def FormatItem(cache: dict<any>, item: string): string
   var formatted_item = ''
 
   if item == 'h'
-    formatted_item = flog#exec#FormatHash(true)
+    formatted_item = FormatHash(true)
   elseif item == 'H'
-    formatted_item = flog#exec#FormatHash(false)
+    formatted_item = FormatHash(false)
   elseif item =~ "^h'."
-    formatted_item = flog#exec#FormatMarkHash(item[2 : ])
+    formatted_item = FormatMarkHash(item[2 : ])
   elseif item =~ 'b'
-    formatted_item = flog#exec#FormatBranch(cache)
+    formatted_item = FormatBranch(cache)
   elseif item =~ "^b'."
-    formatted_item = flog#exec#FormatMarkBranch(cache, item[2 : ])
+    formatted_item = FormatMarkBranch(cache, item[2 : ])
   elseif item =~ 'l'
-    formatted_item = flog#exec#FormatLocalBranch(cache)
+    formatted_item = FormatLocalBranch(cache)
   elseif item =~ "^l'."
-    formatted_item = flog#exec#FormatMarkLocalBranch(cache, item[2 : ])
+    formatted_item = FormatMarkLocalBranch(cache, item[2 : ])
   elseif item == 'p'
-    formatted_item = flog#exec#FormatPath()
+    formatted_item = FormatPath()
   else
     echoerr printf('error converting "%s"', item)
     throw g:flog_unsupported_exec_format_item
@@ -142,7 +150,7 @@ export def FormatItem(cache: dict<any>, item: string): string
 enddef
 
 export def Format(str: string): string
-  flog#floggraph#buf#AssertFlogBuf()
+  buf.AssertFlogBuf()
 
   # Special token flags
   var is_in_item = false
@@ -166,7 +174,7 @@ export def Format(str: string): string
 
       if char == ')'
         # End long specifier
-        const formatted_item = flog#exec#FormatItem(cache, long_item)
+        const formatted_item = FormatItem(cache, long_item)
         if empty(formatted_item)
           return ''
         endif
@@ -185,7 +193,7 @@ export def Format(str: string): string
         is_in_long_item = true
       else
         # Parse specifier character
-        const formatted_item = flog#exec#FormatItem(cache, char)
+        const formatted_item = FormatItem(cache, char)
         if empty(formatted_item)
           return ''
         endif

@@ -4,9 +4,15 @@ vim9script
 # This file contains functions for navigating in "floggraph" buffers.
 #
 
+import autoload 'flog/state.vim' as flog_state
+
+import autoload 'flog/floggraph/buf.vim'
+import autoload 'flog/floggraph/commit.vim' as floggraph_commit
+import autoload 'flog/floggraph/mark.vim'
+
 export def JumpToCommit(hash: string): list<number>
-  flog#floggraph#buf#AssertFlogBuf()
-  const state = flog#state#GetBufState()
+  buf.AssertFlogBuf()
+  const state = flog_state.GetBufState()
 
   if empty(hash)
     return [-1, -1]
@@ -26,12 +32,12 @@ export def JumpToCommit(hash: string): list<number>
 enddef
 
 export def JumpToMark(key: string): list<number>
-  flog#floggraph#buf#AssertFlogBuf()
+  buf.AssertFlogBuf()
 
   const prev_line = line('.')
-  const prev_commit = flog#floggraph#commit#GetAtLine(prev_line)
+  const prev_commit = floggraph_commit.GetAtLine(prev_line)
 
-  const commit = flog#floggraph#mark#Get(key)
+  const commit = mark.Get(key)
   if empty(commit)
     return [-1, -1]
   endif
@@ -39,22 +45,22 @@ export def JumpToMark(key: string): list<number>
   const result = JumpToCommit(commit.hash)
 
   if commit != prev_commit
-    flog#floggraph#mark#SetJump(prev_line)
+    mark.SetJump(prev_line)
   endif
 
   return result
 enddef
 
 export def NextCommit(count: number = 1): dict<any>
-  flog#floggraph#buf#AssertFlogBuf()
+  buf.AssertFlogBuf()
   
   const prev_line = line('.')
 
-  const commit = flog#floggraph#commit#GetNext(count)
+  const commit = floggraph_commit.GetNext(count)
 
   if !empty(commit)
     JumpToCommit(commit.hash)
-    flog#floggraph#mark#SetJump(prev_line)
+    mark.SetJump(prev_line)
   endif
 
   return commit
@@ -65,15 +71,15 @@ export def PrevCommit(count: number = 1): dict<any>
 enddef
 
 export def NextRefCommit(count: number = 1): number
-  flog#floggraph#buf#AssertFlogBuf()
+  buf.AssertFlogBuf()
 
   const prev_line = line('.')
 
-  const [nrefs, commit] = flog#floggraph#commit#GetNextRef(count)
+  const [nrefs, commit] = floggraph_commit.GetNextRef(count)
 
   if !empty(commit)
     JumpToCommit(commit.hash)
-    flog#floggraph#mark#SetJump(prev_line)
+    mark.SetJump(prev_line)
   endif
 
   return nrefs
@@ -84,8 +90,8 @@ export def PrevRefCommit(count: number = 1): number
 enddef
 
 export def SkipTo(skip: number): number
-  flog#floggraph#buf#AssertFlogBuf()
-  const state = flog#state#GetBufState()
+  buf.AssertFlogBuf()
+  const state = flog_state.GetBufState()
 
   var skip_opt = string(skip)
   if skip_opt == '0'
@@ -98,14 +104,14 @@ export def SkipTo(skip: number): number
 
   state.opts.skip = skip_opt
 
-  flog#floggraph#buf#Update()
+  buf.Update()
 
   return skip
 enddef
 
 export def SkipAhead(count: number): number
-  flog#floggraph#buf#AssertFlogBuf()
-  const opts = flog#state#GetBufState().opts
+  buf.AssertFlogBuf()
+  const opts = flog_state.GetBufState().opts
 
   if empty(opts.max_count)
     return -1
@@ -125,10 +131,10 @@ export def SkipBack(count: number): number
 enddef
 
 export def SetRevToCommitAtLine(line: any = '.'): string
-  flog#floggraph#buf#AssertFlogBuf()
-  var state = flog#state#GetBufState()
+  buf.AssertFlogBuf()
+  var state = flog_state.GetBufState()
 
-  const commit = flog#floggraph#commit#GetAtLine(line)
+  const commit = floggraph_commit.GetAtLine(line)
 
   if empty(commit)
     return ''
@@ -144,31 +150,31 @@ export def SetRevToCommitAtLine(line: any = '.'): string
   state.opts.skip = ''
   state.opts.rev = rev
 
-  flog#floggraph#buf#Update()
+  buf.Update()
   
   return hash
 enddef
 
 export def ClearRev(): bool
-  flog#floggraph#buf#AssertFlogBuf()
-  var state = flog#state#GetBufState()
+  buf.AssertFlogBuf()
+  var state = flog_state.GetBufState()
 
   if empty(state.opts.rev)
     return false
   endif
 
   state.opts.rev = []
-  flog#floggraph#buf#Update()
+  buf.Update()
 
   return true
 enddef
 
 export def JumpToCommitStart(): number
-  flog#floggraph#buf#AssertFlogBuf()
+  buf.AssertFlogBuf()
 
   const curr_col = virtcol('.')
 
-  const commit = flog#floggraph#commit#GetAtLine('.')
+  const commit = floggraph_commit.GetAtLine('.')
   if empty(commit)
     return -1
   endif

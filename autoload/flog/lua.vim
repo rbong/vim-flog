@@ -4,6 +4,11 @@ vim9script
 # This file contains functions which allow Flog to communicate with Lua.
 #
 
+import autoload 'flog/shell.vim'
+import autoload 'flog/state.vim' as flog_state
+
+import autoload 'flog/floggraph/buf.vim'
+
 export def ShouldUseInternal(): bool
   const use_lua = get(g:, 'flog_use_internal_lua', false)
 
@@ -39,7 +44,7 @@ export def CheckBinVersion(bin: string): bool
   if g:flog_check_lua_version && !g:flog_did_check_lua_bin_version
     g:flog_did_check_lua_bin_version = true
 
-    const out = flog#shell#Run(bin .. ' -v')[0]
+    const out = shell.Run(bin .. ' -v')[0]
 
     if out =~ '\c^lua 5\.1\(\.\|$\)'
       echoerr 'flog: warning: for speed improvements, please install LuaJIT 2.1'
@@ -77,8 +82,8 @@ export def GetLibPath(lib: string): string
 enddef
 
 export def GetGraphInternal(git_cmd: string): dict<any>
-  flog#floggraph#buf#AssertFlogBuf()
-  const state = flog#state#GetBufState()
+  buf.AssertFlogBuf()
+  const state = flog_state.GetBufState()
 
   # Check version
   CheckInternalVersion()
@@ -114,8 +119,8 @@ export def GetGraphInternal(git_cmd: string): dict<any>
 enddef
 
 export def GetGraphBin(git_cmd: string): dict<any>
-  flog#floggraph#buf#AssertFlogBuf()
-  const state = flog#state#GetBufState()
+  buf.AssertFlogBuf()
+  const state = flog_state.GetBufState()
 
   # Get paths
   const script_path = GetLibPath('graph_bin.lua')
@@ -135,7 +140,7 @@ export def GetGraphBin(git_cmd: string): dict<any>
   cmd ..= shellescape(git_cmd)
 
   # Run command
-  const out = flog#shell#Run(cmd)
+  const out = shell.Run(cmd)
 
   # Parse number of commits
   const ncommits = str2nr(out[0])
@@ -208,7 +213,7 @@ export def GetGraphBin(git_cmd: string): dict<any>
 enddef
 
 export def GetGraph(git_cmd: string): dict<any>
-  flog#floggraph#buf#AssertFlogBuf()
+  buf.AssertFlogBuf()
 
   if ShouldUseInternal()
     return GetGraphInternal(git_cmd)

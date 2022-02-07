@@ -4,20 +4,26 @@ vim9script
 # This file contains public Flog API functions.
 #
 
+import autoload 'flog/exec.vim'
+import autoload 'flog/win.vim'
+
+import autoload 'flog/floggraph/buf.vim'
+import autoload 'flog/floggraph/side_win.vim'
+
 export def ExecRaw(cmd: string, keep_focus: bool, should_update: bool, is_tmp: bool): string
-  if !flog#floggraph#buf#IsFlogBuf()
+  if !buf.IsFlogBuf()
     exec cmd
     return cmd
   endif
 
-  const graph_win = flog#win#Save()
-  flog#floggraph#side_win#Open(cmd, keep_focus, is_tmp)
+  const graph_win = win.Save()
+  side_win.Open(cmd, keep_focus, is_tmp)
 
   if should_update
-    if flog#win#Is(graph_win)
-      flog#floggraph#buf#Update()
+    if win.Is(graph_win)
+      buf.Update()
     else
-      flog#floggraph#buf#InitUpdateHook(flog#win#GetSavedBufnr(graph_win))
+      buf.InitUpdateHook(win.GetSavedBufnr(graph_win))
     endif
   endif
 
@@ -25,13 +31,13 @@ export def ExecRaw(cmd: string, keep_focus: bool, should_update: bool, is_tmp: b
 enddef
 
 export def RunRawCommand(...args: list<any>)
-  flog#deprecate#Function('flog#run_raw_command', 'flog#ExecRaw')
+  deprecate.Function('flog#run_raw_command', 'flog#ExecRaw')
 enddef
 
 export def Exec(cmd: string, keep_focus: bool, should_update: bool, is_tmp: bool): string
-  flog#floggraph#buf#AssertFlogBuf()
+  buf.AssertFlogBuf()
 
-  const formatted_cmd = flog#exec#Format(cmd)
+  const formatted_cmd = exec.Format(cmd)
   if empty(formatted_cmd)
     return ''
   endif
@@ -40,7 +46,7 @@ export def Exec(cmd: string, keep_focus: bool, should_update: bool, is_tmp: bool
 enddef
 
 export def RunCommand(...args: list<any>)
-  flog#deprecate#Function('flog#run_command', 'flog#Exec')
+  deprecate.Function('flog#run_command', 'flog#Exec')
 enddef
 
 export def ExecTmp(cmd: string, keep_focus: bool, should_update: bool): string
@@ -48,5 +54,5 @@ export def ExecTmp(cmd: string, keep_focus: bool, should_update: bool): string
 enddef
 
 export def RunTmpCommand(...args: list<any>)
-  flog#deprecate#Function('flog#run_tmp_command', 'flog#ExecTmp')
+  deprecate.Function('flog#run_tmp_command', 'flog#ExecTmp')
 enddef

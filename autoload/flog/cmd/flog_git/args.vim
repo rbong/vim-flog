@@ -4,6 +4,17 @@ vim9script
 # This file contains functions for handling args to the ":Floggit" command.
 #
 
+import autoload 'flog.vim'
+
+import autoload 'flog/args.vim' as flog_args
+import autoload 'flog/fugitive.vim'
+import autoload 'flog/list.vim'
+import autoload 'flog/shell.vim'
+import autoload 'flog/state.vim' as flog_state
+
+import autoload 'flog/floggraph/buf.vim'
+import autoload 'flog/floggraph/commit.vim' as floggraph_commit
+
 export def Parse(arg_lead: string, cmd_line: string, cursor_pos: number): list<any>
   const split_args = split(cmd_line[ : cursor_pos], '\s', true)
   const nargs = len(split_args)
@@ -39,7 +50,7 @@ enddef
 export def CompleteCommitRefs(commit: dict<any>): list<string>
   var completions = []
 
-  for ref in flog#state#GetCommitRefs(commit)
+  for ref in flog_state.GetCommitRefs(commit)
     if !empty(ref.remote)
       # Add remote
       const remote = ref.prefix .. ref.remote
@@ -80,8 +91,8 @@ export def CompleteFlog(arg_lead: string, cmd_line: string, cursor_pos: number):
   var last_commit = {}
 
   if is_range
-    first_commit = flog#floggraph#commit#GetAtLine(firstline)
-    last_commit = flog#floggraph#commit#GetAtLine(lastline)
+    first_commit = floggraph_commit.GetAtLine(firstline)
+    last_commit = floggraph_commit.GetAtLine(lastline)
     is_range = first_commit != last_commit
   endif
 
@@ -109,7 +120,7 @@ export def CompleteFlog(arg_lead: string, cmd_line: string, cursor_pos: number):
       completions += CompleteCommitRefs(first_commit)
       if has_last
         var last_completions = CompleteCommitRefs(last_commit)
-        completions += flog#list#Exclude(last_completions, completions)
+        completions += list.Exclude(last_completions, completions)
       endif
     else
       completions += CompleteCommitRefs(last_commit)
@@ -119,26 +130,26 @@ export def CompleteFlog(arg_lead: string, cmd_line: string, cursor_pos: number):
   else
     # Complete single line
 
-    const commit = flog#floggraph#commit#GetAtLine('.')
+    const commit = floggraph_commit.GetAtLine('.')
     if empty(commit)
       return []
     endif
     completions = [commit.hash] + CompleteCommitRefs(commit)
   endif
 
-  completions = flog#args#FilterCompletions(arg_lead, completions)
+  completions = flog_args.FilterCompletions(arg_lead, completions)
   return completions
 enddef
 
 export def Complete(arg_lead: string, cmd_line: string, cursor_pos: number): list<string>
-  const is_flog = flog#floggraph#buf#IsFlogBuf()
-  const has_state = flog#state#HasBufState()
+  const is_flog = buf.IsFlogBuf()
+  const has_state = flog_state.HasBufState()
 
   const [_, command_index, command, is_command] = Parse(
     arg_lead, cmd_line, cursor_pos)
 
-  const fugitive_completions = flog#fugitive#Complete(
-    flog#shell#Escape(arg_lead), cmd_line, cursor_pos)
+  const fugitive_completions = fugitive.Complete(
+    shell.Escape(arg_lead), cmd_line, cursor_pos)
 
   # Complete git/command args only
   if is_command || command_index < 0
@@ -149,30 +160,30 @@ export def Complete(arg_lead: string, cmd_line: string, cursor_pos: number): lis
 
   # Complete line
   if is_flog
-    completions += flog#shell#EscapeList(
+    completions += shell.EscapeList(
       CompleteFlog(arg_lead, cmd_line, cursor_pos))
   endif
 
   # Complete state
   if has_state
-    const opts = flog#state#GetBufState().opts
+    const opts = flog_state.GetBufState().opts
 
     if !empty(opts.limit)
-      const [range, path] = flog#args#SplitGitLimitArg(opts.limit)
-      var paths = flog#args#FilterCompletions(arg_lead, [path])
-      paths = flog#shell#EscapeList(paths)
-      completions += flog#list#Exclude(paths, completions)
+      const [range, path] = flog_args.SplitGitLimitArg(opts.limit)
+      var paths = flog_args.FilterCompletions(arg_lead, [path])
+      paths = shell.EscapeList(paths)
+      completions += list.Exclude(paths, completions)
     endif
 
     if !empty(opts.path)
       var paths = flog#FilterCompletions(arg_lead, opts.paths)
-      paths = flog#shell#EscapeList(paths)
-      completions += flog#list#Exclude(paths, completions)
+      paths = shell.EscapeList(paths)
+      completions += list.Exclude(paths, completions)
     endif
   endif
 
   # Complete Fugitive
-  completions += flog#list#Exclude(fugitive_completions, completions)
+  completions += list.Exclude(fugitive_completions, completions)
 
   return completions
 enddef

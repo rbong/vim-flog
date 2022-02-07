@@ -4,14 +4,19 @@ vim9script
 # This file contains functions for modifying options in "floggraph" buffers.
 #
 
+import autoload 'flog/global_opts.vim'
+import autoload 'flog/state.vim' as flog_state
+
+import autoload 'flog/floggraph/buf.vim'
+
 export def Toggle(name: string): bool
-  flog#floggraph#buf#AssertFlogBuf()
-  const opts = flog#state#GetBufState().opts
+  buf.AssertFlogBuf()
+  const opts = flog_state.GetBufState().opts
 
   const val = !opts[name]
   opts[name] = val
 
-  flog#floggraph#buf#Update()
+  buf.Update()
 
   return val
 enddef
@@ -45,8 +50,8 @@ export def TogglePatch(): bool
 enddef
 
 export def CycleSort(): string
-  flog#floggraph#buf#AssertFlogBuf()
-  const opts = flog#state#GetBufState().opts
+  buf.AssertFlogBuf()
+  const opts = flog_state.GetBufState().opts
 
   const default_sort = opts.graph ? 'topo' : 'date'
 
@@ -55,7 +60,7 @@ export def CycleSort(): string
     sort = default_sort
   endif
 
-  const sort_type = flog#global_opts#GetSortType(sort)
+  const sort_type = global_opts.GetSortType(sort)
 
   if empty(sort_type)
     sort = g:flog_sort_types[0].name
@@ -71,7 +76,7 @@ export def CycleSort(): string
 
   opts.sort = sort
 
-  flog#floggraph#buf#Update()
+  buf.Update()
 
   return sort
 enddef

@@ -6,44 +6,54 @@ vim9script
 # The "cmd/" folder contains functions for each command.
 #
 
+import autoload 'flog.vim'
+
+import autoload 'flog/fugitive.vim'
+import autoload 'flog/git.vim'
+import autoload 'flog/state.vim' as flog_state
+
+import autoload 'flog/cmd/flog/args.vim' as flog_cmd_args
+
+import autoload 'flog/floggraph/buf.vim'
+
 # The implementation of ":Flog".
 # The "floggraph/" folder contains functions for dealing with this filetype.
 export def Flog(args: list<string>): dict<any>
-  if !flog#fugitive#IsFugitiveBuf()
+  if !fugitive.IsFugitiveBuf()
     throw g:flog_not_a_fugitive_buffer
   endif
 
-  var state = flog#state#Create()
+  var state = flog_state.Create()
 
-  const fugitive_repo = flog#fugitive#GetRepo()
-  flog#state#SetFugitiveRepo(state, fugitive_repo)
-  const workdir = flog#state#GetFugitiveWorkdir(state)
+  const fugitive_repo = fugitive.GetRepo()
+  flog_state.SetFugitiveRepo(state, fugitive_repo)
+  const workdir = flog_state.GetFugitiveWorkdir(state)
 
-  var default_opts = flog#state#GetDefaultOpts()
-  const opts = flog#cmd#flog#args#Parse(default_opts, workdir, args)
-  flog#state#SetOpts(state, opts)
+  var default_opts = flog_state.GetDefaultOpts()
+  const opts = flog_cmd_args.Parse(default_opts, workdir, args)
+  flog_state.SetOpts(state, opts)
 
-  if g:flog_write_commit_graph && !flog#git#HasCommitGraph()
-    flog#git#WriteCommitGraph()
+  if g:flog_write_commit_graph && !git.HasCommitGraph()
+    git.WriteCommitGraph()
   endif
 
-  flog#floggraph#buf#Open(state)
-  flog#floggraph#buf#Update()
+  buf.Open(state)
+  buf.Update()
 
   return state
 enddef
 
 # The implementation of ":Flogsetargs".
 export def FlogSetArgs(args: list<string>, force: bool): dict<any>
-  const state = flog#state#GetBufState()
+  const state = flog_state.GetBufState()
 
-  const workdir = flog#state#GetFugitiveWorkdir(state)
-  var opts = force ? flog#state#GetInternalDefaultOpts() : state.opts
+  const workdir = flog_state.GetFugitiveWorkdir(state)
+  var opts = force ? flog_state.GetInternalDefaultOpts() : state.opts
 
-  flog#cmd#flog#args#Parse(opts, workdir, args)
-  flog#state#SetOpts(state, opts)
+  args.Parse(opts, workdir, args)
+  flog_state.SetOpts(state, opts)
 
-  flog#floggraph#buf#Update()
+  buf.Update()
 
   return state
 enddef

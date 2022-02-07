@@ -4,9 +4,14 @@ vim9script
 # This file contains functions for working with git for "floggraph" buffers.
 #
 
+import autoload 'flog/fugitive.vim'
+import autoload 'flog/global_opts.vim'
+import autoload 'flog/shell.vim'
+import autoload 'flog/state.vim' as flog_state
+
 export def BuildLogFormat(): string
-  const state = flog#state#GetBufState()
-  const opts = flog#state#GetResolvedOpts(state)
+  const state = flog_state.GetBufState()
+  const opts = flog_state.GetResolvedOpts(state)
 
   var format = 'format:'
   # Add token so we can find commits
@@ -16,12 +21,12 @@ export def BuildLogFormat(): string
   # Add user format
   format ..= opts.format
 
-  return flog#shell#Escape(format)
+  return shell.Escape(format)
 enddef
 
 export def BuildLogArgs(): string
-  const state = flog#state#GetBufState()
-  const opts = flog#state#GetResolvedOpts(state)
+  const state = flog_state.GetBufState()
+  const opts = flog_state.GetResolvedOpts(state)
 
   if opts.reverse && opts.graph
     throw g:flog_reverse_requires_no_graph
@@ -34,7 +39,7 @@ export def BuildLogArgs(): string
   endif
   args ..= ' --no-color'
   args ..= ' --pretty=' .. BuildLogFormat()
-  args ..= ' --date=' .. flog#shell#Escape(opts.date)
+  args ..= ' --date=' .. shell.Escape(opts.date)
   if opts.all && empty(opts.limit)
     args ..= ' --all'
   endif
@@ -54,26 +59,26 @@ export def BuildLogArgs(): string
     args ..= ' --no-patch'
   endif
   if !empty(opts.skip)
-    args ..= ' --skip=' .. flog#shell#Escape(opts.skip)
+    args ..= ' --skip=' .. shell.Escape(opts.skip)
   endif
   if !empty(opts.sort)
-    const sort_type = flog#global_opts#GetSortType(opts.sort)
+    const sort_type = global_opts.GetSortType(opts.sort)
     args ..= ' ' .. sort_type.args
   endif
   if !empty(opts.max_count)
-    args ..= ' --max-count=' .. flog#shell#Escape(opts.max_count)
+    args ..= ' --max-count=' .. shell.Escape(opts.max_count)
   endif
   if !empty(opts.search)
-    args ..= ' --grep=' .. flog#shell#Escape(opts.search)
+    args ..= ' --grep=' .. shell.Escape(opts.search)
   endif
   if !empty(opts.patch_search)
-    args ..= ' -G' .. flog#shell#Escape(opts.patch_search)
+    args ..= ' -G' .. shell.Escape(opts.patch_search)
   endif
   if !empty(opts.author)
-    args ..= ' --author=' .. flog#shell#Escape(opts.author)
+    args ..= ' --author=' .. shell.Escape(opts.author)
   endif
   if !empty(opts.limit)
-    args ..= ' -L' .. flog#shell#Escape(opts.limit)
+    args ..= ' -L' .. shell.Escape(opts.limit)
   endif
   if !empty(opts.raw_args)
     args ..= ' ' .. opts.raw_args
@@ -81,9 +86,9 @@ export def BuildLogArgs(): string
   if len(opts.rev) >= 1
     var rev = ''
     if !empty(opts.limit)
-      rev = flog#shell#Escape(opts.rev[0])
+      rev = shell.Escape(opts.rev[0])
     else
-      rev = join(flog#shell#EscapeList(opts.rev), ' ')
+      rev = join(shell.EscapeList(opts.rev), ' ')
     endif
     args ..= ' ' .. rev
   endif
@@ -92,8 +97,8 @@ export def BuildLogArgs(): string
 enddef
 
 export def BuildLogPaths(): string
-  const state = flog#state#GetBufState()
-  const opts = flog#state#GetResolvedOpts(state)
+  const state = flog_state.GetBufState()
+  const opts = flog_state.GetResolvedOpts(state)
 
   if !empty(opts.limit)
     return ''
@@ -103,11 +108,11 @@ export def BuildLogPaths(): string
     return ''
   endif
 
-  return join(flog#shell#EscapeList(opts.path), ' ')
+  return join(shell.EscapeList(opts.path), ' ')
 enddef
 
 export def BuildLogCmd(): string
-  var cmd = flog#fugitive#GetGitCommand()
+  var cmd = fugitive.GetGitCommand()
 
   cmd ..= ' log'
   cmd ..= BuildLogArgs()

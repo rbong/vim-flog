@@ -4,16 +4,21 @@ vim9script
 # This file contains functions for manipulating the register in "floggraph" buffers.
 #
 
+import autoload 'flog/state.vim' as flog_state
+
+import autoload 'flog/floggraph/buf.vim'
+import autoload 'flog/floggraph/commit.vim' as floggraph_commit
+
 export def YankHash(reg: string = '"', line: any = '.', count: number = 1): number
-  flog#floggraph#buf#AssertFlogBuf()
-  const state = flog#state#GetBufState()
+  buf.AssertFlogBuf()
+  const state = flog_state.GetBufState()
 
   if count < 1
     setreg(reg, [], 'v')
     return 0
   endif
 
-  var commit = flog#floggraph#commit#GetAtLine(line)
+  var commit = floggraph_commit.GetAtLine(line)
   if empty(commit)
     setreg(reg, [], 'v')
     return 0
@@ -40,11 +45,11 @@ export def YankHash(reg: string = '"', line: any = '.', count: number = 1): numb
 enddef
 
 export def YankHashRange(reg: string = '"', start_line: any = "'<", end_line: any = "'>"): number
-  flog#floggraph#buf#AssertFlogBuf()
-  const state = flog#state#GetBufState()
+  buf.AssertFlogBuf()
+  const state = flog_state.GetBufState()
 
-  var start_commit = flog#floggraph#commit#GetAtLine(start_line)
-  var end_commit = flog#floggraph#commit#GetAtLine(end_line)
+  var start_commit = floggraph_commit.GetAtLine(start_line)
+  var end_commit = floggraph_commit.GetAtLine(end_line)
   if empty(start_commit) || empty(end_commit)
     setreg(reg, [])
     return 0

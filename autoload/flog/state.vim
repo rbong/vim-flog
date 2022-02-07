@@ -5,6 +5,8 @@ vim9script
 # object.
 #
 
+import autoload 'flog/deprecate.vim'
+
 g:flog_instance_counter = 0
 
 export def Create(): dict<any>
@@ -51,7 +53,7 @@ export def GetInternalDefaultOpts(): dict<any>
         }
 
   # Show deprecation warning for old setting
-  flog#deprecate#Setting(
+  deprecate.Setting(
     'g:flog_permanent_default_arguments',
     'g:flog_permanent_default_opts'
     )
@@ -82,7 +84,7 @@ export def GetDefaultOpts(): dict<any>
   var defaults = GetInternalDefaultOpts()
 
   # Show deprecation warning for old setting
-  flog#deprecate#Setting(
+  deprecate.Setting(
     'g:flog_default_arguments',
     'g:flog_default_opts'
     )

@@ -4,6 +4,18 @@ vim9script
 # This file contains functions for creating and updating "floggraph" buffers.
 #
 
+import autoload 'flog/args.vim' as flog_args
+import autoload 'flog/fugitive.vim'
+import autoload 'flog/lua.vim'
+import autoload 'flog/shell.vim'
+import autoload 'flog/state.vim' as flog_state
+import autoload 'flog/str.vim'
+import autoload 'flog/win.vim'
+
+import autoload 'flog/floggraph/commit.vim' as floggraph_commit
+import autoload 'flog/floggraph/git.vim'
+import autoload 'flog/floggraph/side_win.vim'
+
 export def IsFlogBuf(): bool
   return &filetype == 'floggraph'
 enddef
@@ -18,9 +30,9 @@ enddef
 export def UpdateStatus(): string
   AssertFlogBuf()
 
-  var cmd = flog#fugitive#GetGitCommand()
+  var cmd = fugitive.GetGitCommand()
   cmd ..= ' status -s'
-  const changes = len(flog#shell#Run(cmd))
+  const changes = len(shell.Run(cmd))
 
   if changes == 0
     b:flog_status_summary = 'No changes'
@@ -30,7 +42,7 @@ export def UpdateStatus(): string
     b:flog_status_summary = string(changes) .. ' files changed'
   endif
 
-  const head = flog#fugitive#GetHead()
+  const head = fugitive.GetHead()
 
   if !empty(head)
     b:flog_status_summary ..= ' (' .. head .. ')'
@@ -77,26 +89,26 @@ export def GetName(instance_number: number, opts: dict<any>): string
     name ..= ' [max_count=' .. opts.max_count .. ']'
   endif
   if !empty(opts.search)
-    name ..= ' [search=' .. flog#str#Ellipsize(opts.search, 15) .. ']'
+    name ..= ' [search=' .. str.Ellipsize(opts.search, 15) .. ']'
   endif
   if !empty(opts.patch_search)
-    name ..= ' [patch_search=' .. flog#str#Ellipsize(opts.patch_search, 15) .. ']'
+    name ..= ' [patch_search=' .. str.Ellipsize(opts.patch_search, 15) .. ']'
   endif
   if !empty(opts.author)
     name ..= ' [author=' .. opts.author .. ']'
   endif
   if !empty(opts.limit)
-    const [range, path] = flog#args#SplitGitLimitArg(opts.limit)
-    name ..= ' [limit=' .. flog#str#Ellipsize(range .. fnamemodify(path, ':t'), 15) .. ']'
+    const [range, path] = flog_args.SplitGitLimitArg(opts.limit)
+    name ..= ' [limit=' .. str.Ellipsize(range .. fnamemodify(path, ':t'), 15) .. ']'
   endif
   if len(opts.rev) == 1
-    name ..= ' [rev=' .. flog#str#Ellipsize(opts.rev[0], 15) .. ']'
+    name ..= ' [rev=' .. str.Ellipsize(opts.rev[0], 15) .. ']'
   endif
   if len(opts.rev) > 1
     name ..= ' [rev=...]'
   endif
   if len(opts.path) == 1
-    name ..= ' [path=' .. flog#str#Ellipsize(fnamemodify(opts.path[0], ':t'), 15) .. ']'
+    name ..= ' [path=' .. str.Ellipsize(fnamemodify(opts.path[0], ':t'), 15) .. ']'
   elseif len(opts.path) > 1
     name ..= ' [path=...]'
   endif
@@ -108,13 +120,13 @@ export def Open(state: dict<any>): number
   const bufname = GetInitialName(state.instance_number)
   execute 'silent! ' .. state.opts.open_cmd .. bufname
 
-  flog#state#SetBufState(state)
+  flog_state.SetBufState(state)
 
   var bufnr = bufnr()
-  flog#state#SetGraphBufnr(state, bufnr)
+  flog_state.SetGraphBufnr(state, bufnr)
 
-  flog#fugitive#TriggerDetection(flog#state#GetFugitiveWorkdir(state))
-  exec 'lcd ' .. flog#fugitive#GetWorkdir()
+  fugitive.TriggerDetection(flog_state.GetFugitiveWorkdir(state))
+  exec 'lcd ' .. fugitive.GetWorkdir()
 
   setlocal filetype=floggraph
 
@@ -123,28 +135,28 @@ enddef
 
 export def Update(): number
   AssertFlogBuf()
-  const state = flog#state#GetBufState()
-  const opts = flog#state#GetResolvedOpts(state)
+  const state = flog_state.GetBufState()
+  const opts = flog_state.GetResolvedOpts(state)
 
-  const graph_win = flog#win#Save()
+  const graph_win = win.Save()
 
   if g:flog_enable_status
     UpdateStatus()
   endif
 
-  const cmd = flog#floggraph#git#BuildLogCmd()
-  flog#state#SetPrevLogCmd(state, cmd)
-  const graph = flog#lua#GetGraph(cmd)
+  const cmd = git.BuildLogCmd()
+  flog_state.SetPrevLogCmd(state, cmd)
+  const graph = lua.GetGraph(cmd)
 
   # Record previous commit
-  const last_commit = flog#floggraph#commit#GetAtLine('.')
+  const last_commit = floggraph_commit.GetAtLine('.')
 
   # Update graph
-  flog#state#SetGraph(state, graph)
+  flog_state.SetGraph(state, graph)
   SetContent(graph.output)
 
   # Restore commit position
-  flog#floggraph#commit#RestorePosition(graph_win, last_commit)
+  floggraph_commit.RestorePosition(graph_win, last_commit)
 
   silent! exec 'file ' .. GetName(state.instance_number, opts)
 
@@ -197,15 +209,15 @@ enddef
 
 export def Close(): number
   AssertFlogBuf()
-  const state = flog#state#GetBufState()
+  const state = flog_state.GetBufState()
 
-  const graph_win = flog#win#Save()
-  flog#floggraph#side_win#CloseTmp()
+  const graph_win = win.Save()
+  side_win.CloseTmp()
 
-  flog#win#Restore(graph_win)
-  if flog#win#Is(graph_win)
+  win.Restore(graph_win)
+  if win.Is(graph_win)
     silent! bdelete!
   endif
 
-  return flog#win#GetSavedId(graph_win)
+  return win.GetSavedId(graph_win)
 enddef
