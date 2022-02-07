@@ -26,5 +26,6 @@ jobs:
         with:
           vim_version: "${{ matrix.vim_version }}"
           vim_type: "${{ matrix.vim_type }}"
+          download: "never"
       - name: "run tests"
         run: ./t/run.sh
