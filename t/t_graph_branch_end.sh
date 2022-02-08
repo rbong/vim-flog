@@ -14,30 +14,30 @@ TMP=$(create_tmp_dir graph_branch_end)
 WORKTREE=$(git_init graph_branch_end)
 cd "$WORKTREE"
 
-git_commit_tag branch-1-a branch-1-b
+git_commit_tag 1-a 1-b
 
-git_checkout branch-1-a
-git_commit_tag branch-3-a
+git_checkout 1-a
+git_commit_tag 3-a
 
-git_checkout branch-1-a
-git_commit_tag branch-4-a
+git_checkout 1-a
+git_commit_tag 4-a
 
-git_checkout branch-1-b
-git_commit_tag branch-1-c
-git_merge -m branch-2-a branch-3-a branch-4-a
-git_tag branch-2-a
+git_checkout 1-b
+git_commit_tag 1-c
+git_merge -m 2-a 3-a 4-a
+git_tag 2-a
 
-git_checkout branch-4-a
-git_commit_tag branch-4-b
+git_checkout 4-a
+git_commit_tag 4-b
 
-git_checkout branch-3-a
-git_commit_tag branch-3-b
+git_checkout 3-a
+git_commit_tag 3-b
 
-git_checkout branch-2-a
-git_commit_tag branch-2-b
+git_checkout 2-a
+git_commit_tag 2-b
 
-git_checkout branch-1-c
-git_merge -m branch-1-e branch-2-b branch-3-b branch-4-b
+git_checkout 1-c
+git_merge -m 1-e 2-b 3-b 4-b
 
 VIM_OUT=$(get_relative_dir "$TMP")/out
 run_vim_command "exec 'Flog -order=date -format=%s' | silent w $VIM_OUT"

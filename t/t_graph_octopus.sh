@@ -14,19 +14,19 @@ TMP=$(create_tmp_dir graph_octopus)
 WORKTREE=$(git_init graph_merge_octopus)
 cd "$WORKTREE"
 
-git_commit_tag a b
+git_commit_tag 1-a 1-b
 
-git_checkout a
-git_commit_tag side-1
+git_checkout 1-a
+git_commit_tag 2-a
 
-git_checkout a
-git_commit_tag side-2
+git_checkout 1-a
+git_commit_tag 3-a
 
-git_checkout a
-git_commit_tag side-3
+git_checkout 1-a
+git_commit_tag 4-a
 
-git_checkout b
-git_merge -m c side-1 side-2 side-3
+git_checkout 1-b
+git_merge -m 1-c 2-a 3-a 4-a
 
 VIM_OUT=$(get_relative_dir "$TMP")/out
 run_vim_command "exec 'Flog -format=%s' | silent w $VIM_OUT"
