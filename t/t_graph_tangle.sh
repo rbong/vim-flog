@@ -67,3 +67,10 @@ silent w $VIM_OUT
 EOF
 
 diff_data "$TMP/out" "graph_tangle_out"
+
+run_vim_command <<EOF
+Flog -format=%s -rev=2-c..2-d
+silent w! $VIM_OUT
+EOF
+
+diff_data "$TMP/out" "graph_tangle_range_out"
