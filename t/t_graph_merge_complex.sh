@@ -27,6 +27,9 @@ git_merge -m 1-c 2-a 3-a
 git_merge -m 1-d 2-b 3-b
 
 VIM_OUT=$(get_relative_dir "$TMP")/out
-run_vim_command "exec 'Flog -format=%s' | silent w $VIM_OUT"
+run_vim_command <<EOF
+Flog -format=%s
+silent w $VIM_OUT
+EOF
 
 diff_data "$TMP/out" "graph_merge_complex_out"

@@ -40,6 +40,9 @@ git_commit_tag 1-d
 git_merge -m 1-e 2-c 3-b
 
 VIM_OUT=$(get_relative_dir "$TMP")/out
-run_vim_command "exec 'Flog -order=date -format=%s' | silent w $VIM_OUT"
+run_vim_command <<EOF
+Flog -order=date -format=%s
+silent w $VIM_OUT
+EOF
 
 diff_data "$TMP/out" "graph_merge_cross_out"

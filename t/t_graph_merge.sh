@@ -24,6 +24,9 @@ git_merge -m 1-d 2-b
 git_commit -m 1-e
 
 VIM_OUT=$(get_relative_dir "$TMP")/out
-run_vim_command "exec 'Flog -format=%s' | silent w $VIM_OUT"
+run_vim_command <<EOF
+Flog -format=%s
+silent w $VIM_OUT
+EOF
 
 diff_data "$TMP/out" "graph_merge_out"

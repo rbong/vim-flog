@@ -17,6 +17,9 @@ cd "$WORKTREE"
 git_commit_tag 1-a 1-b 1-c 1-d
 
 VIM_OUT=$(get_relative_dir "$TMP")/out
-run_vim_command "exec 'Flog -format=%s' | silent w $VIM_OUT"
+run_vim_command <<EOF
+Flog -format=%s
+silent w $VIM_OUT
+EOF
 
 diff_data "$TMP/out" "graph_simple_out"

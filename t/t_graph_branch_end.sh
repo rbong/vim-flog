@@ -40,6 +40,9 @@ git_checkout 1-c
 git_merge -m 1-e 2-b 3-b 4-b
 
 VIM_OUT=$(get_relative_dir "$TMP")/out
-run_vim_command "exec 'Flog -order=date -format=%s' | silent w $VIM_OUT"
+run_vim_command <<EOF
+Flog -order=date -format=%s
+silent w $VIM_OUT
+EOF
 
 diff_data "$TMP/out" "graph_branch_end_out"

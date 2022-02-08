@@ -22,7 +22,11 @@ install_vim() {
 
 run_vim_command() {
   _TMP=$(create_tmp_dir "vim/")
-  _OUT=$_TMP/_messages
+
+  _SCRIPT=$_TMP/_script.vim
+  _OUT=$(get_relative_dir "$_TMP/_out")
+
+  cat > "$_SCRIPT"
 
   cat <<EOF > "$VIMRC"
 set nocompatible
@@ -34,9 +38,9 @@ EOF
   set +e
   vim \
     -u "$VIMRC" \
-    -e -s \
+    -e \
     -c "redir > $_OUT" \
-    -c "$1" \
+    -S "$_SCRIPT" \
     -c "qa!"
   STATUS=$?
   set -e

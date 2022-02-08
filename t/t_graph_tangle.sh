@@ -61,6 +61,9 @@ git_merge -m 1-k 3-c 4-a
 git_merge -m 1-l 2-d
 
 VIM_OUT=$(get_relative_dir "$TMP")/out
-run_vim_command "exec 'Flog -sort=date -format=%s' | silent w $VIM_OUT"
+run_vim_command <<EOF
+Flog -sort=date -format=%s
+silent w $VIM_OUT
+EOF
 
 diff_data "$TMP/out" "graph_tangle_out"

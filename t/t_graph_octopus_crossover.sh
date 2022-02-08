@@ -36,6 +36,9 @@ git_checkout 1-a
 git_commit_tag 1-b
 
 VIM_OUT=$(get_relative_dir "$TMP")/out
-run_vim_command "exec 'Flog -format=%s -rev=1-b -rev=2-b' | silent w $VIM_OUT"
+run_vim_command <<EOF
+Flog -format=%s -rev=1-b -rev=2-b
+silent w $VIM_OUT
+EOF
 
 diff_data "$TMP/out" "graph_octopus_crossover_out"
