@@ -53,5 +53,7 @@ EOF
     echo
   fi
 
+  rm -f "$_OUT"
+
   return $STATUS
 }
