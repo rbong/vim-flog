@@ -21,6 +21,9 @@ install_vim() {
 }
 
 run_vim_command() {
+  _FLOG_DIR=$(get_relative_dir "$FLOG_DIR")
+  _FUGITIVE_DIR=$(get_relative_dir "$FUGITIVE_DIR")
+
   _TMP=$(create_tmp_dir "vim/")
 
   _SCRIPT=$_TMP/_script.vim
@@ -31,8 +34,8 @@ run_vim_command() {
   cat <<EOF > "$VIMRC"
 set nocompatible
 filetype plugin indent on
-exec 'set rtp+=' . fnameescape("$FLOG_DIR")
-exec 'set rtp+=' . fnameescape("$FUGITIVE_DIR")
+exec 'set rtp+=' . expand('%:p:h') . '/' . fnameescape("$_FLOG_DIR")
+exec 'set rtp+=' . expand('%:p:h') . '/' . fnameescape("$_FUGITIVE_DIR")
 EOF
 
   set +e
