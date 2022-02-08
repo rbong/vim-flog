@@ -26,3 +26,11 @@ git_merge() {
 git_tag() {
   git tag "$@"
 }
+
+# Create and tag multiple commits
+git_commit_tag() {
+  for commit in $@; do
+    git_commit -m "$commit"
+    git_tag "$commit"
+  done
+}

@@ -14,22 +14,13 @@ TMP=$(create_tmp_dir graph_merge_complex)
 WORKTREE=$(git_init graph_merge_complex)
 cd "$WORKTREE"
 
-git_commit -m branch-1-a
-git_tag branch-1-a
-git_commit -m branch-1-b
-git_tag branch-1-b
+git_commit_tag branch-1-a branch-1-b
 
 git_checkout branch-1-a
-git_commit -m branch-3-a
-git_tag branch-3-a
-git_commit -m branch-3-b
-git_tag branch-3-b
+git_commit_tag branch-3-a branch-3-b
 
 git_checkout branch-1-b
-git_commit -m branch-2-a
-git_tag branch-2-a
-git_commit -m branch-2-b
-git_tag branch-2-b
+git_commit_tag branch-2-a branch-2-b
 
 git_checkout branch-1-b
 git_merge -m branch-1-c branch-2-a branch-3-a
