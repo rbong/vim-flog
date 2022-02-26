@@ -150,7 +150,7 @@ endif
 nnoremap <buffer> <silent> <Plug>(FlogSkipBack) :<C-U>call flog#floggraph#nav#SkipBack(max([v:count, 1]))<CR>
 
 if !hasmapto('<Plug>(FlogSetSkip)')
-  nmap <buffer> go <Plug>(FlogSetSkip)
+  nmap <buffer> gcg <Plug>(FlogSetSkip)
 endif
 nnoremap <buffer> <silent> <Plug>(FlogSetSkip) :<C-U>call flog#floggraph#nav#SkipTo(v:count)<CR>
 

@@ -356,7 +356,7 @@ NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
   Same as |flog-]]|, but go backwards.
 
                                                          *<Plug>(FlogSetSkip)*
-go                                                                   *flog-go*
+gcg                                                                 *flog-gcg*
 
   Skip to the commit given by the count, or 0 if no count is given.
 
