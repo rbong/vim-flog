@@ -28,7 +28,7 @@ g:flog_get_author_args = '--all --no-merges --max-count=100000'
 
 g:flog_commit_start_token = '__START'
 
-g:flog_sort_types = [
+g:flog_order_types = [
   { name: 'date', args: '--date-order' },
   { name: 'author', args: '--author-date-order' },
   { name: 'topo', args: '--topo-order' },

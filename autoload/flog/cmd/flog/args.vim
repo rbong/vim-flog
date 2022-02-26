@@ -73,10 +73,10 @@ export def Parse(current_opts: dict<any>, workdir: string, args: list<string>): 
       current_opts.skip = flog_args.ParseArg(arg)
     elseif arg == '-skip='
       current_opts.skip = defaults.skip
-    elseif arg =~ '^-\(sort\|order\)=.\+'
-      current_opts.sort = flog_args.ParseArg(arg)
-    elseif arg == '-sort=' || arg == '-order='
-      current_opts.sort = defaults.sort
+    elseif arg =~ '^-\(order\|sort\)=.\+'
+      current_opts.order = flog_args.ParseArg(arg)
+    elseif arg == '-order=' || arg == '-sort='
+      current_opts.order = defaults.order
     elseif arg =~ '^-max-count=\d\+'
       current_opts.max_count = flog_args.ParseArg(arg)
     elseif arg == '-max-count='
@@ -266,15 +266,15 @@ export def CompletePath(arg_lead: string): list<string>
   return flog_args.FilterCompletions(arg_lead, completions)
 enddef
 
-export def CompleteSort(arg_lead: string): list<string>
+export def CompleteOrder(arg_lead: string): list<string>
   const [lead, _] = flog_args.SplitArg(arg_lead)
 
-  var sort_types = []
-  for sort_type in g:flog_sort_types
-    add(sort_types, sort_type.name)
+  var order_types = []
+  for order_type in g:flog_order_types
+    add(order_types, order_type.name)
   endfor
 
-  var completions = flog_args.EscapeCompletions(lead, sort_types)
+  var completions = flog_args.EscapeCompletions(lead, order_types)
   return flog_args.FilterCompletions(arg_lead, completions)
 enddef
 
@@ -312,8 +312,8 @@ export def Complete(arg_lead: string, cmd_line: string, cursor_pos: number): lis
     '-search=',
     '-grep=',
     '-skip=',
-    '-sort=',
     '-order=',
+    '-sort=',
     ]
 
   if arg_lead == ''
@@ -334,8 +334,8 @@ export def Complete(arg_lead: string, cmd_line: string, cursor_pos: number): lis
     return CompleteRev(arg_lead)
   elseif arg_lead =~ '^-path='
     return CompletePath(arg_lead)
-  elseif arg_lead =~ '^-\(sort\|order\)='
-    return CompleteSort(arg_lead)
+  elseif arg_lead =~ '^-\(order\|sort\)='
+    return CompleteOrder(arg_lead)
   endif
   return flog_args.FilterCompletions(arg_lead, default_completion)
 enddef

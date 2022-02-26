@@ -41,7 +41,7 @@ export def GetInternalDefaultOpts(): dict<any>
         'graph': true,
         'patch': true,
         'skip': '',
-        'sort': '',
+        'order': '',
         'max_count': '5000',
         'open_cmd': 'tabedit',
         'search': '',

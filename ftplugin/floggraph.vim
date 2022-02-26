@@ -206,28 +206,28 @@ if !hasmapto('<Plug>(FlogPatchSearch)')
 endif
 nnoremap <buffer> <Plug>(FlogPatchSearch) :<C-U>Flogsetargs -patch-search=
 
-if !hasmapto('<Plug>(FlogCycleSort)')
-  nmap <buffer> gss <Plug>(FlogCycleSort)
+if !hasmapto('<Plug>(FlogCycleOrder)')
+  nmap <buffer> goo <Plug>(FlogCycleOrder)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogCycleSort) :<C-U>call flog#floggraph#opts#CycleSort()<CR>
+nnoremap <buffer> <silent> <Plug>(FlogCycleOrder) :<C-U>call flog#floggraph#opts#CycleOrder()<CR>
 
-if !hasmapto('<Plug>(FlogSortDate)')
-  nmap <buffer> gsd <Plug>(FlogSortDate)
+if !hasmapto('<Plug>(FlogOrderDate)')
+  nmap <buffer> god <Plug>(FlogOrderDate)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogSortDate) :<C-U>Flogsetargs -sort=date<CR>
+nnoremap <buffer> <silent> <Plug>(FlogOrderDate) :<C-U>Flogsetargs -order=date<CR>
 
-if !hasmapto('<Plug>(FlogSortAuthor)')
-  nmap <buffer> gsa <Plug>(FlogSortAuthor)
+if !hasmapto('<Plug>(FlogOrderAuthor)')
+  nmap <buffer> goa <Plug>(FlogOrderAuthor)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogSortAuthor) :<C-U>Flogsetargs -sort=author<CR>
+nnoremap <buffer> <silent> <Plug>(FlogOrderAuthor) :<C-U>Flogsetargs -order=author<CR>
 
-if !hasmapto('<Plug>(FlogSortTopo)')
-  nmap <buffer> gst <Plug>(FlogSortTopo)
+if !hasmapto('<Plug>(FlogOrderTopo)')
+  nmap <buffer> got <Plug>(FlogOrderTopo)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogSortTopo) :<C-U>Flogsetargs -sort=topo<CR>
+nnoremap <buffer> <silent> <Plug>(FlogOrderTopo) :<C-U>Flogsetargs -order=topo<CR>
 
 if !hasmapto('<Plug>(FlogToggleReverse)')
-  nmap <buffer> gsr <Plug>(FlogToggleReverse)
+  nmap <buffer> gor <Plug>(FlogToggleReverse)
 endif
 nnoremap <buffer> <silent> <Plug>(FlogToggleReverse) :<C-U>call flog#floggraph#opts#ToggleReverse()<CR>
 

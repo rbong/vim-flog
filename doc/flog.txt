@@ -109,6 +109,16 @@ COMMANDS                                                       *flog-commands*
 
     Defaults to 5000.
 
+  -order=<type>                                                  *:Flog-order*
+  -sort=<type>                                                    *:Flog-sort*
+
+    Sort by one of <type>, where type is in "date", "author", or "topo".
+
+    These pass either the argument "--date-order", "--author-order", or
+    "--topo-order" to "git log", respectfully.
+
+    Defaults to "topo" when |:Flog-graph| is enabled and "date" otherwise.
+
   -skip=<number>                                                  *:Flog-skip*
 
     Passes the "--skip=<number>" argument to "git log".
@@ -122,16 +132,6 @@ COMMANDS                                                       *flog-commands*
   -patch-grep=<pattern>                                     *:Flog-patch-grep*
 
     Passes the "-G=<pattern>" argument to "git log".
-
-  -sort=<sort>                                                    *:Flog-sort*
-  -order=<sort>                                                  *:Flog-order*
-
-    Sort by one of <type>, where type is in "date", "author", or "topo".
-
-    These pass either the argument "--date-order", "--author-order", or
-    "--topo-order" to "git log", respectfully.
-
-    Defaults to "topo" when |:Flog-graph| is enabled and "date" otherwise.
 
   -rev=<rev>                                                       *:Flog-rev*
 
@@ -416,29 +416,29 @@ g\                                                                   *flog-g\*
   Open the command line with ":Flogsetargs -patch-search=".
   See also |:Flog-patch-search|.
 
-                                                       *<Plug>(FlogCycleSort)*
-gss                                                                 *flog-gss*
+                                                       *<Plug>(FlogCycleOrder)*
+goo                                                                 *flog-goo*
 
-  Cycle through the different |:Flog-sort| options.
-  The order of sort types can be changed with |g:flog_sort_types|.
+  Cycle through the different |:Flog-order| options.
+  The order of sort types can be changed with |g:flog_order_types|.
 
-                                                        *<Plug>(FlogSortDate)*
-gsd                                                                 *flog-gsd*
+                                                        *<Plug>(FlogOrderDate)*
+god                                                                 *flog-god*
 
-  Set |:Flog-sort| to "date".
+  Set |:Flog-order| to "date".
 
-                                                      *<Plug>(FlogSortAuthor)*
-gsa                                                                 *flog-gsa*
+                                                      *<Plug>(FlogOrderAuthor)*
+goa                                                                 *flog-goa*
 
-  Set |:Flog-sort| to "author".
+  Set |:Flog-order| to "author".
 
-                                                        *<plug>(FlogSortTopo)*
-gst                                                                 *flog-gst*
+                                                        *<plug>(FlogOrderTopo)*
+got                                                                 *flog-got*
 
-  Set |:Flog-sort| to "topo".
+  Set |:Flog-order| to "topo".
 
                                                    *<Plug>(FlogToggleReverse)*
-gsr                                                                 *flog-gsr*
+gor                                                                 *flog-gor*
 
   Toggle |:Flog-reverse|.
 
@@ -728,11 +728,11 @@ g:flog_commit_start_token                          *g:flog_commit_start_token*
 
   Defaults to "__START".
 
-g:flog_sort_types                                          *g:flog_sort_types*
+g:flog_order_types                                        *g:flog_order_types*
 
-  An array of dicts describing the different sort types.
+  An array of dicts describing the different order types.
 
-  Can be set to change the order of sort options with |flog-gss|.
+  Can be set to change the order of order options with |flog-goo|.
 
   Defaults to:
 >

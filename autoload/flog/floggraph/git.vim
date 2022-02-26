@@ -61,9 +61,9 @@ export def BuildLogArgs(): string
   if !empty(opts.skip)
     args ..= ' --skip=' .. shell.Escape(opts.skip)
   endif
-  if !empty(opts.sort)
-    const sort_type = global_opts.GetSortType(opts.sort)
-    args ..= ' ' .. sort_type.args
+  if !empty(opts.order)
+    const order_type = global_opts.GetOrderType(opts.order)
+    args ..= ' ' .. order_type.args
   endif
   if !empty(opts.max_count)
     args ..= ' --max-count=' .. shell.Escape(opts.max_count)

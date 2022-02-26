@@ -82,8 +82,8 @@ export def GetName(instance_number: number, opts: dict<any>): string
   if !empty(opts.skip)
     name ..= ' [skip=' .. opts.skip .. ']'
   endif
-  if !empty(opts.sort)
-    name ..= ' [sort=' .. opts.sort .. ']'
+  if !empty(opts.order)
+    name ..= ' [order=' .. opts.order .. ']'
   endif
   if !empty(opts.max_count)
     name ..= ' [max_count=' .. opts.max_count .. ']'

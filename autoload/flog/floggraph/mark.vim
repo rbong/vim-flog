@@ -61,7 +61,7 @@ export def PrintAll(): dict<any>
     return marks
   endif
 
-  for key in sort(keys(marks))
+  for key in order(keys(marks))
     echo '  ' .. key .. '  ' .. marks[key].hash
   endfor
 

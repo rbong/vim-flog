@@ -49,34 +49,34 @@ export def TogglePatch(): bool
   return Toggle('patch')
 enddef
 
-export def CycleSort(): string
+export def CycleOrder(): string
   buf.AssertFlogBuf()
   const opts = flog_state.GetBufState().opts
 
-  const default_sort = opts.graph ? 'topo' : 'date'
+  const default_order = opts.graph ? 'topo' : 'date'
 
-  var sort = opts.sort
-  if empty(sort)
-    sort = default_sort
+  var order = opts.order
+  if empty(order)
+    order = default_order
   endif
 
-  const sort_type = global_opts.GetSortType(sort)
+  const order_type = global_opts.GetOrderType(order)
 
-  if empty(sort_type)
-    sort = g:flog_sort_types[0].name
+  if empty(order_type)
+    order = g:flog_order_types[0].name
   else
-    const sort_index = index(g:flog_sort_types, sort_type)
+    const order_index = index(g:flog_order_types, order_type)
 
-    if sort_index == len(g:flog_sort_types) - 1
-      sort = g:flog_sort_types[0].name
+    if order_index == len(g:flog_order_types) - 1
+      order = g:flog_order_types[0].name
     else
-      sort = g:flog_sort_types[sort_index + 1].name
+      order = g:flog_order_types[order_index + 1].name
     endif
   endif
 
-  opts.sort = sort
+  opts.order = order
 
   buf.Update()
 
-  return sort
+  return order
 enddef
