@@ -103,6 +103,20 @@ nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitRight) :<C-U> call flo
 
 nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitPathsRight) :<C-U> call flog#ExecTmp("vertical belowright Git diff %(h'!) %H -- %p", 0, 0)<CR>
 
+if !hasmapto('<Plug>(FlogVSplitStaged)')
+  nmap <buffer> gs <Plug>(FlogVSplitStaged)
+endif
+if !hasmapto('<Plug>(FlogVSplitUntracked)')
+  nmap <buffer> gu <Plug>(FlogVSplitUntracked)
+endif
+if !hasmapto('<Plug>(FlogVSplitUnstaged)')
+  nmap <buffer> gU <Plug>(FlogVSplitUnstaged)
+endif
+
+nnoremap <buffer> <silent> <Plug>(FlogVSplitStaged) :<C-U> call flog#ExecTmp("vertical belowright Git diff --cached", 0, 0)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVSplitUntracked) :<C-U> call flog#ExecTmp("silent Git add -N . \| vertical belowright Git diff \| silent Git read-tree %t", 0, 0)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVSplitUnstaged) :<C-U> call flog#ExecTmp("vertical belowright Git diff", 0, 0)<CR>
+
 " Navigation mappings
 
 if !hasmapto('<Plug>(FlogJumpToCommitStart)')

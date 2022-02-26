@@ -291,6 +291,21 @@ D!                                                                   *flog-D!*
   Same as |flog-d!|, but use the "-path" or "-limit" argument to only show the
   diff for the currently selected paths.
 
+                                                    *<Plug>(FlogVSplitStaged)*
+gs                                                                   *flog-gs*
+
+  Show the currently staged changes.
+
+                                                 *<Plug>(FlogVSplitUntracked)*
+gu                                                                   *flog-gu*
+
+  Show the currently untracked and unstaged changes.
+
+                                                  *<Plug>(FlogVSplitUnstaged)*
+gU                                                                   *flog-gU*
+
+  Show the currently unstaged changes.
+
 ------------------------------------------------------------------------------
 NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
 
@@ -892,5 +907,11 @@ COMMAND FORMAT                                           *flog-command-format*
                         Otherwise, resolves to the paths passed to
                         |:Flog-path|, if any, escaping them and joining them
                         with spaces.
+
+                                                                     *flog-%t*
+  %t                    A tree for the current index. When this is used, a new
+                        tree will be created for the current index using
+                        "git write-tree" before the command is run. This is
+                        useful for diffing unstaged files with "git add -N".
 
  vim:tw=78:ts=8:ft=help

@@ -5,6 +5,7 @@ vim9script
 #
 
 import autoload 'flog/args.vim' as flog_args
+import autoload 'flog/fugitive.vim'
 import autoload 'flog/shell.vim'
 import autoload 'flog/state.vim' as flog_state
 
@@ -110,6 +111,15 @@ export def FormatPath(): string
   return join(shell.EscapeList(path), ' ')
 enddef
 
+export def FormatIndexTree(cache: dict<any>): string
+  if empty(cache.index_tree)
+    var cmd = fugitive.GetGitCommand()
+    cmd ..= ' write-tree'
+    cache.index_tree = shell.Run(cmd)[0]
+  endif
+  return cache.index_tree
+enddef
+
 export def FormatItem(cache: dict<any>, item: string): string
   var item_cache = cache.items
 
@@ -139,6 +149,8 @@ export def FormatItem(cache: dict<any>, item: string): string
     formatted_item = FormatMarkLocalBranch(cache, item[2 : ])
   elseif item == 'p'
     formatted_item = FormatPath()
+  elseif item == 't'
+    formatted_item = FormatIndexTree(cache)
   else
     echoerr printf('error converting "%s"', item)
     throw g:flog_unsupported_exec_format_item
@@ -163,6 +175,7 @@ export def Format(str: string): string
   var cache = {
     'items': {},
     'refs': {},
+    'index_tree': '',
     }
 
   # Return data
