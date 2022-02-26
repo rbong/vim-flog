@@ -50,7 +50,7 @@ export def FlogSetArgs(args: list<string>, force: bool): dict<any>
   const workdir = flog_state.GetFugitiveWorkdir(state)
   var opts = force ? flog_state.GetInternalDefaultOpts() : state.opts
 
-  args.Parse(opts, workdir, args)
+  flog_cmd_args.Parse(opts, workdir, args)
   flog_state.SetOpts(state, opts)
 
   buf.Update()
