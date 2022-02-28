@@ -1945,6 +1945,15 @@ function! flog#cmd_convert_path(cache, item) abort
   return join(map(l:state.path, 'fnameescape(v:val)'), ' ')
 endfunction
 
+function! flog#cmd_convert_tree(cache, item) abort
+  if empty(a:cache.index_tree)
+    let l:cmd = flog#get_fugitive_git_command()
+    let l:cmd .= ' write-tree'
+    let a:cache.index_tree = flog#systemlist(l:cmd)[0]
+  endif
+  return a:cache.index_tree
+endfunction
+
 function! flog#convert_command_format_item(cache, item) abort
   let l:item_cache = a:cache['items']
 
@@ -1975,6 +1984,8 @@ function! flog#convert_command_format_item(cache, item) abort
     let l:converted_item = flog#cmd_convert_commit_mark(a:cache, a:item, function('flog#cmd_convert_local_branch'))
   elseif a:item =~# 'p'
     let l:converted_item = flog#cmd_convert_path(a:cache, a:item)
+  elseif a:item ==# 't'
+    let l:converted_item = flog#cmd_convert_tree(a:cache, a:item)
   else
     echoerr printf('error converting %s', a:item)
     throw g:flog_unsupported_command_format_item
@@ -2000,7 +2011,8 @@ function! flog#format_command(format) abort
   " memoized data
   let l:cache = {
         \ 'items': {},
-        \ 'refs': {}
+        \ 'refs': {},
+        \ 'index_tree': ''
         \ }
 
   " return data

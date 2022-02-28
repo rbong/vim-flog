@@ -720,4 +720,10 @@ COMMAND FORMAT                                           *flog-command-format*
   %p                    The arguments passed to the |:Flog| "-path" option, if
                         any, escaped and joined together by spaces. 
 
+                                                                     *flog-%t*
+  %t                    A tree for the current index. When this is used, a new
+                        tree will be created for the current index using
+                        "git write-tree" before the command is run. This is
+                        useful for diffing unstaged files with "git add -N".
+
  vim:tw=78:ts=8:ft=help
