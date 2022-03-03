@@ -6,7 +6,7 @@ vim9script
 
 import autoload 'flog/args.vim' as flog_args
 import autoload 'flog/fugitive.vim'
-import autoload 'flog/lua.vim'
+import autoload 'flog/graph.vim' as flog_graph
 import autoload 'flog/shell.vim'
 import autoload 'flog/state.vim' as flog_state
 import autoload 'flog/str.vim'
@@ -146,7 +146,7 @@ export def Update(): number
 
   const cmd = git.BuildLogCmd()
   flog_state.SetPrevLogCmd(state, cmd)
-  const graph = lua.GetGraph(cmd)
+  const graph = flog_graph.Get(cmd)
 
   # Record previous commit
   const last_commit = floggraph_commit.GetAtLine('.')
