@@ -8,9 +8,9 @@ export def IsFugitiveBuf(): bool
   try
     fugitive#repo()
   catch /not a Git repository/
-    return v:false
+    return false
   endtry
-  return v:true
+  return true
 enddef
 
 export def GetRelativePath(workdir: string, path: string): string
