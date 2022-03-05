@@ -1,12 +1,10 @@
 -- This file generates the commit graph as a script.
 
-local graph_lib_path = arg[1]
-
-dofile(graph_lib_path)
+require('flog/graph')
 
 local enable_vim = false
-local start_token = arg[2]
-local enable_graph = arg[3] == 'true'
-local cmd = arg[4]
+local start_token = arg[1]
+local enable_graph = arg[2] == 'true'
+local cmd = arg[3]
 
 flog_get_graph(enable_vim, true, start_token, enable_graph, cmd)

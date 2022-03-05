@@ -75,5 +75,5 @@ export def GetBin(): string
 enddef
 
 export def GetLibPath(lib: string): string
-  return g:flog_root_dir .. '/lua/flog/' .. lib
+  return g:flog_lua_dir .. '/flog/' .. lib
 enddef

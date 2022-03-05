@@ -38,6 +38,8 @@ g:flog_order_types = [
 
 g:flog_root_dir = fnamemodify(resolve(expand('<sfile>:p')), ':h:h')
 
+g:flog_lua_dir = g:flog_root_dir .. '/lua'
+
 g:flog_format_specifiers = [
   '%H',
   '%h',
@@ -138,3 +140,12 @@ g:flog_open_cmd_modifiers = [
 command! -range=0 -complete=customlist,flog#cmd#flog#args#Complete -nargs=* Flog call flog#cmd#Flog((<count> > 1 ? ['-limit=<line1>,<line2>:' .. expand('%:p')] : []) + [<f-args>])
 command! -range=0 -complete=customlist,flog#cmd#flog#args#Complete -nargs=* Flogsplit call flog#cmd#Flog((<count> > 1 ? ['-limit=<line1>,<line2>:' .. expand('%:p')] : []) + ['-open-cmd=<mods> split', <f-args>])
 command! -range -bang -complete=customlist,flog#cmd#flog_git#args#Complete -nargs=* Floggit call flog#cmd#FlogGit('<mods>', '<args>', '<bang>')
+
+# Add lua/ to path
+
+if !empty($LUA_PATH)
+  $LUA_PATH ..= ';'
+else
+  $LUA_PATH = ''
+endif
+$LUA_PATH ..= escape(g:flog_lua_dir .. '/?.lua', '\;')

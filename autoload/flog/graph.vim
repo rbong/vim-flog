@@ -54,14 +54,11 @@ export def GetUsingBinLua(git_cmd: string): dict<any>
 
   # Get paths
   const script_path = lua.GetLibPath('graph_bin.lua')
-  const graph_lib_path = lua.GetLibPath('graph.lua')
 
   # Build command
   var cmd = lua.GetBin()
   cmd ..= ' '
   cmd ..= shellescape(script_path)
-  cmd ..= ' '
-  cmd ..= shellescape(graph_lib_path)
   cmd ..= ' '
   cmd ..= shellescape(g:flog_commit_start_token)
   cmd ..= ' '
