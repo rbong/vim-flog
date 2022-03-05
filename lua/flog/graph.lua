@@ -28,7 +28,12 @@ local missing_parent_str = '┊ '
 local missing_parent_branch_str = '│ '
 local missing_parent_empty_str = '  '
 
-function flog_get_graph(enable_vim, enable_porcelain, start_token, enable_graph, cmd)
+function flog_get_graph(
+    enable_vim,
+    enable_porcelain,
+    start_token,
+    enable_graph,
+    cmd)
   -- Resolve Vim values
   enable_graph = enable_graph and enable_graph ~= 0
 
