@@ -79,7 +79,7 @@ export def GetLibPath(lib: string): string
 enddef
 
 export def SetLuaPath(): list<any>
-  const had_lua_path = exists("$LUA_PATH")
+  const had_lua_path = exists('$LUA_PATH')
   const original_lua_path = $LUA_PATH
 
   $LUA_PATH = escape(g:flog_lua_dir, '\;?') .. '/?.lua'
