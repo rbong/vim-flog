@@ -142,9 +142,18 @@ enddef
 export def Get(git_cmd: string): dict<any>
   buf.AssertFlogBuf()
 
-  if lua.ShouldUseInternal()
-    return GetUsingInternalLua(git_cmd)
-  endif
+  const lua_path_info = lua.SetLuaPath()
+  var graph: dict<any>
 
-  return GetUsingBinLua(git_cmd)
+  try
+    if lua.ShouldUseInternal()
+      graph =  GetUsingInternalLua(git_cmd)
+    else
+      graph = GetUsingBinLua(git_cmd)
+    endif
+  finally
+    lua.ResetLuaPath(lua_path_info)
+  endtry
+
+  return graph
 enddef

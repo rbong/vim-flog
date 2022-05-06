@@ -77,3 +77,22 @@ enddef
 export def GetLibPath(lib: string): string
   return g:flog_lua_dir .. '/flog/' .. lib
 enddef
+
+export def SetLuaPath(): list<any>
+  const had_lua_path = exists("$LUA_PATH")
+  const original_lua_path = $LUA_PATH
+
+  $LUA_PATH = escape(g:flog_lua_dir, '\;?') .. '/?.lua'
+
+  return [had_lua_path, original_lua_path]
+enddef
+
+export def ResetLuaPath(lua_path_info: list<any>)
+  const [had_lua_path, original_lua_path] = lua_path_info
+
+  if !had_lua_path
+    unlet $LUA_PATH
+  else
+    $LUA_PATH = original_lua_path
+  endif
+enddef
