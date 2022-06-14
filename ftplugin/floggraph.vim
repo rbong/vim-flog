@@ -43,11 +43,11 @@ if !hasmapto('<Plug>(FlogVDiffSplitPathsRight)')
   vmap <buffer> DV <Plug>(FlogVDiffSplitPathsRight)
 endif
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command('vertical belowright Git diff HEAD %h')<CR>
-vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command("vertical belowright Git diff %(h'>) %(h'<)")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command('vertical belowright Git show HEAD %h')<CR>
+vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>call flog#run_tmp_command("vertical belowright Git show %(h'>) %(h'<)")<CR>
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command('vertical belowright Git diff HEAD %h -- %p')<CR>
-vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command("vertical belowright Git diff HEAD %(h'<) %(h'>) -- %p")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command('vertical belowright Git show HEAD %h -- %p')<CR>
+vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>call flog#run_tmp_command("vertical belowright Git show HEAD %(h'<) %(h'>) -- %p")<CR>
 
 if !hasmapto('<Plug>(FlogVDiffSplitLastCommitRight)')
   nmap <buffer> d! <Plug>(FlogVDiffSplitLastCommitRight)
@@ -57,9 +57,9 @@ if !hasmapto('<Plug>(FlogVDiffSplitLastCommitPathsRight)')
   nmap <buffer> D! <Plug>(FlogVDiffSplitLastCommitPathsRight)
 endif
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitRight) :<C-U> call flog#run_tmp_command("vertical belowright Git diff %(h'!) %H")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitRight) :<C-U> call flog#run_tmp_command("vertical belowright Git show %(h'!) %H")<CR>
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitPathsRight) :<C-U> call flog#run_tmp_command("vertical belowright Git diff %(h'!) %H -- %p")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitPathsRight) :<C-U> call flog#run_tmp_command("vertical belowright Git show %(h'!) %H -- %p")<CR>
 
 if !hasmapto('<Plug>(FlogCloseTmpWin)')
   nmap <buffer> dq <Plug>(FlogCloseTmpWin)
