@@ -170,24 +170,19 @@ endfunction
 " Fugitive interface {{{
 
 function! flog#is_fugitive_buffer() abort
-  try
-    call fugitive#repo()
-  catch /not a Git repository/
-    return v:false
-  endtry
-  return v:true
+  return empty(FugitiveGitDir()) ? v:false : v:true
 endfunction
 
 function! flog#resolve_fugitive_path_arg(path) abort
-  return flog#resolve_path(a:path, fugitive#repo().tree())
+  return flog#resolve_path(a:path, flog#get_fugitive_workdir())
 endfunction
 
 function! flog#get_initial_fugitive_repo() abort
-  return fugitive#repo()
+  return FugitiveGitDir()
 endfunction
 
 function! flog#get_fugitive_workdir() abort
-  return flog#get_state().fugitive_repo.tree()
+  return FugitiveFind(':/', flog#get_state().fugitive_repo)
 endfunction
 
 function! flog#get_fugitive_git_command() abort
@@ -195,7 +190,7 @@ function! flog#get_fugitive_git_command() abort
 endfunction
 
 function! flog#get_fugitive_git_dir() abort
-  return flog#get_state().fugitive_repo.git_dir
+  return FugitiveFind('.git', flog#get_state().fugitive_repo)
 endfunction
 
 function! flog#trigger_fugitive_git_detection() abort
