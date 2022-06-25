@@ -15,7 +15,7 @@ export def Create(): dict<any>
     opts: {},
     prev_log_cmd: '',
     graph_bufnr: -1,
-    fugitive_repo: {},
+    workdir: '',
     commits: [],
     commits_by_hash: {},
     line_commits: [],
@@ -139,13 +139,13 @@ export def SetGraphBufnr(state: dict<any>, bufnr: number): number
   return bufnr
 enddef
 
-export def SetFugitiveRepo(state: dict<any>, fugitive_repo: dict<any>): dict<any>
-  state.fugitive_repo = fugitive_repo
-  return fugitive_repo
+export def SetWorkdir(state: dict<any>, workdir: string): string
+  state.workdir = workdir
+  return workdir
 enddef
 
-export def GetFugitiveWorkdir(state: dict<any>): string
-  return state.fugitive_repo.tree()
+export def GetWorkdir(state: dict<any>): string
+  return state.workdir
 enddef
 
 export def GetCommitRefs(commit: dict<any>): list<dict<any>>

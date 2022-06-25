@@ -125,7 +125,7 @@ export def Open(state: dict<any>): number
   var bufnr = bufnr()
   flog_state.SetGraphBufnr(state, bufnr)
 
-  fugitive.TriggerDetection(flog_state.GetFugitiveWorkdir(state))
+  fugitive.TriggerDetection(flog_state.GetWorkdir(state))
   exec 'lcd ' .. fugitive.GetWorkdir()
 
   setlocal filetype=floggraph

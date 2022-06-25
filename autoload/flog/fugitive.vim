@@ -5,12 +5,7 @@ vim9script
 #
 
 export def IsFugitiveBuf(): bool
-  try
-    fugitive#repo()
-  catch /not a Git repository/
-    return false
-  endtry
-  return true
+  return g:FugitiveIsGitDir()
 enddef
 
 export def GetRelativePath(workdir: string, path: string): string
@@ -21,16 +16,12 @@ export def GetRelativePath(workdir: string, path: string): string
   return path
 enddef
 
-export def GetRepo(): dict<any>
-  return fugitive#repo()
-enddef
-
 export def GetWorkdir(): string
-  return GetRepo().tree()
+  return g:FugitiveFind(":/")
 enddef
 
 export def GetGitDir(): string
-  return GetRepo().dir()
+  return g:FugitiveGitDir()
 enddef
 
 export def GetGitCommand(): string
@@ -38,7 +29,7 @@ export def GetGitCommand(): string
 enddef
 
 export def GetHead(): string
-  return fugitive#head()
+  return fugitive#Head()
 enddef
 
 export def TriggerDetection(workdir: string): string

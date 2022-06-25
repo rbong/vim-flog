@@ -25,9 +25,8 @@ export def Flog(args: list<string>): dict<any>
 
   var state = flog_state.Create()
 
-  const fugitive_repo = fugitive.GetRepo()
-  flog_state.SetFugitiveRepo(state, fugitive_repo)
-  const workdir = flog_state.GetFugitiveWorkdir(state)
+  const workdir = fugitive.GetWorkdir()
+  flog_state.SetWorkdir(state, workdir)
 
   var default_opts = flog_state.GetDefaultOpts()
   const opts = flog_cmd_args.Parse(default_opts, workdir, args)
@@ -47,7 +46,7 @@ enddef
 export def FlogSetArgs(args: list<string>, force: bool): dict<any>
   const state = flog_state.GetBufState()
 
-  const workdir = flog_state.GetFugitiveWorkdir(state)
+  const workdir = flog_state.GetWorkdir(state)
   var opts = force ? flog_state.GetInternalDefaultOpts() : state.opts
 
   flog_cmd_args.Parse(opts, workdir, args)
