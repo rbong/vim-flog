@@ -170,37 +170,28 @@ endfunction
 " Fugitive interface {{{
 
 function! flog#is_fugitive_buffer() abort
-  try
-    call fugitive#repo()
-  catch /not a Git repository/
-    return v:false
-  endtry
-  return v:true
+  return g:FugitiveIsGitDir()
 endfunction
 
 function! flog#resolve_fugitive_path_arg(path) abort
-  return flog#resolve_path(a:path, fugitive#repo().tree())
-endfunction
-
-function! flog#get_initial_fugitive_repo() abort
-  return fugitive#repo()
-endfunction
-
-function! flog#get_fugitive_workdir() abort
-  return flog#get_state().fugitive_repo.tree()
+  return flog#resolve_path(a:path, g:FugitiveFind(':/'))
 endfunction
 
 function! flog#get_fugitive_git_command() abort
-  return FugitiveShellCommand()
+  return g:FugitiveShellCommand()
+endfunction
+
+function! flog#get_initial_workdir() abort
+  return g:FugitiveFind(':/')
 endfunction
 
 function! flog#get_fugitive_git_dir() abort
-  return flog#get_state().fugitive_repo.git_dir
+  return g:FugitiveGitDir()
 endfunction
 
 function! flog#trigger_fugitive_git_detection() abort
   let b:git_dir = flog#get_fugitive_git_dir()
-  let l:workdir = flog#get_fugitive_workdir()
+  let l:workdir = flog#get_state().workdir
   call FugitiveDetect(l:workdir)
 endfunction
 
@@ -727,7 +718,7 @@ endfunction
 function! flog#get_initial_state(parsed_args, original_file) abort
   return extend(copy(a:parsed_args), {
         \ 'instance': flog#instance(),
-        \ 'fugitive_repo': flog#get_initial_fugitive_repo(),
+        \ 'workdir': flog#get_initial_workdir(),
         \ 'original_file': a:original_file,
         \ 'graph_window_id': v:null,
         \ 'tmp_cmd_window_ids': [],
@@ -1394,7 +1385,7 @@ function! flog#populate_graph_buffer() abort
 endfunction
 
 function! flog#graph_buffer_settings() abort
-  exec 'lcd ' . flog#get_fugitive_workdir()
+  exec 'lcd ' . flog#get_state().workdir
   set filetype=floggraph
 endfunction
 
