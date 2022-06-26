@@ -170,23 +170,23 @@ endfunction
 " Fugitive interface {{{
 
 function! flog#is_fugitive_buffer() abort
-  return g:FugitiveIsGitDir()
+  return FugitiveIsGitDir()
 endfunction
 
 function! flog#resolve_fugitive_path_arg(path) abort
-  return flog#resolve_path(a:path, g:FugitiveFind(':/'))
+  return flog#resolve_path(a:path, FugitiveFind(':/'))
 endfunction
 
 function! flog#get_fugitive_git_command() abort
-  return g:FugitiveShellCommand()
+  return FugitiveShellCommand()
 endfunction
 
 function! flog#get_initial_workdir() abort
-  return g:FugitiveFind(':/')
+  return FugitiveFind(':/')
 endfunction
 
 function! flog#get_fugitive_git_dir() abort
-  return g:FugitiveGitDir()
+  return FugitiveGitDir()
 endfunction
 
 function! flog#trigger_fugitive_git_detection() abort
