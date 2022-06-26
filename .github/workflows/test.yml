@@ -28,11 +28,6 @@ jobs:
         with:
           ruby-version: "3.0"
           bundler-cache: true
-      - name: "set up git"
-        run: |
-          git config --global user.email "ci@example.com"
-          git config --global user.name "CI"
-          git config --global init.defaultBranch "master"
       - name: "run tests"
         run: |
           ${{ matrix.vspec_vim }} --version
