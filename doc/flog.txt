@@ -14,11 +14,11 @@ commands and mappings to interact with the graph.
 ==============================================================================
 PREREQUISITES                                                   *flog-prereqs*
 
-Flog currently only supports Vim 8.
+Flog supports Vim 8, Vim 9, and Neovim.
 
 Flog requires the |fugitive| plugin to be installed.
 
-Flog also requires LuaJIT 2.1 to be installed on the system.
+In Vim 8/9, Flog requires LuaJIT 2.1 to be installed on the system.
 
 See also |g:flog_lua_bin|, |g:flog_use_internal_lua|,
 |g:flog_check_lua_version|.

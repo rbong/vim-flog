@@ -8,10 +8,12 @@ Flog is a fast, beautiful, and powerful git branch viewer for Vim.
 
 ## Prerequisites
 
-Flog currently requires Vim 8 and [LuaJIT 2.1](https://luajit.org/download.html).
+In Vim 8/9, [LuaJIT 2.1](https://luajit.org/download.html) must be installed.
 
 On systems without LuaJIT available, you may also use [Lua](https://www.lua.org/) 5.1,
 however this is less performant.
+
+Neovim is supported natively.
 
 ## Installation
 

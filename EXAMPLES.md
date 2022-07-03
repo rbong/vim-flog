@@ -5,7 +5,7 @@
 1. Launch the graph with `:Flog` (if this runs slowly for you, see [FAQ](FAQ.md)).
 2. Make sure your commit is in the graph by pressing `a` to toggle showing all commits.
 3. Navigate to your branch. There are a couple ways to do this:
-  - Use builtin VIM navigation like `/`, `j`, `k`, etc.
+  - Use builtin Vim navigation like `/`, `j`, `k`, etc.
   - Use `]r`/`[r` to jump between commits with refs.
 4. Checkout the branch. There are also a few ways to do this:
   - Use `cob` to checkout the first local branch name, or remote branch if it is not available.
