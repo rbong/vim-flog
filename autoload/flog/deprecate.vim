@@ -1,52 +1,50 @@
-vim9script
+"
+" This file contains functions for deprecation.
+"
 
-#
-# This file contains functions for deprecation.
-#
+let g:flog_shown_deprecation_warnings = {}
 
-g:flog_shown_deprecation_warnings = {}
+function! flog#deprecate#ShowWarning(old_usage, new_usage) abort
+  echoerr printf('Deprecated: %s', a:old_usage)
+  echoerr printf('New usage: %s', a:new_usage)
+  let g:flog_shown_deprecation_warnings[a:old_usage] = v:true
+endfunction
 
-export def ShowWarning(old_usage: string, new_usage: string)
-  echoerr printf('Deprecated: %s', old_usage)
-  echoerr printf('New usage: %s', new_usage)
-  g:flog_shown_deprecation_warnings[old_usage] = true
-enddef
+function! flog#deprecate#DidShowWarning(old_usage) abort
+  return has_key(g:flog_shown_deprecation_warnings, a:old_usage)
+endfunction
 
-export def DidShowWarning(old_usage: string): bool
-  return has_key(g:flog_shown_deprecation_warnings, old_usage)
-enddef
+function! flog#deprecate#DefaultMapping(old_mapping, new_mapping) abort
+  call flog#deprecate#ShowWarning(a:old_mapping, a:new_mapping)
+endfunction
 
-export def DefaultMapping(old_mapping: string, new_mapping: string)
-  ShowWarning(old_mapping, new_mapping)
-enddef
-
-export def Setting(old_setting: string, new_setting: string, new_value = '...')
-  if exists(old_setting) && !DidShowWarning(old_setting)
-    const new_usage = printf('let %s = %s', new_setting, new_value)
-    ShowWarning(old_setting, new_usage)
+function! flog#deprecate#Setting(old_setting, new_setting, new_value = '...') abort
+  if exists(a:old_setting) && !flog#deprecate#DidShowWarning(a:old_setting)
+    let l:new_usage = printf('let %s = %s', a:new_setting, a:new_value)
+    call flog#deprecate#ShowWarning(a:old_setting, l:new_usage)
   endif
-enddef
+endfunction
 
-export def Function(old_func: string, new_func: string, new_args = '...')
-  const old_usage = printf('%s()', old_func)
-  const new_usage = printf('call %s(%s)', new_func, new_args)
-  ShowWarning(old_usage, new_usage)
-enddef
+function! flog#deprecate#Function(old_func, new_func, new_args = '...') abort
+  let l:old_usage = printf('%s()', a:old_func)
+  let l:new_usage = printf('call %s(%s)', a:new_func, a:new_args)
+  call flog#deprecate#ShowWarning(l:old_usage, l:new_usage)
+endfunction
 
-export def Command(old_cmd: string, new_usage: string)
-  ShowWarning(old_cmd, new_usage)
-enddef
+function! flog#deprecate#Command(old_cmd, new_usage) abort
+  call flog#deprecate#ShowWarning(a:old_cmd, a:new_usage)
+endfunction
 
-export def Autocmd(old_autocmd: string, new_autocmd: string, new_args = '...')
-  if !exists(printf('#User#%s', old_autocmd))
+function! flog#deprecate#Autocmd(old_autocmd, new_autocmd, new_args = '...') abort
+  if !exists(printf('#User#%s', a:old_autocmd))
     return
   endif
 
-  const old_usage = printf('autocmd User %s', old_autocmd)
-  if DidShowWarning(old_usage)
+  let l:old_usage = printf('autocmd User %s', a:old_autocmd)
+  if flog#deprecate#DidShowWarning(l:old_usage)
     return
   endif
 
-  const new_usage = printf('autocmd User %s %s', new_autocmd, new_args)
-  ShowWarning(old_usage, new_usage)
-enddef
+  let l:new_usage = printf('autocmd User %s %s', a:new_autocmd, a:new_args)
+  call flog#deprecate#ShowWarning(l:old_usage, l:new_usage)
+endfunction

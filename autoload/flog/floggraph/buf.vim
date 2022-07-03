@@ -1,223 +1,209 @@
-vim9script
+"
+" This file contains functions for creating and updating "floggraph" buffers.
+"
 
-#
-# This file contains functions for creating and updating "floggraph" buffers.
-#
+function! flog#floggraph#buf#IsFlogBuf() abort
+  return &filetype ==# 'floggraph'
+endfunction
 
-import autoload 'flog/args.vim' as flog_args
-import autoload 'flog/fugitive.vim'
-import autoload 'flog/graph.vim' as flog_graph
-import autoload 'flog/shell.vim'
-import autoload 'flog/state.vim' as flog_state
-import autoload 'flog/str.vim'
-import autoload 'flog/win.vim'
-
-import autoload 'flog/floggraph/commit.vim' as floggraph_commit
-import autoload 'flog/floggraph/git.vim'
-import autoload 'flog/floggraph/side_win.vim'
-
-export def IsFlogBuf(): bool
-  return &filetype == 'floggraph'
-enddef
-
-export def AssertFlogBuf(): bool
-  if !IsFlogBuf()
+function! flog#floggraph#buf#AssertFlogBuf() abort
+  if !flog#floggraph#buf#IsFlogBuf()
     throw g:flog_not_a_flog_buffer
   endif
-  return true
-enddef
+  return v:true
+endfunction
 
-export def UpdateStatus(): string
-  AssertFlogBuf()
+function! flog#floggraph#buf#UpdateStatus() abort
+  call flog#floggraph#buf#AssertFlogBuf()
 
-  var cmd = fugitive.GetGitCommand()
-  cmd ..= ' status -s'
-  const changes = len(shell.Run(cmd))
+  let cmd = flog#fugitive#GetGitCommand()
+  let cmd .= ' status -s'
+  let changes = len(flog#shell#Run(cmd))
 
   if changes == 0
-    b:flog_status_summary = 'No changes'
+    let b:flog_status_summary = 'No changes'
   elseif changes == 1
-    b:flog_status_summary = '1 file changed'
+    let b:flog_status_summary = '1 file changed'
   else
-    b:flog_status_summary = string(changes) .. ' files changed'
+    let b:flog_status_summary = string(changes) . ' files changed'
   endif
 
-  const head = fugitive.GetHead()
+  let head = flog#fugitive#GetHead()
 
   if !empty(head)
-    b:flog_status_summary ..= ' (' .. head .. ')'
+    let b:flog_status_summary .= ' (' . head . ')'
   endif
 
   return b:flog_status_summary
-enddef
+endfunction
 
-export def GetInitialName(instance_number: number): string
-  return ' flog-' .. string(instance_number) .. ' [uninitialized]'
-enddef
+function! flog#floggraph#buf#GetInitialName(instance_number) abort
+  return ' flog-' . string(a:instance_number) . ' [uninitialized]'
+endfunction
 
-export def GetName(instance_number: number, opts: dict<any>): string
-  var name = 'flog-' .. string(instance_number)
+function! flog#floggraph#buf#GetName(instance_number, opts) abort
+  let name = 'flog-' . string(a:instance_number)
 
-  if opts.all
-    name ..= ' [all]'
+  if a:opts.all
+    let name .= ' [all]'
   endif
-  if opts.bisect
-    name ..= ' [bisect]'
+  if a:opts.bisect
+    let name .= ' [bisect]'
   endif
-  if !opts.merges
-    name ..= ' [no_merges]'
+  if !a:opts.merges
+    let name .= ' [no_merges]'
   endif
-  if opts.reflog
-    name ..= ' [reflog]'
+  if a:opts.reflog
+    let name .= ' [reflog]'
   endif
-  if opts.reverse
-    name ..= ' [reverse]'
+  if a:opts.reverse
+    let name .= ' [reverse]'
   endif
-  if !opts.graph
-    name ..= ' [no_graph]'
+  if !a:opts.graph
+    let name .= ' [no_graph]'
   endif
-  if !opts.patch
-    name ..= ' [no_patch]'
+  if !a:opts.patch
+    let name .= ' [no_patch]'
   endif
-  if !empty(opts.skip)
-    name ..= ' [skip=' .. opts.skip .. ']'
+  if !empty(a:opts.skip)
+    let name .= ' [skip=' . a:opts.skip . ']'
   endif
-  if !empty(opts.order)
-    name ..= ' [order=' .. opts.order .. ']'
+  if !empty(a:opts.order)
+    let name .= ' [order=' . a:opts.order . ']'
   endif
-  if !empty(opts.max_count)
-    name ..= ' [max_count=' .. opts.max_count .. ']'
+  if !empty(a:opts.max_count)
+    let name .= ' [max_count=' . a:opts.max_count . ']'
   endif
-  if !empty(opts.search)
-    name ..= ' [search=' .. str.Ellipsize(opts.search, 15) .. ']'
+  if !empty(a:opts.search)
+    let name .= ' [search=' . flog#str#Ellipsize(a:opts.search, 15) . ']'
   endif
-  if !empty(opts.patch_search)
-    name ..= ' [patch_search=' .. str.Ellipsize(opts.patch_search, 15) .. ']'
+  if !empty(a:opts.patch_search)
+    let name .= ' [patch_search=' . flog#str#Ellipsize(a:opts.patch_search, 15) . ']'
   endif
-  if !empty(opts.author)
-    name ..= ' [author=' .. opts.author .. ']'
+  if !empty(a:opts.author)
+    let name .= ' [author=' . a:opts.author . ']'
   endif
-  if !empty(opts.limit)
-    const [range, path] = flog_args.SplitGitLimitArg(opts.limit)
-    name ..= ' [limit=' .. str.Ellipsize(range .. fnamemodify(path, ':t'), 15) .. ']'
+  if !empty(a:opts.limit)
+    let [range, path] = flog#args#SplitGitLimitArg(a:opts.limit)
+    let name .= ' [limit=' . flog#str#Ellipsize(range . fnamemodify(path, ':t'), 15) . ']'
   endif
-  if len(opts.rev) == 1
-    name ..= ' [rev=' .. str.Ellipsize(opts.rev[0], 15) .. ']'
+  if len(a:opts.rev) == 1
+    let name .= ' [rev=' . flog#str#Ellipsize(a:opts.rev[0], 15) . ']'
   endif
-  if len(opts.rev) > 1
-    name ..= ' [rev=...]'
+  if len(a:opts.rev) > 1
+    let name .= ' [rev=...]'
   endif
-  if len(opts.path) == 1
-    name ..= ' [path=' .. str.Ellipsize(fnamemodify(opts.path[0], ':t'), 15) .. ']'
-  elseif len(opts.path) > 1
-    name ..= ' [path=...]'
+  if len(a:opts.path) == 1
+    let name .= ' [path=' . flog#str#Ellipsize(fnamemodify(a:opts.path[0], ':t'), 15) . ']'
+  elseif len(a:opts.path) > 1
+    let name .= ' [path=...]'
   endif
 
   return fnameescape(name)
-enddef
+endfunction
 
-export def Open(state: dict<any>): number
-  const bufname = GetInitialName(state.instance_number)
-  execute 'silent! ' .. state.opts.open_cmd .. bufname
+function! flog#floggraph#buf#Open(state) abort
+  let bufname = flog#floggraph#buf#GetInitialName(a:state.instance_number)
+  execute 'silent! ' . a:state.opts.open_cmd . bufname
 
-  flog_state.SetBufState(state)
+  call flog#state#SetBufState(a:state)
 
-  var bufnr = bufnr()
-  flog_state.SetGraphBufnr(state, bufnr)
+  let bufnr = bufnr()
+  call flog#state#SetGraphBufnr(a:state, bufnr)
 
-  fugitive.TriggerDetection(flog_state.GetWorkdir(state))
-  exec 'lcd ' .. fugitive.GetWorkdir()
+  call flog#fugitive#TriggerDetection(flog#state#GetWorkdir(a:state))
+  exec 'lcd ' . flog#fugitive#GetWorkdir()
 
   setlocal filetype=floggraph
 
   return bufnr
-enddef
+endfunction
 
-export def Update(): number
-  AssertFlogBuf()
-  const state = flog_state.GetBufState()
-  const opts = flog_state.GetResolvedOpts(state)
+function! flog#floggraph#buf#Update() abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let state = flog#state#GetBufState()
+  let opts = flog#state#GetResolvedOpts(state)
 
-  const graph_win = win.Save()
+  let graph_win = flog#win#Save()
 
   if g:flog_enable_status
-    UpdateStatus()
+    call flog#floggraph#buf#UpdateStatus()
   endif
 
-  const cmd = git.BuildLogCmd()
-  flog_state.SetPrevLogCmd(state, cmd)
-  const graph = flog_graph.Get(cmd)
+  let cmd = flog#floggraph#git#BuildLogCmd()
+  call flog#state#SetPrevLogCmd(state, cmd)
+  let graph = flog#graph#Get(cmd)
 
-  # Record previous commit
-  const last_commit = floggraph_commit.GetAtLine('.')
+  " Record previous commit
+  let last_commit = flog#floggraph#commit#GetAtLine('.')
 
-  # Update graph
-  flog_state.SetGraph(state, graph)
-  SetContent(graph.output)
+  " Update graph
+  call flog#state#SetGraph(state, graph)
+  call flog#floggraph#buf#SetContent(graph.output)
 
-  # Restore commit position
-  floggraph_commit.RestorePosition(graph_win, last_commit)
+  " Restore commit position
+  call flog#floggraph#commit#RestorePosition(graph_win, last_commit)
 
-  silent! exec 'file ' .. GetName(state.instance_number, opts)
+  silent! exec 'file ' . flog#floggraph#buf#GetName(state.instance_number, opts)
 
   if exists('#User#FlogUpdate')
     doautocmd User FlogUpdate
   endif
 
   return state.graph_bufnr
-enddef
+endfunction
 
-export def FinishUpdateHook(bufnr: number): number
-  if bufnr() != bufnr
+function! flog#floggraph#buf#FinishUpdateHook(bufnr) abort
+  if bufnr() != a:bufnr
     return -1
   endif
 
   augroup FlogGraphBufUpdate
-    exec 'autocmd! * <buffer=' .. string(bufnr) .. '>'
+    exec 'autocmd! * <buffer=' . string(a:bufnr) . '>'
   augroup END
 
-  Update()
+  call flog#floggraph#buf#Update()
 
-  return bufnr
-enddef
+  return a:bufnr
+endfunction
 
-export def InitUpdateHook(bufnr: number): number
-  const buf = string(bufnr)
+function! flog#floggraph#buf#InitUpdateHook(bufnr) abort
+  let buf = string(a:bufnr)
 
   augroup FlogGraphBufUpdate
-    exec 'autocmd! * <buffer=' .. buf .. '>'
+    exec 'autocmd! * <buffer=' . buf . '>'
     if exists('##SafeState')
-      exec 'autocmd SafeState <buffer=' .. buf .. '> call flog#floggraph#buf#FinishUpdateHook(' .. buf .. ')'
+      exec 'autocmd SafeState <buffer=' . buf . '> call flog#floggraph#buf#FinishUpdateHook(' . buf . ')'
     else
-      exec 'autocmd WinEnter <buffer=' .. buf .. '> call flog#floggraph#buf#FinishUpdateHook(' .. buf .. ')'
+      exec 'autocmd WinEnter <buffer=' . buf . '> call flog#floggraph#buf#FinishUpdateHook(' . buf . ')'
     endif
   augroup END
 
-  return bufnr
-enddef
+  return a:bufnr
+endfunction
 
-export def SetContent(content: list<string>): list<string>
-  AssertFlogBuf()
+function! flog#floggraph#buf#SetContent(content) abort
+  call flog#floggraph#buf#AssertFlogBuf()
 
   setlocal modifiable noreadonly
-  silent! :1,$ delete
-  setline(1, content)
+  silent! 1,$ delete
+  call setline(1, a:content)
   setlocal nomodifiable readonly
 
-  return content
-enddef
+  return a:content
+endfunction
 
-export def Close(): number
-  AssertFlogBuf()
-  const state = flog_state.GetBufState()
+function! flog#floggraph#buf#Close() abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let state = flog#state#GetBufState()
 
-  const graph_win = win.Save()
-  side_win.CloseTmp()
+  let graph_win = flog#win#Save()
+  call flog#floggraph#side_win#CloseTmp()
 
-  win.Restore(graph_win)
-  if win.Is(graph_win)
+  call flog#win#Restore(graph_win)
+  if flog#win#Is(graph_win)
     silent! bdelete!
   endif
 
-  return win.GetSavedId(graph_win)
-enddef
+  return flog#win#GetSavedId(graph_win)
+endfunction

@@ -1,66 +1,59 @@
-vim9script
+"
+" This file contains functions for manipulating the register in "floggraph" buffers.
+"
 
-#
-# This file contains functions for manipulating the register in "floggraph" buffers.
-#
+function! flog#floggraph#reg#YankHash(reg = '"', line = '.', count = 1) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-import autoload 'flog/state.vim' as flog_state
-
-import autoload 'flog/floggraph/buf.vim'
-import autoload 'flog/floggraph/commit.vim' as floggraph_commit
-
-export def YankHash(reg: string = '"', line: any = '.', count: number = 1): number
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
-
-  if count < 1
-    setreg(reg, [], 'v')
+  if a:count < 1
+    call setreg(a:reg, [], 'v')
     return 0
   endif
 
-  var commit = floggraph_commit.GetAtLine(line)
-  if empty(commit)
-    setreg(reg, [], 'v')
+  let l:commit = flog#floggraph#commit#GetAtLine(a:line)
+  if empty(l:commit)
+    call setreg(a:reg, [], 'v')
     return 0
   endif
 
-  const commit_index = index(state.commits, commit)
+  let l:commit_index = index(l:state.commits, l:commit)
 
-  var hashes = [commit.hash]
-  var i = 1
-  while i < count
-    commit = get(state.commits, commit_index + i, {})
-    if empty(commit)
+  let l:hashes = [l:commit.hash]
+  let l:i = 1
+  while l:i < a:count
+    let l:commit = get(l:state.commits, l:commit_index + l:i, {})
+    if empty(l:commit)
       break
     endif
 
-    add(hashes, commit.hash)
+    call add(l:hashes, l:commit.hash)
 
-    i += 1
+    let l:i += 1
   endwhile
 
-  setreg(reg, hashes, 'v')
+  call setreg(a:reg, l:hashes, 'v')
 
-  return i
-enddef
+  return l:i
+endfunction
 
-export def YankHashRange(reg: string = '"', start_line: any = "'<", end_line: any = "'>"): number
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
+function! flog#floggraph#reg#YankHashRange(reg = '"', start_line = "'<", end_line = "'>") abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-  var start_commit = floggraph_commit.GetAtLine(start_line)
-  var end_commit = floggraph_commit.GetAtLine(end_line)
-  if empty(start_commit) || empty(end_commit)
-    setreg(reg, [])
+  let l:start_commit = flog#floggraph#commit#GetAtLine(a:start_line)
+  let l:end_commit = flog#floggraph#commit#GetAtLine(a:end_line)
+  if empty(l:start_commit) || empty(l:end_commit)
+    call setreg(a:reg, [])
     return 0
   endif
 
-  const start_index = index(state.commits, start_commit)
-  const end_index = index(state.commits, end_commit)
-  if start_index < 0 || end_index < 0
-    setreg(reg, [])
+  let l:start_index = index(l:state.commits, l:start_commit)
+  let l:end_index = index(l:state.commits, l:end_commit)
+  if l:start_index < 0 || l:end_index < 0
+    call setreg(a:reg, [])
     return 0
   endif
 
-  return YankHash(reg, start_line, end_index - start_index + 1)
-enddef
+  return flog#floggraph#reg#YankHash(a:reg, a:start_line, l:end_index - l:start_index + 1)
+endfunction

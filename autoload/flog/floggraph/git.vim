@@ -1,123 +1,116 @@
-vim9script
+"
+" This file contains functions for working with git for "floggraph" buffers.
+"
 
-#
-# This file contains functions for working with git for "floggraph" buffers.
-#
+function! flog#floggraph#git#BuildLogFormat() abort
+  let l:state = flog#state#GetBufState()
+  let l:opts = flog#state#GetResolvedOpts(l:state)
 
-import autoload 'flog/fugitive.vim'
-import autoload 'flog/global_opts.vim'
-import autoload 'flog/shell.vim'
-import autoload 'flog/state.vim' as flog_state
+  let l:format = 'format:'
+  " Add token so we can find commits
+  let l:format .= g:flog_commit_start_token
+  " Add commit data
+  let l:format .= '%n%h%n%p%n%D%n'
+  " Add user format
+  let l:format .= l:opts.format
 
-export def BuildLogFormat(): string
-  const state = flog_state.GetBufState()
-  const opts = flog_state.GetResolvedOpts(state)
+  return flog#shell#Escape(l:format)
+endfunction
 
-  var format = 'format:'
-  # Add token so we can find commits
-  format ..= g:flog_commit_start_token
-  # Add commit data
-  format ..= '%n%h%n%p%n%D%n'
-  # Add user format
-  format ..= opts.format
+function! flog#floggraph#git#BuildLogArgs() abort
+  let l:state = flog#state#GetBufState()
+  let l:opts = flog#state#GetResolvedOpts(l:state)
 
-  return shell.Escape(format)
-enddef
-
-export def BuildLogArgs(): string
-  const state = flog_state.GetBufState()
-  const opts = flog_state.GetResolvedOpts(state)
-
-  if opts.reverse && opts.graph
+  if l:opts.reverse && l:opts.graph
     throw g:flog_reverse_requires_no_graph
   endif
 
-  var args = ''
+  let l:args = ''
 
-  if opts.graph
-    args ..= ' --parents --topo-order'
+  if l:opts.graph
+    let l:args .= ' --parents --topo-order'
   endif
-  args ..= ' --no-color'
-  args ..= ' --pretty=' .. BuildLogFormat()
-  args ..= ' --date=' .. shell.Escape(opts.date)
-  if opts.all && empty(opts.limit)
-    args ..= ' --all'
+  let l:args .= ' --no-color'
+  let l:args .= ' --pretty=' . flog#floggraph#git#BuildLogFormat()
+  let l:args .= ' --date=' . flog#shell#Escape(l:opts.date)
+  if l:opts.all && empty(l:opts.limit)
+    let l:args .= ' --all'
   endif
-  if opts.bisect
-    args ..= ' --bisect'
+  if l:opts.bisect
+    let l:args .= ' --bisect'
   endif
-  if !opts.merges
-    args ..= ' --no-merges'
+  if !l:opts.merges
+    let l:args .= ' --no-merges'
   endif
-  if opts.reflog
-    args ..= ' --reflog'
+  if l:opts.reflog
+    let l:args .= ' --reflog'
   endif
-  if opts.reverse
-    args ..= ' --reverse'
+  if l:opts.reverse
+    let l:args .= ' --reverse'
   endif
-  if !opts.patch
-    args ..= ' --no-patch'
+  if !l:opts.patch
+    let l:args .= ' --no-patch'
   endif
-  if !empty(opts.skip)
-    args ..= ' --skip=' .. shell.Escape(opts.skip)
+  if !empty(l:opts.skip)
+    let l:args .= ' --skip=' . flog#shell#Escape(l:opts.skip)
   endif
-  if !empty(opts.order)
-    const order_type = global_opts.GetOrderType(opts.order)
-    args ..= ' ' .. order_type.args
+  if !empty(l:opts.order)
+    let l:order_type = flog#global_opts#GetOrderType(l:opts.order)
+    let l:args .= ' ' . l:order_type.args
   endif
-  if !empty(opts.max_count)
-    args ..= ' --max-count=' .. shell.Escape(opts.max_count)
+  if !empty(l:opts.max_count)
+    let l:args .= ' --max-count=' . flog#shell#Escape(l:opts.max_count)
   endif
-  if !empty(opts.search)
-    args ..= ' --grep=' .. shell.Escape(opts.search)
+  if !empty(l:opts.search)
+    let l:args .= ' --grep=' . flog#shell#Escape(l:opts.search)
   endif
-  if !empty(opts.patch_search)
-    args ..= ' -G' .. shell.Escape(opts.patch_search)
+  if !empty(l:opts.patch_search)
+    let l:args .= ' -G' . flog#shell#Escape(l:opts.patch_search)
   endif
-  if !empty(opts.author)
-    args ..= ' --author=' .. shell.Escape(opts.author)
+  if !empty(l:opts.author)
+    let l:args .= ' --author=' . flog#shell#Escape(l:opts.author)
   endif
-  if !empty(opts.limit)
-    args ..= ' -L' .. shell.Escape(opts.limit)
+  if !empty(l:opts.limit)
+    let l:args .= ' -L' . flog#shell#Escape(l:opts.limit)
   endif
-  if !empty(opts.raw_args)
-    args ..= ' ' .. opts.raw_args
+  if !empty(l:opts.raw_args)
+    let l:args .= ' ' . l:opts.raw_args
   endif
-  if len(opts.rev) >= 1
-    var rev = ''
-    if !empty(opts.limit)
-      rev = shell.Escape(opts.rev[0])
+  if len(l:opts.rev) >= 1
+    let l:rev = ''
+    if !empty(l:opts.limit)
+      let l:rev = flog#shell#Escape(l:opts.rev[0])
     else
-      rev = join(shell.EscapeList(opts.rev), ' ')
+      let l:rev = join(flog#shell#EscapeList(l:opts.rev), ' ')
     endif
-    args ..= ' ' .. rev
+    let l:args .= ' ' . l:rev
   endif
 
-  return args
-enddef
+  return l:args
+endfunction
 
-export def BuildLogPaths(): string
-  const state = flog_state.GetBufState()
-  const opts = flog_state.GetResolvedOpts(state)
+function! flog#floggraph#git#BuildLogPaths() abort
+  let l:state = flog#state#GetBufState()
+  let l:opts = flog#state#GetResolvedOpts(l:state)
 
-  if !empty(opts.limit)
+  if !empty(l:opts.limit)
     return ''
   endif
 
-  if empty(opts.path)
+  if empty(l:opts.path)
     return ''
   endif
 
-  return join(shell.EscapeList(opts.path), ' ')
-enddef
+  return join(flog#shell#EscapeList(l:opts.path), ' ')
+endfunction
 
-export def BuildLogCmd(): string
-  var cmd = fugitive.GetGitCommand()
+function! flog#floggraph#git#BuildLogCmd() abort
+  let cmd = flog#fugitive#GetGitCommand()
 
-  cmd ..= ' log'
-  cmd ..= BuildLogArgs()
-  cmd ..= ' -- '
-  cmd ..= BuildLogPaths()
+  let cmd .= ' log'
+  let cmd .= flog#floggraph#git#BuildLogArgs()
+  let cmd .= ' -- '
+  let cmd .= flog#floggraph#git#BuildLogPaths()
 
   return cmd
-enddef
+endfunction

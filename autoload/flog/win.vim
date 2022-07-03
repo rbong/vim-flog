@@ -1,76 +1,74 @@
-vim9script
+"
+" This file contains functions for handling windows.
+"
 
-#
-# This file contains functions for handling windows.
-#
-
-export def GetAllIds(): list<number>
-  var windows = []
-  for tab in gettabinfo()
-    windows += tab.windows
+function! flog#win#GetAllIds() abort
+  let l:windows = []
+  for l:tab in gettabinfo()
+    let l:windows += l:tab.windows
   endfor
-  return windows
-enddef
+  return l:windows
+endfunction
 
-export def Save(): list<any>
-  return [win_getid(), bufnr(), winsaveview(), virtcol('.') virtcol('$')]
-enddef
+function! flog#win#Save() abort
+  return [win_getid(), bufnr(), winsaveview(), virtcol('.'), virtcol('$')]
+endfunction
 
-export def GetSavedId(saved_win: list<any>): number
-  return saved_win[0]
-enddef
+function! flog#win#GetSavedId(saved_win) abort
+  return a:saved_win[0]
+endfunction
 
-export def GetSavedBufnr(saved_win: list<any>): number
-  return saved_win[1]
-enddef
+function! flog#win#GetSavedBufnr(saved_win) abort
+  return a:saved_win[1]
+endfunction
 
-export def GetSavedView(saved_win: list<any>): dict<any>
-  return saved_win[2]
-enddef
+function! flog#win#GetSavedView(saved_win) abort
+  return a:saved_win[2]
+endfunction
 
-export def GetSavedVcol(saved_win: list<any>): number
-  return saved_win[3]
-enddef
+function! flog#win#GetSavedVcol(saved_win) abort
+  return a:saved_win[3]
+endfunction
 
-export def GetSavedVcols(saved_win: list<any>): number
-  return saved_win[4]
-enddef
+function! flog#win#GetSavedVcols(saved_win) abort
+  return a:saved_win[4]
+endfunction
 
-export def Is(saved_win: list<any>): bool
-  return win_getid() == saved_win[0]
-enddef
+function! flog#win#Is(saved_win) abort
+  return win_getid() == a:saved_win[0]
+endfunction
 
-export def Restore(saved_win: list<any>): number
-  const [win_id, bufnr, view, _, _] = saved_win
+function! flog#win#Restore(saved_win) abort
+  let [l:win_id, l:bufnr, l:view, _, _] = a:saved_win
 
-  silent! call win_gotoid(win_id)
+  silent! call win_gotoid(l:win_id)
 
-  const new_win_id = win_getid()
+  let l:new_win_id = win_getid()
 
-  if Is(saved_win)
-    winrestview(view)
-    RestoreVcol(saved_win)
+  if flog#win#Is(a:saved_win)
+    call winrestview(l:view)
+    call flog#win#RestoreVcol(a:saved_win)
   endif
 
-  return new_win_id
-enddef
+  return l:new_win_id
+endfunction
 
-export def RestoreTopline(saved_win: list<any>): number
-  const view = GetSavedView(saved_win)
+function! flog#win#RestoreTopline(saved_win) abort
+  let l:view = flog#win#GetSavedView(a:saved_win)
 
-  if view.topline == 1
+  if l:view.topline == 1
     return -1
   endif
-  
-  const topline = view.topline - view.lnum + line('.')
 
-  winrestview({ topline: topline })
+  let l:topline = l:view.topline - l:view.lnum + line('.')
 
-  return topline
-enddef
+  call winrestview({ 'topline': l:topline })
 
-export def RestoreVcol(saved_win: list<any>): number
-  var vcol = GetSavedVcol(saved_win)
-  setcursorcharpos('.', vcol)
-  return vcol
-enddef
+  return l:topline
+endfunction
+
+function! flog#win#RestoreVcol(saved_win) abort
+  let l:vcol = flog#win#GetSavedVcol(a:saved_win)
+  call setcursorcharpos('.', l:vcol)
+  return l:vcol
+endfunction

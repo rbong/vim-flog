@@ -1,60 +1,52 @@
-vim9script
+"
+" This file contains public Flog API functions.
+"
 
-#
-# This file contains public Flog API functions.
-#
-
-import autoload 'flog/exec.vim'
-import autoload 'flog/win.vim'
-
-import autoload 'flog/floggraph/buf.vim'
-import autoload 'flog/floggraph/side_win.vim'
-
-export def ExecRaw(cmd: string, keep_focus: bool = 0, should_update: bool = 0, is_tmp: bool = 0): string
-  if !buf.IsFlogBuf()
-    exec cmd
-    return cmd
+function! flog#ExecRaw(cmd, keep_focus, should_update, is_tmp) abort
+  if !flog#floggraph#buf#IsFlogBuf()
+    exec a:cmd
+    return a:cmd
   endif
 
-  const graph_win = win.Save()
-  side_win.Open(cmd, keep_focus, is_tmp)
+  let l:graph_win = flog#win#Save()
+  call flog#floggraph#side_win#Open(a:cmd, a:keep_focus, a:is_tmp)
 
-  if should_update
-    if win.Is(graph_win)
-      buf.Update()
+  if a:should_update
+    if flog#win#Is(l:graph_win)
+      call flog#floggraph#buf#Update()
     else
-      buf.InitUpdateHook(win.GetSavedBufnr(graph_win))
+      call flog#floggraph#buf#InitUpdateHook(flog#win#GetSavedBufnr(l:graph_win))
     endif
   endif
 
-  return cmd
-enddef
+  return a:cmd
+endfunction
 
-export def Exec(cmd: string, keep_focus: bool = 0, should_update: bool = 0, is_tmp: bool = 0): string
-  buf.AssertFlogBuf()
+function! flog#Exec(cmd, keep_focus, should_update, is_tmp) abort
+  call flog#floggraph#buf#AssertFlogBuf()
 
-  const formatted_cmd = exec.Format(cmd)
-  if empty(formatted_cmd)
+  let l:formatted_cmd = flog#exec#Format(a:cmd)
+  if empty(l:formatted_cmd)
     return ''
   endif
 
-  return ExecRaw(formatted_cmd, keep_focus, should_update, is_tmp)
-enddef
+  return flog#ExecRaw(l:formatted_cmd, a:keep_focus, a:should_update, a:is_tmp)
+endfunction
 
-export def ExecTmp(cmd: string, keep_focus: bool = 0, should_update: bool = 0): string
-  return Exec(cmd, keep_focus, should_update, true)
-enddef
+function! flog#ExecTmp(cmd, keep_focus, should_update) abort
+  return flog#Exec(a:cmd, a:keep_focus, a:should_update, v:true)
+endfunction
 
-# Deprecations
+" Deprecations
 
-legacy function flog#run_raw_command(...) abort
+function! flog#run_raw_command(...) abort
   call flog#deprecate#Function('flog#run_raw_command', 'flog#ExecRaw')
 endfunction
 
-legacy function flog#run_command(...) abort
+function! flog#run_command(...) abort
   call flog#deprecate#Function('flog#run_command', 'flog#Exec')
 endfunction
 
-legacy function flog#run_tmp_command(...) abort
+function! flog#run_tmp_command(...) abort
   call flog#deprecate#Function('flog#run_tmp_command', 'flog#ExecTmp')
 endfunction

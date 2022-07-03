@@ -1,341 +1,334 @@
-vim9script
+"
+" This file contains functions for handling args to the ":Flog" command.
+"
 
-#
-# This file contains functions for handling args to the ":Flog" command.
-#
+" Parse ":Flog" args into the options object.
+function! flog#cmd#flog#args#Parse(current_opts, workdir, args) abort
+  let l:defaults = flog#state#GetInternalDefaultOpts()
 
-import autoload 'flog/args.vim' as flog_args
-import autoload 'flog/fugitive.vim'
-import autoload 'flog/git.vim'
-import autoload 'flog/state.vim' as flog_state
+  let l:has_set_path = v:false
 
-# Parse ":Flog" args into the options object.
-export def Parse(current_opts: dict<any>, workdir: string, args: list<string>): dict<any>
-  const defaults = flog_state.GetInternalDefaultOpts()
+  let l:has_set_rev = v:false
 
-  var has_set_path = false
+  let l:has_set_raw_args = v:false
+  let l:got_raw_args_token = v:false
+  let l:raw_args = []
 
-  var has_set_rev = false
-
-  var has_set_raw_args = false
-  var got_raw_args_token = false
-  var raw_args = []
-
-  for arg in args
-    if got_raw_args_token
-      has_set_raw_args = true
-      raw_args += [arg]
-    elseif arg == '--'
-      got_raw_args_token = true
-    elseif arg =~ '^-format=.\+'
-      current_opts.format = flog_args.ParseArg(arg)
-    elseif arg == '-format='
-      current_opts.format = defaults.format
-    elseif arg =~ '^-date=.\+'
-      current_opts.date = flog_args.ParseArg(arg)
-    elseif arg == '-date='
-      current_opts.date = defaults.date
-    elseif arg =~ '^-raw-args=.\+'
-      has_set_raw_args = true
-      raw_args += [flog_args.ParseArg(arg)]
-    elseif arg == '-raw-args='
-      has_set_raw_args = false
-      current_opts.raw_args = defaults.raw_args
-    elseif arg == '-all'
-      current_opts.all = true
-    elseif arg == '-no-all'
-      current_opts.all = false
-    elseif arg == '-bisect'
-      current_opts.bisect = true
-    elseif arg == '-no-bisect'
-      current_opts.bisect = false
-    elseif arg == '-merges'
-      current_opts.merges = true
-    elseif arg == '-no-merges'
-      current_opts.merges = false
-    elseif arg == '-reflog'
-      current_opts.reflog = true
-    elseif arg == '-no-reflog'
-      current_opts.reflog = false
-    elseif arg == '-reverse'
-      current_opts.reverse = true
-    elseif arg == '-no-reverse'
-      current_opts.reverse = false
-    elseif arg == '-graph'
-      current_opts.graph = true
-    elseif arg == '-no-graph'
-      current_opts.graph = false
-    elseif arg == '-patch'
-      current_opts.patch = true
-    elseif arg == '-no-patch'
-      current_opts.patch = false
-    elseif arg =~ '^-skip=\d\+'
-      current_opts.skip = flog_args.ParseArg(arg)
-    elseif arg == '-skip='
-      current_opts.skip = defaults.skip
-    elseif arg =~ '^-\(order\|sort\)=.\+'
-      current_opts.order = flog_args.ParseArg(arg)
-    elseif arg == '-order=' || arg == '-sort='
-      current_opts.order = defaults.order
-    elseif arg =~ '^-max-count=\d\+'
-      current_opts.max_count = flog_args.ParseArg(arg)
-    elseif arg == '-max-count='
-      current_opts.max_count = defaults.max_count
-    elseif arg =~ '^-open-cmd=.\+'
-      current_opts.open_cmd = flog_args.ParseArg(arg)
-    elseif arg == '-open-cmd='
-      current_opts.open_cmd = defaults.open_cmd
-    elseif arg =~ '^-\(search\|grep\)=.\+'
-      current_opts.search = flog_args.ParseArg(arg)
-    elseif arg == '-search=' || arg == '-grep='
-      current_opts.search = defaults.search
-    elseif arg =~ '^-patch-\(search\|grep\)=.\+'
-      current_opts.patch_search = flog_args.ParseArg(arg)
-    elseif arg == '-patch-search=' || arg == '-patch-grep='
-      current_opts.patch_search = defaults.patch_search
-    elseif arg =~ '^-author=.\+'
-      current_opts.author = flog_args.ParseArg(arg)
-    elseif arg == '-author='
-      current_opts.author = defaults.author
-    elseif arg =~ '^-limit=.\+'
-      current_opts.limit = flog_args.ParseGitLimitArg(workdir, arg)
-    elseif arg == '-limit='
-      current_opts.limit = defaults.limit
-    elseif arg =~ '^-rev=.\+'
-      if !has_set_rev
-        current_opts.rev = []
-        has_set_rev = true
+  for l:arg in a:args
+    if l:got_raw_args_token
+      let l:has_set_raw_args = v:true
+      let l:raw_args += [l:arg]
+    elseif l:arg ==# '--'
+      let l:got_raw_args_token = v:true
+    elseif l:arg =~# '^-format=.\+'
+      let a:current_opts.format = flog#args#ParseArg(l:arg)
+    elseif l:arg ==# '-format='
+      let a:current_opts.format = l:defaults.format
+    elseif l:arg =~# '^-date=.\+'
+      let a:current_opts.date = flog#args#ParseArg(l:arg)
+    elseif l:arg ==# '-date='
+      let a:current_opts.date = l:defaults.date
+    elseif l:arg =~# '^-raw-args=.\+'
+      let l:has_set_raw_args = v:true
+      let l:raw_args += [flog#args#ParseArg(l:arg)]
+    elseif l:arg ==# '-raw-args='
+      let l:has_set_raw_args = v:false
+      let a:current_opts.raw_args = l:defaults.raw_args
+    elseif l:arg ==# '-all'
+      let a:current_opts.all = v:true
+    elseif l:arg ==# '-no-all'
+      let a:current_opts.all = v:false
+    elseif l:arg ==# '-bisect'
+      let a:current_opts.bisect = v:true
+    elseif l:arg ==# '-no-bisect'
+      let a:current_opts.bisect = v:false
+    elseif l:arg ==# '-merges'
+      let a:current_opts.merges = v:true
+    elseif l:arg ==# '-no-merges'
+      let a:current_opts.merges = v:false
+    elseif l:arg ==# '-reflog'
+      let a:current_opts.reflog = v:true
+    elseif l:arg ==# '-no-reflog'
+      let a:current_opts.reflog = v:false
+    elseif l:arg ==# '-reverse'
+      let a:current_opts.reverse = v:true
+    elseif l:arg ==# '-no-reverse'
+      let a:current_opts.reverse = v:false
+    elseif l:arg ==# '-graph'
+      let a:current_opts.graph = v:true
+    elseif l:arg ==# '-no-graph'
+      let a:current_opts.graph = v:false
+    elseif l:arg ==# '-patch'
+      let a:current_opts.patch = v:true
+    elseif l:arg ==# '-no-patch'
+      let a:current_opts.patch = v:false
+    elseif l:arg =~# '^-skip=\d\+'
+      let a:current_opts.skip = flog#args#ParseArg(l:arg)
+    elseif l:arg ==# '-skip='
+      let a:current_opts.skip = l:defaults.skip
+    elseif l:arg =~# '^-\(order\|sort\)=.\+'
+      let a:current_opts.order = flog#args#ParseArg(l:arg)
+    elseif l:arg ==# '-order=' || l:arg ==# '-sort='
+      let a:current_opts.order = l:defaults.order
+    elseif l:arg =~# '^-max-count=\d\+'
+      let a:current_opts.max_count = flog#args#ParseArg(l:arg)
+    elseif l:arg ==# '-max-count='
+      let a:current_opts.max_count = l:defaults.max_count
+    elseif l:arg =~# '^-open-cmd=.\+'
+      let a:current_opts.open_cmd = flog#args#ParseArg(l:arg)
+    elseif l:arg ==# '-open-cmd='
+      let a:current_opts.open_cmd = l:defaults.open_cmd
+    elseif l:arg =~# '^-\(search\|grep\)=.\+'
+      let a:current_opts.search = flog#args#ParseArg(l:arg)
+    elseif l:arg ==# '-search=' || l:arg ==# '-grep='
+      let a:current_opts.search = l:defaults.search
+    elseif l:arg =~# '^-patch-\(search\|grep\)=.\+'
+      let a:current_opts.patch_search = flog#args#ParseArg(l:arg)
+    elseif l:arg ==# '-patch-search=' || l:arg ==# '-patch-grep='
+      let a:current_opts.patch_search = l:defaults.patch_search
+    elseif l:arg =~# '^-author=.\+'
+      let a:current_opts.author = flog#args#ParseArg(l:arg)
+    elseif l:arg ==# '-author='
+      let a:current_opts.author = l:defaults.author
+    elseif l:arg =~# '^-limit=.\+'
+      let a:current_opts.limit = flog#args#ParseGitLimitArg(a:workdir, l:arg)
+    elseif l:arg ==# '-limit='
+      let a:current_opts.limit = l:defaults.limit
+    elseif l:arg =~# '^-rev=.\+'
+      if !l:has_set_rev
+        let a:current_opts.rev = []
+        let l:has_set_rev = v:true
       endif
-      add(current_opts.rev, flog_args.ParseArg(arg))
-    elseif arg == '-rev='
-      has_set_rev = false
-      current_opts.rev = defaults.rev
-    elseif arg =~ '^-path=.\+'
-      if !has_set_path
-        current_opts.path = []
-        has_set_path = true
+      call add(a:current_opts.rev, flog#args#ParseArg(l:arg))
+    elseif l:arg ==# '-rev='
+      let l:has_set_rev = v:false
+      let a:current_opts.rev = l:defaults.rev
+    elseif l:arg =~# '^-path=.\+'
+      if !l:has_set_path
+        let a:current_opts.path = []
+        let l:has_set_path = v:true
       endif
-      add(current_opts.path, flog_args.ParseGitPathArg(workdir, arg))
-    elseif arg == '-path='
-      current_opts.path = defaults.path
-      has_set_path = false
+      call add(a:current_opts.path, flog#args#ParseGitPathArg(a:workdir, l:arg))
+    elseif l:arg ==# '-path='
+      let a:current_opts.path = l:defaults.path
+      let l:has_set_path = v:false
     else
-      echoerr 'error parsing argument ' .. arg
+      echoerr 'error parsing argument ' . l:arg
       throw g:flog_unsupported_argument
     endif
   endfor
 
-  if has_set_raw_args
-    current_opts.raw_args = join(raw_args, ' ')
+  if l:has_set_raw_args
+    let a:current_opts.raw_args = join(l:raw_args, ' ')
   endif
 
-  return current_opts
-enddef
+  return a:current_opts
+endfunction
 
-export def CompleteFormat(arg_lead: string): list<string>
-  var is_escaped = false
-  var current_specifier = ''
-  var current_parens = ''
+function! flog#cmd#flog#args#CompleteFormat(arg_lead) abort
+  let l:is_escaped = v:false
+  let l:current_specifier = ''
+  let l:current_parens = ''
 
-  # Find last specifier (handles escaped % signs)
-  for c in arg_lead
-    if c == '%'
-      if current_specifier == '%'
-        # Literal percent
-        current_specifier = '%%'
+  " Find last specifier (handles escaped % signs)
+  for l:c in a:arg_lead
+    if l:c ==# '%'
+      if l:current_specifier ==# '%'
+        " Literal percent
+        let l:current_specifier = '%%'
       else
-        # New specifier
-        current_specifier = '%'
-        current_parens = ''
+        " New specifier
+        let l:current_specifier = '%'
+        let l:current_parens = ''
       endif
-    elseif current_specifier == ''
+    elseif l:current_specifier ==# ''
       continue
-    elseif current_specifier == '%%'
-      current_specifier = ''
-      current_parens = ''
-    elseif current_specifier =~ '($'
-      if c == ')'
-        # End of parens/specifier
-        current_specifier = ''
-        current_parens = ''
+    elseif l:current_specifier ==# '%%'
+      let l:current_specifier = ''
+      let l:current_parens = ''
+    elseif l:current_specifier =~# '($'
+      if l:c ==# ')'
+        " End of parens/specifier
+        let l:current_specifier = ''
+        let l:current_parens = ''
       else
-        # Inside parens
-        current_parens ..= c
+        " Inside parens
+        let l:current_parens .= l:c
       endif
     else
-      current_specifier ..= c
+      let l:current_specifier .= l:c
     endif
   endfor
 
-  # Inside of parens, end parens
-  if !empty(current_parens)
-    return [arg_lead .. ')']
+  " Inside of parens, end parens
+  if !empty(l:current_parens)
+    return [a:arg_lead . ')']
   endif
 
-  const completions = []
-  const l = len(current_specifier)
+  let l:completions = []
+  let l:l = len(l:current_specifier)
 
-  # Find specifiers that start with the current specifier
-  if l > 0
-    const prefix = arg_lead[ : -l - 1]
+  " Find specifiers that start with the current specifier
+  if l:l > 0
+    let l:prefix = a:arg_lead[ : -l:l - 1]
 
-    for specifier in g:flog_format_specifiers
-      if stridx(specifier, current_specifier) == 0
-        add(completions, prefix .. specifier)
+    for l:specifier in g:flog_format_specifiers
+      if stridx(specifier, l:current_specifier) == 0
+        call add(l:completions, l:prefix . l:specifier)
       endif
     endfor
   endif
 
-  # No specifier, start a new one
-  if empty(completions)
-    return [arg_lead .. '%']
+  " No specifier, start a new one
+  if empty(l:completions)
+    return [a:arg_lead . '%']
   endif
 
-  return completions
-enddef
+  return l:completions
+endfunction
 
-export def CompleteDate(arg_lead: string): list<string>
-  const [lead, _] = flog_args.SplitArg(arg_lead)
-  var completions = map(copy(g:flog_date_formats), (_, val) => lead .. val)
-  return flog_args.FilterCompletions(arg_lead, completions)
-enddef
+function! flog#cmd#flog#args#CompleteDate(arg_lead) abort
+  let [l:lead, _] = flog#args#SplitArg(a:arg_lead)
+  let l:completions = map(copy(g:flog_date_formats), 'l:lead . v:val')
+  return flog#args#FilterCompletions(a:arg_lead, l:completions)
+endfunction
 
-export def CompleteOpenCmd(arg_lead: string): list<string>
-  const [lead, _] = flog_args.SplitArg(arg_lead)
+function! flog#cmd#flog#args#CompleteOpenCmd(arg_lead) abort
+  let [l:lead, _] = flog#args#SplitArg(a:arg_lead)
 
-  var completions = g:flog_open_cmds + g:flog_open_cmd_modifiers
+  let l:completions = g:flog_open_cmds + g:flog_open_cmd_modifiers
 
-  # Add combined open commands
-  for modifier in g:flog_open_cmd_modifiers
-    for open_cmd in g:flog_open_cmds
-      add(completions, modifier .. ' ' .. open_cmd)
+  " Add combined open commands
+  for l:modifier in g:flog_open_cmd_modifiers
+    for l:open_cmd in g:flog_open_cmds
+      call add(l:completions, l:modifier . ' ' . l:open_cmd)
     endfor
   endfor
 
-  completions = flog_args.EscapeCompletions(lead, completions)
+  let l:completions = flog#args#EscapeCompletions(l:lead, l:completions)
 
-  return flog_args.FilterCompletions(arg_lead, completions)
-enddef
+  return flog#args#FilterCompletions(a:arg_lead, l:completions)
+endfunction
 
-export def CompleteAuthor(arg_lead: string): list<string>
-  if !fugitive.IsFugitiveBuf()
+function! flog#cmd#flog#args#CompleteAuthor(arg_lead) abort
+  if !flog#fugitive#IsGitBuf()
     return []
   endif
 
-  const [lead, _] = flog_args.SplitArg(arg_lead)
-  var completions = git.GetAuthors()
-  return flog_args.FilterCompletions(
-    arg_lead,
-    flog_args.EscapeCompletions(lead, completions)
-  )
-enddef
+  let [l:lead, _] = flog#args#SplitArg(a:arg_lead)
+  let l:completions = flog#git#GetAuthors()
+  return flog#args#FilterCompletions(
+        \ a:arg_lead,
+        \ flog#args#EscapeCompletions(l:lead, l:completions)
+        \ )
+endfunction
 
-export def CompleteLimit(arg_lead: string): list<string>
-  const [lead, limit] = flog_args.SplitArg(arg_lead)
+function! flog#cmd#flog#args#CompleteLimit(arg_lead) abort
+  let [l:lead, l:limit] = flog#args#SplitArg(a:arg_lead)
 
-  var [range, path] = flog_args.SplitGitLimitArg(limit)
-  if range !~ ':$'
+  let [l:range, l:path] = flog#args#SplitGitLimitArg(l:limit)
+  if l:range !~# ':$'
     return []
   endif
-  path = flog_args.UnescapeArg(path)
+  let l:path = flog#args#UnescapeArg(l:path)
 
-  var completions = getcompletion(path, 'file')
-  completions = flog_args.EscapeCompletions(lead .. range, completions)
-  return flog_args.FilterCompletions(arg_lead, completions)
-enddef
+  let l:completions = getcompletion(l:path, 'file')
+  let l:completions = flog#args#EscapeCompletions(l:lead . l:range, l:completions)
+  return flog#args#FilterCompletions(a:arg_lead, l:completions)
+endfunction
 
-export def CompleteRev(arg_lead: string): list<string>
-  if !fugitive.IsFugitiveBuf()
+function! flog#cmd#flog#args#CompleteRev(arg_lead) abort
+  if !flog#fugitive#IsFugitiveBuf()
     return []
   endif
-  const [lead, _] = flog_args.SplitArg(arg_lead)
+  let [l:lead, _] = flog#args#SplitArg(a:arg_lead)
 
-  var refs = git.GetRefs()
+  let l:refs = flog#git#GetRefs()
 
-  var completions = flog_args.EscapeCompletions(lead, refs)
-  return flog_args.FilterCompletions(arg_lead, completions)
-enddef
+  let l:completions = flog#args#EscapeCompletions(l:lead, l:refs)
+  return flog#args#FilterCompletions(a:arg_lead, l:completions)
+endfunction
 
-export def CompletePath(arg_lead: string): list<string>
-  var [lead, path] = flog_args.SplitArg(arg_lead)
-  path = flog_args.UnescapeArg(path)
+function! flog#cmd#flog#args#CompletePath(arg_lead) abort
+  let [l:lead, l:path] = flog#args#SplitArg(a:arg_lead)
+  let l:path = flog#args#UnescapeArg(l:path)
 
-  var files = getcompletion(path, 'file')
+  let l:files = getcompletion(l:path, 'file')
 
-  var completions = flog_args.EscapeCompletions(lead, files)
-  return flog_args.FilterCompletions(arg_lead, completions)
-enddef
+  let l:completions = flog#args#EscapeCompletions(l:lead, l:files)
+  return flog#args#FilterCompletions(a:arg_lead, l:completions)
+endfunction
 
-export def CompleteOrder(arg_lead: string): list<string>
-  const [lead, _] = flog_args.SplitArg(arg_lead)
+function! flog#cmd#flog#args#CompleteOrder(arg_lead) abort
+  let [l:lead, _] = flog#args#SplitArg(a:arg_lead)
 
-  var order_types = []
-  for order_type in g:flog_order_types
-    add(order_types, order_type.name)
+  let l:order_types = []
+  for l:order_type in g:flog_order_types
+    call add(l:order_types, l:order_type.name)
   endfor
 
-  var completions = flog_args.EscapeCompletions(lead, order_types)
-  return flog_args.FilterCompletions(arg_lead, completions)
-enddef
+  let l:completions = flog#args#EscapeCompletions(l:lead, l:order_types)
+  return flog#args#FilterCompletions(a:arg_lead, l:completions)
+endfunction
 
-export def Complete(arg_lead: string, cmd_line: string, cursor_pos: number): list<string>
-  if cmd_line[ : cursor_pos] =~ ' -- '
+function! flog#cmd#flog#args#Complete(arg_lead, cmd_line, cursor_pos) abort
+  if a:cmd_line[ : a:cursor_pos] =~# ' -- '
     return []
   endif
 
-  const default_completion = [
-    '-all ',
-    '--no-all ',
-    '-author=',
-    '-bisect ',
-    '-no-bisect ',
-    '-date=',
-    '-format=',
-    '-graph ',
-    '-no-graph ',
-    '-limit=',
-    '-max-count=',
-    '-merges ',
-    '-no-merges ',
-    '-open-cmd=',
-    '-patch ',
-    '-no-patch ',
-    '-patch-search=',
-    '-patch-grep=',
-    '-path=',
-    '-raw-args=',
-    '-reflog ',
-    '-no-reflog ',
-    '-rev=',
-    '-reverse ',
-    '-no-reverse ',
-    '-search=',
-    '-grep=',
-    '-skip=',
-    '-order=',
-    '-sort=',
-    ]
+  let l:default_completion = [
+        \ '-all ',
+        \ '--no-all ',
+        \ '-author=',
+        \ '-bisect ',
+        \ '-no-bisect ',
+        \ '-date=',
+        \ '-format=',
+        \ '-graph ',
+        \ '-no-graph ',
+        \ '-limit=',
+        \ '-max-count=',
+        \ '-merges ',
+        \ '-no-merges ',
+        \ '-open-cmd=',
+        \ '-patch ',
+        \ '-no-patch ',
+        \ '-patch-search=',
+        \ '-patch-grep=',
+        \ '-path=',
+        \ '-raw-args=',
+        \ '-reflog ',
+        \ '-no-reflog ',
+        \ '-rev=',
+        \ '-reverse ',
+        \ '-no-reverse ',
+        \ '-search=',
+        \ '-grep=',
+        \ '-skip=',
+        \ '-order=',
+        \ '-sort=',
+        \ ]
 
-  if arg_lead == ''
-    return flog_args.FilterCompletions(arg_lead, default_completion)
-  elseif arg_lead =~ '^-format='
-    return CompleteFormat(arg_lead)
-  elseif arg_lead =~ '^-date='
-    return CompleteDate(arg_lead)
-  elseif arg_lead =~ '^-open-cmd='
-    return CompleteOpenCmd(arg_lead)
-  elseif arg_lead =~ '^-\(patch-\)\?\(search\|grep\)='
+  if a:arg_lead ==# ''
+    return flog#args#FilterCompletions(a:arg_lead, l:default_completion)
+  elseif a:arg_lead =~# '^-format='
+    return flog#cmd#flog#args#CompleteFormat(a:arg_lead)
+  elseif a:arg_lead =~# '^-date='
+    return flog#cmd#flog#args#CompleteDate(a:arg_lead)
+  elseif a:arg_lead =~# '^-open-cmd='
+    return flog#cmd#flog#args#CompleteOpenCmd(a:arg_lead)
+  elseif a:arg_lead =~# '^-\(patch-\)\?\(search\|grep\)='
     return []
-  elseif arg_lead =~ '^-author='
-    return CompleteAuthor(arg_lead)
-  elseif arg_lead =~ '^-limit='
-    return CompleteLimit(arg_lead)
-  elseif arg_lead =~ '^-rev='
-    return CompleteRev(arg_lead)
-  elseif arg_lead =~ '^-path='
-    return CompletePath(arg_lead)
-  elseif arg_lead =~ '^-\(order\|sort\)='
-    return CompleteOrder(arg_lead)
+  elseif a:arg_lead =~# '^-author='
+    return flog#cmd#flog#args#CompleteAuthor(a:arg_lead)
+  elseif a:arg_lead =~# '^-limit='
+    return flog#cmd#flog#args#CompleteLimit(a:arg_lead)
+  elseif a:arg_lead =~# '^-rev='
+    return flog#cmd#flog#args#CompleteRev(a:arg_lead)
+  elseif a:arg_lead =~# '^-path='
+    return flog#cmd#flog#args#CompletePath(a:arg_lead)
+  elseif a:arg_lead =~# '^-\(order\|sort\)='
+    return flog#cmd#flog#args#CompleteOrder(a:arg_lead)
   endif
-  return flog_args.FilterCompletions(arg_lead, default_completion)
-enddef
+  return flog#args#FilterCompletions(a:arg_lead, l:default_completion)
+endfunction

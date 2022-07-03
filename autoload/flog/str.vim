@@ -1,13 +1,11 @@
-vim9script
+"
+" This file contains functions for working with strings.
+"
 
-#
-# This file contains functions for working with strings.
-#
-
-export def Ellipsize(str: string, max_len: number = 15): string
-  if len(str) > max_len
-    return str[ : max_len - 4] .. '...'
+function! flog#str#Ellipsize(str, max_len) abort
+  if len(a:str) > a:max_len
+    return a:str[ : a:max_len - 4] . '...'
   endif
 
-  return str
-enddef
+  return a:str
+endfunction

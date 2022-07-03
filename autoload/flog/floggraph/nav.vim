@@ -1,190 +1,182 @@
-vim9script
+"
+" This file contains functions for navigating in "floggraph" buffers.
+"
 
-#
-# This file contains functions for navigating in "floggraph" buffers.
-#
+function! flog#floggraph#nav#JumpToCommit(hash) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-import autoload 'flog/state.vim' as flog_state
-
-import autoload 'flog/floggraph/buf.vim'
-import autoload 'flog/floggraph/commit.vim' as floggraph_commit
-import autoload 'flog/floggraph/mark.vim'
-
-export def JumpToCommit(hash: string): list<number>
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
-
-  if empty(hash)
+  if empty(a:hash)
     return [-1, -1]
   endif
 
-  const commit = get(state.commits_by_hash, hash, {})
-  if empty(commit)
+  let l:commit = get(l:state.commits_by_hash, a:hash, {})
+  if empty(l:commit)
     return [-1, -1]
   endif
 
-  const lnum = max([commit.line, 1])
-  const col = max([commit.col, 1])
+  let l:lnum = max([l:commit.line, 1])
+  let l:col = max([l:commit.col, 1])
 
-  setcursorcharpos(lnum, col)
+  call setcursorcharpos(l:lnum, l:col)
 
-  return [lnum, col]
-enddef
+  return [l:lnum, l:col]
+endfunction
 
-export def JumpToMark(key: string): list<number>
-  buf.AssertFlogBuf()
+function! flog#floggraph#nav#JumpToMark(key) abort
+  call flog#floggraph#buf#AssertFlogBuf()
 
-  const prev_line = line('.')
-  const prev_commit = floggraph_commit.GetAtLine(prev_line)
+  let l:prev_line = line('.')
+  let l:prev_commit = flog#floggraph#commit#GetAtLine(l:prev_line)
 
-  const commit = mark.Get(key)
-  if empty(commit)
+  let l:commit = flog#floggraph#mark#Get(a:key)
+  if empty(l:commit)
     return [-1, -1]
   endif
 
-  const result = JumpToCommit(commit.hash)
+  let l:result = flog#floggraph#nav#JumpToCommit(l:commit.hash)
 
-  if commit != prev_commit
-    mark.SetJump(prev_line)
+  if l:commit != l:prev_commit
+    call flog#floggraph#mark#SetJump(l:prev_line)
   endif
 
-  return result
-enddef
+  return l:result
+endfunction
 
-export def NextCommit(count: number = 1): dict<any>
-  buf.AssertFlogBuf()
+function! flog#floggraph#nav#NextCommit(count = 1) abort
+  call flog#floggraph#buf#AssertFlogBuf()
   
-  const prev_line = line('.')
+  let l:prev_line = line('.')
 
-  const commit = floggraph_commit.GetNext(count)
+  let l:commit = flog#floggraph#commit#GetNext(a:count)
 
-  if !empty(commit)
-    JumpToCommit(commit.hash)
-    mark.SetJump(prev_line)
+  if !empty(l:commit)
+    call flog#floggraph#nav#JumpToCommit(l:commit.hash)
+    call flog#floggraph#mark#SetJump(l:prev_line)
   endif
 
-  return commit
-enddef
+  return l:commit
+endfunction
 
-export def PrevCommit(count: number = 1): dict<any>
-  return NextCommit(-count)
-enddef
+function! flog#floggraph#nav#PrevCommit(count = 1) abort
+  return flog#floggraph#nav#NextCommit(-a:count)
+endfunction
 
-export def NextRefCommit(count: number = 1): number
-  buf.AssertFlogBuf()
+function! flog#floggraph#nav#NextRefCommit(count = 1) abort
+  call flog#floggraph#buf#AssertFlogBuf()
 
-  const prev_line = line('.')
+  let l:prev_line = line('.')
 
-  const [nrefs, commit] = floggraph_commit.GetNextRef(count)
+  let [l:nrefs, l:commit] = flog#floggraph#commit#GetNextRef(a:count)
 
-  if !empty(commit)
-    JumpToCommit(commit.hash)
-    mark.SetJump(prev_line)
+  if !empty(l:commit)
+    call flog#floggraph#nav#JumpToCommit(l:commit.hash)
+    call flog#floggraph#mark#SetJump(l:prev_line)
   endif
 
-  return nrefs
-enddef
+  return l:nrefs
+endfunction
 
-export def PrevRefCommit(count: number = 1): number
-  return NextRefCommit(-count)
-enddef
+function! flog#floggraph#nav#PrevRefCommit(count = 1) abort
+  return flog#floggraph#nav#NextRefCommit(-a:count)
+endfunction
 
-export def SkipTo(skip: number): number
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
+function! flog#floggraph#nav#SkipTo(skip) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-  var skip_opt = string(skip)
-  if skip_opt == '0'
-    skip_opt = ''
+  let l:skip_opt = string(a:skip)
+  if l:skip_opt ==# '0'
+    let l:skip_opt = ''
   endif
 
-  if state.opts.skip == skip_opt
-    return skip
+  if l:state.opts.skip ==# l:skip_opt
+    return a:skip
   endif
 
-  state.opts.skip = skip_opt
+  let l:state.opts.skip = l:skip_opt
 
-  buf.Update()
+  call flog#floggraph#buf#Update()
 
-  return skip
-enddef
+  return a:skip
+endfunction
 
-export def SkipAhead(count: number): number
-  buf.AssertFlogBuf()
-  const opts = flog_state.GetBufState().opts
+function! flog#floggraph#nav#SkipAhead(count) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:opts = flog#state#GetBufState().opts
 
-  if empty(opts.max_count)
+  if empty(l:opts.max_count)
     return -1
   endif
 
-  var skip = empty(opts.skip) ? 0 : str2nr(opts.skip)
-  skip += str2nr(opts.max_count) * count
-  if skip < 0
-    skip = 0
+  let l:skip = empty(l:opts.skip) ? 0 : str2nr(l:opts.skip)
+  let l:skip += str2nr(l:opts.max_count) * a:count
+  if l:skip < 0
+    let l:skip = 0
   endif
 
-  return SkipTo(skip)
-enddef
+  return flog#floggraph#nav#SkipTo(l:skip)
+endfunction
 
-export def SkipBack(count: number): number
-  return SkipAhead(-count)
-enddef
+function! flog#floggraph#nav#SkipBack(count) abort
+  return flog#floggraph#nav#SkipAhead(-a:count)
+endfunction
 
-export def SetRevToCommitAtLine(line: any = '.'): string
-  buf.AssertFlogBuf()
-  var state = flog_state.GetBufState()
+function! flog#floggraph#nav#SetRevToCommitAtLine(line = '.') abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-  const commit = floggraph_commit.GetAtLine(line)
+  let l:commit = flog#floggraph#commit#GetAtLine(a:line)
 
-  if empty(commit)
+  if empty(l:commit)
     return ''
   endif
 
-  const hash = commit.hash
-  const rev = [hash]
+  let l:hash = l:commit.hash
+  let l:rev = [l:hash]
   
-  if state.opts.rev == rev
+  if l:state.opts.rev ==# l:rev
     return ''
   endif
 
-  state.opts.skip = ''
-  state.opts.rev = rev
+  let l:state.opts.skip = ''
+  let l:state.opts.rev = l:rev
 
-  buf.Update()
+  call flog#floggraph#buf#Update()
   
-  return hash
-enddef
+  return l:hash
+endfunction
 
-export def ClearRev(): bool
-  buf.AssertFlogBuf()
-  var state = flog_state.GetBufState()
+function! flog#floggraph#nav#ClearRev() abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-  if empty(state.opts.rev)
-    return false
+  if empty(l:state.opts.rev)
+    return v:false
   endif
 
-  state.opts.rev = []
-  buf.Update()
+  let l:state.opts.rev = []
+  call flog#floggraph#buf#Update()
 
-  return true
-enddef
+  return v:true
+endfunction
 
-export def JumpToCommitStart(): number
-  buf.AssertFlogBuf()
+function! flog#floggraph#nav#JumpToCommitStart() abort
+  call flog#floggraph#buf#AssertFlogBuf()
 
-  const curr_col = virtcol('.')
+  let l:curr_col = virtcol('.')
 
-  const commit = floggraph_commit.GetAtLine('.')
-  if empty(commit)
+  let l:commit = flog#floggraph#commit#GetAtLine('.')
+  if empty(l:commit)
     return -1
   endif
 
-  var new_col = commit.col
-  if commit.line == line('.') && curr_col <= commit.col
-    new_col = commit.format_col
+  let l:new_col = l:commit.col
+  if l:commit.line == line('.') && l:curr_col <= l:commit.col
+    let l:new_col = l:commit.format_col
   endif
 
-  setcursorcharpos(commit.line, new_col)
+  call setcursorcharpos(l:commit.line, l:new_col)
 
-  return new_col
-enddef
+  return l:new_col
+endfunction

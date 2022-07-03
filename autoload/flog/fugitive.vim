@@ -1,42 +1,40 @@
-vim9script
+"
+" This file contains functions for working with Fugitive.
+"
 
-#
-# This file contains functions for working with Fugitive.
-#
+function! flog#fugitive#IsGitBuf() abort
+  return FugitiveIsGitDir()
+endfunction
 
-export def IsFugitiveBuf(): bool
-  return g:FugitiveIsGitDir()
-enddef
-
-export def GetRelativePath(workdir: string, path: string): string
-  var full_path = fnamemodify(path, ':p')
-  if stridx(full_path, workdir) == 0
-    return full_path[len(workdir) + 1 : ]
+function! flog#fugitive#GetRelativePath(workdir, path) abort
+  let l:full_path = fnamemodify(a:path, ':p')
+  if stridx(l:full_path, a:workdir) == 0
+    return l:full_path[len(a:workdir) + 1 : ]
   endif
-  return path
-enddef
+  return a:path
+endfunction
 
-export def GetWorkdir(): string
-  return g:FugitiveFind(":/")
-enddef
+function! flog#fugitive#GetWorkdir() abort
+  return FugitiveFind(':/')
+endfunction
 
-export def GetGitDir(): string
-  return g:FugitiveGitDir()
-enddef
+function! flog#fugitive#GetGitDir() abort
+  return FugitiveGitDir()
+endfunction
 
-export def GetGitCommand(): string
-  return g:FugitiveShellCommand()
-enddef
+function! flog#fugitive#GetGitCommand() abort
+  return FugitiveShellCommand()
+endfunction
 
-export def GetHead(): string
+function! flog#fugitive#GetHead() abort
   return fugitive#Head()
-enddef
+endfunction
 
-export def TriggerDetection(workdir: string): string
-  g:FugitiveDetect(workdir)
-  return workdir
-enddef
+function! flog#fugitive#TriggerDetection(workdir) abort
+  call FugitiveDetect(a:workdir)
+  return a:workdir
+endfunction
 
-export def Complete(arg_lead: string, cmd_line: string, cursor_pos: number): list<string>
-  return fugitive#Complete(arg_lead, cmd_line, cursor_pos)
-enddef
+function! flog#fugitive#Complete(arg_lead, cmd_line, cursor_pos) abort
+  return fugitive#Complete(a:arg_lead, a:cmd_line, a:cursor_pos)
+endfunction

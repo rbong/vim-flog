@@ -1,56 +1,47 @@
-vim9script
+"
+" This file contains functions for handling side windows in "floggraph" buffers.
+"
 
-#
-# This file contains functions for handling side windows in "floggraph" buffers.
-#
+function! flog#floggraph#side_win#CloseTmp() abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-import autoload 'flog/deprecate.vim'
-import autoload 'flog/list.vim'
-import autoload 'flog/state.vim' as flog_state
-import autoload 'flog/win.vim'
+  let l:prev_win = flog#win#Save()
 
-import autoload 'flog/floggraph/buf.vim'
-
-export def CloseTmp(): list<number>
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
-
-  const prev_win = win.Save()
-
-  for tmp_id in state.tmp_side_wins
-    # Buffer is not open
-    if win_id2tabwin(tmp_id) == [0, 0]
+  for l:tmp_id in l:state.tmp_side_wins
+    " Buffer is not open
+    if win_id2tabwin(l:tmp_id) == [0, 0]
       continue
     endif
 
-    # Buffer is open, close
-    win_gotoid(tmp_id)
+    " Buffer is open, close
+    call win_gotoid(l:tmp_id)
     silent! close!
   endfor
 
-  win.Restore(prev_win)
+  call flog#win#Restore(l:prev_win)
 
-  return flog_state.ResetTmpSideWins(state)
-enddef
+  return flog#state#ResetTmpSideWins(l:state)
+endfunction
 
-export def IsInitialized(): bool
+function! flog#floggraph#side_win#IsInitialized() abort
   return exists('b:flog_side_win_initialized')
-enddef
+endfunction
 
-export def Initialize(state: dict<any>, is_tmp: bool): number
-  if !flog_state.HasBufState()
-    flog_state.SetBufState(state)
+function! flog#floggraph#side_win#Initialize(state, is_tmp) abort
+  if !flog#state#HasBufState()
+    call flog#state#SetBufState(a:state)
   endif
 
-  deprecate.Autocmd('FlogCmdBufferSetup', 'FlogSideWinSetup')
-  deprecate.Autocmd('FlogTmpCmdBufferSetup', 'FlogTmpSideWinSetup')
-  deprecate.Autocmd('FlogNonTmpCmdBufferSetup', 'FlogNonTmpSideWinSetup')
+  call flog#deprecate#Autocmd('FlogCmdBufferSetup', 'FlogSideWinSetup')
+  call flog#deprecate#Autocmd('FlogTmpCmdBufferSetup', 'FlogTmpSideWinSetup')
+  call flog#deprecate#Autocmd('FlogNonTmpCmdBufferSetup', 'FlogNonTmpSideWinSetup')
 
   if exists('#User#FlogSideWinSetup')
     doautocmd User FlogSideWinSetup
   endif
 
-  if is_tmp
+  if a:is_tmp
     if exists('#User#FlogTmpSideWinSetup')
       doautocmd User FlogTmpSideWinSetup
     endif
@@ -60,52 +51,52 @@ export def Initialize(state: dict<any>, is_tmp: bool): number
     endif
   endif
 
-  b:flog_side_win_initialized = true
+  let b:flog_side_win_initialized = v:true
 
   return win_getid()
-enddef
+endfunction
 
-export def Open(cmd: string, keep_focus: bool, is_tmp: bool): number
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
+function! flog#floggraph#side_win#Open(cmd, keep_focus, is_tmp) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-  const graph_win = win.Save()
-  const saved_win_ids = win.GetAllIds()
+  let l:graph_win = flog#win#Save()
+  let l:saved_win_ids = flog#win#GetAllIds()
 
-  exec cmd
-  const final_win = win.Save()
+  exec a:cmd
+  let l:final_win = flog#win#Save()
 
-  var new_win_ids: list<number> = win.GetAllIds()
-  new_win_ids = list.Exclude(new_win_ids, saved_win_ids)
+  let l:new_win_ids = flog#win#GetAllIds()
+  let l:new_win_ids = flog#list#Exclude(l:new_win_ids, l:saved_win_ids)
 
-  if !empty(new_win_ids)
-    win.Restore(graph_win)
+  if !empty(l:new_win_ids)
+    call flog#win#Restore(l:graph_win)
 
-    if is_tmp
-      CloseTmp()
+    if a:is_tmp
+      call flog#floggraph#side_win#CloseTmp()
     endif
 
-    for win_id in new_win_ids
-      silent! call win_gotoid(win_id)
-      if !IsInitialized()
-        Initialize(state, is_tmp)
+    for l:win_id in l:new_win_ids
+      silent! call win_gotoid(l:win_id)
+      if !flog#floggraph#side_win#IsInitialized()
+        call flog#floggraph#side_win#Initialize(l:state, a:is_tmp)
       endif
     endfor
 
-    win.Restore(final_win)
+    call flog#win#Restore(l:final_win)
 
-    if is_tmp
-      flog_state.SetTmpSideWins(state, new_win_ids)
+    if a:is_tmp
+      call flog#state#SetTmpSideWins(l:state, l:new_win_ids)
     endif
   endif
 
-  if !keep_focus
-    win.Restore(graph_win)
+  if !a:keep_focus
+    call flog#win#Restore(l:graph_win)
   endif
 
-  return win.GetSavedId(final_win)
-enddef
+  return flog#win#GetSavedId(l:final_win)
+endfunction
 
-export def OpenTmp(cmd: string, keep_focus: bool): number
-  return Open(cmd, keep_focus, true)
-enddef
+function! flog#floggraph#side_win#OpenTmp(cmd, keep_focus) abort
+  return flog#floggraph#side_win#Open(a:cmd, a:keep_focus, v:true)
+endfunction

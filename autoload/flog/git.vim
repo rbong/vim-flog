@@ -1,41 +1,36 @@
-vim9script
+"
+" This file contains functions for working with git.
+"
 
-#
-# This file contains functions for working with git.
-#
+function! flog#git#HasCommitGraph() abort
+  let l:path = flog#fugitive#GetGitDir()
+  let l:path .= '/objects/info/commit-graph'
+  return filereadable(l:path)
+endfunction
 
-import autoload 'flog/fugitive.vim'
-import autoload 'flog/shell.vim'
+function! flog#git#WriteCommitGraph() abort
+  let l:cmd = 'Git commit-graph write '
+  let l:cmd .= g:flog_write_commit_graph_args
 
-export def HasCommitGraph(): bool
-  var path = fugitive.GetGitDir()
-  path ..= '/objects/info/commit-graph'
-  return filereadable(path)
-enddef
+  exec l:cmd
 
-export def WriteCommitGraph(): string
-  var cmd = 'Git commit-graph write '
-  cmd ..= g:flog_write_commit_graph_args
+  return l:cmd
+endfunction
 
-  exec cmd
+function! flog#git#GetAuthors() abort
+  let l:cmd = flog#fugitive#GetGitCommand()
+  let l:cmd .= ' shortlog -s -n '
+  let l:cmd .= g:flog_get_author_args
 
-  return cmd
-enddef
+  let l:result = flog#shell#Run(l:cmd)
 
-export def GetAuthors(): list<string>
-  var cmd = fugitive.GetGitCommand()
-  cmd ..= ' shortlog -s -n '
-  cmd ..= g:flog_get_author_args
+  " Filter author commit numbers before returning
+  return map(copy(l:result), 'substitute(v:val, "^\\s*\\d*\\s*", "", "")')
+endfunction
 
-  var result = shell.Run(cmd)
+function! flog#git#GetRefs() abort
+  let l:cmd = flog#fugitive#GetGitCommand()
+  let l:cmd .= ' rev-parse --symbolic --branches --tags --remotes'
 
-  # Filter author commit numbers before returning
-  return map(copy(result), (_, val) => substitute(val, '^\s*\d*\s*', '', ''))
-enddef
-
-export def GetRefs(): list<string>
-  var cmd = fugitive.GetGitCommand()
-  cmd ..= ' rev-parse --symbolic --branches --tags --remotes'
-
-  return shell.Run(cmd) + ['HEAD', 'FETCH_HEAD', 'ORIG_HEAD']
-enddef
+  return flog#shell#Run(l:cmd) + ['HEAD', 'FETCH_HEAD', 'ORIG_HEAD']
+endfunction

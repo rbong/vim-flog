@@ -1,98 +1,94 @@
-vim9script
+"
+" This file contains functions which allow Flog to communicate with Lua.
+"
 
-#
-# This file contains functions which allow Flog to communicate with Lua.
-#
+function! flog#lua#ShouldUseInternal() abort
+  let l:use_lua = get(g:, 'flog_use_internal_lua', v:false)
 
-import autoload 'flog/shell.vim'
-
-export def ShouldUseInternal(): bool
-  const use_lua = get(g:, 'flog_use_internal_lua', false)
-
-  if use_lua && !has('lua')
+  if l:use_lua && !has('lua')
     echoerr 'flog: warning: internal Lua is enabled but unavailable'
-    return false
+    return v:false
   endif
 
-  return use_lua
-enddef
+  return l:use_lua
+endfunction
 
-g:flog_did_check_lua_internal_version = false
+let g:flog_did_check_lua_internal_version = v:false
 
-export def CheckInternalVersion(): bool
+function! flog#lua#CheckInternalVersion() abort
   if g:flog_check_lua_version && !g:flog_did_check_lua_internal_version
-    g:flog_did_check_lua_internal_version = true
+    let g:flog_did_check_lua_internal_version = v:true
 
-    if luaeval('_VERSION') !~ '\c^lua 5\.1\(\.\|$\)'
+    if luaeval('_VERSION') !~# '\c^lua 5\.1\(\.\|$\)'
       echoerr 'flog: warning: only Lua 5.1 and LuaJIT 2.1 are supported'
     elseif empty(luaeval('jit and jit.version'))
       echoerr 'flog: warning: for speed improvements, please compile Vim with LuaJIT 2.1'
     endif
 
-    return true
+    return v:true
   endif
 
-  return false
-enddef
+  return v:false
+endfunction
 
-g:flog_did_check_lua_bin_version = false
+let g:flog_did_check_lua_bin_version = v:false
 
-export def CheckBinVersion(bin: string): bool
+function! flog#lua#CheckBinVersion(bin) abort
   if g:flog_check_lua_version && !g:flog_did_check_lua_bin_version
-    g:flog_did_check_lua_bin_version = true
+    let g:flog_did_check_lua_bin_version = v:true
 
-    const out = shell.Run(bin .. ' -v')[0]
+    let l:out = flog#shell#Run(a:bin . ' -v')[0]
 
-    if out =~ '\c^lua 5\.1\(\.\|$\)'
+    if l:out =~# '\c^lua 5\.1\(\.\|$\)'
       echoerr 'flog: warning: for speed improvements, please install LuaJIT 2.1'
-    elseif out !~ '\c^luajit 2\.1\(\.\|$\)'
+    elseif l:out !~# '\c^luajit 2\.1\(\.\|$\)'
       echoerr 'flog: warning: only Lua 5.1 and LuaJIT 2.1 are supported'
     endif
 
-    return true
+    return v:true
   endif
 
-  return false
-enddef
+  return v:false
+endfunction
 
-export def GetBin(): string
-  var bin = ''
+function! flog#lua#GetBin() abort
+  let l:bin = ''
 
   if exists('g:flog_lua_bin')
-    bin = shellescape(g:flog_lua_bin)
+    let l:bin = shellescape(g:flog_lua_bin)
   elseif executable('luajit')
-    bin = 'luajit'
+    let l:bin = 'luajit'
   elseif executable('lua')
-    bin = 'lua'
+    let l:bin = 'lua'
   else
     echoerr 'flog: please install LuaJIT 2.1 it or set it with g:flog_lua_bin'
     throw g:flog_lua_not_found
   endif
 
-  CheckBinVersion(bin)
+  call flog#lua#CheckBinVersion(l:bin)
 
-  return bin
-enddef
+  return l:bin
+endfunction
 
-export def GetLibPath(lib: string): string
-  return g:flog_lua_dir .. '/flog/' .. lib
-enddef
+function! flog#lua#GetLibPath(lib) abort
+  return g:flog_lua_dir . '/flog/' . a:lib
+endfunction
 
-export def SetLuaPath(): list<any>
-  const had_lua_path = exists('$LUA_PATH')
-  const original_lua_path = $LUA_PATH
+function! flog#lua#SetLuaPath() abort
+  let l:had_lua_path = exists('$LUA_PATH')
+  let l:original_lua_path = $LUA_PATH
 
-  $LUA_PATH = escape(g:flog_lua_dir, '\;?') .. '/?.lua'
+  let $LUA_PATH = escape(g:flog_lua_dir, '\;?') . '/?.lua'
 
-  return [had_lua_path, original_lua_path]
-enddef
+  return [l:had_lua_path, l:original_lua_path]
+endfunction
 
-export def ResetLuaPath(lua_path_info: list<any>)
-  const [had_lua_path, original_lua_path] = lua_path_info
+function! flog#lua#ResetLuaPath(lua_path_info) abort
+  let [l:had_lua_path, l:original_lua_path] = a:lua_path_info
 
-  if !had_lua_path
+  if !l:had_lua_path
     unlet $LUA_PATH
   else
-    $LUA_PATH = original_lua_path
+    let $LUA_PATH = l:original_lua_path
   endif
-enddef
+endfunction

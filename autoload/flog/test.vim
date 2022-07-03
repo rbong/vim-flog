@@ -1,11 +1,9 @@
-vim9script
+"
+" This file contains utils only for use in tests.
+"
 
-#
-# This file contains utils only for use in tests.
-#
-
-export def Assert(cmd: string)
-  if !eval(cmd)
-    echoerr cmd
+function! flog#test#Assert(cmd) abort
+  if !eval(a:cmd)
+    echoerr a:cmd
   endif
-enddef
+endfunction

@@ -1,170 +1,161 @@
-vim9script
+"
+" This file contains functions for handling commits in "floggraph" buffers.
+"
 
-#
-# This file contains functions for handling commits in "floggraph" buffers.
-#
+function! flog#floggraph#commit#GetAtLine(...) abort
+  let l:line = get(a:, 1, '.')
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-import autoload 'flog/fugitive.vim'
-import autoload 'flog/shell.vim'
-import autoload 'flog/state.vim' as flog_state
-import autoload 'flog/win.vim'
+  let l:lnum = type(l:line) == v:t_number ? l:line : line(l:line)
 
-import autoload 'flog/floggraph/buf.vim'
-import autoload 'flog/floggraph/nav.vim'
+  return get(l:state.line_commits, l:lnum - 1, {})
+endfunction
 
-export def GetAtLine(line: any = '.'): dict<any>
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
+function! flog#floggraph#commit#GetByHash(hash) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-  var lnum: number = type(line) == v:t_number ? line : line(line)
-
-  return get(state.line_commits, lnum - 1, {})
-enddef
-
-export def GetByHash(hash: string): dict<any>
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
-
-  const commit = get(state.commits_by_hash, hash, {})
-  if empty(commit)
+  let l:commit = get(l:state.commits_by_hash, a:hash, {})
+  if empty(l:commit)
     return {}
   endif
 
-  return commit
-enddef
+  return l:commit
+endfunction
 
-export def GetByRef(ref: string): dict<any>
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
+function! flog#floggraph#commit#GetByRef(ref) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-  var cmd = fugitive.GetGitCommand()
-  cmd ..= ' rev-parse --short ' .. shell.Escape(ref)
+  let l:cmd = flog#fugitive#GetGitCommand()
+  let l:cmd .= ' rev-parse --short ' . flog#shell#Escape(a:ref)
 
-  const result = shell.Run(cmd)
-  if empty(result)
+  let l:result = flog#shell#Run(l:cmd)
+  if empty(l:result)
     return {}
   endif
 
-  return GetByHash(result[0])
-enddef
+  return flog#floggraph#commit#GetByHash(l:result[0])
+endfunction
 
-export def GetNext(offset: number = 1): dict<any>
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
+function! flog#floggraph#commit#GetNext(offset = 1) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-  const commit = GetAtLine('.')
-  const commit_index = index(state.commits, commit)
+  let l:commit = flog#floggraph#commit#GetAtLine('.')
+  let l:commit_index = index(l:state.commits, l:commit)
 
-  if commit_index < 0 || commit_index + offset < 0
+  if l:commit_index < 0 || l:commit_index + a:offset < 0
     return {}
   endif
 
-  return get(state.commits, commit_index + offset, {})
-enddef
+  return get(l:state.commits, l:commit_index + a:offset, {})
+endfunction
 
-export def GetPrev(offset: number = 1): dict<any>
-  return GetNext(-offset)
-enddef
+function! flog#floggraph#commit#GetPrev(offset = 1) abort
+  return flog#floggraph#commit#GetNext(-a:offset)
+endfunction
 
-export def GetNextRef(count: number = 1): list<any>
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
+function! flog#floggraph#commit#GetNextRef(count = 1) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-  if count == 0
+  if a:count == 0
     return [0, {}]
   endif
 
-  const step = count > 0 ? 1 : -1
+  let l:step = a:count > 0 ? 1 : -1
 
-  const commits = state.commits
-  const ncommits = len(commits)
+  let l:commits = l:state.commits
+  let l:ncommits = len(l:commits)
 
-  var ref_commit = {}
-  var commit = GetAtLine('.')
+  let l:ref_commit = {}
+  let l:commit = flog#floggraph#commit#GetAtLine('.')
 
-  var nrefs = 0
-  var i = index(state.commits, commit) + step
-  while i >= 0 && i < ncommits && nrefs != count
-    commit = commits[i]
-    if !empty(commit.refs)
-      ref_commit = commit
-      nrefs += step
+  let l:nrefs = 0
+  let l:i = index(l:state.commits, l:commit) + l:step
+  while l:i >= 0 && l:i < l:ncommits && l:nrefs != a:count
+    let l:commit = l:commits[l:i]
+    if !empty(l:commit.refs)
+      let l:ref_commit = l:commit
+      let l:nrefs += l:step
     endif
 
-    i += step
+    let l:i += l:step
   endwhile
 
-  return [nrefs, ref_commit]
-enddef
+  return [l:nrefs, l:ref_commit]
+endfunction
 
-export def GetPrevRef(count: number = 1): list<any>
-  return GetNext(-count)
-enddef
+function! flog#floggraph#commit#GetPrevRef(count = 1) abort
+  return flog#floggraph#commit#GetNext(-a:count)
+endfunction
 
-export def RestoreOffset(saved_win: list<any>, saved_commit: dict<any>): list<number>
-  if empty(saved_commit)
+function! flog#floggraph#commit#RestoreOffset(saved_win, saved_commit) abort
+  if empty(a:saved_commit)
     return [-1, -1]
   endif
 
-  const saved_view = win.GetSavedView(saved_win)
+  let l:saved_view = flog#win#GetSavedView(a:saved_win)
 
-  const line_offset = saved_view.lnum - saved_commit.line
-  if line_offset < 0
+  let l:line_offset = l:saved_view.lnum - a:saved_commit.line
+  if l:line_offset < 0
     return [-1, -1]
   endif
 
-  if line_offset == 0
-    var new_col = 0
-    const saved_vcol = win.GetSavedVcol(saved_win)
+  if l:line_offset == 0
+    let l:new_col = 0
+    let l:saved_vcol = flog#win#GetSavedVcol(a:saved_win)
 
-    if saved_vcol == saved_commit.col
-      new_col = GetAtLine('.').col
-    elseif saved_vcol == saved_commit.format_col
-      new_col = GetAtLine('.').format_col
+    if l:saved_vcol == a:saved_commit.col
+      let l:new_col = flog#floggraph#commit#GetAtLine('.').col
+    elseif l:saved_vcol == a:saved_commit.format_col
+      let l:new_col = flog#floggraph#commit#GetAtLine('.').format_col
     endif
 
-    if new_col > 0
-      setcursorcharpos('.', new_col)
+    if l:new_col > 0
+      call setcursorcharpos('.', l:new_col)
     endif
 
-    return [0, new_col]
+    return [0, l:new_col]
   endif
 
-  const new_line = line('.') + line_offset
+  let l:new_line = line('.') + l:line_offset
 
-  const new_line_commit = GetAtLine(new_line)
-  if empty(new_line_commit) || new_line_commit.hash != saved_commit.hash
+  let l:new_line_commit = flog#floggraph#commit#GetAtLine(l:new_line)
+  if empty(l:new_line_commit) || l:new_line_commit.hash !=# a:saved_commit.hash
     return [-1, -1]
   endif
 
-  cursor(new_line, col('.'))
+  call cursor(l:new_line, col('.'))
 
-  return [line_offset, 0]
-enddef
+  return [l:line_offset, 0]
+endfunction
 
-export def RestorePosition(saved_win: list<any>, saved_commit: dict<any>): dict<any>
-  # Restore commit
-  var commit_line = -1
-  if !empty(saved_commit)
-    commit_line = nav.JumpToCommit(saved_commit.hash)[0]
+function! flog#floggraph#commit#RestorePosition(saved_win, saved_commit) abort
+  " Restore commit
+  let l:commit_line = -1
+  if !empty(a:saved_commit)
+    let l:commit_line = flog#floggraph#nav#JumpToCommit(a:saved_commit.hash)[0]
   endif
 
-  if commit_line < 0
-    # If commit was not found, restore full window position
-    win.Restore(saved_win)
+  if l:commit_line < 0
+    " If commit was not found, restore full window position
+    call flog#win#Restore(a:saved_win)
     return {}
   endif
 
-  # Try restoring the relative position
-  const [line_offset, new_col] = RestoreOffset(
-    saved_win,
-    saved_commit)
+  " Try restoring the relative position
+  let [l:line_offset, l:new_col] = flog#floggraph#commit#RestoreOffset(
+        \ a:saved_win,
+        \ a:saved_commit)
 
-  # Restore parts of window position
-  win.RestoreTopline(saved_win)
-  if new_col == 0
-    win.RestoreVcol(saved_win)
+  " Restore parts of window position
+  call flog#win#RestoreTopline(a:saved_win)
+  if l:new_col == 0
+    call flog#win#RestoreVcol(a:saved_win)
   endif
 
-  return saved_commit
-enddef
+  return a:saved_commit
+endfunction

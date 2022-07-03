@@ -4,21 +4,15 @@ vim9script
 # This file contains functions for generating the commit graph.
 #
 
-import autoload 'flog/shell.vim'
-import autoload 'flog/state.vim' as flog_state
-
-import autoload 'flog/floggraph/buf.vim'
-import autoload 'flog/lua.vim'
-
 export def GetUsingInternalLua(git_cmd: string): dict<any>
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
+  flog#floggraph#buf#AssertFlogBuf()
+  const state = flog#state#GetBufState()
 
   # Check version
-  lua.CheckInternalVersion()
+  flog#lua#CheckInternalVersion()
 
   # Load graph lib
-  const graph_lib = lua.GetLibPath('graph.lua')
+  const graph_lib = flog#lua#GetLibPath('graph.lua')
   exec 'luafile ' .. fnameescape(graph_lib)
 
   # Set temporary vars
@@ -49,14 +43,14 @@ export def GetUsingInternalLua(git_cmd: string): dict<any>
 enddef
 
 export def GetUsingBinLua(git_cmd: string): dict<any>
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
+  flog#floggraph#buf#AssertFlogBuf()
+  const state = flog#state#GetBufState()
 
   # Get paths
-  const script_path = lua.GetLibPath('graph_bin.lua')
+  const script_path = flog#lua#GetLibPath('graph_bin.lua')
 
   # Build command
-  var cmd = lua.GetBin()
+  var cmd = flog#lua#GetBin()
   cmd ..= ' '
   cmd ..= shellescape(script_path)
   cmd ..= ' '
@@ -67,7 +61,7 @@ export def GetUsingBinLua(git_cmd: string): dict<any>
   cmd ..= shellescape(git_cmd)
 
   # Run command
-  const out = shell.Run(cmd)
+  const out = flog#shell#Run(cmd)
 
   # Parse number of commits
   const ncommits = str2nr(out[0])
@@ -140,19 +134,19 @@ export def GetUsingBinLua(git_cmd: string): dict<any>
 enddef
 
 export def Get(git_cmd: string): dict<any>
-  buf.AssertFlogBuf()
+  flog#floggraph#buf#AssertFlogBuf()
 
-  const lua_path_info = lua.SetLuaPath()
+  const lua_path_info = flog#lua#SetLuaPath()
   var graph: dict<any>
 
   try
-    if lua.ShouldUseInternal()
+    if flog#lua#ShouldUseInternal()
       graph =  GetUsingInternalLua(git_cmd)
     else
       graph = GetUsingBinLua(git_cmd)
     endif
   finally
-    lua.ResetLuaPath(lua_path_info)
+    flog#lua#ResetLuaPath(lua_path_info)
   endtry
 
   return graph

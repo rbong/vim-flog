@@ -1,228 +1,217 @@
-vim9script
+"
+" This file contains utility functions for "flog#Exec()".
+"
 
-#
-# This file contains utility functions for "flog#Exec()".
-#
+function! flog#exec#GetCacheRefs(cache, commit) abort
+  let l:ref_cache = a:cache.refs
 
-import autoload 'flog/args.vim' as flog_args
-import autoload 'flog/fugitive.vim'
-import autoload 'flog/shell.vim'
-import autoload 'flog/state.vim' as flog_state
+  let l:refs = flog#state#GetCommitRefs(a:commit)
 
-import autoload 'flog/floggraph/buf.vim'
-import autoload 'flog/floggraph/commit.vim' as floggraph_commit
-import autoload 'flog/floggraph/mark.vim'
+  let l:ref_cache[a:commit.hash] = l:refs
+  return l:refs
+endfunction
 
-export def GetCacheRefs(cache: dict<any>, commit: dict<any>): list<dict<any>>
-  var ref_cache = cache.refs
-
-  const refs = flog_state.GetCommitRefs(commit)
-
-  ref_cache[commit.hash] = refs
-  return refs
-enddef
-
-export def FormatHash(save: bool): string
-  const commit = floggraph_commit.GetAtLine('.')
+function! flog#exec#FormatHash(save) abort
+  let l:commit = flog#floggraph#commit#GetAtLine('.')
   
-  if !empty(commit)
-    if save
-      mark.SetInternal('!', '.')
+  if !empty(l:commit)
+    if a:save
+      call flog#floggraph#mark#SetInternal('!', '.')
     endif
-    return commit.hash
+    return l:commit.hash
   endif
 
   return ''
-enddef
+endfunction
 
-export def FormatMarkHash(key: string): string
-  const commit = mark.Get(key)
-  return empty(commit) ? '' : commit.hash
-enddef
+function! flog#exec#FormatMarkHash(key) abort
+  let l:commit = flog#floggraph#mark#Get(a:key)
+  return empty(l:commit) ? '' : l:commit.hash
+endfunction
 
-export def FormatCommitBranch(cache: dict<any>, commit: dict<any>): string
-  var local_branch = ''
-  var remote_branch = ''
+function! flog#exec#FormatCommitBranch(cache, commit) abort
+  let l:local_branch = ''
+  let l:remote_branch = ''
 
-  for ref in GetCacheRefs(cache, commit)
-    # Skip non-branches
-    if ref.tag || ref.tail =~ 'HEAD$'
+  for l:ref in flog#exec#GetCacheRefs(a:cache, a:commit)
+    " Skip non-branches
+    if l:ref.tag || l:ref.tail =~# 'HEAD$'
       continue
     endif
 
-    # Get local branch
-    if empty(ref.remote) && empty(ref.prefix)
-      local_branch = ref.tail
+    " Get local branch
+    if empty(l:ref.remote) && empty(l:ref.prefix)
+      let l:local_branch = l:ref.tail
       break
     endif
 
-    # Get remote branch
-    if empty(remote_branch) && !empty(ref.remote)
-      remote_branch = ref.path
+    " Get remote branch
+    if empty(l:remote_branch) && !empty(l:ref.remote)
+      let l:remote_branch = l:ref.path
     endif
   endfor
 
-  const branch = empty(local_branch) ? remote_branch : local_branch
+  let l:branch = empty(l:local_branch) ? l:remote_branch : l:local_branch
 
-  return shell.Escape(branch)
-enddef
+  return flog#shell#Escape(l:branch)
+endfunction
 
-export def FormatBranch(cache: dict<any>): string
-  const commit = floggraph_commit.GetAtLine('.')
-  return FormatCommitBranch(cache, commit)
-enddef
+function! flog#exec#FormatBranch(cache) abort
+  let l:commit = flog#floggraph#commit#GetAtLine('.')
+  return flog#exec#FormatCommitBranch(a:cache, l:commit)
+endfunction
 
-export def FormatMarkBranch(cache: dict<any>, key: string): string
-  const commit = mark.Get(key)
-  return FormatCommitBranch(cache, commit)
-enddef
+function! flog#exec#FormatMarkBranch(cache, key) abort
+  let l:commit = flog#floggraph#mark#Get(a:key)
+  return flog#exec#FormatCommitBranch(a:cache, l:commit)
+endfunction
 
-export def FormatCommitLocalBranch(cache: dict<any>, commit: dict<any>): string
-  var branch = FormatCommitBranch(cache, commit)
-  return substitute(branch, '.*/', '', '')
-enddef
+function! flog#exec#FormatCommitLocalBranch(cache, commit) abort
+  let l:branch = flog#exec#FormatCommitBranch(a:cache, a:commit)
+  return substitute(l:branch, '.*/', '', '')
+endfunction
 
-export def FormatLocalBranch(cache: dict<any>): string
-  const commit = floggraph_commit.GetAtLine('.')
-  return FormatCommitLocalBranch(cache, commit)
-enddef
+function! flog#exec#FormatLocalBranch(cache) abort
+  let l:commit = flog#floggraph#commit#GetAtLine('.')
+  return flog#exec#FormatCommitLocalBranch(a:cache, l:commit)
+endfunction
 
-export def FormatMarkLocalBranch(cache: dict<any>, key: string): string
-  const commit = mark.Get(key)
-  return FormatCommitLocalBranch(cache, commit)
-enddef
+function! flog#exec#FormatMarkLocalBranch(cache, key) abort
+  let l:commit = flog#floggraph#mark#Get(a:key)
+  return flog#exec#FormatCommitLocalBranch(a:cache, l:commit)
+endfunction
 
-export def FormatPath(): string
-  const state = flog_state.GetBufState()
-  var path = state.opts.path
+function! flog#exec#FormatPath() abort
+  let l:state = flog#state#GetBufState()
+  let l:path = l:state.opts.path
 
-  if !empty(state.opts.limit)
-    const [range, limit_path] = flog_args.SplitGitLimitArg(state.opts.limit)
+  if !empty(l:state.opts.limit)
+    let [l:range, l:limit_path] = flog#args#SplitGitLimitArg(l:state.opts.limit)
 
-    if empty(limit_path)
+    if empty(l:limit_path)
       return ''
     endif
 
-    path = [limit_path]
-  elseif empty(path)
+    let l:path = [l:limit_path]
+  elseif empty(l:path)
     return ''
   endif
 
-  return join(shell.EscapeList(path), ' ')
-enddef
+  return join(flog#shell#EscapeList(l:path), ' ')
+endfunction
 
-export def FormatIndexTree(cache: dict<any>): string
-  if empty(cache.index_tree)
-    var cmd = fugitive.GetGitCommand()
-    cmd ..= ' write-tree'
-    cache.index_tree = shell.Run(cmd)[0]
+function! flog#exec#FormatIndexTree(cache) abort
+  if empty(a:cache.index_tree)
+    let l:cmd = flog#fugitive#GetGitCommand()
+    let l:cmd .= ' write-tree'
+    let a:cache.index_tree = flog#shell#Run(l:cmd)[0]
   endif
-  return cache.index_tree
-enddef
+  return a:cache.index_tree
+endfunction
 
-export def FormatItem(cache: dict<any>, item: string): string
-  var item_cache = cache.items
+function! flog#exec#FormatItem(cache, item) abort
+  let l:item_cache = a:cache.items
 
-  # Return cached items
+  " Return cached items
 
-  if has_key(item_cache, item)
-    return item_cache[item]
+  if has_key(l:item_cache, a:item)
+    return l:item_cache[a:item]
   endif
 
-  # Format the item
+  " Format the item
 
-  var formatted_item = ''
+  let l:formatted_item = ''
 
-  if item == 'h'
-    formatted_item = FormatHash(true)
-  elseif item == 'H'
-    formatted_item = FormatHash(false)
-  elseif item =~ "^h'."
-    formatted_item = FormatMarkHash(item[2 : ])
-  elseif item =~ 'b'
-    formatted_item = FormatBranch(cache)
-  elseif item =~ "^b'."
-    formatted_item = FormatMarkBranch(cache, item[2 : ])
-  elseif item =~ 'l'
-    formatted_item = FormatLocalBranch(cache)
-  elseif item =~ "^l'."
-    formatted_item = FormatMarkLocalBranch(cache, item[2 : ])
-  elseif item == 'p'
-    formatted_item = FormatPath()
-  elseif item == 't'
-    formatted_item = FormatIndexTree(cache)
+  if a:item ==# 'h'
+    let l:formatted_item = flog#exec#FormatHash(v:true)
+  elseif a:item ==# 'H'
+    let l:formatted_item = flog#exec#FormatHash(v:false)
+  elseif a:item =~# "^h'."
+    let l:formatted_item = flog#exec#FormatMarkHash(a:item[2 : ])
+  elseif a:item =~# 'b'
+    let l:formatted_item = flog#exec#FormatBranch(a:cache)
+  elseif a:item =~# "^b'."
+    let l:formatted_item = flog#exec#FormatMarkBranch(a:cache, a:item[2 : ])
+  elseif a:item =~# 'l'
+    let l:formatted_item = flog#exec#FormatLocalBranch(a:cache)
+  elseif a:item =~# "^l'."
+    let l:formatted_item = flog#exec#FormatMarkLocalBranch(a:cache, a:item[2 : ])
+  elseif a:item ==# 'p'
+    let l:formatted_item = flog#exec#FormatPath()
+  elseif a:item ==# 't'
+    let l:formatted_item = flog#exec#FormatIndexTree(a:cache)
   else
-    echoerr printf('error converting "%s"', item)
+    echoerr printf('error converting "%s"', a:item)
     throw g:flog_unsupported_exec_format_item
   endif
 
-  # Handle result
-  item_cache[item] = formatted_item
-  return formatted_item
-enddef
+  " Handle result
+  let l:item_cache[a:item] = l:formatted_item
+  return l:formatted_item
+endfunction
 
-export def Format(str: string): string
-  buf.AssertFlogBuf()
+function! flog#exec#Format(str) abort
+  call flog#floggraph#buf#AssertFlogBuf()
 
-  # Special token flags
-  var is_in_item = false
-  var is_in_long_item = false
+  " Special token flags
+  let l:is_in_item = v:false
+  let l:is_in_long_item = v:false
 
-  # Special token data
-  var long_item = ''
+  " Special token data
+  let l:long_item = ''
 
-  # Memoized data
-  var cache = {
-    'items': {},
-    'refs': {},
-    'index_tree': '',
-    }
+  " Memoized data
+  let l:cache = {
+        \ 'items': {},
+        \ 'refs': {},
+        \ 'index_tree': '',
+        \ }
 
-  # Return data
-  var result = ''
+  " Return data
+  let l:result = ''
 
-  for char in split(str, '\zs')
-    if is_in_long_item
-      # Parse characters in %()
+  for l:char in split(a:str, '\zs')
+    if l:is_in_long_item
+      " Parse characters in %()
 
-      if char == ')'
-        # End long specifier
-        const formatted_item = FormatItem(cache, long_item)
-        if empty(formatted_item)
+      if l:char ==# ')'
+        " End long specifier
+        let l:formatted_item = flog#exec#FormatItem(l:cache, l:long_item)
+        if empty(l:formatted_item)
           return ''
         endif
 
-        result ..= formatted_item
-        is_in_long_item = false
-        long_item = ''
+        let l:result .= l:formatted_item
+        let l:is_in_long_item = v:false
+        let l:long_item = ''
       else
-        long_item ..= char
+        let l:long_item .= l:char
       endif
-    elseif is_in_item
-      # Parse character after %
+    elseif l:is_in_item
+      " Parse character after %
 
-      if char == '('
-        # Start long specifier
-        is_in_long_item = true
+      if l:char ==# '('
+        " Start long specifier
+        let l:is_in_long_item = v:true
       else
-        # Parse specifier character
-        const formatted_item = FormatItem(cache, char)
-        if empty(formatted_item)
+        " Parse specifier character
+        let l:formatted_item = flog#exec#FormatItem(l:cache, l:char)
+        if empty(l:formatted_item)
           return ''
         endif
 
-        result ..= formatted_item
+        let l:result .= l:formatted_item
       endif
 
-      is_in_item = false
-    elseif char == '%'
-      # Start specifier
-      is_in_item = true
+      let l:is_in_item = v:false
+    elseif l:char ==# '%'
+      " Start specifier
+      let l:is_in_item = v:true
     else
-      # Append normal character
-      result ..= char
+      " Append normal character
+      let l:result .= l:char
     endif
   endfor
 
-  return result
-enddef
+  return l:result
+endfunction

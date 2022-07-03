@@ -1,69 +1,62 @@
-vim9script
+"
+" This file contains functions for working with commit marks in "floggraph" buffers.
+"
 
-#
-# This file contains functions for working with commit marks in "floggraph" buffers.
-#
+function! flog#floggraph#mark#SetInternal(key, line) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
+  let l:commit = flog#floggraph#commit#GetAtLine(a:line)
+  return flog#state#SetInternalCommitMark(l:state, a:key, l:commit)
+endfunction
 
-import autoload 'flog/state.vim' as flog_state
+function! flog#floggraph#mark#Set(key, line) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
+  let l:commit = flog#floggraph#commit#GetAtLine(a:line)
+  return flog#state#SetCommitMark(l:state, a:key, l:commit)
+endfunction
 
-import autoload 'flog/floggraph/buf.vim'
-import autoload 'flog/floggraph/commit.vim' as floggraph_commit
+function! flog#floggraph#mark#SetJump(line = '.') abort
+  return flog#floggraph#mark#Set("'", a:line)
+endfunction
 
-export def SetInternal(key: string, line: any): dict<any>
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
-  const commit = floggraph_commit.GetAtLine(line)
-  return flog_state.SetInternalCommitMark(state, key, commit)
-enddef
+function! flog#floggraph#mark#Get(key) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-export def Set(key: string, line: any): dict<any>
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
-  const commit = floggraph_commit.GetAtLine(line)
-  return flog_state.SetCommitMark(state, key, commit)
-enddef
-
-export def SetJump(line: any = '.'): dict<any>
-  return Set("'", line)
-enddef
-
-export def Get(key: string): dict<any>
-  buf.AssertFlogBuf()
-  const state = flog_state.GetBufState()
-
-  if key =~ '[<>]'
-    return floggraph_commit.GetAtLine("'" .. key)
+  if a:key =~# '[<>]'
+    return flog#floggraph#commit#GetAtLine("'" . a:key)
   endif
 
-  if key == '@'
-    return floggraph_commit.GetByRef('HEAD')
+  if a:key ==# '@'
+    return flog#floggraph#commit#GetByRef('HEAD')
   endif
-  if key =~ '[~^]'
-    return floggraph_commit.GetByRef('HEAD~')
+  if a:key =~# '[~^]'
+    return flog#floggraph#commit#GetByRef('HEAD~')
   endif
 
-  if flog_state.IsCancelCommitMark(key)
+  if flog#state#IsCancelCommitMark(a:key)
     throw g:flog_invalid_mark
   endif
 
-  if !flog_state.HasCommitMark(state, key)
+  if !flog#state#HasCommitMark(l:state, a:key)
     return {}
   endif
 
-  return flog_state.GetCommitMark(state, key)
-enddef
+  return flog#state#GetCommitMark(l:state, a:key)
+endfunction
 
-export def PrintAll(): dict<any>
-  const marks = flog_state.GetBufState().commit_marks
+function! flog#floggraph#mark#PrintAll() abort
+  let l:marks = flog#state#GetBufState().commit_marks
 
-  if empty(marks)
+  if empty(l:marks)
     echo 'No commit marks.'
-    return marks
+    return l:marks
   endif
 
-  for key in order(keys(marks))
-    echo '  ' .. key .. '  ' .. marks[key].hash
+  for l:key in order(keys(l:marks))
+    echo '  ' . l:key . '  ' . l:marks[l:key].hash
   endfor
 
-  return marks
-enddef
+  return l:marks
+endfunction

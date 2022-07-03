@@ -1,65 +1,61 @@
-vim9script
+"
+" This file contains functions for handling args to commands.
+"
 
-#
-# This file contains functions for handling args to commands.
-#
+function! flog#args#SplitArg(arg) abort
+  let l:match = matchlist(a:arg, '\v(.{-}(\=|$))(.*)')
+  return [l:match[1], l:match[3]]
+endfunction
 
-import autoload 'flog/fugitive.vim'
+function! flog#args#ParseArg(arg) abort
+  return flog#args#SplitArg(a:arg)[1]
+endfunction
 
-export def SplitArg(arg: string): list<string>
-  const match = matchlist(arg, '\v(.{-}(\=|$))(.*)')
-  return [match[1], match[3]]
-enddef
+function! flog#args#UnescapeArg(arg) abort
+  let l:unescaped = ''
+  let l:is_escaped = v:false
 
-export def ParseArg(arg: string): string
-  return SplitArg(arg)[1]
-enddef
-
-export def UnescapeArg(arg: string): string
-  var unescaped = ''
-  var is_escaped = false
-
-  for char in split(arg, '\zs')
-    if char == '\' && !is_escaped
-      is_escaped = true
+  for l:char in split(a:arg, '\zs')
+    if l:char ==# '\' && !l:is_escaped
+      let l:is_escaped = v:true
     else
-      unescaped ..= char
-      is_escaped = false
+      let l:unescaped .= l:char
+      let l:is_escaped = v:false
     endif
   endfor
 
-  return unescaped
-enddef
+  return l:unescaped
+endfunction
 
-export def SplitGitLimitArg(limit: string): list<string>
-  const [match, start, end] = matchstrpos(limit, '^.\{1,}:\zs')
-  if start < 0
-    return [limit, '']
+function! flog#args#SplitGitLimitArg(limit) abort
+  let [l:match, l:start, l:end] = matchstrpos(a:limit, '^.\{1,}:\zs')
+  if l:start < 0
+    return [a:limit, '']
   endif
-  return [limit[ : start - 1], limit[start : ]]
-enddef
+  return [a:limit[ : l:start - 1], a:limit[l:start : ]]
+endfunction
 
-export def ParseGitLimitArg(workdir: string, arg: string): string
-  const arg_opt = ParseArg(arg)
-  var [range, path] = SplitGitLimitArg(arg_opt)
+function! flog#args#ParseGitLimitArg(workdir, arg) abort
+  let l:arg_opt = flog#args#ParseArg(a:arg)
+  let [l:range, l:path] = flog#args#SplitGitLimitArg(l:arg_opt)
 
-  if empty(path)
-    return arg_opt
+  if empty(l:path)
+    return l:arg_opt
   endif
 
-  return range .. fugitive.GetRelativePath(workdir, expand(path))
-enddef
+  return l:range . flog#fugitive#GetRelativePath(a:workdir, expand(l:path))
+endfunction
 
-export def ParseGitPathArg(workdir: string, arg: string): string
-  const arg_opt = ParseArg(arg)
-  return fugitive.GetRelativePath(workdir, expand(arg_opt))
-enddef
+function! flog#args#ParseGitPathArg(workdir, arg) abort
+  let l:arg_opt = flog#args#ParseArg(a:arg)
+  return flog#fugitive#GetRelativePath(a:workdir, expand(l:arg_opt))
+endfunction
 
-export def FilterCompletions(arg_lead: string, completions: list<string>): list<string>
-  const lead = '^' .. escape(arg_lead, '\\')
-  return filter(copy(completions), (_, val) => val =~ lead)
-enddef
+function! flog#args#FilterCompletions(arg_lead, completions) abort
+  let l:lead = '^' . escape(a:arg_lead, '\\')
+  return filter(copy(a:completions), 'v:val =~# l:lead')
+endfunction
 
-export def EscapeCompletions(lead: string, completions: list<string>): list<string>
-  return map(copy(completions), (_, val) => lead .. substitute(val, ' ', '\\ ', 'g'))
-enddef
+function! flog#args#EscapeCompletions(lead, completions) abort
+  return map(copy(a:completions), 'a:lead . substitute(v:val, " ", "\\\\ ", "g")')
+endfunction

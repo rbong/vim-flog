@@ -1,82 +1,75 @@
-vim9script
+"
+" This file contains functions for modifying options in "floggraph" buffers.
+"
 
-#
-# This file contains functions for modifying options in "floggraph" buffers.
-#
+function! flog#floggraph#opts#Toggle(name) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:opts = flog#state#GetBufState().opts
 
-import autoload 'flog/global_opts.vim'
-import autoload 'flog/state.vim' as flog_state
+  let l:val = !l:opts[a:name]
+  let l:opts[a:name] = l:val
 
-import autoload 'flog/floggraph/buf.vim'
+  call flog#floggraph#buf#Update()
 
-export def Toggle(name: string): bool
-  buf.AssertFlogBuf()
-  const opts = flog_state.GetBufState().opts
+  return l:val
+endfunction
 
-  const val = !opts[name]
-  opts[name] = val
+function! flog#floggraph#opts#ToggleAll() abort
+  return flog#floggraph#opts#Toggle('all')
+endfunction
 
-  buf.Update()
+function! flog#floggraph#opts#ToggleBisect() abort
+  return flog#floggraph#opts#Toggle('bisect')
+endfunction
 
-  return val
-enddef
+function! flog#floggraph#opts#ToggleMerges() abort
+  return flog#floggraph#opts#Toggle('merges')
+endfunction
 
-export def ToggleAll(): bool
-  return Toggle('all')
-enddef
+function! flog#floggraph#opts#ToggleReflog() abort
+  return flog#floggraph#opts#Toggle('reflog')
+endfunction
 
-export def ToggleBisect(): bool
-  return Toggle('bisect')
-enddef
+function! flog#floggraph#opts#ToggleReverse() abort
+  return flog#floggraph#opts#Toggle('reverse')
+endfunction
 
-export def ToggleMerges(): bool
-  return Toggle('merges')
-enddef
+function! flog#floggraph#opts#ToggleGraph() abort
+  return flog#floggraph#opts#Toggle('graph')
+endfunction
 
-export def ToggleReflog(): bool
-  return Toggle('reflog')
-enddef
+function! flog#floggraph#opts#TogglePatch() abort
+  return flog#floggraph#opts#Toggle('patch')
+endfunction
 
-export def ToggleReverse(): bool
-  return Toggle('reverse')
-enddef
+function! flog#floggraph#opts#CycleOrder() abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:opts = flog#state#GetBufState().opts
 
-export def ToggleGraph(): bool
-  return Toggle('graph')
-enddef
+  let l:default_order = l:opts.graph ? 'topo' : 'date'
 
-export def TogglePatch(): bool
-  return Toggle('patch')
-enddef
-
-export def CycleOrder(): string
-  buf.AssertFlogBuf()
-  const opts = flog_state.GetBufState().opts
-
-  const default_order = opts.graph ? 'topo' : 'date'
-
-  var order = opts.order
-  if empty(order)
-    order = default_order
+  let l:order = l:opts.order
+  if empty(l:order)
+    let l:order = l:default_order
   endif
 
-  const order_type = global_opts.GetOrderType(order)
+  let l:order_type = flog#global_opts#GetOrderType(l:order)
 
-  if empty(order_type)
-    order = g:flog_order_types[0].name
+  if empty(l:order_type)
+    let l:order = g:flog_order_types[0].name
   else
-    const order_index = index(g:flog_order_types, order_type)
+    let l:order_index = index(g:flog_order_types, l:order_type)
 
-    if order_index == len(g:flog_order_types) - 1
-      order = g:flog_order_types[0].name
+    if l:order_index == len(g:flog_order_types) - 1
+      let l:order = g:flog_order_types[0].name
     else
-      order = g:flog_order_types[order_index + 1].name
+      let l:order = g:flog_order_types[l:order_index + 1].name
     endif
   endif
 
-  opts.order = order
+  let l:opts.order = l:order
 
-  buf.Update()
+  call flog#floggraph#buf#Update()
 
-  return order
-enddef
+  return l:order
+endfunction
