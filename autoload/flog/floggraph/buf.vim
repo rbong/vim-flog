@@ -206,7 +206,11 @@ function! flog#floggraph#buf#Close() abort
 
   call flog#win#Restore(graph_win)
   if flog#win#Is(graph_win)
+    let l:tab_info = flog#tab#GetInfo()
     silent! bdelete!
+    if flog#tab#DidCloseRight(l:tab_info)
+      tabprev
+    end
   endif
 
   return flog#win#GetSavedId(graph_win)
