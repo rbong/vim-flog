@@ -1,7 +1,7 @@
 vim9script
 
 #
-# This file contains functions for generating the commit graph.
+# This file contains functions for generating the commit graph in Vim.
 #
 
 export def GetUsingInternalLua(git_cmd: string): dict<any>
@@ -21,10 +21,17 @@ export def GetUsingInternalLua(git_cmd: string): dict<any>
 
   # Build command
   var cmd = 'flog_get_graph('
+  # enable_vim
   cmd ..= 'true, '
+  # enable_nvim
+  cmd ..= 'false, '
+  # enable_porcelain
   cmd ..= 'true, '
+  # start_token
   cmd ..= 'vim.eval("g:flog_commit_start_token"), '
+  # enable_graph
   cmd ..= 'vim.eval("g:flog_tmp_enable_graph"), '
+  # cmd
   cmd ..= 'vim.eval("g:flog_tmp_git_cmd"))'
 
   # Evaluate command
@@ -54,10 +61,13 @@ export def GetUsingBinLua(git_cmd: string): dict<any>
   cmd ..= ' '
   cmd ..= shellescape(script_path)
   cmd ..= ' '
+  # start_token
   cmd ..= shellescape(g:flog_commit_start_token)
   cmd ..= ' '
+  # enable_graph
   cmd ..= state.opts.graph ? 'true' : 'false'
   cmd ..= ' '
+  # cmd
   cmd ..= shellescape(git_cmd)
 
   # Run command

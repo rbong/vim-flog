@@ -28,8 +28,9 @@ local missing_parent_str = '┊ '
 local missing_parent_branch_str = '│ '
 local missing_parent_empty_str = '  '
 
-function flog_get_graph(
+local function flog_get_graph(
     enable_vim,
+    enable_nvim,
     enable_porcelain,
     start_token,
     enable_graph,
@@ -110,7 +111,7 @@ function flog_get_graph(
   end
 
   -- Output number of commits
-  if not enable_vim then
+  if not enable_vim and not enable_nvim then
     print(ncommits)
   end
 
@@ -562,11 +563,16 @@ function flog_get_graph(
     local should_out_complex = should_out_merge and ncomplex_merges > 0
     local should_out_missing_parents = nmissing_parents > 0
 
-    if enable_vim then
+    if enable_vim or enable_nvim then
       -- Output using Vim
 
       -- Init Vim commit
-      local vim_commit = vim.dict()
+      local vim_commit
+      if enable_vim then
+        vim_commit = vim.dict()
+      else
+        vim_commit = {}
+      end
 
       -- Set commit details
       vim_commit.hash = commit_hash
@@ -713,12 +719,20 @@ function flog_get_graph(
     end
   end
 
-  if enable_vim then
-    return vim.dict({
-        output = vim_out,
-        commits = vim_commits,
-        commits_by_hash = vim_commits_by_hash,
-        line_commits = vim_line_commits,
-      })
+  if enable_vim or enable_nvim then
+    local dict_out = {
+      output = vim_out,
+      commits = vim_commits,
+      commits_by_hash = vim_commits_by_hash,
+      line_commits = vim_line_commits,
+    }
+
+    if enable_vim then
+      return vim.dict(dict_out)
+    else
+      return dict_out
+    end
   end
 end
+
+_G.flog_get_graph = flog_get_graph

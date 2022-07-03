@@ -132,7 +132,11 @@ function! flog#floggraph#buf#Update() abort
 
   let cmd = flog#floggraph#git#BuildLogCmd()
   call flog#state#SetPrevLogCmd(state, cmd)
-  let graph = flog#graph#Get(cmd)
+  if has('nvim')
+    let graph = flog#graph#nvim#Get(cmd)
+  else
+    let graph = flog#graph#vim#Get(cmd)
+  end
 
   " Record previous commit
   let last_commit = flog#floggraph#commit#GetAtLine('.')

@@ -5,6 +5,8 @@ require('flog/graph')
 flog_get_graph(
     -- enable_vim
     false,
+    -- enable_nvim
+    false,
     -- enable_porcelain
     true,
     -- start_token
