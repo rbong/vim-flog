@@ -6,7 +6,17 @@ Let users customize how they use Flog so they can use their personal workflows a
 
 ## Running Tests
 
-Simply run `./t/run.sh`.
+**Vim**:
+
+```
+./t/run.sh
+```
+
+**Neovim**:
+
+```
+NVIM=true ./t/run.sh
+```
 
 ## Pull Request Process
 

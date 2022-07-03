@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 set -e
 
@@ -39,7 +39,7 @@ git_checkout 1-c
 git_commit_tag 1-d
 git_merge -m 1-e 2-c 3-b
 
-VIM_OUT=$(get_relative_dir "$TMP")/out
+VIM_OUT="$TMP/out"
 run_vim_command <<EOF
 Flog -order=date -format=%s
 silent w $VIM_OUT

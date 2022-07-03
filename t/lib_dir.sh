@@ -10,10 +10,6 @@ get_tmp_dir() {
   echo "$BASE_DIR/.test/tmp/$1"
 }
 
-get_relative_dir() {
-  realpath --relative-to="." -- "$1"
-}
-
 create_abs_dir() {
   mkdir -p "$1"
   echo "$1"
