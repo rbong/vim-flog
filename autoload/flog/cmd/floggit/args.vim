@@ -71,6 +71,11 @@ function! flog#cmd#floggit#args#Parse(args) abort
         \ }
 endfunction
 
+function! flog#cmd#floggit#args#CompleteOpts(arg_lead, cmd_line, cursor_pos) abort
+  return flog#args#FilterCompletions(a:arg_lead,
+        \ ['-f', '-u', '-t', '--focus', '--update', '--tmp'])
+endfunction
+
 function! flog#cmd#floggit#args#CompleteCommitRefs(commit) abort
   let l:completions = []
 
@@ -105,7 +110,7 @@ function! flog#cmd#floggit#args#CompleteCommitRefs(commit) abort
   return l:completions
 endfunction
 
-function! flog#cmd#floggit#args#CompleteFlog(arg_lead, cmd_line, cursor_pos) abort
+function! flog#cmd#floggit#args#CompleteContext(arg_lead, cmd_line, cursor_pos) abort
   let l:line = line('.')
   let l:firstline = line("'<")
   let l:lastline = line("'>")
@@ -175,9 +180,20 @@ function! flog#cmd#floggit#args#Complete(arg_lead, cmd_line, cursor_pos) abort
   let l:fugitive_completions = flog#fugitive#Complete(
         \ flog#shell#Escape(a:arg_lead), a:cmd_line, a:cursor_pos)
 
-  " Complete git/subcommand args only
-  if l:parsed_args.is_subcommand || l:parsed_args.subcommand_index < 0
+  " Complete subcommand args only
+  if l:parsed_args.is_subcommand
     return l:fugitive_completions
+  endif
+
+  " Complete Floggit options and Git base args
+  if l:parsed_args.subcommand_index < 0
+    if l:is_flog
+      let l:opt_completions = flog#cmd#floggit#args#CompleteOpts(
+            \ a:arg_lead, a:cmd_line, a:cursor_pos)
+      return opt_completions + l:fugitive_completions
+    else
+      return l:fugitive_completions
+    endif
   endif
 
   let l:completions = []
@@ -185,7 +201,7 @@ function! flog#cmd#floggit#args#Complete(arg_lead, cmd_line, cursor_pos) abort
   " Complete line
   if l:is_flog
     let l:completions += flog#shell#EscapeList(
-          \ flog#cmd#floggit#args#CompleteFlog(a:arg_lead, a:cmd_line, a:cursor_pos))
+          \ flog#cmd#floggit#args#CompleteContext(a:arg_lead, a:cmd_line, a:cursor_pos))
   endif
 
   " Complete state
