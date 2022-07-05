@@ -2,7 +2,7 @@
 " This file contains functions for handling args to the ":Floggit" command.
 "
 
-function! flog#cmd#flog_git#args#HasParam(arg) abort
+function! flog#cmd#floggit#args#HasParam(arg) abort
   if a:arg =~# '^--exec-path'
     return v:true
   elseif a:arg =~# '^--work-tree'
@@ -17,7 +17,7 @@ function! flog#cmd#flog_git#args#HasParam(arg) abort
   return v:false
 endfunction
 
-function! flog#cmd#flog_git#args#Parse(args) abort
+function! flog#cmd#floggit#args#Parse(args) abort
   let l:nargs = len(a:args)
 
   " Find command and parse potions
@@ -49,7 +49,7 @@ function! flog#cmd#flog_git#args#Parse(args) abort
       call add(l:git_args, l:arg)
 
       " Handle param in next arg
-      if l:arg ==# '-c' || flog#cmd#flog_git#args#HasParam(l:arg) && l:arg !~# '='
+      if l:arg ==# '-c' || flog#cmd#floggit#args#HasParam(l:arg) && l:arg !~# '='
         let l:arg_index += 1
         call add(l:git_args, a:args[l:arg_index])
       endif
@@ -71,7 +71,7 @@ function! flog#cmd#flog_git#args#Parse(args) abort
         \ }
 endfunction
 
-function! flog#cmd#flog_git#args#CompleteCommitRefs(commit) abort
+function! flog#cmd#floggit#args#CompleteCommitRefs(commit) abort
   let l:completions = []
 
   for l:ref in flog#state#GetCommitRefs(a:commit)
@@ -105,7 +105,7 @@ function! flog#cmd#flog_git#args#CompleteCommitRefs(commit) abort
   return l:completions
 endfunction
 
-function! flog#cmd#flog_git#args#CompleteFlog(arg_lead, cmd_line, cursor_pos) abort
+function! flog#cmd#floggit#args#CompleteFlog(arg_lead, cmd_line, cursor_pos) abort
   let l:line = line('.')
   let l:firstline = line("'<")
   let l:lastline = line("'>")
@@ -141,13 +141,13 @@ function! flog#cmd#flog_git#args#CompleteFlog(arg_lead, cmd_line, cursor_pos) ab
     endif
 
     if l:has_first
-      let l:completions += flog#cmd#flog_git#args#CompleteCommitRefs(l:first_commit)
+      let l:completions += flog#cmd#floggit#args#CompleteCommitRefs(l:first_commit)
       if l:has_last
-        let l:last_completions = flog#cmd#flog_git#args#CompleteCommitRefs(l:last_commit)
+        let l:last_completions = flog#cmd#floggit#args#CompleteCommitRefs(l:last_commit)
         let l:completions += flog#list#Exclude(l:last_completions, l:completions)
       endif
     else
-      let l:completions += flog#cmd#flog_git#args#CompleteCommitRefs(l:last_commit)
+      let l:completions += flog#cmd#floggit#args#CompleteCommitRefs(l:last_commit)
     endif
 
     return l:completions
@@ -158,18 +158,18 @@ function! flog#cmd#flog_git#args#CompleteFlog(arg_lead, cmd_line, cursor_pos) ab
     if empty(l:commit)
       return []
     endif
-    let l:completions = [l:commit.hash] + flog#cmd#flog_git#args#CompleteCommitRefs(l:commit)
+    let l:completions = [l:commit.hash] + flog#cmd#floggit#args#CompleteCommitRefs(l:commit)
   endif
 
   let l:completions = flog#args#FilterCompletions(a:arg_lead, l:completions)
   return l:completions
 endfunction
 
-function! flog#cmd#flog_git#args#Complete(arg_lead, cmd_line, cursor_pos) abort
+function! flog#cmd#floggit#args#Complete(arg_lead, cmd_line, cursor_pos) abort
   let l:is_flog = flog#floggraph#buf#IsFlogBuf()
   let l:has_state = flog#state#HasBufState()
 
-  let l:parsed_args = flog#cmd#flog_git#args#Parse(
+  let l:parsed_args = flog#cmd#floggit#args#Parse(
         \ split(a:cmd_line[ : a:cursor_pos], '\s', v:true)[1 :])
 
   let l:fugitive_completions = flog#fugitive#Complete(
@@ -185,7 +185,7 @@ function! flog#cmd#flog_git#args#Complete(arg_lead, cmd_line, cursor_pos) abort
   " Complete line
   if l:is_flog
     let l:completions += flog#shell#EscapeList(
-          \ flog#cmd#flog_git#args#CompleteFlog(a:arg_lead, a:cmd_line, a:cursor_pos))
+          \ flog#cmd#floggit#args#CompleteFlog(a:arg_lead, a:cmd_line, a:cursor_pos))
   endif
 
   " Complete state
