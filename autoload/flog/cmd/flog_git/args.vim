@@ -2,36 +2,73 @@
 " This file contains functions for handling args to the ":Floggit" command.
 "
 
-function! flog#cmd#flog_git#args#Parse(arg_lead, cmd_line, cursor_pos) abort
-  let l:split_args = split(a:cmd_line[ : a:cursor_pos], '\s', v:true)
-  let l:nargs = len(l:split_args)
+function! flog#cmd#flog_git#args#HasParam(arg) abort
+  if a:arg =~# '^--exec-path'
+    return v:true
+  elseif a:arg =~# '^--work-tree'
+    return v:true
+  elseif a:arg =~# '^--namespace'
+    return v:true
+  elseif a:arg =~# '^--super-prefix'
+    return v:true
+  elseif a:arg =~# '^--config-env'
+    return v:true
+  endif
+  return v:false
+endfunction
 
-  " Find command
+function! flog#cmd#flog_git#args#Parse(args) abort
+  let l:nargs = len(a:args)
 
-  let l:command_index = 1
-  let l:command = ''
-  while l:command_index < l:nargs
-    let l:arg = l:split_args[l:command_index]
+  " Find command and parse potions
 
-    if !empty(l:arg) && l:arg[0] !=# '-'
-      let l:command = l:arg
+  let l:arg_index = 0
+  let l:git_args = []
+  let l:subcommand = ''
+  let l:options = {
+        \ 'focus': v:false,
+        \ 'update': v:false,
+        \ 'tmp': v:false,
+        \ }
+
+  while l:arg_index < l:nargs
+    let l:arg = a:args[l:arg_index]
+
+    if l:arg !~# '^-'
+      let l:subcommand = l:arg
       break
     endif
 
-    let l:command_index += 1
+    if l:arg ==# '--focus' || l:arg ==# '-f'
+      let l:options.focus = v:true
+    elseif l:arg ==# '--update' || l:arg ==# '-u'
+      let l:options.update = v:true
+    elseif l:arg ==# '--tmp' || l:arg ==# '-t'
+      let l:options.tmp = v:true
+    else
+      call add(l:git_args, l:arg)
+
+      " Handle param in next arg
+      if l:arg ==# '-c' || flog#cmd#flog_git#args#HasParam(l:arg) && l:arg !~# '='
+        let l:arg_index += 1
+        call add(l:git_args, a:args[l:arg_index])
+      endif
+    endif
+
+    let l:arg_index += 1
   endwhile
 
-  " Return
+  " Resolve options and return
 
-  let l:is_command = v:false
-
-  if l:command_index == l:nargs
-    let l:command_index = -1
-  elseif l:command_index == l:nargs - 1
-    let l:is_command = v:true
-  endif
-
-  return [l:split_args, l:command_index, l:command, l:is_command]
+  return {
+        \ 'subcommand_index': l:arg_index >= l:nargs ? -1 : l:arg_index,
+        \ 'is_subcommand': l:arg_index == l:nargs - 1,
+        \ 'subcommand': l:subcommand,
+        \ 'git_args': l:git_args,
+        \ 'focus': l:options.focus,
+        \ 'update': l:options.update,
+        \ 'tmp': l:options.tmp,
+        \ }
 endfunction
 
 function! flog#cmd#flog_git#args#CompleteCommitRefs(commit) abort
@@ -132,14 +169,14 @@ function! flog#cmd#flog_git#args#Complete(arg_lead, cmd_line, cursor_pos) abort
   let l:is_flog = flog#floggraph#buf#IsFlogBuf()
   let l:has_state = flog#state#HasBufState()
 
-  let [_, l:command_index, l:command, l:is_command] = flog#cmd#flog_git#args#Parse(
-        \ a:arg_lead, a:cmd_line, a:cursor_pos)
+  let l:parsed_args = flog#cmd#flog_git#args#Parse(
+        \ split(a:cmd_line[ : a:cursor_pos], '\s', v:true)[1 :])
 
   let l:fugitive_completions = flog#fugitive#Complete(
         \ flog#shell#Escape(a:arg_lead), a:cmd_line, a:cursor_pos)
 
-  " Complete git/command args only
-  if l:is_command || l:command_index < 0
+  " Complete git/subcommand args only
+  if l:parsed_args.is_subcommand || l:parsed_args.subcommand_index < 0
     return l:fugitive_completions
   endif
 

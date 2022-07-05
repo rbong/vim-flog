@@ -1,8 +1,8 @@
 "
-" This file contains utility functions for "flog#Exec()".
+" This file contains utility functions for "flog#Format()".
 "
 
-function! flog#exec#GetCacheRefs(cache, commit) abort
+function! flog#format#GetCacheRefs(cache, commit) abort
   let l:ref_cache = a:cache.refs
 
   let l:refs = flog#state#GetCommitRefs(a:commit)
@@ -11,7 +11,7 @@ function! flog#exec#GetCacheRefs(cache, commit) abort
   return l:refs
 endfunction
 
-function! flog#exec#FormatHash(save) abort
+function! flog#format#FormatHash(save) abort
   let l:commit = flog#floggraph#commit#GetAtLine('.')
   
   if !empty(l:commit)
@@ -24,16 +24,16 @@ function! flog#exec#FormatHash(save) abort
   return ''
 endfunction
 
-function! flog#exec#FormatMarkHash(key) abort
+function! flog#format#FormatMarkHash(key) abort
   let l:commit = flog#floggraph#mark#Get(a:key)
   return empty(l:commit) ? '' : l:commit.hash
 endfunction
 
-function! flog#exec#FormatCommitBranch(cache, commit) abort
+function! flog#format#FormatCommitBranch(cache, commit) abort
   let l:local_branch = ''
   let l:remote_branch = ''
 
-  for l:ref in flog#exec#GetCacheRefs(a:cache, a:commit)
+  for l:ref in flog#format#GetCacheRefs(a:cache, a:commit)
     " Skip non-branches
     if l:ref.tag || l:ref.tail =~# 'HEAD$'
       continue
@@ -56,32 +56,32 @@ function! flog#exec#FormatCommitBranch(cache, commit) abort
   return flog#shell#Escape(l:branch)
 endfunction
 
-function! flog#exec#FormatBranch(cache) abort
+function! flog#format#FormatBranch(cache) abort
   let l:commit = flog#floggraph#commit#GetAtLine('.')
-  return flog#exec#FormatCommitBranch(a:cache, l:commit)
+  return flog#format#FormatCommitBranch(a:cache, l:commit)
 endfunction
 
-function! flog#exec#FormatMarkBranch(cache, key) abort
+function! flog#format#FormatMarkBranch(cache, key) abort
   let l:commit = flog#floggraph#mark#Get(a:key)
-  return flog#exec#FormatCommitBranch(a:cache, l:commit)
+  return flog#format#FormatCommitBranch(a:cache, l:commit)
 endfunction
 
-function! flog#exec#FormatCommitLocalBranch(cache, commit) abort
-  let l:branch = flog#exec#FormatCommitBranch(a:cache, a:commit)
+function! flog#format#FormatCommitLocalBranch(cache, commit) abort
+  let l:branch = flog#format#FormatCommitBranch(a:cache, a:commit)
   return substitute(l:branch, '.*/', '', '')
 endfunction
 
-function! flog#exec#FormatLocalBranch(cache) abort
+function! flog#format#FormatLocalBranch(cache) abort
   let l:commit = flog#floggraph#commit#GetAtLine('.')
-  return flog#exec#FormatCommitLocalBranch(a:cache, l:commit)
+  return flog#format#FormatCommitLocalBranch(a:cache, l:commit)
 endfunction
 
-function! flog#exec#FormatMarkLocalBranch(cache, key) abort
+function! flog#format#FormatMarkLocalBranch(cache, key) abort
   let l:commit = flog#floggraph#mark#Get(a:key)
-  return flog#exec#FormatCommitLocalBranch(a:cache, l:commit)
+  return flog#format#FormatCommitLocalBranch(a:cache, l:commit)
 endfunction
 
-function! flog#exec#FormatPath() abort
+function! flog#format#FormatPath() abort
   let l:state = flog#state#GetBufState()
   let l:path = l:state.opts.path
 
@@ -100,7 +100,7 @@ function! flog#exec#FormatPath() abort
   return join(flog#shell#EscapeList(l:path), ' ')
 endfunction
 
-function! flog#exec#FormatIndexTree(cache) abort
+function! flog#format#FormatIndexTree(cache) abort
   if empty(a:cache.index_tree)
     let l:cmd = flog#fugitive#GetGitCommand()
     let l:cmd .= ' write-tree'
@@ -109,7 +109,7 @@ function! flog#exec#FormatIndexTree(cache) abort
   return a:cache.index_tree
 endfunction
 
-function! flog#exec#FormatItem(cache, item) abort
+function! flog#format#FormatItem(cache, item) abort
   let l:item_cache = a:cache.items
 
   " Return cached items
@@ -123,23 +123,23 @@ function! flog#exec#FormatItem(cache, item) abort
   let l:formatted_item = ''
 
   if a:item ==# 'h'
-    let l:formatted_item = flog#exec#FormatHash(v:true)
+    let l:formatted_item = flog#format#FormatHash(v:true)
   elseif a:item ==# 'H'
-    let l:formatted_item = flog#exec#FormatHash(v:false)
+    let l:formatted_item = flog#format#FormatHash(v:false)
   elseif a:item =~# "^h'."
-    let l:formatted_item = flog#exec#FormatMarkHash(a:item[2 : ])
+    let l:formatted_item = flog#format#FormatMarkHash(a:item[2 : ])
   elseif a:item =~# 'b'
-    let l:formatted_item = flog#exec#FormatBranch(a:cache)
+    let l:formatted_item = flog#format#FormatBranch(a:cache)
   elseif a:item =~# "^b'."
-    let l:formatted_item = flog#exec#FormatMarkBranch(a:cache, a:item[2 : ])
+    let l:formatted_item = flog#format#FormatMarkBranch(a:cache, a:item[2 : ])
   elseif a:item =~# 'l'
-    let l:formatted_item = flog#exec#FormatLocalBranch(a:cache)
+    let l:formatted_item = flog#format#FormatLocalBranch(a:cache)
   elseif a:item =~# "^l'."
-    let l:formatted_item = flog#exec#FormatMarkLocalBranch(a:cache, a:item[2 : ])
+    let l:formatted_item = flog#format#FormatMarkLocalBranch(a:cache, a:item[2 : ])
   elseif a:item ==# 'p'
-    let l:formatted_item = flog#exec#FormatPath()
+    let l:formatted_item = flog#format#FormatPath()
   elseif a:item ==# 't'
-    let l:formatted_item = flog#exec#FormatIndexTree(a:cache)
+    let l:formatted_item = flog#format#FormatIndexTree(a:cache)
   else
     echoerr printf('error converting "%s"', a:item)
     throw g:flog_unsupported_exec_format_item
@@ -150,7 +150,7 @@ function! flog#exec#FormatItem(cache, item) abort
   return l:formatted_item
 endfunction
 
-function! flog#exec#Format(str) abort
+function! flog#format#FormatCommand(str) abort
   call flog#floggraph#buf#AssertFlogBuf()
 
   " Special token flags
@@ -176,7 +176,7 @@ function! flog#exec#Format(str) abort
 
       if l:char ==# ')'
         " End long specifier
-        let l:formatted_item = flog#exec#FormatItem(l:cache, l:long_item)
+        let l:formatted_item = flog#format#FormatItem(l:cache, l:long_item)
         if empty(l:formatted_item)
           return ''
         endif
@@ -195,7 +195,7 @@ function! flog#exec#Format(str) abort
         let l:is_in_long_item = v:true
       else
         " Parse specifier character
-        let l:formatted_item = flog#exec#FormatItem(l:cache, l:char)
+        let l:formatted_item = flog#format#FormatItem(l:cache, l:char)
         if empty(l:formatted_item)
           return ''
         endif

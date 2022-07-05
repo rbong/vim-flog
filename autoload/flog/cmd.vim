@@ -47,5 +47,26 @@ endfunction
 
 " The implementation of ":Floggit".
 function! flog#cmd#FlogGit(mods, args, bang) abort
-  return flog#ExecRaw(a:mods .. ' Git ' .. a:args, v:true, v:true, !empty(a:bang))
+  let l:split_args = split(a:args)
+  let l:parsed_args = flog#cmd#flog_git#args#Parse(l:split_args)
+
+  let l:cmd = a:mods
+
+  let l:git_args = l:parsed_args.git_args
+  if !empty(l:git_args)
+    let l:cmd .= ' '
+    let l:cmd .= join(l:git_args)
+  endif
+
+  let l:cmd .= ' Git'
+  let l:cmd .= a:bang
+
+  let l:subcommand_index = l:parsed_args.subcommand_index
+  if l:subcommand_index >= 0
+    let l:cmd .= ' '
+    let l:cmd .= join(l:split_args[l:subcommand_index :])
+  end
+
+  return flog#Exec(
+        \ l:cmd, l:parsed_args.focus, l:parsed_args.update, l:parsed_args.tmp)
 endfunction
