@@ -67,15 +67,15 @@ Put this code inside of your `.vimrc`:
 
 ```vim
 augroup flog
-  autocmd FileType floggraph nno <buffer> dd :<C-U>call flog#ExecTmp('vertical belowright Git diff HEAD %h', 0, 0)<CR>
-  autocmd FileType floggraph vno <buffer> dd :<C-U>call flog#ExecTmp("vertical belowright Git diff %(h'>) %(h'<)", 0, 0)<CR>
+  autocmd FileType floggraph nno <buffer> dd :<C-U>exec flog#Format('vertical belowright Floggit -t diff HEAD %h')<CR>
+  autocmd FileType floggraph vno <buffer> dd :<C-U>exec flog#Format("vertical belowright Floggit -t diff %(h'>) %(h'<)")<CR>
 augroup END
 ```
 
-`flog#ExecTmp` tells flog to run the command and treat any windows it opens as temporary side windows.
-You can also use `flog#Exec`, which runs a command using the same syntax without temporary side windows.
+`Floggit` runs a command using Fugitive's `Git` command.
+The `-t` flag treats any windows it opens as temporary side windows.
 
-These functions can use special format specifier items, similar to `printf()`, to get contextual information from Flog.
+The `flog#Format()` function uses special format specifier items, similar to `printf()`, to get contextual information from Flog.
 
 The `%h` format specifier item used here will resolve to the hash on the current line.
 `%(h'>) %(h'<)` will resolve to the hashes at the end and beginning of the visual selection.

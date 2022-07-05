@@ -188,7 +188,9 @@ COMMANDS                                                       *flog-commands*
 
 :Floggit                                                            *:Floggit*
 
-  Open a git command via |:Git| in a |flog-side-window|.
+  Open a git command via |:Git| using |flog#Exec()|.
+
+  All arguments supported by |:Git| are supported.
 
   Revision, file, and option completion is available for this command.
 
@@ -197,7 +199,24 @@ COMMANDS                                                       *flog-commands*
 
 :Floggit!                                                          *:Floggit!*
 
-  Same as |:Floggit|, but open the command in temporary |flog-side-window|.
+  Same as |:Floggit|, but use |:Git!|.
+
+:Floggit --focus                              *:Floggit_--focus* *:Floggit_-f*
+:Floggit -f
+
+  Instead of returning focus to the graph window after running the command,
+  retain focus.
+
+:Floggit --update                            *:Floggit_--update* *:Floggit_-u*
+:Floggit -u
+
+  Update the graph after running the command.
+
+
+:Floggit --tmp                                  *:Floggit_--tmp* *:Floggit_-t*
+:Floggit -t
+
+  Any windows will run in a temporary |flog-side-window|.
 
 ==============================================================================
 MAPPINGS                                                       *flog-mappings*
@@ -762,23 +781,22 @@ g:flog_order_types                                        *g:flog_order_types*
 FUNCTIONS                                                     *flog-functions*
 
                                                                  *flog#Exec()*
-flog#Exec({command}[, {keep-focus}[, {should-update}[, {is-tmp}]]])
+flog#Exec({command}[, {focus}[, {update}[, {tmp}]]])
 
   Runs {command}.
 
-  The command will be formatted according to |flog-command-format|.
   Any window opened by the command will be considered a |flog-side-window|.
 
   By default, focus returns to the graph window after running the command.
-  {keep-focus} allows the command to retrain focus.
+  {focus} allows the command to retain focus.
 
-  {should-update} updates the graph after running the command.
+  {update} updates the graph after running the command.
 
-  {is-tmp} causes the window to run in a temporary |flog-side-window|.
+  {tmp} causes any windows to run in a temporary |flog-side-window|.
 
   Example:
 >
-    flog#Exec('Git show %h')
+    flog#Exec('Git show HEAD')
 <
 
                                                              *flog#ExecTmp()*
@@ -787,10 +805,15 @@ flog#ExecTmp({command}[, {keep-focus}[, {should-update}]])
   Same as |flog#Exec()|, but always open the command in a temporary
   |flog-side-window|.
 
-                                                             *flog#ExecRaw()*
-flog#ExecRaw({command}[, {keep-focus}[, {should-update}[, {is-tmp}]]])
+                                                              *flog#Format()*
+flog#Format({command})
 
-  Same as |flog#Exec()|, but do not format {command}.
+  Format a command according to |flog-command-format|.
+
+  Example:
+>
+    flog#Format('Git show %h')
+<
 
 ==============================================================================
 AUTOCOMMANDS                                               *flog-autocommands*
@@ -858,7 +881,7 @@ COMMIT MARKS                                               *flog-commit-marks*
 ------------------------------------------------------------------------------
 COMMAND FORMAT                                           *flog-command-format*
 
-  When running commands with |flog#Exec()|, a special syntax similar to
+  When running commands with |flog#Format()|, a special syntax similar to
   |printf| is used to transform the command string.
 
   Items prefixed by the "%" character are resolved into commit information and
