@@ -46,7 +46,7 @@ function! flog#cmd#FlogSetArgs(args, force) abort
 endfunction
 
 " The implementation of ":Floggit".
-function! flog#cmd#FlogGit(mods, args, bang) abort
+function! flog#cmd#Floggit(mods, args, bang) abort
   let l:split_args = split(a:args)
   let l:parsed_args = flog#cmd#floggit#args#Parse(l:split_args)
 
