@@ -42,8 +42,8 @@ if !hasmapto('<Plug>(FlogGit)')
   nmap <buffer> git <Plug>(FlogGit)
   vmap <buffer> git <Plug>(FlogGit)
 endif
-nnoremap <buffer> <Plug>(FlogGit) :Floggit
-vnoremap <buffer> <Plug>(FlogGit) :Floggit
+nnoremap <buffer> <Plug>(FlogGit) :Floggit -u<space>
+vnoremap <buffer> <Plug>(FlogGit) :Floggit -u<space>
 
 if !hasmapto('<Plug>(FlogYank)')
   nmap <buffer> y<C-G> <Plug>(FlogYank)
