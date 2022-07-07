@@ -25,26 +25,43 @@ function! flog#cmd#floggit#args#Parse(args) abort
   let l:arg_index = 0
   let l:git_args = []
   let l:subcommand = ''
-  let l:options = {
+  let l:flags = {
         \ 'focus': v:false,
+        \ 'f': v:false,
         \ 'update': v:false,
+        \ 'u': v:false,
         \ 'tmp': v:false,
+        \ 't': v:false,
         \ }
+  let l:is_flag = v:false
 
   while l:arg_index < l:nargs
     let l:arg = a:args[l:arg_index]
+    let l:is_flag = v:false
 
     if l:arg !~# '^-'
       let l:subcommand = l:arg
       break
     endif
 
-    if l:arg ==# '--focus' || l:arg ==# '-f'
-      let l:options.focus = v:true
-    elseif l:arg ==# '--update' || l:arg ==# '-u'
-      let l:options.update = v:true
-    elseif l:arg ==# '--tmp' || l:arg ==# '-t'
-      let l:options.tmp = v:true
+    if l:arg ==# '--focus'
+      let l:flags.focus = v:true
+      let l:is_flag = v:true
+    elseif l:arg ==# '-f'
+      let l:flags.f = v:true
+      let l:is_flag = v:true
+    elseif l:arg ==# '--update'
+      let l:flags.update = v:true
+      let l:is_flag = v:true
+    elseif l:arg ==# '-u'
+      let l:flags.u = v:true
+      let l:is_flag = v:true
+    elseif l:arg ==# '--tmp'
+      let l:flags.tmp = v:true
+      let l:is_flag = v:true
+    elseif l:arg ==# '-t'
+      let l:flags.t = v:true
+      let l:is_flag = v:true
     else
       call add(l:git_args, l:arg)
 
@@ -61,14 +78,43 @@ function! flog#cmd#floggit#args#Parse(args) abort
   " Resolve options and return
 
   return {
+        \ 'args': a:args,
         \ 'subcommand_index': l:arg_index >= l:nargs ? -1 : l:arg_index,
         \ 'is_subcommand': l:arg_index == l:nargs - 1,
+        \ 'is_flag': l:is_flag,
         \ 'subcommand': l:subcommand,
         \ 'git_args': l:git_args,
-        \ 'focus': l:options.focus,
-        \ 'update': l:options.update,
-        \ 'tmp': l:options.tmp,
+        \ 'focus': l:flags.focus || l:flags.f,
+        \ 'update': l:flags.update || l:flags.u,
+        \ 'tmp': l:flags.tmp || l:flags.t,
+        \ 'flags': l:flags,
         \ }
+endfunction
+
+function! flog#cmd#floggit#args#ToGitCommand(mods, bang, parsed_args) abort
+  let l:cmd = ''
+
+  if !empty(a:mods)
+    let l:cmd .= a:mods
+    let l:cmd .= ' '
+  endif
+
+  let l:git_args = a:parsed_args.git_args
+  if !empty(l:git_args)
+    let l:cmd .= join(l:git_args)
+    let l:cmd .= ' '
+  endif
+
+  let l:cmd .= 'Git'
+  let l:cmd .= a:bang
+
+  let l:subcommand_index = a:parsed_args.subcommand_index
+  if l:subcommand_index >= 0
+    let l:cmd .= ' '
+    let l:cmd .= join(a:parsed_args.args[l:subcommand_index :])
+  end
+
+  return l:cmd
 endfunction
 
 function! flog#cmd#floggit#args#CompleteOpts(arg_lead, cmd_line, cursor_pos) abort
@@ -174,11 +220,16 @@ function! flog#cmd#floggit#args#Complete(arg_lead, cmd_line, cursor_pos) abort
   let l:is_flog = flog#floggraph#buf#IsFlogBuf()
   let l:has_state = flog#state#HasBufState()
 
-  let l:parsed_args = flog#cmd#floggit#args#Parse(
-        \ split(a:cmd_line[ : a:cursor_pos], '\s', v:true)[1 :])
+  let l:cmd = a:cmd_line[ : a:cursor_pos]
+  let l:split_cmd = split(l:cmd, '\s', v:true)
+  let l:split_args = l:split_cmd[1 :]
+
+  let l:parsed_args = flog#cmd#floggit#args#Parse(l:split_args)
+
+  let l:cmd = flog#cmd#floggit#args#ToGitCommand('', '', l:parsed_args)
 
   let l:fugitive_completions = flog#fugitive#Complete(
-        \ flog#shell#Escape(a:arg_lead), a:cmd_line, a:cursor_pos)
+        \ flog#shell#Escape(l:split_cmd[-1]), l:cmd, len(l:cmd))
 
   " Complete subcommand args only
   if l:parsed_args.is_subcommand
