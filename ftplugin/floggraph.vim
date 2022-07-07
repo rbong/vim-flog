@@ -113,9 +113,9 @@ if !hasmapto('<Plug>(FlogVSplitUnstaged)')
   nmap <buffer> gU <Plug>(FlogVSplitUnstaged)
 endif
 
-nnoremap <buffer> <silent> <Plug>(FlogVSplitStaged) :<C-U>exec flog#Format("vertical belowright Floggit -t diff --cached")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVSplitStaged) :<C-U>vertical belowright Floggit -t diff --cached<CR>
 nnoremap <buffer> <silent> <Plug>(FlogVSplitUntracked) :<C-U>exec flog#Format("silent Floggit -t add -N . \| vertical belowright Git diff \| silent Git read-tree %t")<CR>
-nnoremap <buffer> <silent> <Plug>(FlogVSplitUnstaged) :<C-U>exec flog#Format("vertical belowright Floggit -t diff")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVSplitUnstaged) :<C-U>vertical belowright Floggit -t diff<CR>
 
 " Navigation mappings
 
@@ -370,32 +370,32 @@ nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveAutosquash) :<C-U>exec fl
 if !hasmapto('<Plug>(FlogRebaseInteractiveUpstream)')
   nmap <buffer> ru <Plug>(FlogRebaseInteractiveUpstream)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveUpstream) :<C-U>exec flog#Format('Floggit -u -f rebase --interactive @{upstream}')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveUpstream) :<C-U>Floggit -u -f rebase --interactive @{upstream}<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractivePush)')
   nmap <buffer> rp <Plug>(FlogRebaseInteractivePush)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractivePush) :<C-U>exec flog#Format('Floggit -u -f rebase --interactive @{push}')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractivePush) :<C-U>Floggit -u -f rebase --interactive @{push}<CR>
 
 if !hasmapto('<Plug>(FlogRebaseContinue)')
   nmap <buffer> rr <Plug>(FlogRebaseContinue)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseContinue) :<C-U>exec flog#Format('Floggit -u -f rebase --continue')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseContinue) :<C-U>Floggit -u -f rebase --continue<CR>
 
 if !hasmapto('<Plug>(FlogRebaseSkip)')
   nmap <buffer> rs <Plug>(FlogRebaseSkip)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseSkip) :<C-U>exec flog#Format('Floggit -u -f rebase --skip')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseSkip) :<C-U>Floggit -u -f rebase --skip<CR>
 
 if !hasmapto('<Plug>(FlogRebaseAbort)')
   nmap <buffer> ra <Plug>(FlogRebaseAbort)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseAbort) :<C-U>exec flog#Format('Floggit -u -f rebase --abort')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseAbort) :<C-U>Floggit -u -f rebase --abort<CR>
 
 if !hasmapto('<Plug>(FlogRebaseEditTodo)')
   nmap <buffer> re <Plug>(FlogRebaseEditTodo)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseEditTodo) :<C-U>exec flog#Format('Floggit -u -f rebase --edit-todo')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseEditTodo) :<C-U>Floggit -u -f rebase --edit-todo<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveReword)')
   nmap <buffer> rw <Plug>(FlogRebaseInteractiveReword)
