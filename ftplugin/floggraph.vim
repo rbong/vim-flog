@@ -114,7 +114,7 @@ if !hasmapto('<Plug>(FlogVSplitUnstaged)')
 endif
 
 nnoremap <buffer> <silent> <Plug>(FlogVSplitStaged) :<C-U>vertical belowright Floggit -t diff --cached<CR>
-nnoremap <buffer> <silent> <Plug>(FlogVSplitUntracked) :<C-U>exec flog#Format("silent Floggit -t add -N . \| vertical belowright Git diff \| silent Git read-tree %t")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVSplitUntracked) :<C-U>exec flog#Format('silent Floggit -t add -N . \| vertical belowright Git diff \| silent Git read-tree %t')<CR>
 nnoremap <buffer> <silent> <Plug>(FlogVSplitUnstaged) :<C-U>vertical belowright Floggit -t diff<CR>
 
 " Navigation mappings
