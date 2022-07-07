@@ -66,7 +66,7 @@ This example shows how to switch the order of commits when diffing with `dd`.
 Put this code inside of your `.vimrc`:
 
 ```vim
-augroup flog
+augroup MyFlogSettings
   autocmd FileType floggraph nno <buffer> dd :<C-U>exec flog#Format('vertical belowright Floggit -t diff HEAD %h')<CR>
   autocmd FileType floggraph vno <buffer> dd :<C-U>exec flog#Format("vertical belowright Floggit -t diff %(h'>) %(h'<)")<CR>
 augroup END
