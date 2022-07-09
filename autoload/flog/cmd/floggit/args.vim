@@ -99,14 +99,14 @@ function! flog#cmd#floggit#args#ToGitCommand(mods, bang, parsed_args) abort
     let l:cmd .= ' '
   endif
 
-  let l:git_args = a:parsed_args.git_args
-  if !empty(l:git_args)
-    let l:cmd .= join(l:git_args)
-    let l:cmd .= ' '
-  endif
-
   let l:cmd .= 'Git'
   let l:cmd .= a:bang
+
+  let l:git_args = a:parsed_args.git_args
+  if !empty(l:git_args)
+    let l:cmd .= ' '
+    let l:cmd .= join(l:git_args)
+  endif
 
   let l:subcommand_index = a:parsed_args.subcommand_index
   if l:subcommand_index >= 0
