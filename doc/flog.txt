@@ -197,6 +197,10 @@ COMMANDS                                                       *flog-commands*
   While in the |:Flog| window, completion is available for the current line or
   range.
 
+  By default, returns focus to the graph window after running the command.
+
+  It updates the graph window after returning to it by default.
+
 :Floggit!                                                          *:Floggit!*
 
   Same as |:Floggit|, but use |:Git!|.
