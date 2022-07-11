@@ -2,8 +2,8 @@
 
 ## Checking Out a Branch
 
-1. Launch the graph with `:Flog` (if this runs slowly for you, see [FAQ](FAQ.md)).
-2. Make sure your commit is in the graph by pressing `a` to toggle showing all commits.
+1. Open the git branch graph with `:Flog` (if this runs slowly for you, see [FAQ](FAQ.md)).
+2. Make sure your commit is in the git branch graph by pressing `a` to toggle showing all commits.
 3. Navigate to your branch. There are a couple ways to do this:
   - Use builtin Vim navigation like `/`, `j`, `k`, etc.
   - Use `]r`/`[r` to jump between commits with refs.
@@ -28,7 +28,7 @@ let g:flog_default_opts = {
             \ }
 ```
 
-You can use `:Flogsetargs` after the graph has launched to override these options:
+You can use `:Flogsetargs` after the git branch graph has launched to override these options:
 
 ```
 # Clear the max count
@@ -73,7 +73,7 @@ augroup END
 ```
 
 `Floggit` runs a command using Fugitive's `Git` command.
-The `-s` flag prevents the graph buffer from updating after running the command.
+The `-s` flag prevents the Flog buffer from updating after running the command.
 The `-t` flag treats any windows it opens as temporary side windows.
 
 The `flog#Format()` function uses special format specifier items, similar to `printf()`, to get contextual information from Flog.

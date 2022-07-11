@@ -8,7 +8,7 @@ License: Same terms as Vim itself (see |license|)
 INTRODUCTION                                                      *flog-intro*
 
 Flog is a lightweight git branch viewer for Vim. It provides several helpful
-commands and mappings to interact with the graph.
+commands and mappings to interact with the git branch graph.
 
 
 ==============================================================================
@@ -33,8 +33,9 @@ These commands open Flog.
 
 :Flog                                                                  *:Flog*
 
-  Open the log graph in a new tab. This command can be run from any file in a
-  git repository. Any |fugitive-commands| can be run from the buffer.
+  Open Flog in a new tab, showing the git branch graph. This command can be
+  run from any file in a git repository. Any |fugitive-commands| can be run
+  from the buffer.
 
   When opened in visual mode or passed a range, the currently selected range
   and filename is passed to "-limit=".
@@ -83,8 +84,8 @@ These commands open Flog.
 :Flog -graph                                                    *:Flog_-graph*
 :Flog -no-graph                                              *:Flog_-no-graph*
 
-  When disabled, do not draw the commit graph.
-  The graph cannot be drawn when |:Flog_-reverse| is set.
+  When disabled, do not draw the git branch graph.
+  The git branch cannot be drawn when |:Flog_-reverse| is set.
   Enabled by default.
 
 :Flog -author=<author>                                         *:Flog_-author*
@@ -165,7 +166,7 @@ These commands open Flog.
 
 :Flog -raw-args=<args>                                       *:Flog_-raw-args*
 
-  Additional args to pass to "git log --graph".
+  Additional args to pass to "git log".
   No args passed in using this option are guaranteed to work.
   Can be specified multiple times.
 
@@ -176,8 +177,8 @@ These commands open Flog.
 
 :Flogsplit                                                        *:Flogsplit*
 
-  Open the log graph in a split. Supports |<mods>|. Behaves the same as
-  |:Flog| otherwise.
+  Open Flog in a split. Supports |<mods>|. Behaves the same as |:Flog|
+  otherwise.
 
 ------------------------------------------------------------------------------
 FLOG GIT COMMANDS                                          *flog-git-commands*
@@ -195,9 +196,9 @@ These commands are wrappers to |:Git|.
   While in the |:Flog| window, completion is available for the current line or
   range.
 
-  By default, returns focus to the graph window after running the command.
+  By default, returns focus to the |:Flog| window after running the command.
 
-  It updates the graph window after returning to it by default.
+  It updates the |:Flog| window after returning to it by default.
 
 :Floggit!                                                          *:Floggit!*
 
@@ -206,13 +207,13 @@ These commands are wrappers to |:Git|.
 :Floggit --focus                              *:Floggit_--focus* *:Floggit_-f*
 :Floggit -f
 
-  Instead of returning focus to the graph window after running the command,
+  Instead of returning focus to the |:Flog| window after running the command,
   retain focus.
 
 :Floggit --static                            *:Floggit_--static* *:Floggit_-s*
 :Floggit -s
 
-  Prevent updating the graph after running the command.
+  Prevent updating |:Flog| after running the command.
 
 
 :Floggit --tmp                                  *:Floggit_--tmp* *:Floggit_-t*
@@ -284,7 +285,7 @@ y<C-G>                                                           *flog-y<C-G>*
                                                           *<Plug>(FlogUpdate)*
 u                                                                     *flog-u*
 
-  Update/reload the graph window.
+  Update/reload the |:Flog| window.
 
                                                      *<Plug>(FlogCloseTmpWin)*
 dq                                                                   *flog-dq*
@@ -811,10 +812,11 @@ flog#Exec({command}[, {focus}[, {static}[, {tmp}]]])
 
   Any window opened by the command will be considered a |flog-side-window|.
 
-  By default, focus returns to the graph window after running the command.
+  By default, focus returns to the |:Flog| window after running the command.
   {focus} allows the command to retain focus.
 
-  {static} causes the graph not to update after running the command.
+  By default, updates the |:Flog| window after running the command.
+  {static} causes the window not to update after running the command.
 
   {tmp} causes any windows to run in a temporary |flog-side-window|.
 
@@ -862,7 +864,8 @@ ABOUT                                                             *flog-about*
 ------------------------------------------------------------------------------
 SIDE WINDOWS                                                *flog-side-window*
 
-  Flog can open windows beside the graph to show more commit info.
+  Flog can open windows beside the commit branch graph to show more commit
+  info.
 
   Side windows are opened with |flog#Exec()|.
 
@@ -873,7 +876,7 @@ SIDE WINDOWS                                                *flog-side-window*
 ------------------------------------------------------------------------------
 COMMIT MARKS                                               *flog-commit-marks*
 
-  Flog allows marking commits. Marked commits persist even when the graph
+  Flog allows marking commits. Marked commits persist even when the |:Flog|
   buffer updates.
 
   Marked commits can be referenced using |flog-command-format|. Marked commits
@@ -911,8 +914,9 @@ COMMAND FORMAT                                           *flog-command-format*
   Items prefixed by the "%" character are resolved into commit information and
   Flog options.
 
-  If any items cannot be resolved, such as if the graph buffer is empty or the
-  item uses an option like "-path" that was not set, commands will not be run.
+  If any items cannot be resolved, such as if the |:Flog| buffer is empty or
+  the item uses an option like "-path" that was not set, commands will not be
+  run.
 
   The following items are supported:
 

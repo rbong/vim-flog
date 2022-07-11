@@ -26,13 +26,13 @@ Plug 'rbong/vim-flog'
 
 ## Using Flog
 
-Open the commit graph with `:Flog` or `:Flogsplit`.
+Open the git branch graph with `:Flog` or `:Flogsplit`.
 Many options can be passed in, complete with `<Tab>` completion.
 
 Open commits in temporary windows once you've opened Flog using `<CR>`.
 Jump between commits with `<C-N>` and `<C-P>`.
 
-Refresh the graph with `u`.
+Refresh the git branch graph with `u`.
 Toggle viewing all branches with `a`.
 Toggle displaying no merges with `gm`.
 Toggle viewing the reflog with `gr`.
@@ -43,7 +43,7 @@ See more mappings with `g?`.
 
 Many of the mappings that work in the Fugitive `:Git` status window will work in Flog.
 
-Run `:Git` commands in a split next to the graph using `:Floggit -p`.
+Run `:Git` commands in a split next to the git branch graph using `:Floggit -p`.
 Command line completion is provided to do any git command with the commits and refs under the cursor.
 
 Flog can be heavily customized with functions.

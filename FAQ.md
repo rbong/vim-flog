@@ -47,7 +47,7 @@ Launch with less commits by default:
 let g:flog_permanent_default_opts = { 'max_count': 2000 }
 ```
 
-**Flog takes a long time to load for complex graphs**
+**Flog takes a long time to load for complex git branch graphs**
 
 Toggle the graph with `gx` or launch with `:Flog -no-graph`.
 
@@ -65,8 +65,8 @@ Flog is faster than gitv.
 Flog is slower than gv.vim, but in many cases only marginally.
 
 gv.vim and gitv rely on the output of `git log --graph`.
-Flog draws the commit graph itself.
-This allows for branch highlighting and beautiful commit graphs.
+Flog draws the git branch graph itself.
+This allows for branch highlighting and beautiful git branch graphs.
 
 Flog is more customizable and flexible than gitv.
 gv.vim does not have any customization or flexibility by design.
