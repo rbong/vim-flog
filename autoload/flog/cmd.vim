@@ -52,5 +52,5 @@ function! flog#cmd#Floggit(mods, args, bang) abort
   let l:cmd = flog#cmd#floggit#args#ToGitCommand(a:mods, a:bang, l:parsed_args)
 
   return flog#Exec(
-        \ l:cmd, l:parsed_args.focus, l:parsed_args.update, l:parsed_args.tmp)
+        \ l:cmd, l:parsed_args.focus, l:parsed_args.static, l:parsed_args.tmp)
 endfunction

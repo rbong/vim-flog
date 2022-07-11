@@ -207,10 +207,10 @@ COMMANDS                                                       *flog-commands*
   Instead of returning focus to the graph window after running the command,
   retain focus.
 
-:Floggit --update                            *:Floggit_--update* *:Floggit_-u*
-:Floggit -u
+:Floggit --static                            *:Floggit_--static* *:Floggit_-s*
+:Floggit -s
 
-  Update the graph after running the command.
+  Prevent updating the graph after running the command.
 
 
 :Floggit --tmp                                  *:Floggit_--tmp* *:Floggit_-t*
@@ -781,7 +781,7 @@ g:flog_order_types                                        *g:flog_order_types*
 FUNCTIONS                                                     *flog-functions*
 
                                                                  *flog#Exec()*
-flog#Exec({command}[, {focus}[, {update}[, {tmp}]]])
+flog#Exec({command}[, {focus}[, {static}[, {tmp}]]])
 
   Runs {command}.
 
@@ -790,17 +790,17 @@ flog#Exec({command}[, {focus}[, {update}[, {tmp}]]])
   By default, focus returns to the graph window after running the command.
   {focus} allows the command to retain focus.
 
-  {update} updates the graph after running the command.
+  {static} causes the graph not to update after running the command.
 
   {tmp} causes any windows to run in a temporary |flog-side-window|.
 
   Example:
 >
-    flog#Exec('Git show HEAD')
+    flog#Exec('Git fetch')
 <
 
                                                              *flog#ExecTmp()*
-flog#ExecTmp({command}[, {keep-focus}[, {should-update}]])
+flog#ExecTmp({command}[, {focus}[, {static}]])
 
   Same as |flog#Exec()|, but always open the command in a temporary
   |flog-side-window|.

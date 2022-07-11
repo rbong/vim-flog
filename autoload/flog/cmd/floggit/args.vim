@@ -28,8 +28,8 @@ function! flog#cmd#floggit#args#Parse(args) abort
   let l:flags = {
         \ 'focus': v:false,
         \ 'f': v:false,
-        \ 'update': v:false,
-        \ 'u': v:false,
+        \ 'static': v:false,
+        \ 's': v:false,
         \ 'tmp': v:false,
         \ 't': v:false,
         \ }
@@ -50,11 +50,11 @@ function! flog#cmd#floggit#args#Parse(args) abort
     elseif l:arg ==# '-f'
       let l:flags.f = v:true
       let l:is_flag = v:true
-    elseif l:arg ==# '--update'
-      let l:flags.update = v:true
+    elseif l:arg ==# '--static'
+      let l:flags.static = v:true
       let l:is_flag = v:true
-    elseif l:arg ==# '-u'
-      let l:flags.u = v:true
+    elseif l:arg ==# '-s'
+      let l:flags.s = v:true
       let l:is_flag = v:true
     elseif l:arg ==# '--tmp'
       let l:flags.tmp = v:true
@@ -85,7 +85,7 @@ function! flog#cmd#floggit#args#Parse(args) abort
         \ 'subcommand': l:subcommand,
         \ 'git_args': l:git_args,
         \ 'focus': l:flags.focus || l:flags.f,
-        \ 'update': l:flags.update || l:flags.u,
+        \ 'static': l:flags.static || l:flags.s,
         \ 'tmp': l:flags.tmp || l:flags.t,
         \ 'flags': l:flags,
         \ }
@@ -119,7 +119,7 @@ endfunction
 
 function! flog#cmd#floggit#args#CompleteOpts(arg_lead, cmd_line, cursor_pos) abort
   return flog#args#FilterCompletions(a:arg_lead,
-        \ ['-f', '-u', '-t', '--focus', '--update', '--tmp'])
+        \ ['-f', '-s', '-t', '--focus', '--static', '--tmp'])
 endfunction
 
 function! flog#cmd#floggit#args#CompleteCommitRefs(commit) abort

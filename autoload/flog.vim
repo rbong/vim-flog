@@ -2,7 +2,7 @@
 " This file contains public Flog API functions.
 "
 
-function! flog#Exec(cmd, focus, update, tmp) abort
+function! flog#Exec(cmd, focus, static, tmp) abort
   if empty(a:cmd)
     return ''
   end
@@ -15,7 +15,7 @@ function! flog#Exec(cmd, focus, update, tmp) abort
   let l:graph_win = flog#win#Save()
   call flog#floggraph#side_win#Open(a:cmd, a:focus, a:tmp)
 
-  if a:update
+  if ! a:static
     if flog#win#Is(l:graph_win)
       call flog#floggraph#buf#Update()
     else
@@ -26,8 +26,8 @@ function! flog#Exec(cmd, focus, update, tmp) abort
   return a:cmd
 endfunction
 
-function! flog#ExecTmp(cmd, focus, update) abort
-  return flog#Exec(a:cmd, a:focus, a:update, v:true)
+function! flog#ExecTmp(cmd, focus, static) abort
+  return flog#Exec(a:cmd, a:focus, a:static, v:true)
 endfunction
 
 function! flog#Format(cmd) abort

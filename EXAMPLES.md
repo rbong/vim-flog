@@ -54,7 +54,7 @@ let g:flog_permanent_default_opts = {
 
 There are several different ways to diff commits after launching Flog:
   - Press `dd` in normal mode to diff the commit under the cursor with `HEAD`.
-  - Visually select the commits and use `:Floggit diff <Tab>` to complete the commits at the beginning and end of the selection.
+  - Visually select the commits and use `:Floggit -s diff <Tab>` to complete the commits at the beginning and end of the selection.
   - Press `dd` in visual mode to diff the commits at the beginning and end of the selection
   - Press `d!` to diff the commit at the cursor and the commit that was previously opened with `<CR>`.
 
@@ -67,12 +67,13 @@ Put this code inside of your `.vimrc`:
 
 ```vim
 augroup MyFlogSettings
-  autocmd FileType floggraph nno <buffer> dd :<C-U>exec flog#Format('vertical belowright Floggit -t diff HEAD %h')<CR>
-  autocmd FileType floggraph vno <buffer> dd :<C-U>exec flog#Format("vertical belowright Floggit -t diff %(h'>) %(h'<)")<CR>
+  autocmd FileType floggraph nno <buffer> dd :<C-U>exec flog#Format('vertical belowright Floggit -s -t diff HEAD %h')<CR>
+  autocmd FileType floggraph vno <buffer> dd :<C-U>exec flog#Format("vertical belowright Floggit -s -t diff %(h'>) %(h'<)")<CR>
 augroup END
 ```
 
 `Floggit` runs a command using Fugitive's `Git` command.
+The `-s` flag prevents the graph buffer from updating after running the command.
 The `-t` flag treats any windows it opens as temporary side windows.
 
 The `flog#Format()` function uses special format specifier items, similar to `printf()`, to get contextual information from Flog.
