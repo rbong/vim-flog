@@ -199,6 +199,9 @@ These commands are wrappers to |:Git|.
 
   It updates the |:Flog| window after returning to it by default.
 
+  If called outside of a |:Flog| window, calls |:Git| and ignores anything
+  relating to Flog.
+
 :Floggit!                                                          *:Floggit!*
 
   Same as |:Floggit|, but use |:Git!|.
