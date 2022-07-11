@@ -26,6 +26,11 @@ See also |g:flog_lua_bin|, |g:flog_use_internal_lua|,
 ==============================================================================
 COMMANDS                                                       *flog-commands*
 
+------------------------------------------------------------------------------
+FLOG OPEN COMMANDS                                        *flog-open-commands*
+
+These commands open Flog.
+
 :Flog                                                                  *:Flog*
 
   Open the log graph in a new tab. This command can be run from any file in a
@@ -174,22 +179,10 @@ COMMANDS                                                       *flog-commands*
   Open the log graph in a split. Supports |<mods>|. Behaves the same as
   |:Flog| otherwise.
 
-:Flogsetargs                                                    *:Flogsetargs*
+------------------------------------------------------------------------------
+FLOG GIT COMMANDS                                          *flog-git-commands*
 
-  Update the arguments passed to |:Flog| or |:Flogsplit|. Can only be run in a
-  |:Flog| window. Merges new arguments with the current arguments.
-
-:Flogsetargs!                                                  *:Flogsetargs!*
-
-  Same as |:Flogsetargs|, but overwrite all of the current arguments instead
-  of updating them.
-
-:Flogsplitcommit                                            *:Flogsplitcommit*
-
-  Open a commit under the cursor using |:Gsplit| in a |flog-temp-window|. Can
-  only be run in the |:Flog| window.
-
-  Sets |flog-'!|.
+These commands are wrappers to |:Git|.
 
 :Floggit                                                            *:Floggit*
 
@@ -226,6 +219,28 @@ COMMANDS                                                       *flog-commands*
 :Floggit -t
 
   Any windows will run in a temporary |flog-side-window|.
+
+------------------------------------------------------------------------------
+FLOG BUFFER COMMANDS                                    *flog-buffer-commands*
+
+These commands only work in the |:Flog| buffer.
+
+:Flogsetargs                                                    *:Flogsetargs*
+
+  Update the arguments passed to |:Flog| or |:Flogsplit|. Can only be run in a
+  |:Flog| window. Merges new arguments with the current arguments.
+
+:Flogsetargs!                                                  *:Flogsetargs!*
+
+  Same as |:Flogsetargs|, but overwrite all of the current arguments instead
+  of updating them.
+
+:Flogsplitcommit                                            *:Flogsplitcommit*
+
+  Open a commit under the cursor using |:Gsplit| in a |flog-temp-window|. Can
+  only be run in the |:Flog| window.
+
+  Sets |flog-'!|.
 
 ==============================================================================
 MAPPINGS                                                       *flog-mappings*
