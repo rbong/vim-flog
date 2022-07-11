@@ -10,7 +10,6 @@ INTRODUCTION                                                      *flog-intro*
 Flog is a lightweight git branch viewer for Vim. It provides several helpful
 commands and mappings to interact with the git branch graph.
 
-
 ==============================================================================
 PREREQUISITES                                                   *flog-prereqs*
 
@@ -214,7 +213,6 @@ These commands are wrappers to |:Git|.
 :Floggit -s
 
   Prevent updating |:Flog| after running the command.
-
 
 :Floggit --tmp                                  *:Floggit_--tmp* *:Floggit_-t*
 :Floggit -t
@@ -599,7 +597,6 @@ cb<Space>                                                     *flog-cb<Space>*
 ------------------------------------------------------------------------------
 COMMIT MARK MAPPINGS                                      *flog-mark-mappings*
 
-
                                                    *<Plug>(FlogSetCommitMark)*
 m{a-zA-Z'}                                                            *flog-m*
 
@@ -630,7 +627,6 @@ rf                                                                   *flog-rf*
 
   Perform an autosquash rebase without editing the TODO list.
   See also "git rebase --help".
-
 
                                        *<Plug>(FlogRebaseInteractiveUpstream)*
 ru                                                                   *flog-ru*
@@ -864,25 +860,25 @@ ABOUT                                                             *flog-about*
 ------------------------------------------------------------------------------
 SIDE WINDOWS                                                *flog-side-window*
 
-  Flog can open windows beside the commit branch graph to show more commit
-  info.
+Flog can open windows beside the commit branch graph to show more commit
+info.
 
-  Side windows are opened with |flog#Exec()|.
+Side windows are opened with |flog#Exec()|.
 
-  These windows can be set to temporary. Temporary windows will close when
-  other temporary windows are opened. Temporary windows close when Flog
-  closes.
+These windows can be set to temporary. Temporary windows will close when
+other temporary windows are opened. Temporary windows close when Flog
+closes.
 
 ------------------------------------------------------------------------------
 COMMIT MARKS                                               *flog-commit-marks*
 
-  Flog allows marking commits. Marked commits persist even when the |:Flog|
-  buffer updates.
+Flog allows marking commits. Marked commits persist even when the |:Flog|
+buffer updates.
 
-  Marked commits can be referenced using |flog-command-format|. Marked commits
-  can be created with |flog-m|. A commit mark can be jumped to with |flog-'|.
+Marked commits can be referenced using |flog-command-format|. Marked commits
+can be created with |flog-m|. A commit mark can be jumped to with |flog-'|.
 
-  The following special commit marks exist.
+The following special commit marks exist.
 
                                                                      *flog-''*
   ''                    The last commit before jumping to another commit.
