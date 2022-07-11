@@ -37,132 +37,137 @@ COMMANDS                                                       *flog-commands*
   The first time this is called, runs "git commit-graph write". This can be
   changed with |g:flog_write_commit_graph|.
 
-  The following options are supported:
+:Flog -all                                                        *:Flog_-all*
+:Flog -no-all                                                  *:Flog_-no-all*
 
-  -all -no-all                                      *:Flog-all* *:Flog-no-all*
+  When enabled, pass the "--all" argument to "git log".
+  Disabled when |:Flog_-limit| is set.
+  Disabled by default.
 
-    When enabled, pass the "--all" argument to "git log".
-    Disabled when |:Flog-limit| is set.
-    Disabled by default.
+:Flog -bisect                                                  *:Flog_-bisect*
+:Flog -no-bisect                                            *:Flog_-no-bisect*
 
-  -bisect -no-bisect                          *:Flog-bisect* *:Flog-no-bisect*
+  When enabled, pass the "--bisect" argument to "git log".
+  Disabled by default.
 
-    When enabled, pass the "--bisect" argument to "git log".
-    Disabled by default.
+:Flog -merges                                                  *:Flog_-merges*
+:Flog -no-merges                                            *:Flog_-no-merges*
 
-  -merges -no-merges                          *:Flog-merges* *:Flog-no-merges*
+  When disabled, pass the "--no-merges" argument to "git log".
+  Enabled by default.
 
-    When disabled, pass the "--no-merges" argument to "git log".
-    Enabled by default.
+:Flog -reflog                                                  *:Flog_-reflog*
+:Flog -no-reflog                                            *:Flog_-no-reflog*
 
-  -reflog -no-reflog                          *:Flog-reflog* *:Flog-no-reflog*
+  When enabled, pass the "--reflog" argument to "git log".
+  Disabled by default.
 
-    When enabled, pass the "--reflog" argument to "git log".
-    Disabled by default.
+:Flog -reverse                                                *:Flog_-reverse*
+:Flog -no-reverse                                          *:Flog_-no-reverse*
 
-  -reverse -no-reverse                      *:Flog-reverse* *:Flog-no-reverse*
+  When enabled, pass the "--reverse" argument to "git log".
+  Requires |:Flog_-no-graph|.
+  Disabled by default.
 
-    When enabled, pass the "--reverse" argument to "git log".
-    Requires |:Flog-no-graph|.
-    Disabled by default.
+:Flog -patch                                                    *:Flog_-patch*
+:Flog -no-patch                                              *:Flog_-no-patch*
 
-  -patch -no-patch                              *:Flog-patch* *:Flog-no-patch*
+  When disabled, pass the "--no-patch" argument to "git log".
+  Enabled by default.
 
-    When disabled, pass the "--no-patch" argument to "git log".
-    Enabled by default.
+:Flog -graph                                                    *:Flog_-graph*
+:Flog -no-graph                                              *:Flog_-no-graph*
 
-  -graph -no-graph                              *:Flog-graph* *:Flog-no-graph*
+  When disabled, do not draw the commit graph.
+  The graph cannot be drawn when |:Flog_-reverse| is set.
+  Enabled by default.
 
-    When disabled, do not draw the commit graph.
-    The graph cannot be drawn when |:Flog-reverse| is set.
-    Enabled by default.
+:Flog -author=<author>                                         *:Flog_-author*
 
-  -author=<author>                                              *:Flog-author*
+  Passes the "--author=<author>" argument to "git log".
 
-    Passes the "--author=<author>" argument to "git log".
+:Flog -date=<date>                                               *:Flog_-date*
 
-  -date=<date>                                                    *:Flog-date*
+  Passes the "--date=<date>" argument to "git log".
+  All named formats are supported.
 
-    Passes the "--date=<date>" argument to "git log".
-    All named formats are supported.
+:Flog -format=<format>                                         *:Flog_-format*
 
-  -format=<format>                                              *:Flog-format*
+  Passes the "--pretty=format:<format>" argument to "git log".
+  Multiline formats are supported.
 
-    Passes the "--pretty=format:<format>" argument to "git log".
-    Multiline formats are supported.
+  To support highlighting, special items should go at the start.
+  This includes date, hash, author, and refs.
 
-    To support highlighting, special items should go at the start.
-    This includes date, hash, author, and refs.
+:Flog -limit=<limit>                                            *:Flog_-limit*
 
-  -limit=<limit>                                                 *:Flog-limit*
+  Passes the "-L=<limit>" argument to "git log".
+  The patch displayed can be disabled with |:Flog_-no-patch|.
 
-    Passes the "-L=<limit>" argument to "git log".
-    The patch displayed can be disabled with |:Flog-no-patch|.
+  You can also specify this argument by passing a range to the command.
+  You can also visually select lines and run the command.
+  This will use the current file and selected lines for the limit.
 
-    You can also specify this argument by passing a range to the command.
-    You can also visually select lines and run the command.
-    This will use the current file and selected lines for the limit.
+:Flog -max-count=<number>                                   *:Flog_-max-count*
 
-  -max-count=<number>                                        *:Flog-max-count*
+  Passes the "--max-count=<number>" argument to "git log".
 
-    Passes the "--max-count=<number>" argument to "git log".
+  Defaults to 5000.
 
-    Defaults to 5000.
+:Flog -order=<type>                                             *:Flog_-order*
+:Flog -sort=<type>                                               *:Flog_-sort*
 
-  -order=<type>                                                  *:Flog-order*
-  -sort=<type>                                                    *:Flog-sort*
+  Sort by one of <type>, where type is in "date", "author", or "topo".
 
-    Sort by one of <type>, where type is in "date", "author", or "topo".
+  These pass either the argument "--date-order", "--author-order", or
+  "--topo-order" to "git log", respectfully.
 
-    These pass either the argument "--date-order", "--author-order", or
-    "--topo-order" to "git log", respectfully.
+  Defaults to "topo" when |:Flog_-graph| is enabled and "date" otherwise.
 
-    Defaults to "topo" when |:Flog-graph| is enabled and "date" otherwise.
+:Flog -skip=<number>                                             *:Flog_-skip*
 
-  -skip=<number>                                                  *:Flog-skip*
+  Passes the "--skip=<number>" argument to "git log".
 
-    Passes the "--skip=<number>" argument to "git log".
+:Flog -search=<pattern>                                        *:Flog_-search*
+:Flog -grep=<pattern>                                            *:Flog_-grep*
 
-  -search=<pattern>                                             *:Flog-search*
-  -grep=<pattern>                                                 *:Flog-grep*
+  Passes the "--grep=<pattern>" argument to "git log".
 
-    Passes the "--grep=<pattern>" argument to "git log".
+:Flog -patch-search=<pattern>                            *:Flog_-patch-search*
+:Flog -patch-grep=<pattern>                                *:Flog_-patch-grep*
 
-  -patch-search=<pattern>                                 *:Flog-patch-search*
-  -patch-grep=<pattern>                                     *:Flog-patch-grep*
+  Passes the "-G=<pattern>" argument to "git log".
 
-    Passes the "-G=<pattern>" argument to "git log".
+:Flog -rev=<rev>                                                  *:Flog_-rev*
 
-  -rev=<rev>                                                       *:Flog-rev*
+  A git revision to pass to "git log".
+  Can be specified more than once.
 
-    A git revision to pass to "git log".
-    Can be specified more than once.
+  When |:Flog_-limit| is specified, only the first revision is used.
 
-    When |:Flog-limit| is specified, only the first revision is used.
+:Flog -path=<path>                                               *:Flog_-path*
 
-  -path=<path>                                                    *:Flog-path*
+  A path to pass to "git log".
+  This option can be specified multiple times for multiple paths.
 
-    A path to pass to "git log".
-    This option can be specified multiple times for multiple paths.
+  When |:Flog_-limit| is specified, this is not used.
 
-    When |:Flog-limit| is specified, this is not used.
+:Flog -open-cmd=<cmd>                                        *:Flog_-open-cmd*
 
-  -open-cmd=<cmd>                                             *:Flog-open-cmd*
+  The command to use to open the window containing the graph.
+  Must give initial focus to the window.
+  Defaults to |tabedit|.
 
-    The command to use to open the window containing the graph.
-    Must give initial focus to the window.
-    Defaults to |tabedit|.
+:Flog -raw-args=<args>                                       *:Flog_-raw-args*
 
-  -raw-args=<args>                                            *:Flog-raw-args*
+  Additional args to pass to "git log --graph".
+  No args passed in using this option are guaranteed to work.
+  Can be specified multiple times.
 
-    Additional args to pass to "git log --graph".
-    No args passed in using this option are guaranteed to work.
-    Can be specified multiple times.
+:Flog --                                                            *:Flog_--*
 
-  --                                                                 *:Flog--*
-
-    Parse the remaining arguments as if they were passed to |:Flog-raw-args|.
-    Does not require escaping spaces.
+  Parse the remaining arguments as if they were passed to |:Flog_-raw-args|.
+  Does not require escaping spaces.
 
 :Flogsplit                                                        *:Flogsplit*
 
@@ -383,7 +388,7 @@ NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
                                                        *<Plug>(FlogSkipAhead)*
 ]]                                                                   *flog-]]*
 
-  Go forward in the commit history by |:Flog-max-count| commits, if that
+  Go forward in the commit history by |:Flog_-max-count| commits, if that
   option is set.
 
   Accepts a count.
@@ -401,7 +406,7 @@ gcg                                                                 *flog-gcg*
                                                           *<Plug>(FlogSetRev)*
 gct                                                                 *flog-gct*
 
-  Set |:Flog-rev| to the commit under the cursor and clear |:Flog-skip|.
+  Set |:Flog_-rev| to the commit under the cursor and clear |:Flog_-skip|.
   Similar to |zt|, this will set the commit to the top of the output.
 
                                                         *<Plug>(FlogClearRev)*
