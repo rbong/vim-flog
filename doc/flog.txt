@@ -476,23 +476,23 @@ g\                                                                   *flog-g\*
   Open the command line with ":Flogsetargs -patch-search=".
   See also |:Flog-patch-search|.
 
-                                                       *<Plug>(FlogCycleOrder)*
+                                                      *<Plug>(FlogCycleOrder)*
 goo                                                                 *flog-goo*
 
   Cycle through the different |:Flog-order| options.
   The order of sort types can be changed with |g:flog_order_types|.
 
-                                                        *<Plug>(FlogOrderDate)*
+                                                       *<Plug>(FlogOrderDate)*
 god                                                                 *flog-god*
 
   Set |:Flog-order| to "date".
 
-                                                      *<Plug>(FlogOrderAuthor)*
+                                                     *<Plug>(FlogOrderAuthor)*
 goa                                                                 *flog-goa*
 
   Set |:Flog-order| to "author".
 
-                                                        *<plug>(FlogOrderTopo)*
+                                                       *<plug>(FlogOrderTopo)*
 got                                                                 *flog-got*
 
   Set |:Flog-order| to "topo".
@@ -824,13 +824,13 @@ flog#Exec({command}[, {focus}[, {static}[, {tmp}]]])
     flog#Exec('Git fetch')
 <
 
-                                                             *flog#ExecTmp()*
+                                                              *flog#ExecTmp()*
 flog#ExecTmp({command}[, {focus}[, {static}]])
 
   Same as |flog#Exec()|, but always open the command in a temporary
   |flog-side-window|.
 
-                                                              *flog#Format()*
+                                                               *flog#Format()*
 flog#Format({command})
 
   Format a command according to |flog-command-format|.
@@ -849,11 +849,11 @@ FlogUpdate                On updating a |:Flog| window.
                                                        *User_FlogSideWinSetup*
 FlogSideWinSetup          On initializing any |flog-side-window|.
 
-                                                  *User_FlogTmpSideWinSetup*
+                                                    *User_FlogTmpSideWinSetup*
 FlogTmpSideWinSetup       On initializing a temporary |flog-side-window|.
                           Called after |User_FlogSideWinSetup|.
 
-                                               *User_FlogNonTmpSideWinSetup*
+                                                 *User_FlogNonTmpSideWinSetup*
 FlogNonTmpSideWinSetup    On initializing a non-temporary |flog-side-window|.
                           Called after |User_FlogSideWinSetup|.
 
