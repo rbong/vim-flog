@@ -238,7 +238,7 @@ function! flog#cmd#flog#args#CompleteLimit(arg_lead) abort
 endfunction
 
 function! flog#cmd#flog#args#CompleteRev(arg_lead) abort
-  if !flog#fugitive#IsFugitiveBuf()
+  if !flog#fugitive#IsGitBuf()
     return []
   endif
   let [l:lead, _] = flog#args#SplitArg(a:arg_lead)
