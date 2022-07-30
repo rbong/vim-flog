@@ -68,7 +68,7 @@ endfunction
 
 function! flog#format#FormatCommitLocalBranch(cache, commit) abort
   let l:branch = flog#format#FormatCommitBranch(a:cache, a:commit)
-  return substitute(l:branch, '.*/', '', '')
+  return substitute(l:branch, '.\{-}/', '', '')
 endfunction
 
 function! flog#format#FormatLocalBranch(cache) abort

@@ -148,7 +148,7 @@ function! flog#state#GetCommitRefs(commit) abort
   let l:refs = []
 
   for l:ref in split(a:commit.refs, ', ')
-    let l:match = matchlist(l:ref, '\v^(([^ ]+) -\> )?(tag: )?((refs/(remote|.*)?/)?((.*/)?(.*)))')
+    let l:match = matchlist(l:ref, '\v^(([^ ]+) -\> )?(tag: )?((refs/(remote|.*)?/)?((.{-}/)?(.*)))')
 
     " orig: The name of the original path, ex. "HEAD"
     " tag: Whether the ref is a tag
@@ -156,7 +156,7 @@ function! flog#state#GetCommitRefs(commit) abort
     " remote: Remote name only
     " full: Full path including refs/.*/
     " path: Path with remote
-    " tail: End of path only (after the last slash)
+    " tail: End of path only (no remote)
     call add(l:refs, {
           \ 'orig': l:match[2],
           \ 'tag': !empty(l:match[3]),
