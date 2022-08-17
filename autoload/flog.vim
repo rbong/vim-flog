@@ -190,7 +190,6 @@ function! flog#get_fugitive_git_dir() abort
 endfunction
 
 function! flog#trigger_fugitive_git_detection() abort
-  let b:git_dir = flog#get_fugitive_git_dir()
   let l:workdir = flog#get_state().workdir
   call FugitiveDetect(l:workdir)
 endfunction
@@ -1653,6 +1652,9 @@ endfunction
 " Graph layout management {{{
 
 function! flog#open_graph(state) abort
+  " grab git dir before opening a new buffer so we still have the opened file
+  let b:git_dir = flog#get_fugitive_git_dir()
+
   let l:window_name = 'flog-' . a:state.instance . ' [uninitialized]'
   silent exec a:state.open_cmd . ' ' . l:window_name
 
