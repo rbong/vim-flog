@@ -81,9 +81,11 @@ local function flog_get_graph(
     local parent_hashes = {}
     local nparents = 0
     for parent in handle:read():gmatch('%S+') do
-      nparents = nparents + 1
-      parents[nparents] = parent
-      parent_hashes[parent] = 1
+      if not parent_hashes[parent] then
+        nparents = nparents + 1
+        parents[nparents] = parent
+        parent_hashes[parent] = 1
+      end
     end
 
     -- Read refs
