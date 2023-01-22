@@ -11,7 +11,7 @@ jobs:
             vim_version: "v8.2.2277"
             vspec_vim: "vim"
           - vim_type: "Neovim"
-            vim_version: "stable"
+            vim_version: "head"
             vspec_vim: "nvim"
     steps:
       - name: "checkout"
