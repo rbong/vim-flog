@@ -12,7 +12,7 @@ jobs:
             lua_version: "luajit-2.1.0-beta3"
             nvim: "false"
           - vim_type: "Vim"
-            vim_version: "v9.0.1229"
+            vim_version: "v9.0.0000"
             lua_version: "luajit-2.1.0-beta3"
             nvim: "false"
           - vim_type: "Neovim"
