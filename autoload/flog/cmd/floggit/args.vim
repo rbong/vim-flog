@@ -267,7 +267,7 @@ function! flog#cmd#floggit#args#Complete(arg_lead, cmd_line, cursor_pos) abort
     endif
 
     if !empty(l:opts.path)
-      let l:paths = flog#FilterCompletions(a:arg_lead, l:opts.paths)
+      let l:paths = flog#args#FilterCompletions(a:arg_lead, l:opts.path)
       let l:paths = flog#shell#EscapeList(l:paths)
       let l:completions += flog#list#Exclude(l:paths, l:completions)
     endif
