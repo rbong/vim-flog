@@ -12,7 +12,7 @@ jobs:
             lua_version: "luajit-2.1.0-beta3"
             nvim: "false"
           - vim_type: "Neovim"
-            vim_version: "stable"
+            vim_version: "head"
             nvim: "true"
     steps:
       - name: "checkout"
