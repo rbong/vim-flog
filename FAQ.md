@@ -2,102 +2,80 @@
 
 ## How do I get Flog to run faster?
 
-There are several ways to get Flog to run faster depending on what your exact issue is.
+The answer depends on your issue.
 
-**Specifying the max count**
+**Flog is slow the first time it runs for a repo**
 
-You may want to specify `-max-count=<count>`, or use `let g:flog_default_arguments = { 'max_count': <count> }`.
+The first time Flog runs for a repo, it runs `git commit-graph write`.
+This ultimately makes it run faster.
 
-This restricts the log to displaying a certain number of commits.
-This will increase the speed at which Flog can redraw the commit graph, generally reducing lag.
-
-If you need to jump forward/backwards in history by `<count>`, use `[[`/`]]`
-
-**Pre-calculating the commit graph**
-
-In very large repositories, the commit graph can take a long time to sort when you use `git log --graph` or run Flog, even with max count specified.
-In these cases you can pre-calculate the commit graph.
-
-If you are running Git 2.24 or greater, it is enabled by default.
-Otherwise it can be enabled via:
+Disable this feature:
 
 ```
-git config --global core.commitGraph true
-git config --global gc.writeCommitGraph true
+let g:flog_write_commit_graph = 0
 ```
 
-After that, navigate to your repository and run `git commit-graph write`.
+Set args (defaults shown):
 
-This command may still take a long time to run, but once it has been generated, `git log --graph` and Flog will run much faster.
-If you don't plan to view a large number of commits that aren't reachable, you can use `git commit-graph write --reachable` to speed up this process.
-
-You may want to re-run this command regularly when there are enough new commits.
-
-**Disabling graph mode**
-
-If you want to skip generating a graph and use Flog just as a log viewer, you can pass `-no-graph` to Flog or use the `gx` binding to toggle the graph.
-This is equivalent to `git log --no-graph`.
-
-If this is still too slow, it might be because Flog has to wait until the command completes to write output to the buffer.
-In these cases, you may want to resort to just using `git log` in the terminal.
-
-**Flog is still too slow**
-
-Flog, unlike other branch viewers like `gitk`, is just a wrapper around `git log`.
-It just reads static output from the command after it finishes and writes it to a buffer.
-By contrast, `gitk` reads raw commit data, calculates the graph structure itself commit-by-commit, and updates the display, all without hanging.
-
-This may change in the future, so check back.
-
-If you have any feedback about Flog's speed or any of the suggestions above, please see [this ongoing issue](https://github.com/rbong/vim-flog/issues/26).
-
-## How do I get Flog to look nicer?
-
-Flog struggles with highlighting since Vim is not built to highlight vertical columns.
-
-To use the same highlighting that `git log --graph` would use in the shell,
-[download the AnsiEsc.vim plugin](https://github.com/vim-scripts/AnsiEsc.vim),
-then add `let g:flog_use_ansi_esc = 1` to your `.vimrc`.
-
-Note that using `AnsiEsc.vim` with Flog comes with a performance hit.
-
-Another option is to use a custom command to replace `git log --graph`.
-Some users prefer the look of [git-forest](https://github.com/rbong/git-scripts/blob/master/git-forest),
-pictured below.
-
-![git-forest](img/git-forest.png)
-
-To use `git-forest` as a custom log command,
-[download it from here](https://github.com/rbong/git-scripts/blob/master/git-forest),
-and add it to your path, then add this to your `.vimrc`.
-
-```vim
-let g:flog_build_log_command_fn = 'flog#build_git_forest_log_command'
+```
+let g:flog_write_commit_graph_args = '--reachable --progress'
 ```
 
-## Why not just use the `git log --graph` command?
+**Flog gets slower over time for repos**
 
-To interact with commits.
+The commit graph will eventually become out of date.
 
-## Why have a branch viewer inside of Vim?
+You can update it by running:
 
-This allows seamlessly switching between navigating the commit history, running git commands, and editing files checked into git.
+```
+git commit-graph write --reachable --progress
+```
 
-It also prevents having to learn another git interface on top of [fugitive](https://github.com/tpope/vim-fugitive).
+**Flog takes a long time to load for many commits**
 
-If you want to know everything you can do with fugitive, I recommend [the Vimcasts fugitive series](http://vimcasts.org/blog/2011/05/the-fugitive-series/).
+By default, Flog will shows 5,000 commits.
+
+Launch with less commits:
+
+```
+:Flog -max-count=2000
+```
+
+Launch with less commits by default:
+
+```
+let g:flog_permanent_default_opts = { 'max_count': 2000 }
+```
+
+**Flog takes a long time to load for complex git branch graphs**
+
+Toggle the graph with `gx` or launch with `:Flog -no-graph`.
+
+**Other issues**
+
+Please [post an issue](https://github.com/rbong/vim-flog/issues/).
 
 ## What are the differences with other branch viewers?
 
-[gv.vim](https://github.com/junegunn/gv.vim) is an ultra-light branch viewer, whereas Flog is fully featured.
-Flog allows updating the graph, running commands, and customization, where gv does not.
+[gv.vim](https://github.com/junegunn/gv.vim) is an ultra-light branch viewer.
 
-[gitv](https://github.com/gregsexton/gitv) is another fully featured branch viewer.
-Flog is a next generation branch viewer that learns a lot of lessons from gitv.
-It has a better defined argument system, more robust window management, more stable update system, has the ability to run more commands in the graph easier, has cleaner mappings, and supports any log format.
+[gitv](https://github.com/gregsexton/gitv) is a fully featured branch viewer.
+
+Flog is faster than gitv.
+Flog is slower than gv.vim, but in many cases only marginally.
+
+gv.vim and gitv rely on the output of `git log --graph`.
+Flog draws the git branch graph itself.
+This allows for branch highlighting and beautiful git branch graphs.
+
+Flog is more customizable and flexible than gitv.
+gv.vim does not have any customization or flexibility by design.
+
+Flog has features which have no equivalent in either of the other branch viewers.
+This includes commit marks, some navigation mappings, and contextually aware command completion.
 
 ## How can I learn how to use flog?
 
 See `:help flog` for all commands and options.
-See [the examples](EXAMPLES.md) for detailed walkthroughs of different operations using flog.
-Please [post an issue](https://github.com/rbong/vim-flog/issues) if you have any questions on how to do anything.
+See [examples](EXAMPLES.md) for detailed walkthroughs.
+Please [post an issue](https://github.com/rbong/vim-flog/issues) if you have any questions.
