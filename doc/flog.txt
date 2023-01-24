@@ -765,6 +765,11 @@ g:flog_use_internal_lua                              *g:flog_use_internal_lua*
     --enable-luainterp=dynamic \
     --with-luajit
 <
+  You must have both LuaJIT and the LuaJIT development files installed on your
+  system to use this option. For example, on Ubuntu run:
+>
+  apt-get install luajit libluajit-5.1-dev
+<
 
   See |install| for information on compiling Vim.
   See also "./configure --help".
