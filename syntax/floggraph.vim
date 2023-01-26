@@ -138,7 +138,7 @@ for branch_idx in range(1, 9)
   exec 'highlight link ' . branch . 'MergeStart ' . branch
 
   " Horizontal merge character
-  exec 'syntax match ' . merge . 'Horizontal contained /\v%(%u2500|%u252c|%u2534)/'
+  exec 'syntax match ' . merge . 'Horizontal contained /\v%(%u2500|%u252c|%u2534|%u256e|%u256f)/'
   exec 'highlight link ' . merge . 'Horizontal ' . branch
 
   " Branches to the right of a merge
