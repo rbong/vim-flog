@@ -288,54 +288,6 @@ u                                                                     *flog-u*
 
   Update/reload the |:Flog| window.
 
-                                                     *<Plug>(FlogCloseTmpWin)*
-dq                                                                   *flog-dq*
-
-  Close all temporary |flog-side-window|s.
-
-                                                            *<Plug>(FlogQuit)*
-gq                                                                   *flog-gq*
-ZZ                                                                   *flog-ZZ*
-
-  Quit Flog.
-
-------------------------------------------------------------------------------
-DIFF MAPPINGS                                             *flog-diff-mappings*
-
-                                                 *<Plug>(FlogVDiffSplitRight)*
-dd                                                                   *flog-dd*
-dv                                                                   *flog-dv*
-
-  In normal mode, open a diff in a temporary |flog-side-window| comparing the
-  commit under the cursor with the current HEAD.
-
-  In normal mode, also sets |flog-'!| to the commit under the cursor.
-
-  In visual mode, open a diff in a temporary |flog-side-window| comparing the
-  commits at the top and bottom of the visual selection.
-
-                                            *<Plug>(FlogVDiffSplitPathsRight)*
-dp                                                                   *flog-dp*
-DD                                                                   *flog-DD*
-DV                                                                   *flog-DV*
-
-  Same as |flog-dd|, but use the "-path" or "-limit" argument to only show the
-  diff for the currently selected paths.
-
-                                       *<Plug>(FlogVDiffSplitLastCommitRight)*
-d!                                                                   *flog-d!*
-
-  Diff the commit under the cursor and the last used commit in a temporary
-  |flog-side-window|.
-
-  See also |flog-'!|.
-
-                                  *<Plug>(FlogVDiffSplitLastCommitPathsRight)*
-D!                                                                   *flog-D!*
-
-  Same as |flog-d!|, but use the "-path" or "-limit" argument to only show the
-  diff for the currently selected paths.
-
                                                     *<Plug>(FlogVSplitStaged)*
 gs                                                                   *flog-gs*
 
@@ -350,6 +302,17 @@ gu                                                                   *flog-gu*
 gU                                                                   *flog-gU*
 
   Show the currently unstaged changes.
+
+                                                     *<Plug>(FlogCloseTmpWin)*
+dq                                                                   *flog-dq*
+
+  Close all temporary |flog-side-window|s.
+
+                                                            *<Plug>(FlogQuit)*
+gq                                                                   *flog-gq*
+ZZ                                                                   *flog-ZZ*
+
+  Quit Flog.
 
 ------------------------------------------------------------------------------
 NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
@@ -432,6 +395,23 @@ gcc                                                                 *flog-gcc*
   Unset |:Flog-rev|.
 
 ------------------------------------------------------------------------------
+COMMIT MARK MAPPINGS                                      *flog-mark-mappings*
+
+                                                   *<Plug>(FlogSetCommitMark)*
+m{a-zA-Z'}                                                            *flog-m*
+
+  Mark the current commit under the cursor.
+  See also |flog-commit-marks|.
+
+                                                *<Plug>(FlogJumpToCommitMark)*
+'{a-zA-Z'}                                                            *flog-'*
+
+  Jump to the marked commit.
+  Sets |flog-''| to the last commit under the cursor.
+
+  See also |flog-commit-marks|.
+
+------------------------------------------------------------------------------
 ARGUMENT MODIFIER MAPPINGS                            *flog-argument-mappings*
 
                                                        *<Plug>(FlogToggleAll)*
@@ -501,6 +481,48 @@ got                                                                 *flog-got*
 gor                                                                 *flog-gor*
 
   Toggle |:Flog-reverse|.
+
+------------------------------------------------------------------------------
+DIFF MAPPINGS                                             *flog-diff-mappings*
+
+                                                 *<Plug>(FlogVDiffSplitRight)*
+dd                                                                   *flog-dd*
+dv                                                                   *flog-dv*
+
+  In normal mode, open a diff in a temporary |flog-side-window| comparing the
+  commit under the cursor with the current HEAD.
+
+  In normal mode, also sets |flog-'!| to the commit under the cursor.
+
+  In visual mode, open a diff in a temporary |flog-side-window| comparing the
+  commits at the top and bottom of the visual selection.
+
+                                            *<Plug>(FlogVDiffSplitPathsRight)*
+dp                                                                   *flog-dp*
+DD                                                                   *flog-DD*
+DV                                                                   *flog-DV*
+
+  Same as |flog-dd|, but use the "-path" or "-limit" argument to only show the
+  diff for the currently selected paths.
+
+                                       *<Plug>(FlogVDiffSplitLastCommitRight)*
+d!                                                                   *flog-d!*
+
+  Diff the commit under the cursor and the last used commit in a temporary
+  |flog-side-window|.
+
+  See also |flog-'!|.
+
+                                  *<Plug>(FlogVDiffSplitLastCommitPathsRight)*
+D!                                                                   *flog-D!*
+
+  Same as |flog-d!|, but use the "-path" or "-limit" argument to only show the
+  diff for the currently selected paths.
+
+							*<Plug>(FlogDiffHelp)*
+d?                                                                   *flog-d?*
+
+  Show these mappings.
 
 ------------------------------------------------------------------------------
 COMMIT AND BRANCH MAPPINGS                              *flog-commit-mappings*
@@ -597,22 +619,10 @@ cb<Space>                                                     *flog-cb<Space>*
   Start a command line with ":Floggit branch ".
   See also |:Floggit|.
 
-------------------------------------------------------------------------------
-COMMIT MARK MAPPINGS                                      *flog-mark-mappings*
+						      *<Plug>(FlogCommitHelp)*
+c?                                                                   *flog-c?*
 
-                                                   *<Plug>(FlogSetCommitMark)*
-m{a-zA-Z'}                                                            *flog-m*
-
-  Mark the current commit under the cursor.
-  See also |flog-commit-marks|.
-
-                                                *<Plug>(FlogJumpToCommitMark)*
-'{a-zA-Z'}                                                            *flog-'*
-
-  Jump to the marked commit.
-  Sets |flog-''| to the last commit under the cursor.
-
-  See also |flog-commit-marks|.
+  Show these mappings.
 
 ------------------------------------------------------------------------------
 REBASE MAPPINGS                                         *flog-rebase-mappings*
@@ -694,6 +704,11 @@ r<Space>                                                       *flog-r<Space>*
 
   See also |:Floggit|.
   See also "git rebase --help".
+
+						      *<Plug>(FlogRebaseHelp)*
+r?                                                                   *flog-r?*
+
+  Show these mappings.
 
 ==============================================================================
 SETTINGS                                                       *flog-settings*

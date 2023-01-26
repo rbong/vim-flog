@@ -57,52 +57,6 @@ if !hasmapto('<Plug>(FlogUpdate)')
 endif
 nnoremap <buffer> <silent> <Plug>(FlogUpdate) :<C-U>call flog#floggraph#buf#Update()<CR>
 
-if !hasmapto('<Plug>(FlogCloseTmpWin)')
-  nmap <buffer> dq <Plug>(FlogCloseTmpWin)
-endif
-
-nnoremap <buffer> <silent> <Plug>(FlogCloseTmpWin) :<C-U>call flog#floggraph#side_win#CloseTmp()<CR>
-
-if !hasmapto('<Plug>(FlogQuit)')
-  nmap <buffer> ZZ <Plug>(FlogQuit)
-  nmap <buffer> gq <Plug>(FlogQuit)
-endif
-nnoremap <buffer> <silent> <Plug>(FlogQuit) :<C-U>call flog#floggraph#buf#Close()<CR>
-
-" Diff mappings
-
-if !hasmapto('<Plug>(FlogVDiffSplitRight)')
-  nmap <buffer> dd <Plug>(FlogVDiffSplitRight)
-  vmap <buffer> dd <Plug>(FlogVDiffSplitRight)
-  nmap <buffer> dv <Plug>(FlogVDiffSplitRight)
-  vmap <buffer> dv <Plug>(FlogVDiffSplitRight)
-endif
-
-if !hasmapto('<Plug>(FlogVDiffSplitPathsRight)')
-  nmap <buffer> DD <Plug>(FlogVDiffSplitPathsRight)
-  vmap <buffer> DD <Plug>(FlogVDiffSplitPathsRight)
-  nmap <buffer> DV <Plug>(FlogVDiffSplitPathsRight)
-  vmap <buffer> DV <Plug>(FlogVDiffSplitPathsRight)
-endif
-
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>exec flog#Format('vertical belowright Floggit -s -t diff HEAD %h')<CR>
-vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>exec flog#Format("vertical belowright Floggit -s -t diff %(h'>) %(h'<)")<CR>
-
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>exec flog#Format('vertical belowright Floggit -s -t diff HEAD %h -- %p')<CR>
-vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>exec flog#Format("vertical belowright Floggit -s -t diff HEAD %(h'<) %(h'>) -- %p")<CR>
-
-if !hasmapto('<Plug>(FlogVDiffSplitLastCommitRight)')
-  nmap <buffer> d! <Plug>(FlogVDiffSplitLastCommitRight)
-endif
-
-if !hasmapto('<Plug>(FlogVDiffSplitLastCommitPathsRight)')
-  nmap <buffer> D! <Plug>(FlogVDiffSplitLastCommitPathsRight)
-endif
-
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitRight) :<C-U>exec flog#Format("vertical belowright Floggit -s -t diff %(h'!) %H")<CR>
-
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitPathsRight) :<C-U>exec flog#Format("vertical belowright Floggit -s -t diff %(h'!) %H -- %p")<CR>
-
 if !hasmapto('<Plug>(FlogVSplitStaged)')
   nmap <buffer> gs <Plug>(FlogVSplitStaged)
 endif
@@ -116,6 +70,18 @@ endif
 nnoremap <buffer> <silent> <Plug>(FlogVSplitStaged) :<C-U>vertical belowright Floggit -s -t diff --cached<CR>
 nnoremap <buffer> <silent> <Plug>(FlogVSplitUntracked) :<C-U>exec flog#Format('silent Git add -N . \| vertical belowright Floggit -s -t diff \| silent Git read-tree %t')<CR>
 nnoremap <buffer> <silent> <Plug>(FlogVSplitUnstaged) :<C-U>vertical belowright Floggit -s -t diff<CR>
+
+if !hasmapto('<Plug>(FlogCloseTmpWin)')
+  nmap <buffer> dq <Plug>(FlogCloseTmpWin)
+endif
+
+nnoremap <buffer> <silent> <Plug>(FlogCloseTmpWin) :<C-U>call flog#floggraph#side_win#CloseTmp()<CR>
+
+if !hasmapto('<Plug>(FlogQuit)')
+  nmap <buffer> ZZ <Plug>(FlogQuit)
+  nmap <buffer> gq <Plug>(FlogQuit)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogQuit) :<C-U>call flog#floggraph#buf#Close()<CR>
 
 " Navigation mappings
 
@@ -177,6 +143,22 @@ if !hasmapto('<Plug>(FlogClearRev)')
   nmap <buffer> gcc <Plug>(FlogClearRev)
 endif
 nnoremap <buffer> <silent> <Plug>(FlogClearRev) :<C-U>call flog#floggraph#nav#ClearRev()<CR>
+
+" Mark mappings
+
+if !hasmapto('<Plug>(FlogSetCommitMark)')
+  nmap <buffer> m <Plug>(FlogSetCommitMark)
+  vmap <buffer> m <Plug>(FlogSetCommitMark)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogSetCommitMark) :<C-U>call flog#floggraph#mark#Set(nr2char(getchar()), '.')<CR>
+vnoremap <buffer> <silent> <Plug>(FlogSetCommitMark) :<C-U>call flog#floggraph#mark#Set(nr2char(getchar()), '.')<CR>
+
+if !hasmapto('<Plug>(FlogJumpToCommitMark)')
+  nmap <buffer> ' <Plug>(FlogJumpToCommitMark)
+  vmap <buffer> ' <Plug>(FlogJumpToCommitMark)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogJumpToCommitMark) :<C-U>call flog#floggraph#nav#JumpToMark(nr2char(getchar()))<CR>
+vnoremap <buffer> <silent> <Plug>(FlogJumpToCommitMark) :<C-U>call flog#floggraph#nav#JumpToMark(nr2char(getchar()))<CR>
 
 " Argument modifier mappings
 
@@ -244,6 +226,45 @@ if !hasmapto('<Plug>(FlogToggleReverse)')
   nmap <buffer> gor <Plug>(FlogToggleReverse)
 endif
 nnoremap <buffer> <silent> <Plug>(FlogToggleReverse) :<C-U>call flog#floggraph#opts#ToggleReverse()<CR>
+
+" Diff mappings
+
+if !hasmapto('<Plug>(FlogVDiffSplitRight)')
+  nmap <buffer> dd <Plug>(FlogVDiffSplitRight)
+  vmap <buffer> dd <Plug>(FlogVDiffSplitRight)
+  nmap <buffer> dv <Plug>(FlogVDiffSplitRight)
+  vmap <buffer> dv <Plug>(FlogVDiffSplitRight)
+endif
+
+if !hasmapto('<Plug>(FlogVDiffSplitPathsRight)')
+  nmap <buffer> DD <Plug>(FlogVDiffSplitPathsRight)
+  vmap <buffer> DD <Plug>(FlogVDiffSplitPathsRight)
+  nmap <buffer> DV <Plug>(FlogVDiffSplitPathsRight)
+  vmap <buffer> DV <Plug>(FlogVDiffSplitPathsRight)
+endif
+
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>exec flog#Format('vertical belowright Floggit -s -t diff HEAD %h')<CR>
+vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>exec flog#Format("vertical belowright Floggit -s -t diff %(h'>) %(h'<)")<CR>
+
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>exec flog#Format('vertical belowright Floggit -s -t diff HEAD %h -- %p')<CR>
+vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>exec flog#Format("vertical belowright Floggit -s -t diff HEAD %(h'<) %(h'>) -- %p")<CR>
+
+if !hasmapto('<Plug>(FlogVDiffSplitLastCommitRight)')
+  nmap <buffer> d! <Plug>(FlogVDiffSplitLastCommitRight)
+endif
+
+if !hasmapto('<Plug>(FlogVDiffSplitLastCommitPathsRight)')
+  nmap <buffer> D! <Plug>(FlogVDiffSplitLastCommitPathsRight)
+endif
+
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitRight) :<C-U>exec flog#Format("vertical belowright Floggit -s -t diff %(h'!) %H")<CR>
+
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitPathsRight) :<C-U>exec flog#Format("vertical belowright Floggit -s -t diff %(h'!) %H -- %p")<CR>
+
+if !hasmapto('<Plug>(FlogDiffHelp)')
+  nmap <buffer> d? <Plug>(FlogDiffHelp)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogDiffHelp) :help flog-diff-mappings<CR>
 
 " Commit/branch mappings
 
@@ -339,21 +360,10 @@ endif
 nnoremap <buffer> <Plug>(FlogGitBranch) :Floggit branch<Space>
 vnoremap <buffer> <Plug>(FlogGitBranch) :Floggit branch<Space>
 
-" Mark mappings
-
-if !hasmapto('<Plug>(FlogSetCommitMark)')
-  nmap <buffer> m <Plug>(FlogSetCommitMark)
-  vmap <buffer> m <Plug>(FlogSetCommitMark)
+if !hasmapto('<Plug>(FlogCommitHelp)')
+  nmap <buffer> c? <Plug>(FlogCommitHelp)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogSetCommitMark) :<C-U>call flog#floggraph#mark#Set(nr2char(getchar()), '.')<CR>
-vnoremap <buffer> <silent> <Plug>(FlogSetCommitMark) :<C-U>call flog#floggraph#mark#Set(nr2char(getchar()), '.')<CR>
-
-if !hasmapto('<Plug>(FlogJumpToCommitMark)')
-  nmap <buffer> ' <Plug>(FlogJumpToCommitMark)
-  vmap <buffer> ' <Plug>(FlogJumpToCommitMark)
-endif
-nnoremap <buffer> <silent> <Plug>(FlogJumpToCommitMark) :<C-U>call flog#floggraph#nav#JumpToMark(nr2char(getchar()))<CR>
-vnoremap <buffer> <silent> <Plug>(FlogJumpToCommitMark) :<C-U>call flog#floggraph#nav#JumpToMark(nr2char(getchar()))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogCommitHelp) :help flog-commit-mappings<CR>
 
 " Rebase mappings
 
@@ -418,3 +428,8 @@ if !hasmapto('<Plug>(FlogGitRebase)')
 endif
 nnoremap <buffer> <Plug>(FlogGitRebase) :Floggit rebase<Space>
 vnoremap <buffer> <Plug>(FlogGitRebase) :Floggit rebase<Space>
+
+if !hasmapto('<Plug>(FlogRebaseHelp)')
+  nmap <buffer> r? <Plug>(FlogRebaseHelp)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogRebaseHelp) :help flog-rebase-mappings<CR>
