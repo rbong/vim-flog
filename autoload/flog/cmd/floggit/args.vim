@@ -201,6 +201,7 @@ function! flog#cmd#floggit#args#CompleteContext(arg_lead, cmd_line, cursor_pos) 
       let l:completions += flog#cmd#floggit#args#CompleteCommitRefs(l:last_commit)
     endif
 
+    let l:completions = flog#args#FilterCompletions(a:arg_lead, l:completions)
     return l:completions
   else
     " Complete single line
