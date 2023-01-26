@@ -6,11 +6,10 @@ let b:current_syntax = 'floggraph'
 
 runtime! syntax/diff.vim
 
-syntax match flogEmptyStart /^/ nextgroup=@flogDiff,@flogCommitInfo
+syntax match flogLineStart nextgroup=flogLeftBranch1,flogCommit1,flogMerge1StartBranch,flogMergeComplexStartBranch1,flogMissingParentsStartBranch1,@flogCommitInfo,@flogDiff /^/
 
 " Commit Highlighting
 
-syntax match flogCommitInfo contained nextgroup=@flogCommitInfo /\v%(%U2022.{-})@<= /
 syntax cluster flogCommitInfo contains=flogHash,flogAuthor,flogRef,flogDate
 
 syntax match flogHash   contained nextgroup=flogAuthor,flogRef,flogDate  /\v%(\].*)@<!\[[0-9a-f]{4,}\]%( |$)/
@@ -59,10 +58,7 @@ highlight default link flogRefHeadBranch Special
 " Diff Highlighting
 " Copied from syntax/diff.vim
 
-syntax match flogDiff contained nextgroup=@flogDiff /\v%(%U2022.*)@<! /
 syntax cluster flogDiff contains=flogDiffAdded,flogDiffBDiffer,flogDiffChanged,flogDiffComment,flogDiffCommon,flogDiffDiffer,flogDiffFile,flogDiffIdentical,flogDiffIndexLine,flogDiffIsA,flogDiffLine,flogDiffNewFile,flogDiffNoEOL,flogDiffOldFile,flogDiffOnly,flogDiffRemoved
-
-syntax match flogDiffEmptyStart /^ \+/ nextgroup=@flogDiff
 
 syn match flogDiffOnly      contained /Only in .*/
 syn match flogDiffIdentical contained /Files .* and .* are identical$/
@@ -115,45 +111,92 @@ hi default link flogDiffRemoved   diffRemoved
 
 " Graph Highlighting
 
-" Entry point for branches
-syntax match flogGraphBranch0 nextgroup=flogGraphBranch2,flogDiff,flogCommitInfo /\v^%( |%u2502|%u250a|%u251c|%u256d|%u2570|%u2022)/
+" Dynamically generate highlight groups for branches
+for branch_idx in range(1, 9)
+  let branch_name = 'Branch' . branch_idx
+  let next_branch_idx = branch_idx % 9 + 1
+  let next_branch_name = 'Branch' . next_branch_idx
 
-" Color cycle for branches
-let branch_pattern = '/\v%( |%u2500|%u252c|%u2570)%( |%u2500|%u2502|%u250a|%u251c|%u2524|%u252c|%u2534|%u253c|%u256d|%u256e|%u256f|%u2570|%u2022)/'
-exec 'syntax match flogGraphBranch9 contained nextgroup=flogGraphBranch1,flogDiff,flogCommitInfo ' . branch_pattern
-exec 'syntax match flogGraphBranch8 contained nextgroup=flogGraphBranch9,flogDiff,flogCommitInfo ' . branch_pattern
-exec 'syntax match flogGraphBranch7 contained nextgroup=flogGraphBranch8,flogDiff,flogCommitInfo ' . branch_pattern
-exec 'syntax match flogGraphBranch6 contained nextgroup=flogGraphBranch7,flogDiff,flogCommitInfo ' . branch_pattern
-exec 'syntax match flogGraphBranch5 contained nextgroup=flogGraphBranch6,flogDiff,flogCommitInfo ' . branch_pattern
-exec 'syntax match flogGraphBranch4 contained nextgroup=flogGraphBranch5,flogDiff,flogCommitInfo ' . branch_pattern
-exec 'syntax match flogGraphBranch3 contained nextgroup=flogGraphBranch4,flogDiff,flogCommitInfo ' . branch_pattern
-exec 'syntax match flogGraphBranch2 contained nextgroup=flogGraphBranch3,flogDiff,flogCommitInfo ' . branch_pattern
-exec 'syntax match flogGraphBranch1 contained nextgroup=flogGraphBranch2,flogDiff,flogCommitInfo ' . branch_pattern
+  " Support both flogGraphBranch* and flogBranch
+  exec 'highlight link flogGraph' . branch_name . ' flog' . branch_name
 
-syntax cluster flogGraphBranch contains=flogGraphBranch0,flogGraphBranch1,flogGraphBranch2,flogGraphBranch3,flogGraphBranch4,flogGraphBranch5,flogGraphBranch6,flogGraphBranch7,flogGraphBranch8,flogGraphBranch9
+  " Branches at the start of the line - leads into other groups
+  exec 'syntax match flogLeft' . branch_name . ' contained nextgroup=flogLeft' . next_branch_name . ',flogCommit' . next_branch_idx . ',flogMerge' . next_branch_idx . 'StartBranch,flogMergeComplexStart' . next_branch_name . ',flogMissingParentsStart' . next_branch_name . ',@flogDiff /\v%(  |%u2502 |%u2502$)/'
+  exec 'highlight link flogLeft' . branch_name . ' flog' . branch_name
 
-syntax match flogGraphCommit /\v%u2022/ contained containedin=@flogGraphBranch
-syntax match flogGraphMerge /\v%(%u2500|%u252c\ze%u2022|%u2534)/ contained containedin=@flogGraphBranch
+  " Commit indicators
+  exec 'syntax match flogCommit' . branch_idx . ' contained nextgroup=flogCommitRight' . next_branch_name . ',@flogCommitInfo /\%u2022 /'
+  exec 'highlight link flogCommit' . branch_name . ' flogCommit'
+
+  " Branches to the right of the commit indicator
+  exec 'syntax match flogCommitRight' . branch_name . ' contained nextgroup=flogCommitRight' . next_branch_name . ',@flogCommitInfo /\v%(  |%u2502 |%u2502$)/'
+  exec 'highlight link flogCommitRight' . branch_name . ' flog' . branch_name
+
+  " Start of a merge - saves the branch that the merge starts on (see below)
+  exec 'syntax match flogMerge' . branch_idx . 'StartBranch contained nextgroup=flogMerge' . branch_idx . next_branch_name . ',flogMerge' . branch_idx . 'End' . next_branch_name . ' /\v%(%u251c|%u256d|%u2570)/'
+  exec 'highlight link flogMerge' . branch_idx . 'StartBranch flog' . branch_name
+
+  " Horizontal merge character
+  exec 'syntax match flogMerge' . branch_idx . 'Horizontal contained /\v%(%u2500|%u252c|%u2534)/'
+  exec 'highlight link flogMerge' . branch_idx . 'Horizontal flog' . branch_name
+
+  " Branches to the right of a merge
+  exec 'syntax match flogMergeRight' . branch_name . ' contained nextgroup=flogMergeRight' . next_branch_name . ' /\v%(  | %u2502|)/'
+  exec 'highlight link flogMergeRight' . branch_name . ' flog' . branch_name
+
+  " Start of complex merge line
+  exec 'syntax match flogMergeComplexStart' . branch_name . ' contained nextgroup=flogMergeComplexRight' . next_branch_name . ' /\v%( |%u2502)\ze%u2570%u2524/'
+  exec 'highlight link flogMergeComplexStart' . branch_name . ' flog' . branch_name
+
+  " Branches to right of complex merge line start
+  exec 'syntax match flogMergeComplexRight' . branch_name . ' contained nextgroup=flogMergeComplexRight' . next_branch_name . ' /\v%(  | %u2502|%u2570%u2524)/'
+  exec 'highlight link flogMergeComplexRight' . branch_name . ' flog' . branch_name
+
+  " Start of missing parents line
+  exec 'syntax match flogMissingParentsStart' . branch_name . ' contained nextgroup=flogMissingParents' . next_branch_name . ' /\v%u250a /'
+  exec 'highlight link flogMissingParentsStart' . branch_name . ' flog' . branch_name
+
+  " Branches to right of missing parents start
+  exec 'syntax match flogMissingParents' . branch_name . ' contained nextgroup=flogMissingParents' . next_branch_name . ' /\v%(  |%u2502 |%u2502$|%u250a |%u250a$)/'
+  exec 'highlight link flogMissingParents' . branch_name . ' flog' . branch_name
+endfor
+
+" Dynamically generate highlight groups for merges
+for merge_idx in range(1, 9)
+  for branch_idx in range(1, 9)
+    let branch_name = 'Branch' . branch_idx
+    let next_branch_idx = branch_idx % 9 + 1
+    let next_branch_name = 'Branch' . next_branch_idx
+
+    " Merge branches
+    exec 'syntax match flogMerge' . merge_idx . branch_name . ' contained contains=flogMerge' . merge_idx . 'Horizontal nextgroup=flogMerge' . merge_idx . next_branch_name ',flogMerge' . merge_idx . 'End' . next_branch_name . ' /\v%(%u2500|%u252c)\v%(%u2500|%u252c|%u2534|%u250a|%u253c)/'
+    exec 'highlight link flogMerge' . merge_idx . branch_name . ' flog' . branch_name
+
+    " End of a merge - lead into a simplified highlight group
+    exec 'syntax match flogMerge' . merge_idx . 'End' . branch_name . ' contained contains=flogMerge' . merge_idx . 'Horizontal nextgroup=flogMergeRight' . next_branch_name . ' /\v%u2500%(%u2524|%u256e|%u256f)/'
+    exec 'highlight link flogMerge' . merge_idx . 'End' . branch_name . ' flog' . branch_name
+  endfor
+endfor
 
 if &background ==# 'dark'
-  highlight default flogGraphBranch1 ctermfg=magenta     guifg=green1
-  highlight link    flogGraphBranch0 flogGraphBranch1
-  highlight default flogGraphBranch2 ctermfg=green       guifg=yellow1
-  highlight default flogGraphBranch3 ctermfg=yellow      guifg=orange1
-  highlight default flogGraphBranch4 ctermfg=cyan        guifg=greenyellow
-  highlight default flogGraphBranch5 ctermfg=red         guifg=springgreen1
-  highlight default flogGraphBranch6 ctermfg=yellow      guifg=cyan1
-  highlight default flogGraphBranch7 ctermfg=green       guifg=slateblue1
-  highlight default flogGraphBranch8 ctermfg=cyan        guifg=magenta1
-  highlight default flogGraphBranch9 ctermfg=magenta     guifg=purple1
+  highlight default flogBranch1 ctermfg=magenta     guifg=green1
+  highlight link    flogBranch0 flogBranch1
+  highlight default flogBranch2 ctermfg=green       guifg=yellow1
+  highlight default flogBranch3 ctermfg=yellow      guifg=orange1
+  highlight default flogBranch4 ctermfg=cyan        guifg=greenyellow
+  highlight default flogBranch5 ctermfg=red         guifg=springgreen1
+  highlight default flogBranch6 ctermfg=yellow      guifg=cyan1
+  highlight default flogBranch7 ctermfg=green       guifg=slateblue1
+  highlight default flogBranch8 ctermfg=cyan        guifg=magenta1
+  highlight default flogBranch9 ctermfg=magenta     guifg=purple1
 else
-  highlight default flogGraphBranch1 ctermfg=darkyellow  guifg=orangered3
-  highlight default flogGraphBranch2 ctermfg=darkgreen   guifg=orange2
-  highlight default flogGraphBranch3 ctermfg=blue        guifg=yellow3
-  highlight default flogGraphBranch4 ctermfg=darkmagenta guifg=olivedrab4
-  highlight default flogGraphBranch5 ctermfg=red         guifg=green4
-  highlight default flogGraphBranch6 ctermfg=darkyellow  guifg=paleturquoise3
-  highlight default flogGraphBranch7 ctermfg=darkgreen   guifg=deepskyblue4
-  highlight default flogGraphBranch8 ctermfg=blue        guifg=darkslateblue
-  highlight default flogGraphBranch9 ctermfg=darkmagenta guifg=darkviolet
+  highlight default flogBranch1 ctermfg=darkyellow  guifg=orangered3
+  highlight default flogBranch2 ctermfg=darkgreen   guifg=orange2
+  highlight default flogBranch3 ctermfg=blue        guifg=yellow3
+  highlight default flogBranch4 ctermfg=darkmagenta guifg=olivedrab4
+  highlight default flogBranch5 ctermfg=red         guifg=green4
+  highlight default flogBranch6 ctermfg=darkyellow  guifg=paleturquoise3
+  highlight default flogBranch7 ctermfg=darkgreen   guifg=deepskyblue4
+  highlight default flogBranch8 ctermfg=blue        guifg=darkslateblue
+  highlight default flogBranch9 ctermfg=darkmagenta guifg=darkviolet
 endif
