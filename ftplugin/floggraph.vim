@@ -370,12 +370,12 @@ nnoremap <buffer> <silent> <Plug>(FlogCommitHelp) :help flog-commit-mappings<CR>
 if !hasmapto('<Plug>(FlogRebaseInteractive)')
   nmap <buffer> ri <Plug>(FlogRebaseInteractive)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractive) :<C-U>exec flog#Format('Floggit -f rebase --interactive %H^')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractive) :<C-U>exec flog#Format('Floggit -f rebase --interactive %H')<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveAutosquash)')
   nmap <buffer> rf <Plug>(FlogRebaseInteractiveAutosquash)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveAutosquash) :<C-U>exec flog#Format('Floggit -f -c sequence.editor=true rebase --interactive --autosquash %H^')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveAutosquash) :<C-U>exec flog#Format('Floggit -f -c sequence.editor=true rebase --interactive --autosquash %H')<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveUpstream)')
   nmap <buffer> ru <Plug>(FlogRebaseInteractiveUpstream)
@@ -410,17 +410,17 @@ nnoremap <buffer> <silent> <Plug>(FlogRebaseEditTodo) :<C-U>Floggit -f rebase --
 if !hasmapto('<Plug>(FlogRebaseInteractiveReword)')
   nmap <buffer> rw <Plug>(FlogRebaseInteractiveReword)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveReword) :<C-U>exec flog#Format('Floggit -f rebase --interactive %H^ \| s/^pick/reword/e')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveReword) :<C-U>exec flog#Format('Floggit -f rebase --interactive %H \| s/^pick/reword/e')<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveEdit)')
   nmap <buffer> rm <Plug>(FlogRebaseInteractiveEdit)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveEdit) :<C-U>exec flog#Format('Floggit -f rebase --interactive %H^ \| s/^pick/edit/e')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveEdit) :<C-U>exec flog#Format('Floggit -f rebase --interactive %H \| s/^pick/edit/e')<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveDrop)')
   nmap <buffer> rd <Plug>(FlogRebaseInteractiveDrop)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveDrop) :<C-U>exec flog#Format('Floggit -f rebase --interactive %H^ \| s/^pick/drop/e')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveDrop) :<C-U>exec flog#Format('Floggit -f rebase --interactive %H \| s/^pick/drop/e')<CR>
 
 if !hasmapto('<Plug>(FlogGitRebase)')
   nmap <buffer> r<Space> <Plug>(FlogGitRebase)
