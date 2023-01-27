@@ -315,11 +315,11 @@ local function flog_get_graph(
           if branch_hash and not commit_hashes[parent_hash] then
             is_missing_parent = true
             nmissing_parents = nmissing_parents + 1
-          else
-            -- Record the visual parent if it is not missing
-            nvisual_parents = nvisual_parents + 1
-            visual_parents[nvisual_parents] = parent_hash
           end
+
+          -- Record the visual parent
+          nvisual_parents = nvisual_parents + 1
+          visual_parents[nvisual_parents] = parent_hash
         elseif branch_index == moved_parent_branch_index or (nmerges_right > 0 and parent_hashes[branch_hash]) then
           -- Existing parents
 
@@ -337,6 +337,12 @@ local function flog_get_graph(
           if branch_hash and not commit_hashes[branch_hash] then
             is_missing_parent = true
             nmissing_parents = nmissing_parents + 1
+          end
+
+          if branch_index ~= moved_parent_branch_index then
+            -- Record the visual parent
+            nvisual_parents = nvisual_parents + 1
+            visual_parents[nvisual_parents] = branch_hash
           end
         end
 
