@@ -365,6 +365,22 @@ NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
 
   Same as |flog-]r|, but jump backwards.
 
+                                                    *<Plug>(FlogJumpToParent)*
+}                                                                     *flog-}*
+
+  Jump to the nth parent of the commit under the cursor.
+
+  Accepts a count.
+  Sets |flog-''| to the last commit under the cursor.
+
+                                                     *<Plug>(FlogJumpToChild)*
+{                                                                     *flog-{*
+
+  Jump to the nth child of the commit under the cursor.
+
+  Accepts a count.
+  Sets |flog-''| to the last commit under the cursor.
+
                                                        *<Plug>(FlogSkipAhead)*
 ]]                                                                   *flog-]]*
 

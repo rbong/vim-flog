@@ -23,6 +23,39 @@ function! flog#floggraph#nav#JumpToCommit(hash) abort
   return [l:lnum, l:col]
 endfunction
 
+function! flog#floggraph#nav#JumpToParent(count) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
+
+  let l:prev_line = line('.')
+  let l:commit = flog#floggraph#commit#GetAtLine('.')
+  if empty(l:commit)
+    return [-1, -1]
+  endif
+
+  let l:parent_hash = get(l:commit.parents, a:count - 1)
+
+  let l:result = flog#floggraph#nav#JumpToCommit(l:parent_hash)
+  call flog#floggraph#mark#SetJump(l:prev_line)
+
+  return l:result
+endfunction
+
+function! flog#floggraph#nav#JumpToChild(count) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+
+  let l:prev_line = line('.')
+  let [l:nchildren, l:commit] = flog#floggraph#commit#GetChild(a:count)
+  if empty(l:commit)
+    return [-1, -1]
+  endif
+
+  let l:result = flog#floggraph#nav#JumpToCommit(l:commit.hash)
+  call flog#floggraph#mark#SetJump(l:prev_line)
+
+  return l:result
+endfunction
+
 function! flog#floggraph#nav#JumpToMark(key) abort
   call flog#floggraph#buf#AssertFlogBuf()
 

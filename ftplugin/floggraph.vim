@@ -119,6 +119,15 @@ endif
 nnoremap <buffer> <silent> <Plug>(FlogVNextRefRight) :<C-U>call flog#floggraph#nav#NextRefCommit(max([1, v:count]))<CR>
 nnoremap <buffer> <silent> <Plug>(FlogVPrevRefRight) :<C-U>call flog#floggraph#nav#PrevRefCommit(max([1, v:count]))<CR>
 
+if !hasmapto('<Plug>(FlogJumpToParent)')
+  nmap <buffer> } <Plug>(FlogJumpToParent)
+endif
+if !hasmapto('<Plug>(FlogJumpToChild)')
+  nmap <buffer> { <Plug>(FlogJumpToChild)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogJumpToParent) :<C-U>call flog#floggraph#nav#JumpToParent(max([1, v:count]))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogJumpToChild) :<C-U>call flog#floggraph#nav#JumpToChild(max([1, v:count]))<CR>
+
 if !hasmapto('<Plug>(FlogSkipAhead)')
   nmap <buffer> ]] <Plug>(FlogSkipAhead)
 endif

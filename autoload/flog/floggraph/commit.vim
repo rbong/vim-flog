@@ -92,6 +92,36 @@ function! flog#floggraph#commit#GetPrevRef(count = 1) abort
   return flog#floggraph#commit#GetNext(-a:count)
 endfunction
 
+function! flog#floggraph#commit#GetChild(count = 1) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
+
+  if a:count == 0
+    return [0, {}]
+  endif
+
+  let l:commits = l:state.commits
+  let l:ncommits = len(l:commits)
+
+  let l:child_commit = {}
+  let l:commit = flog#floggraph#commit#GetAtLine('.')
+  let l:commit_hash = l:commit.hash
+
+  let l:nchildren = 0
+  let l:i = index(l:state.commits, l:commit) - 1
+  while l:i >= 0 && l:nchildren != a:count
+    let l:commit = l:commits[l:i]
+    if index(l:commit.parents, l:commit_hash) >= 0
+      let l:child_commit = l:commit
+      let l:nchildren += 1
+    endif
+
+    let l:i -= 1
+  endwhile
+
+  return [l:nchildren, l:child_commit]
+endfunction
+
 function! flog#floggraph#commit#RestoreOffset(saved_win, saved_commit) abort
   if empty(a:saved_commit)
     return [-1, -1]
