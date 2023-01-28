@@ -148,6 +148,9 @@ function! flog#floggraph#buf#Update() abort
   " Restore commit position
   call flog#floggraph#commit#RestorePosition(graph_win, last_commit)
 
+  " Reset jumps
+  clearjumps
+
   silent! exec 'file ' . flog#floggraph#buf#GetName(state.instance_number, opts)
 
   if exists('#User#FlogUpdate')

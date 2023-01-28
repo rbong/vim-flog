@@ -50,6 +50,8 @@ function! flog#floggraph#nav#JumpToChild(count) abort
     return [-1, -1]
   endif
 
+  " Push the current position to jump history
+  mark `
   let l:result = flog#floggraph#nav#JumpToCommit(l:commit.hash)
   call flog#floggraph#mark#SetJump(l:prev_line)
 
@@ -70,6 +72,8 @@ function! flog#floggraph#nav#JumpToMark(key) abort
   let l:result = flog#floggraph#nav#JumpToCommit(l:commit.hash)
 
   if l:commit != l:prev_commit
+    " Push the current position to jump history
+    mark `
     call flog#floggraph#mark#SetJump(l:prev_line)
   endif
 
@@ -84,6 +88,8 @@ function! flog#floggraph#nav#NextCommit(count = 1) abort
   let l:commit = flog#floggraph#commit#GetNext(a:count)
 
   if !empty(l:commit)
+    " Push the current position to jump history
+    mark `
     call flog#floggraph#nav#JumpToCommit(l:commit.hash)
     call flog#floggraph#mark#SetJump(l:prev_line)
   endif
