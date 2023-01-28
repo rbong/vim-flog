@@ -16,22 +16,22 @@ endfunction
 function! flog#floggraph#buf#UpdateStatus() abort
   call flog#floggraph#buf#AssertFlogBuf()
 
-  let cmd = flog#fugitive#GetGitCommand()
-  let cmd .= ' status -s'
-  let changes = len(flog#shell#Run(cmd))
+  let l:cmd = flog#fugitive#GetGitCommand()
+  let l:cmd .= ' status -s'
+  let l:changes = len(flog#shell#Run(l:cmd))
 
-  if changes == 0
+  if l:changes == 0
     let b:flog_status_summary = 'No changes'
-  elseif changes == 1
+  elseif l:changes == 1
     let b:flog_status_summary = '1 file changed'
   else
-    let b:flog_status_summary = string(changes) . ' files changed'
+    let b:flog_status_summary = string(l:changes) . ' files changed'
   endif
 
-  let head = flog#fugitive#GetHead()
+  let l:head = flog#fugitive#GetHead()
 
-  if !empty(head)
-    let b:flog_status_summary .= ' (' . head . ')'
+  if !empty(l:head)
+    let b:flog_status_summary .= ' (' . l:head . ')'
   endif
 
   return b:flog_status_summary
@@ -42,90 +42,90 @@ function! flog#floggraph#buf#GetInitialName(instance_number) abort
 endfunction
 
 function! flog#floggraph#buf#GetName(instance_number, opts) abort
-  let name = 'flog-' . string(a:instance_number)
+  let l:name = 'flog-' . string(a:instance_number)
 
   if a:opts.all
-    let name .= ' [all]'
+    let l:name .= ' [all]'
   endif
   if a:opts.bisect
-    let name .= ' [bisect]'
+    let l:name .= ' [bisect]'
   endif
   if !a:opts.merges
-    let name .= ' [no_merges]'
+    let l:name .= ' [no_merges]'
   endif
   if a:opts.reflog
-    let name .= ' [reflog]'
+    let l:name .= ' [reflog]'
   endif
   if a:opts.reverse
-    let name .= ' [reverse]'
+    let l:name .= ' [reverse]'
   endif
   if !a:opts.graph
-    let name .= ' [no_graph]'
+    let l:name .= ' [no_graph]'
   endif
   if !a:opts.patch
-    let name .= ' [no_patch]'
+    let l:name .= ' [no_patch]'
   endif
   if !empty(a:opts.skip)
-    let name .= ' [skip=' . a:opts.skip . ']'
+    let l:name .= ' [skip=' . a:opts.skip . ']'
   endif
   if !empty(a:opts.order)
-    let name .= ' [order=' . a:opts.order . ']'
+    let l:name .= ' [order=' . a:opts.order . ']'
   endif
   if !empty(a:opts.max_count)
-    let name .= ' [max_count=' . a:opts.max_count . ']'
+    let l:name .= ' [max_count=' . a:opts.max_count . ']'
   endif
   if !empty(a:opts.search)
-    let name .= ' [search=' . flog#str#Ellipsize(a:opts.search, 15) . ']'
+    let l:name .= ' [search=' . flog#str#Ellipsize(a:opts.search, 15) . ']'
   endif
   if !empty(a:opts.patch_search)
-    let name .= ' [patch_search=' . flog#str#Ellipsize(a:opts.patch_search, 15) . ']'
+    let l:name .= ' [patch_search=' . flog#str#Ellipsize(a:opts.patch_search, 15) . ']'
   endif
   if !empty(a:opts.author)
-    let name .= ' [author=' . a:opts.author . ']'
+    let l:name .= ' [author=' . a:opts.author . ']'
   endif
   if !empty(a:opts.limit)
     let [range, path] = flog#args#SplitGitLimitArg(a:opts.limit)
-    let name .= ' [limit=' . flog#str#Ellipsize(range . fnamemodify(path, ':t'), 15) . ']'
+    let l:name .= ' [limit=' . flog#str#Ellipsize(range . fnamemodify(path, ':t'), 15) . ']'
   endif
   if len(a:opts.rev) == 1
-    let name .= ' [rev=' . flog#str#Ellipsize(a:opts.rev[0], 15) . ']'
+    let l:name .= ' [rev=' . flog#str#Ellipsize(a:opts.rev[0], 15) . ']'
   endif
   if len(a:opts.rev) > 1
-    let name .= ' [rev=...]'
+    let l:name .= ' [rev=...]'
   endif
   if len(a:opts.path) == 1
-    let name .= ' [path=' . flog#str#Ellipsize(fnamemodify(a:opts.path[0], ':t'), 15) . ']'
+    let l:name .= ' [path=' . flog#str#Ellipsize(fnamemodify(a:opts.path[0], ':t'), 15) . ']'
   elseif len(a:opts.path) > 1
-    let name .= ' [path=...]'
+    let l:name .= ' [path=...]'
   endif
 
-  return fnameescape(name)
+  return fnameescape(l:name)
 endfunction
 
 function! flog#floggraph#buf#Open(state) abort
-  let bufname = flog#floggraph#buf#GetInitialName(a:state.instance_number)
-  execute 'silent! ' . a:state.opts.open_cmd . bufname
+  let l:bufname = flog#floggraph#buf#GetInitialName(a:state.instance_number)
+  execute 'silent! ' . a:state.opts.open_cmd . l:bufname
 
   call flog#state#SetBufState(a:state)
 
-  let bufnr = bufnr()
-  call flog#state#SetGraphBufnr(a:state, bufnr)
+  let l:bufnr = bufnr()
+  call flog#state#SetGraphBufnr(a:state, l:bufnr)
 
   call flog#fugitive#TriggerDetection(flog#state#GetWorkdir(a:state))
   exec 'lcd ' . flog#fugitive#GetWorkdir()
 
   setlocal filetype=floggraph
 
-  return bufnr
+  return l:bufnr
 endfunction
 
 function! flog#floggraph#buf#Update() abort
   call flog#floggraph#buf#AssertFlogBuf()
-  let state = flog#state#GetBufState()
-  let opts = flog#state#GetResolvedOpts(state)
+  let l:state = flog#state#GetBufState()
+  let l:opts = flog#state#GetResolvedOpts(l:state)
 
   " Record previous window
-  let graph_win = flog#win#Save()
+  let l:graph_win = flog#win#Save()
 
   " Update buffer status
   if g:flog_enable_status
@@ -133,35 +133,35 @@ function! flog#floggraph#buf#Update() abort
   endif
 
   " Build command
-  let cmd = flog#floggraph#git#BuildLogCmd()
-  call flog#state#SetPrevLogCmd(state, cmd)
+  let l:cmd = flog#floggraph#git#BuildLogCmd()
+  call flog#state#SetPrevLogCmd(l:state, l:cmd)
 
   " Build graph
   if has('nvim')
-    let graph = flog#graph#nvim#Get(cmd)
+    let l:graph = flog#graph#nvim#Get(l:cmd)
   else
-    let graph = flog#graph#vim#Get(cmd)
+    let l:graph = flog#graph#vim#Get(l:cmd)
   end
 
   " Record previous commit
-  let last_commit = flog#floggraph#commit#GetAtLine('.')
+  let l:last_commit = flog#floggraph#commit#GetAtLine('.')
 
   " Update graph
-  call flog#state#SetGraph(state, graph)
-  call flog#floggraph#buf#SetContent(graph.output)
+  call flog#state#SetGraph(l:state, l:graph)
+  call flog#floggraph#buf#SetContent(l:graph.output)
 
   " Restore commit position
-  call flog#floggraph#commit#RestorePosition(graph_win, last_commit)
+  call flog#floggraph#commit#RestorePosition(l:graph_win, l:last_commit)
 
   " Set buffer name
-  silent! exec 'file ' . flog#floggraph#buf#GetName(state.instance_number, opts)
+  silent! exec 'file ' . flog#floggraph#buf#GetName(l:state.instance_number, l:opts)
 
   " Execute user autocommands
   if exists('#User#FlogUpdate')
     doautocmd User FlogUpdate
   endif
 
-  return state.graph_bufnr
+  return l:state.graph_bufnr
 endfunction
 
 function! flog#floggraph#buf#FinishUpdateHook(bufnr) abort
@@ -179,14 +179,14 @@ function! flog#floggraph#buf#FinishUpdateHook(bufnr) abort
 endfunction
 
 function! flog#floggraph#buf#InitUpdateHook(bufnr) abort
-  let buf = string(a:bufnr)
+  let l:buf = string(a:bufnr)
 
   augroup FlogGraphBufUpdate
-    exec 'autocmd! * <buffer=' . buf . '>'
+    exec 'autocmd! * <buffer=' . l:buf . '>'
     if exists('##SafeState')
-      exec 'autocmd SafeState <buffer=' . buf . '> call flog#floggraph#buf#FinishUpdateHook(' . buf . ')'
+      exec 'autocmd SafeState <buffer=' . l:buf . '> call flog#floggraph#buf#FinishUpdateHook(' . l:buf . ')'
     else
-      exec 'autocmd WinEnter <buffer=' . buf . '> call flog#floggraph#buf#FinishUpdateHook(' . buf . ')'
+      exec 'autocmd WinEnter <buffer=' . l:buf . '> call flog#floggraph#buf#FinishUpdateHook(' . l:buf . ')'
     endif
   augroup END
 
@@ -206,13 +206,13 @@ endfunction
 
 function! flog#floggraph#buf#Close() abort
   call flog#floggraph#buf#AssertFlogBuf()
-  let state = flog#state#GetBufState()
+  let l:state = flog#state#GetBufState()
 
-  let graph_win = flog#win#Save()
+  let l:graph_win = flog#win#Save()
   call flog#floggraph#side_win#CloseTmp()
 
-  call flog#win#Restore(graph_win)
-  if flog#win#Is(graph_win)
+  call flog#win#Restore(l:graph_win)
+  if flog#win#Is(l:graph_win)
     let l:tab_info = flog#tab#GetInfo()
     silent! bdelete!
     if flog#tab#DidCloseRight(l:tab_info)
@@ -220,5 +220,5 @@ function! flog#floggraph#buf#Close() abort
     end
   endif
 
-  return flog#win#GetSavedId(graph_win)
+  return flog#win#GetSavedId(l:graph_win)
 endfunction

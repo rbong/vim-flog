@@ -105,12 +105,12 @@ function! flog#floggraph#git#BuildLogPaths() abort
 endfunction
 
 function! flog#floggraph#git#BuildLogCmd() abort
-  let cmd = flog#fugitive#GetGitCommand()
+  let l:cmd = flog#fugitive#GetGitCommand()
 
-  let cmd .= ' log'
-  let cmd .= flog#floggraph#git#BuildLogArgs()
-  let cmd .= ' -- '
-  let cmd .= flog#floggraph#git#BuildLogPaths()
+  let l:cmd .= ' log'
+  let l:cmd .= flog#floggraph#git#BuildLogArgs()
+  let l:cmd .= ' -- '
+  let l:cmd .= flog#floggraph#git#BuildLogPaths()
 
-  return cmd
+  return l:cmd
 endfunction

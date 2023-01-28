@@ -11,38 +11,38 @@ function! flog#cmd#Flog(args) abort
     throw g:flog_not_a_fugitive_buffer
   endif
 
-  let state = flog#state#Create()
+  let l:state = flog#state#Create()
 
-  let workdir = flog#fugitive#GetWorkdir()
-  call flog#state#SetWorkdir(state, workdir)
+  let l:workdir = flog#fugitive#GetWorkdir()
+  call flog#state#SetWorkdir(l:state, l:workdir)
 
-  let default_opts = flog#state#GetDefaultOpts()
-  let opts = flog#cmd#flog#args#Parse(default_opts, workdir, a:args)
-  call flog#state#SetOpts(state, opts)
+  let l:default_opts = flog#state#GetDefaultOpts()
+  let l:opts = flog#cmd#flog#args#Parse(l:default_opts, l:workdir, a:args)
+  call flog#state#SetOpts(l:state, l:opts)
 
   if g:flog_write_commit_graph && !flog#git#HasCommitGraph()
     call flog#git#WriteCommitGraph()
   endif
 
-  call flog#floggraph#buf#Open(state)
+  call flog#floggraph#buf#Open(l:state)
   call flog#floggraph#buf#Update()
 
-  return state
+  return l:state
 endfunction
 
 " The implementation of ":Flogsetargs".
 function! flog#cmd#FlogSetArgs(args, force) abort
-  let state = flog#state#GetBufState()
+  let l:state = flog#state#GetBufState()
 
-  let workdir = flog#state#GetWorkdir(state)
-  let opts = a:force ? flog#state#GetInternalDefaultOpts() : state.opts
+  let l:workdir = flog#state#GetWorkdir(l:state)
+  let l:opts = a:force ? flog#state#GetInternalDefaultOpts() : l:state.l:opts
 
-  call flog#cmd#flog#args#Parse(opts, workdir, a:args)
-  call flog#state#SetOpts(state, opts)
+  call flog#cmd#flog#args#Parse(l:opts, l:workdir, a:args)
+  call flog#state#SetOpts(l:state, l:opts)
 
   call flog#floggraph#buf#Update()
 
-  return state
+  return l:state
 endfunction
 
 " The implementation of ":Floggit".
