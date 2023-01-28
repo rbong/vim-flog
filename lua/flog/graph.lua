@@ -589,16 +589,35 @@ local function flog_get_graph(
       vim_commit.line = vim_out_index
       vim_commit.col = commit_branch_col
       vim_commit.format_col = format_col
+      vim_commit.len = ncommit_lines
+
+      -- Initialize commit objects
+      local vim_commit_body
+      local vim_commit_suffix
+      local vim_commit_suffix_index = 1
+      if enable_vim then
+        vim_commit_body = vim.dict()
+        vim_commit_suffix = vim.dict()
+      else
+        vim_commit_body = {}
+        vim_commit_suffix = {}
+      end
+      vim_commit.body = vim_commit_body
+      vim_commit.suffix = vim_commit_suffix
 
       -- Add commit data
       vim_commits[commit_index] = vim_commit
       vim_commits_by_hash[commit_hash] = vim_commit
 
-      -- Add commit out
+      -- Add commit subject line
 
       vim_line_commits[vim_out_index] = vim_commit
-      vim_out[vim_out_index] = table.concat(commit_prefix, '') .. commit_out[1]
+
+      vim_commit.subject = table.concat(commit_prefix, '') .. commit_out[1]
+      vim_out[vim_out_index] = vim_commit.subject
       vim_out_index = vim_out_index + 1
+
+      -- Add commit body line
 
       if ncommit_lines > 1 then
         local prefix = table.concat(commit_multiline_prefix, '')
@@ -606,75 +625,88 @@ local function flog_get_graph(
 
         while commit_out_index <= ncommit_lines do
           vim_line_commits[vim_out_index] = vim_commit
+
           vim_out[vim_out_index] = prefix .. commit_out[commit_out_index]
+          vim_commit_body[commit_out_index - 1] = vim_out[vim_out_index]
 
           commit_out_index = commit_out_index + 1
           vim_out_index = vim_out_index + 1
         end
       end
 
-      -- Add merge out
+      -- Add merge lines
 
       if should_out_merge then
         vim_line_commits[vim_out_index] = vim_commit
-        vim_out[vim_out_index] = table.concat(merge_line, '')
+
+        vim_commit_suffix[vim_commit_suffix_index] = table.concat(merge_line, '')
+        vim_out[vim_out_index] = vim_commit_suffix[vim_commit_suffix_index]
+
         vim_out_index = vim_out_index + 1
+        vim_commit_suffix_index = vim_commit_suffix_index + 1
 
         if should_out_complex then
           vim_line_commits[vim_out_index] = vim_commit
-          vim_out[vim_out_index] = table.concat(complex_merge_line, '')
+
+          vim_commit_suffix[vim_commit_suffix_index] = table.concat(complex_merge_line, '')
+          vim_out[vim_out_index] = vim_commit_suffix[vim_commit_suffix_index]
+
           vim_out_index = vim_out_index + 1
+          vim_commit_suffix_index = vim_commit_suffix_index + 1
         end
       end
 
-      -- Add missing parents out
+      -- Add missing parents lines
 
       if should_out_missing_parents then
         vim_line_commits[vim_out_index] = vim_commit
-        vim_out[vim_out_index] = table.concat(missing_parents_line_1, '')
+
+        vim_commit_suffix[vim_commit_suffix_index] = table.concat(missing_parents_line_1, '')
+        vim_out[vim_out_index] = vim_commit_suffix[vim_commit_suffix_index]
+
         vim_out_index = vim_out_index + 1
+        vim_commit_suffix_index = vim_commit_suffix_index + 1
 
         vim_line_commits[vim_out_index] = vim_commit
-        vim_out[vim_out_index] = table.concat(missing_parents_line_2, '')
+
+        vim_commit_suffix[vim_commit_suffix_index] = table.concat(missing_parents_line_2, '')
+        vim_out[vim_out_index] = vim_commit_suffix[vim_commit_suffix_index]
+
         vim_out_index = vim_out_index + 1
+        vim_commit_suffix_index = vim_commit_suffix_index + 1
       end
+
+      -- Calculate number of extra lines
+      vim_commit.suffix_len = vim_commit_suffix_index - 1
     else
       -- Output using stdout
 
       if enable_porcelain then
-        -- Calculate total lines out
-
-        local total_lines = (ncommit_lines
-          + (should_out_merge and 1 or 0)
-          + (should_out_complex and 1 or 0)
-          + (should_out_missing_parents and 2 or 0))
-
         -- Print commit hash
-
         print(commit_hash)
 
         -- Print commit visual parents
-
         print(nvisual_parents)
         for _, parent in ipairs(visual_parents) do
           print(parent)
         end
 
         -- Print commit refs
-
         print(commit.refs)
 
         -- Print commit col
-
         print(commit_branch_col)
 
         -- Print commit format start
+        print(format_col)
 
-        print(ncommit_cols + 1)
+        -- Print commit length
+        print(ncommit_lines)
 
-        -- Print total lines out
-
-        print(total_lines)
+        -- Print suffix length
+        print((should_out_merge and 1 or 0)
+          + (should_out_complex and 1 or 0)
+          + (should_out_missing_parents and 2 or 0))
       end
 
       -- Print commit out

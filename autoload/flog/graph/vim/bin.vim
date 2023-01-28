@@ -68,17 +68,59 @@ export def Get(git_cmd: string): dict<any>
     commit.format_col = str2nr(out[out_index])
     out_index += 1
 
-    # Parse output
-    const ncommit_lines = str2nr(out[out_index])
-    const last_out_index = out_index + ncommit_lines
-    while out_index < last_out_index
-      out_index += 1
-      add(final_out, out[out_index])
-      add(line_commits, commit)
-    endwhile
+    # Parse commit length
+    const len = str2nr(out[out_index])
+    commit.len = len
     out_index += 1
+
+    # Parse commit suffix length
+    const suffix_len = str2nr(out[out_index])
+    commit.suffix_len = suffix_len
+    out_index += 1
+
+    # Parse subject
+    commit.subject = out[out_index]
+    add(final_out, out[out_index])
+    add(line_commits, commit)
+    out_index += 1
+
+    if len > 1
+      # Parse body
+      var body = {}
+      commit.body = body
+      var body_index = 1
+
+      while body_index < len
+        body[body_index] = out[out_index]
+        add(final_out, out[out_index])
+        add(line_commits, commit)
+
+        out_index += 1
+        body_index += 1
+      endwhile
+    endif
+
+    # Parse suffix
+    if suffix_len > 0
+      var suffix = {}
+      commit.suffix = suffix
+      var suffix_index = 1
+
+      while suffix_index <= suffix_len
+        suffix[suffix_index] = out[out_index]
+        add(final_out, out[out_index])
+        add(line_commits, commit)
+
+        out_index += 1
+        suffix_index += 1
+      endwhile
+    endif
+
+    # Record line position
     commit.line = total_lines + 1
-    total_lines += ncommit_lines
+
+    # Update total lines
+    total_lines += len + suffix_len
 
     # Increment
     add(commits, commit)
