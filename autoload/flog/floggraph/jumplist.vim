@@ -39,8 +39,6 @@ function! flog#floggraph#jumplist#Push(line) abort
   elseif l:state.commit_jumplist_index > 0
     let l:current_hash = get(l:state.commit_jumplist, l:state.commit_jumplist_index - 1)
 
-    let g:debug = [l:current_hash, l:commit, l:state.commit_jumplist_index, copy(l:state.commit_jumplist)]
-
     if !empty(l:current_hash) && l:current_hash == l:commit.hash
       return v:false
     endif
