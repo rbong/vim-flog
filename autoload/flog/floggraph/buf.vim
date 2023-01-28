@@ -124,14 +124,19 @@ function! flog#floggraph#buf#Update() abort
   let state = flog#state#GetBufState()
   let opts = flog#state#GetResolvedOpts(state)
 
+  " Record previous window
   let graph_win = flog#win#Save()
 
+  " Update buffer status
   if g:flog_enable_status
     call flog#floggraph#buf#UpdateStatus()
   endif
 
+  " Build command
   let cmd = flog#floggraph#git#BuildLogCmd()
   call flog#state#SetPrevLogCmd(state, cmd)
+
+  " Build graph
   if has('nvim')
     let graph = flog#graph#nvim#Get(cmd)
   else
@@ -148,8 +153,10 @@ function! flog#floggraph#buf#Update() abort
   " Restore commit position
   call flog#floggraph#commit#RestorePosition(graph_win, last_commit)
 
+  " Set buffer name
   silent! exec 'file ' . flog#floggraph#buf#GetName(state.instance_number, opts)
 
+  " Execute user autocommands
   if exists('#User#FlogUpdate')
     doautocmd User FlogUpdate
   endif
