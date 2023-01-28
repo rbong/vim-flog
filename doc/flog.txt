@@ -549,7 +549,7 @@ D!                                                                   *flog-D!*
   Same as |flog-d!|, but use the "-path" or "-limit" argument to only show the
   diff for the currently selected paths.
 
-							*<Plug>(FlogDiffHelp)*
+                                                        *<Plug>(FlogDiffHelp)*
 d?                                                                   *flog-d?*
 
   Show these mappings.
@@ -649,7 +649,7 @@ cb<Space>                                                     *flog-cb<Space>*
   Start a command line with ":Floggit branch ".
   See also |:Floggit|.
 
-						      *<Plug>(FlogCommitHelp)*
+                                                      *<Plug>(FlogCommitHelp)*
 c?                                                                   *flog-c?*
 
   Show these mappings.
@@ -735,7 +735,7 @@ r<Space>                                                       *flog-r<Space>*
   See also |:Floggit|.
   See also "git rebase --help".
 
-						      *<Plug>(FlogRebaseHelp)*
+                                                      *<Plug>(FlogRebaseHelp)*
 r?                                                                   *flog-r?*
 
   Show these mappings.
@@ -933,7 +933,7 @@ can be created with |flog-m|. A commit mark can be jumped to with |flog-'|.
 
 Marking a commit adds it to the |flog-jump-history|.
 
-The following special commit marks exist.
+The following special commit marks exist:
 
                                                                      *flog-''*
   ''                    The last commit before jumping to another commit.
@@ -975,17 +975,17 @@ The commit jump history persists when the |:Flog| buffer updates.
 ------------------------------------------------------------------------------
 COMMAND FORMAT                                           *flog-command-format*
 
-  When running commands with |flog#Format()|, a special syntax similar to
-  |printf| is used to transform the command string.
+When running commands with |flog#Format()|, a special syntax similar to
+|printf| is used to transform the command string.
 
-  Items prefixed by the "%" character are resolved into commit information and
-  Flog options.
+Items prefixed by the "%" character are resolved into commit information and
+Flog options.
 
-  If any items cannot be resolved, such as if the |:Flog| buffer is empty or
-  the item uses an option like "-path" that was not set, commands will not be
-  run.
+If any items cannot be resolved, such as if the |:Flog| buffer is empty or
+the item uses an option like "-path" that was not set, commands will not be
+run.
 
-  The following items are supported:
+The following items are supported:
 
                                                                      *flog-%%*
   %%                    A literal "%" character.
