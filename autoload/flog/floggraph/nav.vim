@@ -35,6 +35,8 @@ function! flog#floggraph#nav#JumpToParent(count) abort
 
   let l:parent_hash = get(l:commit.parents, a:count - 1)
 
+  " Push the current position to jump history
+  mark `
   let l:result = flog#floggraph#nav#JumpToCommit(l:parent_hash)
   call flog#floggraph#mark#SetJump(l:prev_line)
 
