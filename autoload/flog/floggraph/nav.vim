@@ -2,7 +2,7 @@
 " This file contains functions for navigating in "floggraph" buffers.
 "
 
-function! flog#floggraph#nav#JumpToCommit(hash) abort
+function! flog#floggraph#nav#JumpToCommit(hash, set_jump_mark = v:true, push_to_jumplist = v:true) abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
 
@@ -15,19 +15,56 @@ function! flog#floggraph#nav#JumpToCommit(hash) abort
     return [-1, -1]
   endif
 
-  let l:lnum = max([l:commit.line, 1])
+  let l:prev_line = line('.')
+  let l:prev_commit = flog#floggraph#commit#GetAtLine(l:prev_line)
+
+  let l:line = max([l:commit.line, 1])
   let l:col = max([l:commit.col, 1])
 
-  call setcursorcharpos(l:lnum, l:col)
+  call setcursorcharpos(l:line, l:col)
 
-  return [l:lnum, l:col]
+  if a:push_to_jumplist
+    call flog#floggraph#jumplist#Push(l:prev_line)
+  endif
+  if l:prev_commit.hash != l:commit.hash && a:set_jump_mark
+    call flog#floggraph#mark#SetJump(l:prev_line, a:push_to_jumplist)
+  endif
+
+  return [l:line, l:col]
+endfunction
+
+function! flog#floggraph#nav#JumpToOlder(count = 1) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+
+  let l:hash = flog#floggraph#jumplist#Older(a:count)
+
+  if empty(l:hash)
+    return [-1, -1]
+  endif
+
+  let l:result = flog#floggraph#nav#JumpToCommit(l:hash, v:true, v:false)
+
+  return l:result
+endfunction
+
+function! flog#floggraph#nav#JumpToNewer(count = 1) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+
+  let l:hash = flog#floggraph#jumplist#Newer(a:count)
+
+  if empty(l:hash)
+    return [-1, -1]
+  endif
+
+  let l:result = flog#floggraph#nav#JumpToCommit(l:hash, v:true, v:false)
+
+  return l:result
 endfunction
 
 function! flog#floggraph#nav#JumpToParent(count) abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
 
-  let l:prev_line = line('.')
   let l:commit = flog#floggraph#commit#GetAtLine('.')
   if empty(l:commit)
     return [-1, -1]
@@ -35,10 +72,7 @@ function! flog#floggraph#nav#JumpToParent(count) abort
 
   let l:parent_hash = get(l:commit.parents, a:count - 1)
 
-  " Push the current position to jump history
-  mark `
   let l:result = flog#floggraph#nav#JumpToCommit(l:parent_hash)
-  call flog#floggraph#mark#SetJump(l:prev_line)
 
   return l:result
 endfunction
@@ -46,16 +80,12 @@ endfunction
 function! flog#floggraph#nav#JumpToChild(count) abort
   call flog#floggraph#buf#AssertFlogBuf()
 
-  let l:prev_line = line('.')
   let [l:nchildren, l:commit] = flog#floggraph#commit#GetChild(a:count)
   if empty(l:commit)
     return [-1, -1]
   endif
 
-  " Push the current position to jump history
-  mark `
   let l:result = flog#floggraph#nav#JumpToCommit(l:commit.hash)
-  call flog#floggraph#mark#SetJump(l:prev_line)
 
   return l:result
 endfunction
@@ -63,21 +93,12 @@ endfunction
 function! flog#floggraph#nav#JumpToMark(key) abort
   call flog#floggraph#buf#AssertFlogBuf()
 
-  let l:prev_line = line('.')
-  let l:prev_commit = flog#floggraph#commit#GetAtLine(l:prev_line)
-
   let l:commit = flog#floggraph#mark#Get(a:key)
   if empty(l:commit)
     return [-1, -1]
   endif
 
   let l:result = flog#floggraph#nav#JumpToCommit(l:commit.hash)
-
-  if l:commit != l:prev_commit
-    " Push the current position to jump history
-    mark `
-    call flog#floggraph#mark#SetJump(l:prev_line)
-  endif
 
   return l:result
 endfunction
@@ -90,10 +111,7 @@ function! flog#floggraph#nav#NextCommit(count = 1) abort
   let l:commit = flog#floggraph#commit#GetNext(a:count)
 
   if !empty(l:commit)
-    " Push the current position to jump history
-    mark `
-    call flog#floggraph#nav#JumpToCommit(l:commit.hash)
-    call flog#floggraph#mark#SetJump(l:prev_line)
+    let l:result = flog#floggraph#nav#JumpToCommit(l:commit.hash)
   endif
 
   return l:commit
@@ -112,7 +130,6 @@ function! flog#floggraph#nav#NextRefCommit(count = 1) abort
 
   if !empty(l:commit)
     call flog#floggraph#nav#JumpToCommit(l:commit.hash)
-    call flog#floggraph#mark#SetJump(l:prev_line)
   endif
 
   return l:nrefs

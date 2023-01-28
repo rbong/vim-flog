@@ -167,7 +167,7 @@ function! flog#floggraph#commit#RestorePosition(saved_win, saved_commit) abort
   " Restore commit
   let l:commit_line = -1
   if !empty(a:saved_commit)
-    let l:commit_line = flog#floggraph#nav#JumpToCommit(a:saved_commit.hash)[0]
+    let l:commit_line = flog#floggraph#nav#JumpToCommit(a:saved_commit.hash, v:false, v:false)[0]
   endif
 
   if l:commit_line < 0

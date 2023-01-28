@@ -332,6 +332,7 @@ NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
 
   Accepts a count.
   Sets |flog-''| to the last commit under the cursor.
+  Pushes the last commit to the |flog-jump-history|.
 
                                                       *<Plug>(FlogPrevCommit)*
 (                                                                     *flog-(*
@@ -346,6 +347,7 @@ NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
   Accepts a count.
   Sets |flog-''| to the last commit under the cursor.
   Sets |flog-'!| to the new commit under the cursor.
+  Pushes the last commit to the |flog-jump-history|.
 
                                                 *<Plug>(FlogVPrevCommitRight)*
 <C-P>                                                            *flog-CTRL-P*
@@ -359,6 +361,7 @@ NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
 
   Accepts a count.
   Sets |flog-''| to the last commit under the cursor.
+  Pushes the last commit to the |flog-jump-history|.
 
                                                    *<Plug>(FlogVPrevRefRight)*
 [r                                                                   *flog-[r*
@@ -372,14 +375,25 @@ NAVIGATION MAPPINGS                                 *flog-navigation-mappings*
 
   Accepts a count.
   Sets |flog-''| to the last commit under the cursor.
+  Pushes the last commit to the |flog-jump-history|.
 
                                                      *<Plug>(FlogJumpToChild)*
 {                                                                     *flog-{*
 
-  Jump to the nth child of the commit under the cursor.
+  Same as |flog-}|, but jumps to the nth child.
+
+                                                     *<Plug>(FlogJumpToOlder)*
+CTRL-O                                                           *flog-CTRL-O*
+
+  Jump back in the |flog-jump-history|.
 
   Accepts a count.
   Sets |flog-''| to the last commit under the cursor.
+
+                                                     *<Plug>(FlogJumpToNewer)*
+CTRL-I                                                           *flog-CTRL-I*
+
+  Same as |flog-CTRL-O|, but jump forwards in history.
 
                                                        *<Plug>(FlogSkipAhead)*
 ]]                                                                   *flog-]]*
@@ -917,6 +931,8 @@ buffer updates.
 Marked commits can be referenced using |flog-command-format|. Marked commits
 can be created with |flog-m|. A commit mark can be jumped to with |flog-'|.
 
+Marking a commit adds it to the |flog-jump-history|.
+
 The following special commit marks exist.
 
                                                                      *flog-''*
@@ -939,6 +955,22 @@ The following special commit marks exist.
   '!                    The commit last used in a command with |flog-%h|.
                         This mark is set by various commands and mappings.
                         Can be thought of as the "last used commit".
+
+------------------------------------------------------------------------------
+COMMIT JUMP HISTORY                                        *flog-jump-history*
+
+Flog keeps track of which commits you have jumped to using the commit
+jump history. This feature is based on the Vim |jumplist|.
+
+Using a number of |flog-navigation-mappings| counts as a jump.
+
+Setting a |flog-commit-mark| will also add the marked commit to the commit
+jump history.
+
+Using |flog-CTRL-O| and |flog-CTRL-I|, you can jump backwards and forwards in
+commit jump history.
+
+The commit jump history persists when the |:Flog| buffer updates.
 
 ------------------------------------------------------------------------------
 COMMAND FORMAT                                           *flog-command-format*

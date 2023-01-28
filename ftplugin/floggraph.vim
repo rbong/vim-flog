@@ -128,6 +128,15 @@ endif
 nnoremap <buffer> <silent> <Plug>(FlogJumpToParent) :<C-U>call flog#floggraph#nav#JumpToParent(max([1, v:count]))<CR>
 nnoremap <buffer> <silent> <Plug>(FlogJumpToChild) :<C-U>call flog#floggraph#nav#JumpToChild(max([1, v:count]))<CR>
 
+if !hasmapto('<Plug>(FlogJumpToNewer)')
+  nmap <buffer> <C-I> <Plug>(FlogJumpToNewer)
+endif
+if !hasmapto('<Plug>(FlogJumpToOlder)')
+  nmap <buffer> <C-O> <Plug>(FlogJumpToOlder)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogJumpToNewer) :<C-U>call flog#floggraph#nav#JumpToNewer(max([1, v:count]))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogJumpToOlder) :<C-U>call flog#floggraph#nav#JumpToOlder(max([1, v:count]))<CR>
+
 if !hasmapto('<Plug>(FlogSkipAhead)')
   nmap <buffer> ]] <Plug>(FlogSkipAhead)
 endif

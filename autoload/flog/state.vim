@@ -17,6 +17,8 @@ function! flog#state#Create() abort
         \ 'line_commits': [],
         \ 'commit_marks': {},
         \ 'tmp_side_wins': [],
+        \ 'commit_jumplist': [],
+        \ 'commit_jumplist_index': -1,
         \ }
 
   let g:flog_instance_counter += 1

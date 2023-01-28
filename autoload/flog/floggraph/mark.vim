@@ -9,15 +9,20 @@ function! flog#floggraph#mark#SetInternal(key, line) abort
   return flog#state#SetInternalCommitMark(l:state, a:key, l:commit)
 endfunction
 
-function! flog#floggraph#mark#Set(key, line) abort
+function! flog#floggraph#mark#Set(key, line, stage_to_jumplist = v:true) abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
   let l:commit = flog#floggraph#commit#GetAtLine(a:line)
+
+  if a:stage_to_jumplist
+    call flog#floggraph#jumplist#Stage('.')
+  endif
+
   return flog#state#SetCommitMark(l:state, a:key, l:commit)
 endfunction
 
-function! flog#floggraph#mark#SetJump(line = '.') abort
-  return flog#floggraph#mark#Set("'", a:line)
+function! flog#floggraph#mark#SetJump(line = '.', stage_to_jumplist = v:true) abort
+  return flog#floggraph#mark#Set("'", a:line, a:stage_to_jumplist)
 endfunction
 
 function! flog#floggraph#mark#Get(key) abort
