@@ -775,4 +775,83 @@ local function flog_get_graph(
   end
 end
 
+local function flog_update_graph(
+    enable_nvim,
+    graph)
+  -- Init data
+  local commits = graph.commits
+  local commit_index = 1
+  local commits_by_hash = graph.commits_by_hash
+  local line_commits
+  local output
+  local total_lines = 1
+
+  if not enable_nvim then
+    line_commits = vim.list()
+    output = vim.list()
+  else
+    line_commits = {}
+    output = {}
+  end
+
+  -- Find number of commits
+  local ncommits = #commits
+
+  -- Rebuild output/line commits
+  while commit_index <= ncommits do
+    local commit = commits[commit_index]
+    local len = commit.len
+    local suffix_len = commit.suffix_len
+
+    -- Update line position
+    commit.line = total_lines
+
+    -- Add subject
+    output[total_lines] = commit.subject
+    line_commits[total_lines] = commit
+    total_lines = total_lines + 1
+
+    if len > 1 then
+      -- Add body
+      local body_index = 1
+      local body = commit.body
+      while body_index < len do
+        output[total_lines] = body[body_index]
+        line_commits[total_lines] = commit
+        body_index = body_index + 1
+        total_lines = total_lines + 1
+      end
+    end
+
+    if suffix_len > 0 then
+      -- Add suffix
+      local suffix_index = 1
+      local suffix = commit.suffix
+      while suffix_index <= suffix_len do
+        output[total_lines] = suffix[suffix_index]
+        line_commits[total_lines] = commit
+        suffix_index = suffix_index + 1
+        total_lines = total_lines + 1
+      end
+    end
+
+    -- Increment
+    commit_index = commit_index + 1
+  end
+
+  -- Return
+  local dict_out = {
+    output = output,
+    commits = commits,
+    commits_by_hash = commits_by_hash,
+    line_commits = line_commits,
+  }
+  if enable_nvim then
+    return dict_out
+  else
+    return vim.dict(dict_out)
+  end
+end
+
 _G.flog_get_graph = flog_get_graph
+_G.flog_update_graph = flog_update_graph

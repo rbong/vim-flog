@@ -135,3 +135,65 @@ export def Get(git_cmd: string): dict<any>
     line_commits: line_commits,
     }
 enddef
+
+export def Update(graph: dict<any>): dict<any>
+  # Init data
+  var commits = graph.commits
+  var commit_index = 0
+  var commits_by_hash = graph.commits_by_hash
+  var line_commits = []
+  var output = []
+  var total_lines = 0
+
+  # Find number of commits
+  const ncommits = len(commits)
+
+  # Rebuild output/line commits
+  while commit_index < ncommits
+    var commit = commits[commit_index]
+    var len = commit.len
+    var suffix_len = commit.suffix_len
+
+    # Update line position
+    commit.line = total_lines + 1
+
+    # Add subject
+    add(output, commit.subject)
+    add(line_commits, commit)
+    total_lines += 1
+
+    if len > 1
+      # Add body
+      var body_index = 1
+      var body = commit.body
+      while body_index < len
+        add(output, body[body_index])
+        add(line_commits, commit)
+        body_index += 1
+      endwhile
+      total_lines += len - 1
+    endif
+
+    if suffix_len > 0
+      # Add suffix
+      var suffix_index = 1
+      var suffix = commit.suffix
+      while suffix_index <= suffix_len
+        add(output, suffix[suffix_index])
+        add(line_commits, commit)
+        suffix_index += 1
+      endwhile
+      total_lines += suffix_len
+    endif
+
+    # Increment
+    commit_index += 1
+  endwhile
+
+  return {
+    output: output,
+    commits: commits,
+    commits_by_hash: commits_by_hash,
+    line_commits: line_commits,
+    }
+enddef

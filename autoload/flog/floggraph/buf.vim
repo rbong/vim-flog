@@ -164,6 +164,33 @@ function! flog#floggraph#buf#Update() abort
   return l:state.graph_bufnr
 endfunction
 
+function! flog#floggraph#buf#Redraw() abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
+
+  " Record previous window
+  let l:graph_win = flog#win#Save()
+
+  " Rebuild graph
+  if has('nvim')
+    let l:graph = flog#graph#nvim#Update(l:state)
+  else
+    let l:graph = flog#graph#vim#Update(l:state)
+  end
+
+  " Record previous commit
+  let l:last_commit = flog#floggraph#commit#GetAtLine('.')
+
+  " Update graph
+  call flog#state#SetGraph(l:state, l:graph)
+  call flog#floggraph#buf#SetContent(l:graph.output)
+
+  " Restore commit position
+  call flog#floggraph#commit#RestorePosition(l:graph_win, l:last_commit)
+
+  return l:state.graph_bufnr
+endfunction
+
 function! flog#floggraph#buf#FinishUpdateHook(bufnr) abort
   if bufnr() != a:bufnr
     return -1

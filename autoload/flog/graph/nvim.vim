@@ -17,3 +17,13 @@ function! flog#graph#nvim#Get(git_cmd) abort
         \ a:git_cmd
         \ )
 endfunction
+
+function! flog#graph#nvim#Update(graph) abort
+  let l:graph_lib = flog#lua#GetLibPath('graph.lua')
+  exec 'luafile ' . fnameescape(l:graph_lib)
+
+  return v:lua.flog_update_graph(
+        \ v:true,
+        \ a:graph
+        \ )
+endfunction
