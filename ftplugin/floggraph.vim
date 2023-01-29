@@ -474,3 +474,9 @@ if !hasmapto('<Plug>(FlogRebaseHelp)')
   nmap <buffer> r? <Plug>(FlogRebaseHelp)
 endif
 nnoremap <buffer> <silent> <Plug>(FlogRebaseHelp) :help flog-rebase-mappings<CR>
+
+" Override Vim movement mappings
+
+for mapping in get(g:, 'flog_jumplist_default_mappings', ['gg', 'G', '<C-U>', '<C-D>'])
+  exec 'nnoremap <buffer> ' . mapping . ' :<C-U>call flog#floggraph#mark#SetJump()<CR>' . mapping
+endfor
