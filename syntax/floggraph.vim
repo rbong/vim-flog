@@ -6,7 +6,7 @@ let b:current_syntax = 'floggraph'
 
 runtime! syntax/diff.vim
 
-syntax match flogLineStart nextgroup=flogBranch1,flogBranch1Commit,flogBranch1MergeStart,flogBranch1ComplexMergeStart,flogBranch1MissingParentsStart,@flogCommitInfo,@flogDiff /^/
+syntax match flogLineStart nextgroup=@flogBranch1,@flogCommitInfo,@flogDiff /^/
 
 " Commit Highlighting
 
@@ -110,6 +110,9 @@ hi default link flogDiffOnly      diffOnly
 hi default link flogDiffRemoved   diffRemoved
 
 " Graph Highlighting
+
+" Cluster all branch 1 groups
+syntax cluster flogBranch1 contains=flogBranch1,flogBranch1Commit,flogBranch1MergeStart,flogBranch1ComplexMergeStart,flogBranch1MissingParentsStart
 
 " Dynamically generate highlight groups for branches
 for branch_idx in range(1, 9)
