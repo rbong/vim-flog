@@ -442,6 +442,30 @@ m{a-zA-Z'}                                                            *flog-m*
   See also |flog-commit-marks|.
 
 ------------------------------------------------------------------------------
+COLLAPSE MAPPINGS                                     *flog-collapse-mappings*
+
+                                                  *<Plug>(FlogCollapseCommit)*
+<<                                                                   *flog-<<*
+{Visual}<                                                           *flog-v_<*
+
+  Collapse the body of the commit under the cursor.
+  In visual mode, collapses the body of all commits under the cursor.
+
+                                                    *<Plug>(FlogExpandCommit)*
+>>                                                                   *flog->>*
+{Visual}>                                                           *flog-v_>*
+
+  Expand the body of the commit under the cursor.
+  In visual mode, expands the body of all commits under the cursor.
+
+                                            *<Plug>(FlogToggleCollapseCommit)*
+==                                                                   *flog-==*
+{Visual}=                                                           *flog-v_=*
+
+  Toggle collapsing the body of the commit under the cursor.
+  In visual mode, toggle collapsing the body of all commits under the cursor.
+
+------------------------------------------------------------------------------
 ARGUMENT MODIFIER MAPPINGS                            *flog-argument-mappings*
 
                                                        *<Plug>(FlogToggleAll)*

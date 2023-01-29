@@ -34,7 +34,8 @@ local function flog_get_graph(
     enable_porcelain,
     start_token,
     enable_graph,
-    cmd)
+    cmd,
+    collapsed_commits)
   -- Resolve Vim values
   enable_graph = enable_graph and enable_graph ~= 0
 
@@ -622,15 +623,26 @@ local function flog_get_graph(
       if ncommit_lines > 1 then
         local prefix = table.concat(commit_multiline_prefix, '')
         local commit_out_index = 2
+        local collapsed = collapsed_commits[commit_hash]
+
+        vim_commit.collapsed_body = prefix .. string.format('== %d hidden lines ==', ncommit_lines - 1)
+
+        if collapsed then
+          vim_line_commits[vim_out_index] = vim_commit
+          vim_out[vim_out_index] = vim_commit.collapsed_body
+          vim_out_index = vim_out_index + 1
+        end
 
         while commit_out_index <= ncommit_lines do
-          vim_line_commits[vim_out_index] = vim_commit
+          vim_commit_body[commit_out_index - 1] = prefix .. commit_out[commit_out_index]
 
-          vim_out[vim_out_index] = prefix .. commit_out[commit_out_index]
-          vim_commit_body[commit_out_index - 1] = vim_out[vim_out_index]
+          if not collapsed then
+            vim_line_commits[vim_out_index] = vim_commit
+            vim_out[vim_out_index] = vim_commit_body[commit_out_index - 1]
+            vim_out_index = vim_out_index + 1
+          end
 
           commit_out_index = commit_out_index + 1
-          vim_out_index = vim_out_index + 1
         end
       end
 
@@ -707,6 +719,14 @@ local function flog_get_graph(
         print((should_out_merge and 1 or 0)
           + (should_out_complex and 1 or 0)
           + (should_out_missing_parents and 2 or 0))
+
+        -- Print collapsed format
+        if ncommit_lines > 1 then
+          for _, str in ipairs(commit_multiline_prefix) do
+            io.write(str)
+          end
+          io.write(string.format('== %d hidden lines ==\n', ncommit_lines - 1))
+        end
       end
 
       -- Print commit out
@@ -777,7 +797,8 @@ end
 
 local function flog_update_graph(
     enable_nvim,
-    graph)
+    graph,
+    collapsed_commits)
   -- Init data
   local commits = graph.commits
   local commit_index = 1
@@ -800,11 +821,17 @@ local function flog_update_graph(
   -- Rebuild output/line commits
   while commit_index <= ncommits do
     local commit = commits[commit_index]
+    local hash = commit.hash
     local len = commit.len
     local suffix_len = commit.suffix_len
 
     -- Update line position
     commit.line = total_lines
+
+    if enable_nvim then
+      -- Re-record commit
+      commits_by_hash[hash] = commit
+    end
 
     -- Add subject
     output[total_lines] = commit.subject
@@ -812,14 +839,21 @@ local function flog_update_graph(
     total_lines = total_lines + 1
 
     if len > 1 then
-      -- Add body
-      local body_index = 1
-      local body = commit.body
-      while body_index < len do
-        output[total_lines] = body[body_index]
+      if collapsed_commits[hash] then
+        -- Add collapsed body
+        output[total_lines] = commit.collapsed_body
         line_commits[total_lines] = commit
-        body_index = body_index + 1
         total_lines = total_lines + 1
+      else
+        -- Add body
+        local body_index = 1
+        local body = commit.body
+        while body_index < len do
+          output[total_lines] = body[body_index]
+          line_commits[total_lines] = commit
+          body_index = body_index + 1
+          total_lines = total_lines + 1
+        end
       end
     end
 

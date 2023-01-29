@@ -4,6 +4,8 @@ export def Get(git_cmd: string): dict<any>
   flog#floggraph#buf#AssertFlogBuf()
   const state = flog#state#GetBufState()
 
+  const collapsed_commits = state.collapsed_commits
+
   # Get paths
   const script_path = flog#lua#GetLibPath('graph_bin.lua')
 
@@ -40,6 +42,9 @@ export def Get(git_cmd: string): dict<any>
   while commit_index < ncommits
     # Init commit
     var commit = {}
+
+    # Record line position
+    commit.line = total_lines + 1
 
     # Parse hash
     const hash = out[out_index]
@@ -78,22 +83,45 @@ export def Get(git_cmd: string): dict<any>
     commit.suffix_len = suffix_len
     out_index += 1
 
+    if len > 1
+      # Parse collapsed body
+      commit.collapsed_body = out[out_index]
+      out_index += 1
+    endif
+
     # Parse subject
     commit.subject = out[out_index]
     add(final_out, out[out_index])
     add(line_commits, commit)
     out_index += 1
+    total_lines += 1
 
     if len > 1
+      var collapsed = has_key(collapsed_commits, hash)
+
+      # Add collapsed body to output
+
+      if collapsed
+        add(final_out, commit.collapsed_body)
+        add(line_commits, commit)
+        total_lines += 1
+      else
+        total_lines += len
+      endif
+
       # Parse body
+
       var body = {}
       commit.body = body
       var body_index = 1
 
       while body_index < len
         body[body_index] = out[out_index]
-        add(final_out, out[out_index])
-        add(line_commits, commit)
+
+        if !collapsed
+          add(final_out, out[out_index])
+          add(line_commits, commit)
+        endif
 
         out_index += 1
         body_index += 1
@@ -114,13 +142,9 @@ export def Get(git_cmd: string): dict<any>
         out_index += 1
         suffix_index += 1
       endwhile
+
+      total_lines += suffix_len
     endif
-
-    # Record line position
-    commit.line = total_lines + 1
-
-    # Update total lines
-    total_lines += len + suffix_len
 
     # Increment
     add(commits, commit)
@@ -137,6 +161,11 @@ export def Get(git_cmd: string): dict<any>
 enddef
 
 export def Update(graph: dict<any>): dict<any>
+  flog#floggraph#buf#AssertFlogBuf()
+  const state = flog#state#GetBufState()
+
+  const collapsed_commits = state.collapsed_commits
+
   # Init data
   var commits = graph.commits
   var commit_index = 0
@@ -163,15 +192,22 @@ export def Update(graph: dict<any>): dict<any>
     total_lines += 1
 
     if len > 1
-      # Add body
-      var body_index = 1
-      var body = commit.body
-      while body_index < len
-        add(output, body[body_index])
+      if has_key(collapsed_commits, commit.hash)
+        # Add collapsed body
+        add(output, commit.collapsed_body)
         add(line_commits, commit)
-        body_index += 1
-      endwhile
-      total_lines += len - 1
+        total_lines += 1
+      else
+        # Add body
+        var body_index = 1
+        var body = commit.body
+        while body_index < len
+          add(output, body[body_index])
+          add(line_commits, commit)
+          body_index += 1
+        endwhile
+        total_lines += len - 1
+      endif
     endif
 
     if suffix_len > 0
