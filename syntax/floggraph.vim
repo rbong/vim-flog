@@ -6,7 +6,7 @@ let b:current_syntax = 'floggraph'
 
 runtime! syntax/diff.vim
 
-syntax match flogLineStart nextgroup=@flogBranch1,@flogCommitInfo,@flogDiff /^/
+syntax match flogLineStart nextgroup=@flogBranch1,@flogCommitInfo,flogCollapsedCommit,@flogDiff /^/
 
 " Commit Highlighting
 
@@ -38,6 +38,11 @@ highlight default link flogHash   Statement
 highlight default link flogAuthor String
 highlight default link flogRef    Directory
 highlight default link flogDate   Number
+
+" Collapsed commit indicator
+syntax match flogCollapsedCommit contained /== \d\+ hidden lines ==$/
+
+highlight default link flogCollapsedCommit Comment
 
 " Ref Highlighting
 
@@ -126,7 +131,7 @@ for branch_idx in range(1, 9)
   exec 'highlight link flogGraphBranch' . branch_idx . ' ' . branch
 
   " Branches at the start of the line - leads into other groups
-  exec 'syntax match ' . branch . ' contained nextgroup=' . next_branch . ',' . next_branch . 'Commit,' . next_branch . 'MergeStart,' . next_branch . 'ComplexMergeStart,' . next_branch . 'MissingParentsStart,@flogDiff /\v%(  |%u2502 |%u2502$)/'
+  exec 'syntax match ' . branch . ' contained nextgroup=' . next_branch . ',' . next_branch . 'Commit,' . next_branch . 'MergeStart,' . next_branch . 'ComplexMergeStart,' . next_branch . 'MissingParentsStart,flogCollapsedCommit,@flogDiff /\v%(  |%u2502 |%u2502$)/'
 
   " Commit indicators
   exec 'syntax match ' . branch . 'Commit contained nextgroup=' . next_branch . 'AfterCommit,@flogCommitInfo /\%u2022 /'
