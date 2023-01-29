@@ -181,24 +181,24 @@ vnoremap <buffer> <silent> <Plug>(FlogJumpToCommitMark) :<C-U>call flog#floggrap
 " Collapse mappings
 
 if !hasmapto('<Plug>(FlogCollapseCommit)')
-  nmap <buffer> << <Plug>(FlogCollapseCommit)
+  nmap <buffer> <nowait> < <Plug>(FlogCollapseCommit)
   vmap <buffer> < <Plug>(FlogCollapseCommit)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogCollapseCommit) :<C-U>call flog#floggraph#collapse#AtLine('.')<CR>
+nnoremap <buffer> <nowait> <silent> <Plug>(FlogCollapseCommit) :<C-U>call flog#floggraph#collapse#AtLine('.')<CR>
 vnoremap <buffer> <silent> <Plug>(FlogCollapseCommit) :<C-U>call flog#floggraph#collapse#Range("'<", "'>")<CR>
 
 if !hasmapto('<Plug>(FlogExpandCommit)')
-  nmap <buffer> >> <Plug>(FlogExpandCommit)
+  nmap <buffer> <nowait> > <Plug>(FlogExpandCommit)
   vmap <buffer> > <Plug>(FlogExpandCommit)
 endif
 nnoremap <buffer> <silent> <Plug>(FlogExpandCommit) :<C-U>call flog#floggraph#collapse#ExpandAtLine('.')<CR>
 vnoremap <buffer> <silent> <Plug>(FlogExpandCommit) :<C-U>call flog#floggraph#collapse#ExpandRange("'<", "'>")<CR>
 
 if !hasmapto('<Plug>(FlogToggleCollapseCommit)')
-  nmap <buffer> == <Plug>(FlogToggleCollapseCommit)
+  nmap <buffer> <nowait> = <Plug>(FlogToggleCollapseCommit)
   vmap <buffer> = <Plug>(FlogToggleCollapseCommit)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogToggleCollapseCommit) :<C-U>call flog#floggraph#collapse#ToggleAtLine('.')<CR>
+nnoremap <buffer> <nowait> <silent> <Plug>(FlogToggleCollapseCommit) :<C-U>call flog#floggraph#collapse#ToggleAtLine('.')<CR>
 vnoremap <buffer> <silent> <Plug>(FlogToggleCollapseCommit) :<C-U>call flog#floggraph#collapse#ToggleRange("'<", "'>")<CR>
 
 " Argument modifier mappings
