@@ -21,7 +21,7 @@ function! flog#floggraph#nav#JumpToCommit(hash, set_jump_mark = v:true, push_to_
   let l:line = max([l:commit.line, 1])
   let l:col = max([l:commit.col, 1])
 
-  call setcursorcharpos(l:line, l:col)
+  call flog#win#SetVcol(l:line, l:col)
 
   if a:push_to_jumplist
     call flog#floggraph#jumplist#Push(l:prev_line)
@@ -222,7 +222,7 @@ endfunction
 function! flog#floggraph#nav#JumpToCommitStart() abort
   call flog#floggraph#buf#AssertFlogBuf()
 
-  let l:curr_col = virtcol('.')
+  let l:curr_col = flog#win#GetVcol('.')
 
   let l:commit = flog#floggraph#commit#GetAtLine('.')
   if empty(l:commit)
@@ -234,7 +234,7 @@ function! flog#floggraph#nav#JumpToCommitStart() abort
     let l:new_col = l:commit.format_col
   endif
 
-  call setcursorcharpos(l:commit.line, l:new_col)
+  call flog#win#SetVcol(l:commit.line, l:new_col)
 
   return l:new_col
 endfunction

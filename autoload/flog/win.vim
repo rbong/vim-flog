@@ -11,7 +11,7 @@ function! flog#win#GetAllIds() abort
 endfunction
 
 function! flog#win#Save() abort
-  return [win_getid(), bufnr(), winsaveview(), virtcol('.'), virtcol('$')]
+  return [win_getid(), bufnr(), winsaveview(), flog#win#GetVcol('.'), flog#win#GetVcol('$')]
 endfunction
 
 function! flog#win#GetSavedId(saved_win) abort
@@ -67,8 +67,25 @@ function! flog#win#RestoreTopline(saved_win) abort
   return l:topline
 endfunction
 
+function! flog#win#GetVcol(expr) abort
+  return virtcol(a:expr)
+endfunction
+
+function! flog#win#SetVcol(line, vcol) abort
+  if exists('*setcursorcharpos')
+    return setcursorcharpos(a:line, a:vcol)
+  endif
+
+  let l:line = a:line
+  if type(a:line) == v:t_string
+    let l:line = line(a:line)
+  endif
+
+  return cursor(a:line, virtcol2col(win_getid(), l:line, a:vcol))
+endfunction
+
 function! flog#win#RestoreVcol(saved_win) abort
   let l:vcol = flog#win#GetSavedVcol(a:saved_win)
-  call setcursorcharpos('.', l:vcol)
+  call flog#win#SetVcol('.', l:vcol)
   return l:vcol
 endfunction

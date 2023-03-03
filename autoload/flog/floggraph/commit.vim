@@ -145,7 +145,7 @@ function! flog#floggraph#commit#RestoreOffset(saved_win, saved_commit) abort
     endif
 
     if l:new_col > 0
-      call setcursorcharpos('.', l:new_col)
+      call flog#win#SetVcol('.', l:new_col)
     endif
 
     return [0, l:new_col]
