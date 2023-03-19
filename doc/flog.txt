@@ -734,18 +734,29 @@ rw                                                                   *flog-rw*
   Start an interactive rebase with the commit under the cursor set to
   "reword".
 
+  The rebase will target the first parent of the commit under the cursor.
+  This command does not work on the root commit of a branch.
+
   See also "git rebase --help".
 
                                            *<Plug>(FlogRebaseInteractiveEdit)*
 rm                                                                   *flog-rm*
 
   Start an interactive rebase with the commit under the cursor set to "edit".
+
+  The rebase will target the first parent of the commit under the cursor.
+  This command does not work on the root commit of a branch.
+
   See also "git rebase --help".
 
                                            *<Plug>(FlogRebaseInteractiveDrop)*
 rd                                                                   *flog-rd*
 
   Start an interactive rebase with the commit under the cursor set to "drop".
+
+  The rebase will target the first parent of the commit under the cursor.
+  This command does not work on the root commit of a branch.
+
   See also "git rebase --help".
 
                                                        *<Plug>(FlogGitRebase)*
