@@ -35,7 +35,7 @@ function! flog#cmd#FlogSetArgs(args, force) abort
   let l:state = flog#state#GetBufState()
 
   let l:workdir = flog#state#GetWorkdir(l:state)
-  let l:opts = a:force ? flog#state#GetInternalDefaultOpts() : l:state.l:opts
+  let l:opts = a:force ? flog#state#GetInternalDefaultOpts() : l:state.opts
 
   call flog#cmd#flog#args#Parse(l:opts, l:workdir, a:args)
   call flog#state#SetOpts(l:state, l:opts)
