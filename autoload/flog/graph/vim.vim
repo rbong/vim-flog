@@ -10,9 +10,9 @@ function! flog#graph#vim#Get(git_cmd) abort
 
   try
     if flog#lua#ShouldUseInternal()
-      let l:graph = flog#graph#vim#internal#Get(a:git_cmd)
+      let l:graph = FlogGetVimInternalGraph(a:git_cmd)
     else
-      let l:graph = flog#graph#vim#bin#Get(a:git_cmd)
+      let l:graph = FlogGetVimBinGraph(a:git_cmd)
     endif
   finally
     call flog#lua#ResetLuaPath(l:lua_path_info)
@@ -29,9 +29,9 @@ function! flog#graph#vim#Update(git_cmd) abort
 
   try
     if flog#lua#ShouldUseInternal()
-      let l:graph = flog#graph#vim#internal#Update(a:git_cmd)
+      let l:graph = FlogUpdateVimInternalGraph(a:git_cmd)
     else
-      let l:graph = flog#graph#vim#bin#Update(a:git_cmd)
+      let l:graph = FlogUpdateVimBinGraph(a:git_cmd)
     endif
   finally
     call flog#lua#ResetLuaPath(l:lua_path_info)
