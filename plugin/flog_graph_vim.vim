@@ -1,3 +1,7 @@
+if has('nvim')
+  finish
+endif
+
 vim9script
 
 #
