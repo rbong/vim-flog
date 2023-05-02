@@ -5,7 +5,7 @@
 function! flog#Exec(cmd, focus, static, tmp) abort
   if empty(a:cmd)
     return ''
-  end
+  endif
 
   if !flog#floggraph#buf#IsFlogBuf()
     exec a:cmd

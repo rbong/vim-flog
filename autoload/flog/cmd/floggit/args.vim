@@ -112,7 +112,7 @@ function! flog#cmd#floggit#args#ToGitCommand(mods, bang, parsed_args) abort
   if l:subcommand_index >= 0
     let l:cmd .= ' '
     let l:cmd .= join(a:parsed_args.args[l:subcommand_index :])
-  end
+  endif
 
   return l:cmd
 endfunction

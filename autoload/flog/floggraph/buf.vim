@@ -141,7 +141,7 @@ function! flog#floggraph#buf#Update() abort
     let l:graph = flog#graph#nvim#Get(l:cmd)
   else
     let l:graph = flog#graph#vim#Get(l:cmd)
-  end
+  endif
 
   " Record previous commit
   let l:last_commit = flog#floggraph#commit#GetAtLine('.')
@@ -176,7 +176,7 @@ function! flog#floggraph#buf#Redraw() abort
     let l:graph = flog#graph#nvim#Update(l:state)
   else
     let l:graph = flog#graph#vim#Update(l:state)
-  end
+  endif
 
   " Record previous commit
   let l:last_commit = flog#floggraph#commit#GetAtLine('.')
@@ -244,7 +244,7 @@ function! flog#floggraph#buf#Close() abort
     silent! bdelete!
     if flog#tab#DidCloseRight(l:tab_info)
       tabprev
-    end
+    endif
   endif
 
   return flog#win#GetSavedId(l:graph_win)
