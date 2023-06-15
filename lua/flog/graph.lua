@@ -5,7 +5,10 @@
 local graph_error = 'flog: internal error drawing graph'
 
 -- Init graph strings
-local current_commit_str = '• '
+local top_commit_str =    '┌ '
+local middle_commit_str = '├ '
+local bottom_commit_str = '└ '
+local disconnected_commit_str = '• '
 local commit_branch_str = '│ '
 local commit_empty_str = '  '
 local complex_merge_str_1 = '┬┊'
@@ -27,6 +30,21 @@ local merge_empty_str = ' '
 local missing_parent_str = '┊ '
 local missing_parent_branch_str = '│ '
 local missing_parent_empty_str = '  '
+
+local function get_commit_string(is_top, is_bottom)
+  if not is_top and not is_bottom then
+    return middle_commit_str
+  end
+  if is_top and is_bottom then
+    return disconnected_commit_str
+  end
+  if is_top then
+    return top_commit_str
+  end
+  if is_bottom then
+    return bottom_commit_str
+  end
+end
 
 local function flog_get_graph(
     enable_vim,
@@ -122,6 +140,8 @@ local function flog_get_graph(
   local branch_hashes = {}
   local branch_indexes = {}
   local nbranches = 0
+  -- set of commits that have children already printed
+  local commit_hashes_with_children = {}
 
   -- Draw graph
 
@@ -201,6 +221,11 @@ local function flog_get_graph(
       parent_index = parent_index + 1
     end
 
+    -- Mark parent commits as mentioned
+    for _, parent_hash in ipairs(parents) do
+      commit_hashes_with_children[parent_hash] = true
+    end
+
     -- Traverse old and new branches
 
     if enable_graph then
@@ -227,7 +252,13 @@ local function flog_get_graph(
           is_commit = true
         end
 
+        local current_commit_str
         if is_commit then
+          -- identify symbol to draw for commit
+          local is_top = commit_hashes_with_children[commit_hash] == nil
+          local is_bottom = nparents == 0
+          current_commit_str = get_commit_string(is_top, is_bottom)
+
           -- Count commit merge
           nmerges_right = nmerges_right - 1
           nmerges_left = nmerges_left + 1
@@ -294,7 +325,7 @@ local function flog_get_graph(
           branch_indexes[parent_hash] = branch_index
           branch_hashes[branch_index] = parent_hash
 
-          -- Update branch has
+          -- Update branch hash
           branch_hash = parent_hash
 
           -- Update the number of branches
