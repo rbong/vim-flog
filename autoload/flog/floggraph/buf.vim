@@ -50,6 +50,9 @@ function! flog#floggraph#buf#GetName(instance_number, opts) abort
   if a:opts.bisect
     let l:name .= ' [bisect]'
   endif
+  if a:opts.first_parent
+    let l:name .= ' [first_parent]'
+  endif
   if !a:opts.merges
     let l:name .= ' [no_merges]'
   endif

@@ -213,6 +213,11 @@ if !hasmapto('<Plug>(FlogToggleBisect)')
 endif
 nnoremap <buffer> <silent> <Plug>(FlogToggleBisect) :<C-U>call flog#floggraph#opts#ToggleBisect()<CR>
 
+if !hasmapto('<Plug>(FlogToggleFirstParent)')
+  nmap <buffer> gP <Plug>(FlogToggleFirstParent)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogToggleFirstParent) :<C-U>call flog#floggraph#opts#ToggleFirstParent()<CR>
+
 if !hasmapto('<Plug>(FlogToggleMerges)')
   nmap <buffer> gm <Plug>(FlogToggleMerges)
 endif

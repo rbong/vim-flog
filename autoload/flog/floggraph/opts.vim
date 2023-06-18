@@ -22,6 +22,10 @@ function! flog#floggraph#opts#ToggleBisect() abort
   return flog#floggraph#opts#Toggle('bisect')
 endfunction
 
+function! flog#floggraph#opts#ToggleFirstParent() abort
+  return flog#floggraph#opts#Toggle('first_parent')
+endfunction
+
 function! flog#floggraph#opts#ToggleMerges() abort
   return flog#floggraph#opts#Toggle('merges')
 endfunction

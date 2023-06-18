@@ -42,6 +42,10 @@ function! flog#cmd#flog#args#Parse(current_opts, workdir, args) abort
       let a:current_opts.bisect = v:true
     elseif l:arg ==# '-no-bisect'
       let a:current_opts.bisect = v:false
+    elseif l:arg ==# '-first-parent'
+      let a:current_opts.first_parent = v:true
+    elseif l:arg ==# '-no-first-parent'
+      let a:current_opts.first_parent = v:false
     elseif l:arg ==# '-merges'
       let a:current_opts.merges = v:true
     elseif l:arg ==# '-no-merges'
@@ -283,6 +287,8 @@ function! flog#cmd#flog#args#Complete(arg_lead, cmd_line, cursor_pos) abort
         \ '-bisect ',
         \ '-no-bisect ',
         \ '-date=',
+        \ '-first-parent ',
+        \ '-no-first-parent ',
         \ '-format=',
         \ '-graph ',
         \ '-no-graph ',

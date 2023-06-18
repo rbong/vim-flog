@@ -55,6 +55,12 @@ These commands open Flog.
   When enabled, pass the "--bisect" argument to "git log".
   Disabled by default.
 
+:Flog -first-parent                                      *:Flog_-first_parent*
+:Flog -no-first-parent                                *:Flog_-no-first-parent*
+
+  When enabled, pass the "--first-parent" argument to "git log".
+  Disabled by default.
+
 :Flog -merges                                                  *:Flog_-merges*
 :Flog -no-merges                                            *:Flog_-no-merges*
 
@@ -474,6 +480,11 @@ a                                                                     *flog-a*
 gb                                                                   *flog-gb*
 
   Toggle |:Flog-bisect|.
+
+                                             *<Plug>(FlogToggleNoFirstParent)*
+gP                                                                   *flog-gP*
+
+  Toggle |:Flog-first-parent|.
 
                                                   *<Plug>(FlogToggleNoMerges)*
 gm                                                                   *flog-gm*

@@ -39,6 +39,9 @@ function! flog#floggraph#git#BuildLogArgs() abort
   if l:opts.bisect
     let l:args .= ' --bisect'
   endif
+  if l:opts.first_parent
+    let l:args .= ' --first-parent'
+  endif
   if !l:opts.merges
     let l:args .= ' --no-merges'
   endif
