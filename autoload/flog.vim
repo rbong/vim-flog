@@ -2,10 +2,14 @@
 " This file contains public Flog API functions.
 "
 
-function! flog#Exec(cmd, focus, static, tmp) abort
+function! flog#Exec(cmd, ...) abort
   if empty(a:cmd)
     return ''
   endif
+
+  let l:focus = get(a:, 1, v:false)
+  let l:static = get(a:, 2, v:false)
+  let l:tmp = get(a:, 3, v:false)
 
   if !flog#floggraph#buf#IsFlogBuf()
     exec a:cmd
@@ -13,9 +17,9 @@ function! flog#Exec(cmd, focus, static, tmp) abort
   endif
 
   let l:graph_win = flog#win#Save()
-  call flog#floggraph#side_win#Open(a:cmd, a:focus, a:tmp)
+  call flog#floggraph#side_win#Open(a:cmd, l:focus, l:tmp)
 
-  if ! a:static
+  if ! l:static
     if flog#win#Is(l:graph_win)
       call flog#floggraph#buf#Update()
     else
@@ -26,8 +30,10 @@ function! flog#Exec(cmd, focus, static, tmp) abort
   return a:cmd
 endfunction
 
-function! flog#ExecTmp(cmd, focus, static) abort
-  return flog#Exec(a:cmd, a:focus, a:static, v:true)
+function! flog#ExecTmp(cmd, ...) abort
+  let l:focus = get(a:, 1, v:false)
+  let l:static = get(a:, 2, v:false)
+  return flog#Exec(a:cmd, l:focus, l:static, v:true)
 endfunction
 
 function! flog#Format(cmd) abort
