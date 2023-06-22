@@ -3,10 +3,6 @@
 "
 
 function! flog#shell#Escape(str) abort
-  " Fix bug where '-' is escaped
-  if a:str ==# '-'
-    return a:str
-  endif
   return escape(a:str, ' *?[]{}`$\%#"|!<();&>' . "\n\t'")
 endfunction
 
