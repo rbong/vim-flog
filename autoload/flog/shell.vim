@@ -3,6 +3,9 @@
 "
 
 function! flog#shell#Escape(str) abort
+  if has('win32') || get(g:, 'flog_use_builtin_shellescape')
+    return shellescape(a:str)
+  endif
   return escape(a:str, ' *?[]{}`$\%#"|!<();&>' . "\n\t'")
 endfunction
 
