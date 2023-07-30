@@ -281,6 +281,13 @@ git                                                                 *flog-git*
   Enter in the characters ":Floggit" from normal or visual mode in order to
   quickly begin a |:Floggit| command.
 
+                                                    *<Plug>(FlogStartCommand)*
+.                                                                     *flog-.*
+
+  Start a |:| command line with the commit under the cursor populated.
+
+  In visual mode, fills in all the commits under the cursor.
+
                                                             *<Plug>(FlogYank)*
 y<C-G>                                                           *flog-y<C-G>*
 

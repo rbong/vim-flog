@@ -45,6 +45,11 @@ endif
 nnoremap <buffer> <Plug>(FlogGit) :Floggit
 vnoremap <buffer> <Plug>(FlogGit) :Floggit
 
+if !hasmapto('<Plug>(FlogStartCommand)')
+  nmap <buffer> . <Plug>(FlogStartCommand)
+endif
+nnoremap <buffer> <Plug>(FlogStartCommand) :<C-U> <C-R>=flog#Format('%H')<CR><Home>
+
 if !hasmapto('<Plug>(FlogYank)')
   nmap <buffer> y<C-G> <Plug>(FlogYank)
   vmap <buffer> y<C-G> <Plug>(FlogYank)
