@@ -314,6 +314,21 @@ nnoremap <buffer> <silent> <Plug>(FlogDiffHelp) :help flog-diff-mappings<CR>
 
 " Commit/branch mappings
 
+if !hasmapto('<Plug>(FlogCommit)')
+  nmap <buffer> cc <Plug>(FlogCommit)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogCommit) :<C-U>Floggit -f commit<CR>
+
+if !hasmapto('<Plug>(FlogAmend)')
+  nmap <buffer> ca <Plug>(FlogAmend)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogAmend) :<C-U>Floggit -f commit --amend<CR>
+
+if !hasmapto('<Plug>(FlogAmendNoEdit)')
+  nmap <buffer> ce <Plug>(FlogAmendNoEdit)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogAmendNoEdit) :<C-U>Floggit -f commit --amend --no-edit<CR>
+
 if !hasmapto('<Plug>(FlogFixup)')
   nmap <buffer> cf <Plug>(FlogFixup)
 endif

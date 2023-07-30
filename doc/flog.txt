@@ -589,6 +589,21 @@ d?                                                                   *flog-d?*
 ------------------------------------------------------------------------------
 COMMIT AND BRANCH MAPPINGS                              *flog-commit-mappings*
 
+                                                          *<Plug>(FlogCommit)*
+cc                                                                   *flog-cc*
+
+  Create a commit.
+
+                                                           *<Plug>(FlogAmend)*
+ca                                                                   *flog-ca*
+
+  Amend the current HEAD commit and edit the message.
+
+                                                     *<Plug>(FlogAmendNoEdit)*
+ce                                                                   *flog-ce*
+
+  Amend the current HEAD commit without editing the message.
+
                                                            *<Plug>(FlogFixup)*
 cf                                                                   *flog-cf*
 
