@@ -227,7 +227,7 @@ function! flog#floggraph#buf#SetContent(content) abort
   call flog#floggraph#buf#AssertFlogBuf()
 
   setlocal modifiable noreadonly
-  silent! 1,$ delete
+  silent! 1,$ delete _
   call setline(1, a:content)
   setlocal nomodifiable readonly
 
