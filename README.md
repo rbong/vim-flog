@@ -46,7 +46,7 @@ See [examples](EXAMPLES.md) for details.
 
 ## Getting Help
 
-See [the issue tracker](https://github.com/rbong/vim-flog/issues) and `:help flog`.
+See [the issue tracker](https://github.com/rbong/vim-flog/issues), [the discussions board](https://github.com/rbong/vim-flog/discussions), and `:help flog`.
 
 See [fugitive](https://github.com/tpope/vim-fugitive) for help with fugitive.
 

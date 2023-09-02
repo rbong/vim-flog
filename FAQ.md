@@ -53,7 +53,7 @@ Toggle the graph with `gx` or launch with `:Flog -no-graph`.
 
 **Other issues**
 
-Please [post an issue](https://github.com/rbong/vim-flog/issues/).
+Please [post an issue](https://github.com/rbong/vim-flog/issues/) or [discussion](https://github.com/rbong/vim-flog/discussions) if you run into any other speed problems.
 
 ## What are the differences with other branch viewers?
 
@@ -78,4 +78,4 @@ This includes commit marks, some navigation mappings, and contextually aware com
 
 See `:help flog` for all commands and options.
 See [examples](EXAMPLES.md) for detailed walkthroughs.
-Please [post an issue](https://github.com/rbong/vim-flog/issues) if you have any questions.
+Please [start a discussion](https://github.com/rbong/vim-flog/discussions/new/choose) if you have any questions or [post an issue](https://github.com/rbong/vim-flog/issues/) if you run into any bugs.
