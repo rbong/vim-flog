@@ -192,16 +192,15 @@ for merge_idx in range(1, 9)
 endfor
 
 if &background ==# 'dark'
-  highlight default flogBranch1 ctermfg=magenta     guifg=green1
-  highlight link    flogBranch0 flogBranch1
-  highlight default flogBranch2 ctermfg=green       guifg=yellow1
-  highlight default flogBranch3 ctermfg=yellow      guifg=orange1
-  highlight default flogBranch4 ctermfg=cyan        guifg=greenyellow
-  highlight default flogBranch5 ctermfg=red         guifg=springgreen1
-  highlight default flogBranch6 ctermfg=yellow      guifg=cyan1
-  highlight default flogBranch7 ctermfg=green       guifg=slateblue1
-  highlight default flogBranch8 ctermfg=cyan        guifg=magenta1
-  highlight default flogBranch9 ctermfg=magenta     guifg=purple1
+  highlight default flogBranch1 ctermfg=magenta guifg=green1
+  highlight default flogBranch2 ctermfg=green   guifg=yellow1
+  highlight default flogBranch3 ctermfg=yellow  guifg=orange1
+  highlight default flogBranch4 ctermfg=cyan    guifg=greenyellow
+  highlight default flogBranch5 ctermfg=red     guifg=springgreen1
+  highlight default flogBranch6 ctermfg=yellow  guifg=cyan1
+  highlight default flogBranch7 ctermfg=green   guifg=slateblue1
+  highlight default flogBranch8 ctermfg=cyan    guifg=magenta1
+  highlight default flogBranch9 ctermfg=magenta guifg=purple1
 else
   highlight default flogBranch1 ctermfg=darkyellow  guifg=orangered3
   highlight default flogBranch2 ctermfg=darkgreen   guifg=orange2
@@ -213,3 +212,5 @@ else
   highlight default flogBranch8 ctermfg=blue        guifg=darkslateblue
   highlight default flogBranch9 ctermfg=darkmagenta guifg=darkviolet
 endif
+
+highlight link flogBranch0 flogBranch1
