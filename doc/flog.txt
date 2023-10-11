@@ -708,8 +708,18 @@ c?                                                                   *flog-c?*
 
   Show these mappings.
 
+                                                     *<Plug>(FlogResetBranch)*
+rb
+
+  Reset current branch to the commit under the cursor.
+
+                                                 *<Plug>(FlogResetBranchHard)*
+rbh
+
+  Reset hard current branch to the commit under the cursor.
+
 ------------------------------------------------------------------------------
-REBASE MAPPINGS                                         *flog-rebase-mappings*
+CHERRY-PICK and REBASE MAPPINGS *flog-cherry-pick-mappings* *flog-rebase-mappings*
 
 Note that all rebase mappings target the commit under the cursor unless
 otherwise noted.
@@ -719,6 +729,11 @@ the commit under the cursor by default.
 
 This is because targetting the parent of a commit would make targetting the
 tip of other branches impossible. Fugitive cannot target other branches.
+
+cp
+
+  Cherry-pick the commit under the cursor.  In visual mode, cherry-pick all
+  selected.
 
                                                *<Plug>(FlogRebaseInteractive)*
 ri                                                                   *flog-ri*

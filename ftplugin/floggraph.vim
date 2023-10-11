@@ -431,7 +431,24 @@ if !hasmapto('<Plug>(FlogCommitHelp)')
 endif
 nnoremap <buffer> <silent> <Plug>(FlogCommitHelp) :help flog-commit-mappings<CR>
 
-" Rebase mappings
+if !hasmapto('<Plug>(FlogResetBranch)')
+  nmap <buffer> rb <Plug>(FlogResetBranch)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogResetBranch) :<C-U>call flog#Exec(flog#Format('Git reset %h'))<CR>
+
+if !hasmapto('<Plug>(FlogResetBranchHard)')
+  nmap <buffer> rbh <Plug>(FlogResetBranchHard)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogResetBranchHard) :<C-U>call flog#Exec(flog#Format('Git reset --hard %h'))<CR>
+
+" Cherry-Pick and Rebase mappings
+
+if !hasmapto('<Plug>(FlogCherryPick)')
+  nmap <buffer> cp <Plug>(FlogCherryPick)
+  vmap <buffer> cp <Plug>(FlogCherryPick)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogCherryPick) :<C-U>call flog#Exec(flog#Format('Git cherry-pick %h'))<CR>
+vnoremap <buffer> <silent> <Plug>(FlogCherryPick) :<C-U>call flog#Exec(flog#Format("Git cherry-pick %(h'>)^..%(h'<)"))<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractive)')
   nmap <buffer> ri <Plug>(FlogRebaseInteractive)
