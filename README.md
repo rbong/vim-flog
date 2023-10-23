@@ -30,7 +30,7 @@ For lazy.nvim users:
 {
   "rbong/vim-flog",
   lazy = true,
-  cmd = { "Flogsplit", "Flog" },
+  cmd = { "Flog", "Flogsplit", "Floggit" },
   dependencies = {
     "tpope/vim-fugitive",
   },
