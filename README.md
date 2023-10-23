@@ -24,6 +24,19 @@ Plug 'tpope/vim-fugitive'
 Plug 'rbong/vim-flog'
 ```
 
+For lazy.nvim users:
+
+```lua
+{
+  "rbong/vim-flog",
+  lazy = true,
+  cmd = { "Flogsplit", "Flog" },
+  dependencies = {
+    "tpope/vim-fugitive",
+  },
+},
+```
+
 ## Using Flog
 
 Basics:
