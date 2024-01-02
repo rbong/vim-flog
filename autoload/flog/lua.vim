@@ -6,7 +6,7 @@ function! flog#lua#ShouldUseInternal() abort
   let l:use_lua = get(g:, 'flog_use_internal_lua', v:false)
 
   if l:use_lua && !has('lua')
-    echoerr 'flog: warning: internal Lua is enabled but unavailable'
+    call flog#print#err('flog: warning: internal Lua is enabled but unavailable')
     return v:false
   endif
 
@@ -20,9 +20,9 @@ function! flog#lua#CheckInternalVersion() abort
     let g:flog_did_check_lua_internal_version = v:true
 
     if luaeval('_VERSION') !~# '\c^lua 5\.1\(\.\|$\)'
-      echoerr 'flog: warning: only Lua 5.1 and LuaJIT 2.1 are supported'
+      call flog#print#err('flog: warning: only Lua 5.1 and LuaJIT 2.1 are supported')
     elseif empty(luaeval('jit and jit.version'))
-      echoerr 'flog: warning: for speed improvements, please compile Vim with LuaJIT 2.1'
+      call flog#print#err('flog: warning: for speed improvements, please compile Vim with LuaJIT 2.1')
     endif
 
     return v:true
@@ -40,9 +40,9 @@ function! flog#lua#CheckBinVersion(bin) abort
     let l:out = flog#shell#Run(a:bin . ' -v')[0]
 
     if l:out =~# '\c^lua 5\.1\(\.\|$\)'
-      echoerr 'flog: warning: for speed improvements, please install LuaJIT 2.1'
+      call flog#print#err('flog: warning: for speed improvements, please install LuaJIT 2.1')
     elseif l:out !~# '\c^luajit 2\.1\(\.\|$\)'
-      echoerr 'flog: warning: only Lua 5.1 and LuaJIT 2.1 are supported'
+      call flog#print#err('flog: warning: only Lua 5.1 and LuaJIT 2.1 are supported')
     endif
 
     return v:true
@@ -61,7 +61,7 @@ function! flog#lua#GetBin() abort
   elseif executable('lua')
     let l:bin = 'lua'
   else
-    echoerr 'flog: please install LuaJIT 2.1 it or set it with g:flog_lua_bin'
+    call flog#print#err('flog: please install LuaJIT 2.1 it or set it with g:flog_lua_bin')
     throw g:flog_lua_not_found
   endif
 

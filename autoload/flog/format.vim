@@ -141,7 +141,7 @@ function! flog#format#FormatItem(cache, item) abort
   elseif a:item ==# 't'
     let l:formatted_item = flog#format#FormatIndexTree(a:cache)
   else
-    echoerr printf('error converting "%s"', a:item)
+    call flog#print#err('error converting "%s"', a:item)
     throw g:flog_unsupported_exec_format_item
   endif
 

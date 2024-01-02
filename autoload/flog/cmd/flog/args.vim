@@ -117,7 +117,7 @@ function! flog#cmd#flog#args#Parse(current_opts, workdir, args) abort
       let a:current_opts.path = l:defaults.path
       let l:has_set_path = v:false
     else
-      echoerr 'error parsing argument ' . l:arg
+      call flog#print#err('error parsing argument "%s"', l:arg)
       throw g:flog_unsupported_argument
     endif
   endfor

@@ -16,7 +16,7 @@ endfunction
 function! flog#shell#Run(cmd) abort
   let l:output = systemlist(a:cmd)
   if !empty(v:shell_error)
-    echoerr join(l:output, "\n")
+    call flog#print#err(join(l:output, "\n"))
     throw g:flog_shell_error
   endif
   return l:output

@@ -64,7 +64,7 @@ function! flog#state#GetInternalDefaultOpts() abort
       if has_key(l:defaults, l:key)
         let l:defaults[key] = l:value
       else
-        echoerr 'Warning: unrecognized permanent default option ' . l:key
+        call flog#print#err('flog: warning: unrecognized permanent default option "%s"', l:key)
       endif
     endfor
   endif
@@ -95,7 +95,7 @@ function! flog#state#GetDefaultOpts() abort
       if has_key(l:defaults, l:key)
         let l:defaults[key] = l:value
       else
-        echoerr 'Warning: unrecognized default option ' . l:key
+        call flog#print#err('flog: warning: unrecognized default option "%s"', l:key)
       endif
     endfor
   endif

@@ -5,8 +5,8 @@
 let g:flog_shown_deprecation_warnings = {}
 
 function! flog#deprecate#ShowWarning(old_usage, new_usage) abort
-  echoerr printf('Deprecated: %s', a:old_usage)
-  echoerr printf('New usage: %s', a:new_usage)
+  call flog#print#err('deprecated: %s', a:old_usage)
+  call flog#print#err('new usage: %s', a:new_usage)
   let g:flog_shown_deprecation_warnings[a:old_usage] = v:true
 endfunction
 
