@@ -3,6 +3,10 @@
 "
 
 function! flog#print#err(...) abort
-  echohl WarningMsg
-  echomsg call('printf', a:000)
+  try
+    echohl WarningMsg
+    echomsg call('printf', a:000)
+  finally
+    echohl NONE
+  endtry
 endfunction
