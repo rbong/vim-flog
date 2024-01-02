@@ -1,5 +1,5 @@
 "
-" This file contains functions for printing to the console.
+" This file contains functions for printing messages.
 "
 
 function! flog#print#err(...) abort
