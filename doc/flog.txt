@@ -36,8 +36,10 @@ These commands open Flog.
   run from any file in a git repository. Any |fugitive-commands| can be run
   from the buffer.
 
-  When opened in visual mode or passed a range, the currently selected range
-  and filename is passed to "-limit=".
+  When opened in visual mode or passed a range, the selected range and
+  filename is passed to "-limit".
+
+  When called with range "0", passes the entire file to "-limit".
 
   The first time this is called, runs "git commit-graph write". This can be
   changed with |g:flog_write_commit_graph|.

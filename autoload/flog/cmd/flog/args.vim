@@ -338,3 +338,24 @@ function! flog#cmd#flog#args#Complete(arg_lead, cmd_line, cursor_pos) abort
   endif
   return flog#args#FilterCompletions(a:arg_lead, l:default_completion)
 endfunction
+
+" Get arguments for a range passed to Flog.
+function! flog#cmd#flog#args#GetRangeArgs(range, line1, line2) abort
+  let l:limit = ''
+
+  if a:range ==# 1
+    if a:line1 ==# 0
+      let l:limit = '1,'
+    else
+      let l:limit = a:line1 . ',' . a:line2
+    endif
+  elseif a:range ==# 2
+    let l:limit = a:line1 . ',' . a:line2
+  endif
+
+  if l:limit !=# ''
+    return ['-limit=' . l:limit . ':' . expand('%:p')]
+  endif
+
+  return []
+endfunction
