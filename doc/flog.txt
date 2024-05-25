@@ -889,9 +889,9 @@ g:flog_lua_bin                                                *g:flog_lua_bin*
 g:flog_use_internal_lua                              *g:flog_use_internal_lua*
 
   When enabled, use the version of Lua included with Vim rather than calling
-  Lua directly.
+  Lua directly. This setting is always true when using Neovim.
 
-  In most cases, this requires compiling Vim with:
+  In most cases, when using Vim, this requires compiling Vim with:
 >
   ./configure \
     ...
