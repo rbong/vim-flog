@@ -150,7 +150,8 @@ endfunction
 
 function! flog#state#GetCommitRefs(commit) abort
   let l:refs = []
-
+  let l:remotes = flog#shell#Run(flog#fugitive#GetGitCommand() . ' remote -v')
+  let l:remotes = uniq(map(l:remotes, 'substitute(v:val, "\t.*$", "", "")'))
   for l:ref in split(a:commit.refs, ', ')
     let l:match = matchlist(l:ref, '\v^(([^ ]+) -\> )?(tag: )?((refs/(remote|.*)?/)?((.{-}/)?(.*)))')
 
@@ -161,11 +162,15 @@ function! flog#state#GetCommitRefs(commit) abort
     " full: Full path including refs/.*/
     " path: Path with remote
     " tail: End of path only (no remote)
+    let l:remote = l:match[8][ : -2]
+    if index(l:remotes, l:remote) < 0
+      let l:remote = ""
+    endif
     call add(l:refs, {
           \ 'orig': l:match[2],
           \ 'tag': !empty(l:match[3]),
           \ 'prefix': l:match[5][ : -2],
-          \ 'remote': l:match[8][ : -2],
+          \ 'remote': l:remote,
           \ 'full': l:match[4],
           \ 'path': l:match[7],
           \ 'tail': l:match[9],
