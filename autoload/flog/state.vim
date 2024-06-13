@@ -151,8 +151,24 @@ endfunction
 function! flog#state#GetCommitRefs(commit) abort
   let l:refs = []
 
+  let l:remotes = flog#shell#Run(flog#fugitive#GetGitCommand() . ' remote -v')
+  let l:remotes = uniq(map(l:remotes, 'substitute(v:val, "\t.*$", "", "")'))
+
   for l:ref in split(a:commit.refs, ', ')
-    let l:match = matchlist(l:ref, '\v^(([^ ]+) -\> )?(tag: )?((refs/(remote|.*)?/)?((.{-}/)?(.*)))')
+    let l:match = matchlist(l:ref, '\v^(([^ ]+) -\> )?(tag: )?((refs/.{-}/)?(.*))')
+
+    let l:path = l:match[6]
+    let l:tail = l:path
+    let l:remote = ''
+
+    " Match path with remote
+    for l:remote_match in l:remotes
+      if l:path[ : len(l:remote_match) - 1] ==# l:remote_match
+        let l:remote = l:remote_match
+        let l:tail = l:path[len(l:remote_match) + 1 : ]
+        break
+      endif
+    endfor
 
     " orig: The name of the original path, ex. "HEAD"
     " tag: Whether the ref is a tag
@@ -165,10 +181,10 @@ function! flog#state#GetCommitRefs(commit) abort
           \ 'orig': l:match[2],
           \ 'tag': !empty(l:match[3]),
           \ 'prefix': l:match[5][ : -2],
-          \ 'remote': l:match[8][ : -2],
+          \ 'remote': l:remote,
           \ 'full': l:match[4],
-          \ 'path': l:match[7],
-          \ 'tail': l:match[9],
+          \ 'path': l:path,
+          \ 'tail': l:tail,
           \ })
   endfor
 
