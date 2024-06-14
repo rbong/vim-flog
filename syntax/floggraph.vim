@@ -134,7 +134,7 @@ for branch_idx in range(1, 9)
   exec 'syntax match ' . branch . ' contained nextgroup=' . next_branch . ',' . next_branch . 'Commit,' . next_branch . 'MergeStart,' . next_branch . 'ComplexMergeStart,' . next_branch . 'MissingParentsStart,flogCollapsedCommit,@flogDiff /\v%(  |%u2502 |%u2502$)/'
 
   " Commit indicators
-  exec 'syntax match ' . branch . 'Commit contained nextgroup=' . next_branch . 'AfterCommit,@flogCommitInfo /\%u2022 /'
+  exec 'syntax match ' . branch . 'Commit contained nextgroup=' . next_branch . 'AfterCommit,@flogCommitInfo /\v%(%u2022|%u250c|%u251c|%u2514) /'
   exec 'highlight link ' . branch . 'Commit flogCommit'
 
   " Branches to the right of the commit indicator
@@ -142,7 +142,7 @@ for branch_idx in range(1, 9)
   exec 'highlight link ' . branch . 'AfterCommit ' . branch
 
   " Start of a merge - saves the branch that the merge starts on (see below)
-  exec 'syntax match ' . branch . 'MergeStart contained nextgroup=' . next_merge_branch . ',' . next_merge_branch . 'End /\v%(%u251c|%u256d|%u2570)/'
+  exec 'syntax match ' . branch . 'MergeStart contained nextgroup=' . next_merge_branch . ',' . next_merge_branch . 'End /\v%(%u251c|%u256d|%u2570)[^ ]/'
   exec 'highlight link ' . branch . 'MergeStart ' . branch
 
   " Horizontal merge character
