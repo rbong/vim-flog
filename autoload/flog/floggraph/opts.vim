@@ -43,7 +43,18 @@ function! flog#floggraph#opts#ToggleGraph() abort
 endfunction
 
 function! flog#floggraph#opts#TogglePatch() abort
-  return flog#floggraph#opts#Toggle('patch')
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:opts = flog#state#GetBufState().opts
+
+	if l:opts.patch == v:false
+		let l:opts.patch = v:null
+	else
+		let l:opts.patch = v:false
+	endif
+
+	call flog#floggraph#buf#Update()
+
+	return l:opts.patch
 endfunction
 
 function! flog#floggraph#opts#CycleOrder() abort

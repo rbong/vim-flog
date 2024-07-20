@@ -85,8 +85,12 @@ These commands open Flog.
 :Flog -patch                                                    *:Flog_-patch*
 :Flog -no-patch                                              *:Flog_-no-patch*
 
+  When enabled, pass the "--patch" argument to "git log".
   When disabled, pass the "--no-patch" argument to "git log".
-  Enabled by default.
+  By default, pass neither flag.
+
+  This option can be set to default with "Flog -patch=" (nothing after "=").
+  Be aware that enabling this option can crash large repositories.
 
 :Flog -graph                                                    *:Flog_-graph*
 :Flog -no-graph                                              *:Flog_-no-graph*
@@ -513,7 +517,7 @@ gx                                                                   *flog-gx*
                                                    *<Plug>(FlogToggleNoPatch)*
 gp                                                                   *flog-gp*
 
-  Toggle |:Flog-patch|.
+  Toggle |:Flog-patch| between off/default.
 
                                                           *<Plug>(FlogSearch)*
 g/                                                                   *flog-g/*

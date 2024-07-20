@@ -51,7 +51,9 @@ function! flog#floggraph#git#BuildLogArgs() abort
   if l:opts.reverse
     let l:args .= ' --reverse'
   endif
-  if !l:opts.patch
+  if l:opts.patch == v:true
+    let l:args .= ' --patch'
+	elseif l:opts.patch == v:false
     let l:args .= ' --no-patch'
   endif
   if !empty(l:opts.skip)
