@@ -463,7 +463,7 @@ m{a-zA-Z'}                                                            *flog-m*
 ------------------------------------------------------------------------------
 COLLAPSE MAPPINGS                                     *flog-collapse-mappings*
 
-                                                  *<Plug>(FlogCollapseCommit)*
+<                                                 *<Plug>(FlogCollapseCommit)*
 <                                                                     *flog-<*
 
   Collapse the body of the commit under the cursor.
