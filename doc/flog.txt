@@ -467,7 +467,7 @@ Collapse mappings only apply when a multiline log format is used, or if an
 option which includes multiline output like '-patch' is used.
 
                                                   *<Plug>(FlogCollapseCommit)*
-<                                                                     *flog-<*
+ <                                                                    *flog-<*
 
   Collapse the body of the commit under the cursor.
   In visual mode, collapses the body of all commits under the cursor.
