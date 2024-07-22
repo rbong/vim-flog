@@ -463,6 +463,9 @@ m{a-zA-Z'}                                                            *flog-m*
 ------------------------------------------------------------------------------
 COLLAPSE MAPPINGS                                     *flog-collapse-mappings*
 
+Collapse mappings only apply when a multiline log format is used, or if an
+option which includes multiline output like '-patch' is used.
+
 <                                                 *<Plug>(FlogCollapseCommit)*
 <                                                                     *flog-<*
 
