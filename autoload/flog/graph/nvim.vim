@@ -14,6 +14,7 @@ function! flog#graph#nvim#Get(git_cmd) abort
         \ v:true,
         \ g:flog_commit_start_token,
         \ state.opts.graph ? v:true : v:false,
+        \ state.opts.default_collapsed ? v:true : v:false,
         \ a:git_cmd,
         \ l:state.collapsed_commits
         \ )
@@ -38,6 +39,7 @@ function! flog#graph#nvim#Update(graph) abort
   let l:state = flog#state#GetBufState()
 
   let l:collapsed_commits = l:state.collapsed_commits
+  let l:default_collapsed = l:state.opts.default_collapsed
 
   " Init data
   let l:commits = a:graph.commits
@@ -69,7 +71,7 @@ function! flog#graph#nvim#Update(graph) abort
     let l:total_lines += 1
 
     if len > 1
-      if has_key(l:collapsed_commits, l:hash)
+      if get(l:collapsed_commits, l:hash, l:default_collapsed)
         " Add collapsed body
         call add(l:output, l:commit.collapsed_body)
         call add(l:line_commits, l:commit)

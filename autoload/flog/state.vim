@@ -34,6 +34,7 @@ function! flog#state#GetInternalDefaultOpts() abort
         \ 'date': 'iso',
         \ 'all': v:false,
         \ 'bisect': v:false,
+        \ 'default_collapsed': v:false,
         \ 'first_parent': v:false,
         \ 'merges': v:true,
         \ 'reflog': v:false,

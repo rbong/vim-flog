@@ -34,6 +34,7 @@ local function flog_get_graph(
     enable_porcelain,
     start_token,
     enable_graph,
+    default_collapsed,
     cmd,
     collapsed_commits)
   -- Resolve Vim values
@@ -624,6 +625,10 @@ local function flog_get_graph(
         local prefix = table.concat(commit_multiline_prefix, '')
         local commit_out_index = 2
         local collapsed = collapsed_commits[commit_hash]
+
+        if collapsed == nil then
+          collapsed = default_collapsed
+        end
 
         vim_commit.collapsed_body = prefix .. string.format('== %d hidden lines ==', ncommit_lines - 1)
 

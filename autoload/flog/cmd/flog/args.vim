@@ -42,6 +42,10 @@ function! flog#cmd#flog#args#Parse(current_opts, workdir, args) abort
       let a:current_opts.bisect = v:true
     elseif l:arg ==# '-no-bisect'
       let a:current_opts.bisect = v:false
+    elseif l:arg ==# '-default-collapsed'
+      let a:current_opts.default_collapsed = v:true
+    elseif l:arg ==# '-default-expanded'
+      let a:current_opts.default_collapsed = v:false
     elseif l:arg ==# '-first-parent'
       let a:current_opts.first_parent = v:true
     elseif l:arg ==# '-no-first-parent'
@@ -289,6 +293,8 @@ function! flog#cmd#flog#args#Complete(arg_lead, cmd_line, cursor_pos) abort
         \ '-bisect ',
         \ '-no-bisect ',
         \ '-date=',
+        \ '-default-collapsed',
+        \ '-default-expanded',
         \ '-first-parent ',
         \ '-no-first-parent ',
         \ '-format=',

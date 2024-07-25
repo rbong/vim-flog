@@ -6,27 +6,24 @@ function! flog#floggraph#collapse#Set(hash, collapse = 1, redraw = v:true) abort
   let l:state = flog#state#GetBufState()
 
   let l:collapsed_commits = l:state.collapsed_commits
+  let l:default_collapsed = l:state.opts.default_collapsed
   let l:collapse = a:collapse
 
   if l:collapse < 0
-    if has_key(l:collapsed_commits, a:hash)
+    if get(l:collapsed_commits, a:hash, l:default_collapsed)
       let l:collapse = 0
     else
       let l:collapse = 1
     endif
   endif
 
-  if l:collapse > 0
-    let l:collapsed_commits[a:hash] = 1
-  elseif has_key(l:collapsed_commits, a:hash)
-    call remove(l:collapsed_commits, a:hash)
-  endif
+  let l:collapsed_commits[a:hash] = l:collapse
 
   if a:redraw
     call flog#floggraph#buf#Redraw()
   endif
 
-  return has_key(l:collapsed_commits, a:hash)
+  return l:collapse
 endfunction
 
 function! flog#floggraph#collapse#Expand(hash) abort

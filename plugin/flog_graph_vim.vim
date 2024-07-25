@@ -257,6 +257,7 @@ def g:FlogGetVimInternalGraph(git_cmd: string): dict<any>
 
   # Set temporary vars
   g:flog_tmp_enable_graph = state.opts.graph
+  g:flog_tmp_default_collapsed = state.opts.default_collapsed
   g:flog_tmp_git_cmd = git_cmd
   g:flog_tmp_collapsed_commits = state.collapsed_commits
 
@@ -272,6 +273,8 @@ def g:FlogGetVimInternalGraph(git_cmd: string): dict<any>
   cmd ..= 'vim.eval("g:flog_commit_start_token"), '
   # enable_graph
   cmd ..= 'vim.eval("g:flog_tmp_enable_graph"), '
+  # default_collapsed
+  cmd ..= 'vim.eval("g:flog_tmp_default_collapsed"), '
   # cmd
   cmd ..= 'vim.eval("g:flog_tmp_git_cmd"), '
   # collapsed_commits

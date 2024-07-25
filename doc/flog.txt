@@ -57,6 +57,13 @@ These commands open Flog.
   When enabled, pass the "--bisect" argument to "git log".
   Disabled by default.
 
+:Flog -default-collapsed                            *:Flog_-default-collapsed*
+:Flog -default-expanded                              *:Flog_-default-expanded*
+
+  Control whether multiline commit bodies are collapsed by default.
+  See also |flog-collapse-mappings|.
+  Collapsed by default.
+
 :Flog -first-parent                                      *:Flog_-first_parent*
 :Flog -no-first-parent                                *:Flog_-no-first-parent*
 
