@@ -62,7 +62,7 @@ These commands open Flog.
 
   Control whether multiline commit bodies are collapsed by default.
   See also |flog-collapse-mappings|.
-  Collapsed by default.
+  Expanded by default.
 
 :Flog -first-parent                                      *:Flog_-first_parent*
 :Flog -no-first-parent                                *:Flog_-no-first-parent*
