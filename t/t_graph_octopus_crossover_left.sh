@@ -15,6 +15,7 @@ WORKTREE=$(git_init graph_merge_octopus_crossover)
 cd "$WORKTREE"
 
 git_commit_tag 1-a
+git_commit_tag 1-b
 
 git_checkout 1-a
 git_commit_tag 2-a
@@ -25,12 +26,14 @@ git_commit_tag 3-a
 git_checkout 1-a
 git_commit_tag 4-a
 
-git_checkout 1-a
-git_commit_tag 1-b 1-c
-
 git_checkout 2-a
 git_merge -m 2-b 3-a 4-a 1-b
 git_tag 2-b
+
+sleep 1
+
+git_checkout 1-b
+git_commit_tag 1-c
 
 VIM_OUT="$TMP/out"
 run_vim_command <<EOF

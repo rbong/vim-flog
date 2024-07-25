@@ -20,10 +20,12 @@ git_checkout 1-a
 git_commit_tag 3-a
 
 git_checkout 1-b
-git_commit_tag 2-a
+git_commit_tag 1-c
+
+sleep 1
 
 git_checkout 1-b
-git_commit_tag 1-c
+git_commit_tag 2-a
 
 git_checkout 2-a
 git_merge -m 2-b 1-c 3-a

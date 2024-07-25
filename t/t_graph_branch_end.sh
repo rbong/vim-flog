@@ -17,10 +17,12 @@ cd "$WORKTREE"
 git_commit_tag 1-a 1-b
 
 git_checkout 1-a
-git_commit_tag 3-a
+git_commit_tag 4-a
+
+sleep 1
 
 git_checkout 1-a
-git_commit_tag 4-a
+git_commit_tag 3-a
 
 git_checkout 1-b
 git_commit_tag 1-c
