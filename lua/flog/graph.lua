@@ -802,6 +802,7 @@ end
 
 local function flog_update_graph(
     enable_nvim,
+    default_collapsed,
     graph,
     collapsed_commits)
   -- Init data
@@ -844,7 +845,13 @@ local function flog_update_graph(
     total_lines = total_lines + 1
 
     if len > 1 then
-      if collapsed_commits[hash] then
+      local collapsed = collapsed_commits[hash]
+
+      if collapsed == nil then
+        collapsed = default_collapsed
+      end
+
+      if collapsed then
         -- Add collapsed body
         output[total_lines] = commit.collapsed_body
         line_commits[total_lines] = commit

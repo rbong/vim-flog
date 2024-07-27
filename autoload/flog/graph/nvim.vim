@@ -29,6 +29,7 @@ function! flog#graph#nvim#Update(graph) abort
 
   " return v:lua.flog_update_graph(
   "       \ v:true,
+  "       \ l:state.opts.default_collapsed ? v:true : v:false,
   "       \ a:graph,
   "       \ l:state.collapsed_commits
   "       \ )
