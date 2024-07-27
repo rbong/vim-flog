@@ -60,22 +60,19 @@ function! flog#graph#nvim#Update(graph) abort
     let len = l:commit.len
     let suffix_len = l:commit.suffix_len
 
-    " Record commit
-    let l:commits_by_hash[l:hash] = l:commit
-
     " Update line position
     let l:commit.line = l:total_lines + 1
 
     " Add subject
     call add(l:output, l:commit.subject)
-    call add(l:line_commits, l:commit)
+    call add(l:line_commits, l:commit_index)
     let l:total_lines += 1
 
     if len > 1
       if get(l:collapsed_commits, l:hash, l:default_collapsed)
         " Add collapsed body
         call add(l:output, l:commit.collapsed_body)
-        call add(l:line_commits, l:commit)
+        call add(l:line_commits, l:commit_index)
         let l:total_lines += 1
       else
         " Add body
@@ -83,7 +80,7 @@ function! flog#graph#nvim#Update(graph) abort
         let l:body = l:commit.body
         while l:body_index < len - 1
           call add(l:output, l:body[l:body_index])
-          call add(l:line_commits, l:commit)
+          call add(l:line_commits, l:commit_index)
           let l:body_index += 1
         endwhile
         let l:total_lines += len - 1
@@ -96,7 +93,7 @@ function! flog#graph#nvim#Update(graph) abort
       let l:suffix = l:commit.suffix
       while l:suffix_index <= suffix_len - 1
         call add(l:output, l:suffix[l:suffix_index])
-        call add(l:line_commits, l:commit)
+        call add(l:line_commits, l:commit_index)
         let l:suffix_index += 1
       endwhile
       let l:total_lines += suffix_len

@@ -102,7 +102,7 @@ def g:FlogGetVimBinGraph(git_cmd: string): dict<any>
     # Parse subject
     commit.subject = out[out_index]
     add(final_out, out[out_index])
-    add(line_commits, commit)
+    add(line_commits, commit_index)
     out_index += 1
     total_lines += 1
 
@@ -113,7 +113,7 @@ def g:FlogGetVimBinGraph(git_cmd: string): dict<any>
 
       if collapsed
         add(final_out, commit.collapsed_body)
-        add(line_commits, commit)
+        add(line_commits, commit_index)
         total_lines += 1
       else
         total_lines += len
@@ -130,7 +130,7 @@ def g:FlogGetVimBinGraph(git_cmd: string): dict<any>
 
         if !collapsed
           add(final_out, out[out_index])
-          add(line_commits, commit)
+          add(line_commits, commit_index)
         endif
 
         out_index += 1
@@ -147,7 +147,7 @@ def g:FlogGetVimBinGraph(git_cmd: string): dict<any>
       while suffix_index <= suffix_len
         suffix[suffix_index] = out[out_index]
         add(final_out, out[out_index])
-        add(line_commits, commit)
+        add(line_commits, commit_index)
 
         out_index += 1
         suffix_index += 1
@@ -158,7 +158,7 @@ def g:FlogGetVimBinGraph(git_cmd: string): dict<any>
 
     # Increment
     add(commits, commit)
-    commits_by_hash[hash] = commit
+    commits_by_hash[hash] = commit_index
     commit_index += 1
   endwhile
 
@@ -198,14 +198,14 @@ def g:FlogUpdateVimBinGraph(graph: dict<any>): dict<any>
 
     # Add subject
     add(output, commit.subject)
-    add(line_commits, commit)
+    add(line_commits, commit_index)
     total_lines += 1
 
     if len > 1
       if has_key(collapsed_commits, commit.hash)
         # Add collapsed body
         add(output, commit.collapsed_body)
-        add(line_commits, commit)
+        add(line_commits, commit_index)
         total_lines += 1
       else
         # Add body
@@ -213,7 +213,7 @@ def g:FlogUpdateVimBinGraph(graph: dict<any>): dict<any>
         var body = commit.body
         while body_index < len
           add(output, body[body_index])
-          add(line_commits, commit)
+          add(line_commits, commit_index)
           body_index += 1
         endwhile
         total_lines += len - 1
@@ -226,7 +226,7 @@ def g:FlogUpdateVimBinGraph(graph: dict<any>): dict<any>
       var suffix = commit.suffix
       while suffix_index <= suffix_len
         add(output, suffix[suffix_index])
-        add(line_commits, commit)
+        add(line_commits, commit_index)
         suffix_index += 1
       endwhile
       total_lines += suffix_len

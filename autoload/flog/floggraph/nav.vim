@@ -10,10 +10,12 @@ function! flog#floggraph#nav#JumpToCommit(hash, set_jump_mark = v:true, push_to_
     return [-1, -1]
   endif
 
-  let l:commit = get(l:state.commits_by_hash, a:hash, {})
-  if empty(l:commit)
+  let l:commit_index = get(l:state.commits_by_hash, a:hash, -1)
+  if l:commit_index < 0
     return [-1, -1]
   endif
+
+  let l:commit = l:state.commits[l:commit_index]
 
   let l:prev_line = line('.')
   let l:prev_commit = flog#floggraph#commit#GetAtLine(l:prev_line)

@@ -9,19 +9,24 @@ function! flog#floggraph#commit#GetAtLine(...) abort
 
   let l:lnum = type(l:line) == v:t_number ? l:line : line(l:line)
 
-  return get(l:state.line_commits, l:lnum - 1, {})
+  let l:commit_index = get(l:state.line_commits, l:lnum - 1, -1)
+  if l:commit_index < 0
+    return {}
+  endif
+
+  return l:state.commits[l:commit_index]
 endfunction
 
 function! flog#floggraph#commit#GetByHash(hash) abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
 
-  let l:commit = get(l:state.commits_by_hash, a:hash, {})
-  if empty(l:commit)
+  let l:commit_index = get(l:state.commits_by_hash, a:hash, -1)
+  if l:commit_index < 0
     return {}
   endif
 
-  return l:commit
+  return l:state.commits[l:commit_index]
 endfunction
 
 function! flog#floggraph#commit#GetByRef(ref) abort

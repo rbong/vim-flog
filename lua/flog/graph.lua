@@ -578,6 +578,7 @@ local function flog_get_graph(
 
       -- Init Vim commit
       local vim_commit
+      local vim_commit_index = commit_index - 1
       if enable_vim then
         vim_commit = vim.dict()
       else
@@ -609,11 +610,11 @@ local function flog_get_graph(
 
       -- Add commit data
       vim_commits[commit_index] = vim_commit
-      vim_commits_by_hash[commit_hash] = vim_commit
+      vim_commits_by_hash[commit_hash] = vim_commit_index
 
       -- Add commit subject line
 
-      vim_line_commits[vim_out_index] = vim_commit
+      vim_line_commits[vim_out_index] = vim_commit_index
 
       vim_commit.subject = table.concat(commit_prefix, '') .. commit_out[1]
       vim_out[vim_out_index] = vim_commit.subject
@@ -633,7 +634,7 @@ local function flog_get_graph(
         vim_commit.collapsed_body = prefix .. string.format('== %d hidden lines ==', ncommit_lines - 1)
 
         if collapsed then
-          vim_line_commits[vim_out_index] = vim_commit
+          vim_line_commits[vim_out_index] = vim_commit_index
           vim_out[vim_out_index] = vim_commit.collapsed_body
           vim_out_index = vim_out_index + 1
         end
@@ -642,7 +643,7 @@ local function flog_get_graph(
           vim_commit_body[commit_out_index - 1] = prefix .. commit_out[commit_out_index]
 
           if not collapsed then
-            vim_line_commits[vim_out_index] = vim_commit
+            vim_line_commits[vim_out_index] = vim_commit_index
             vim_out[vim_out_index] = vim_commit_body[commit_out_index - 1]
             vim_out_index = vim_out_index + 1
           end
@@ -654,7 +655,7 @@ local function flog_get_graph(
       -- Add merge lines
 
       if should_out_merge then
-        vim_line_commits[vim_out_index] = vim_commit
+        vim_line_commits[vim_out_index] = vim_commit_index
 
         vim_commit_suffix[vim_commit_suffix_index] = table.concat(merge_line, '')
         vim_out[vim_out_index] = vim_commit_suffix[vim_commit_suffix_index]
@@ -663,7 +664,7 @@ local function flog_get_graph(
         vim_commit_suffix_index = vim_commit_suffix_index + 1
 
         if should_out_complex then
-          vim_line_commits[vim_out_index] = vim_commit
+          vim_line_commits[vim_out_index] = vim_commit_index
 
           vim_commit_suffix[vim_commit_suffix_index] = table.concat(complex_merge_line, '')
           vim_out[vim_out_index] = vim_commit_suffix[vim_commit_suffix_index]
@@ -676,7 +677,7 @@ local function flog_get_graph(
       -- Add missing parents lines
 
       if should_out_missing_parents then
-        vim_line_commits[vim_out_index] = vim_commit
+        vim_line_commits[vim_out_index] = vim_commit_index
 
         vim_commit_suffix[vim_commit_suffix_index] = table.concat(missing_parents_line_1, '')
         vim_out[vim_out_index] = vim_commit_suffix[vim_commit_suffix_index]
@@ -684,7 +685,7 @@ local function flog_get_graph(
         vim_out_index = vim_out_index + 1
         vim_commit_suffix_index = vim_commit_suffix_index + 1
 
-        vim_line_commits[vim_out_index] = vim_commit
+        vim_line_commits[vim_out_index] = vim_commit_index
 
         vim_commit_suffix[vim_commit_suffix_index] = table.concat(missing_parents_line_2, '')
         vim_out[vim_out_index] = vim_commit_suffix[vim_commit_suffix_index]
@@ -826,6 +827,7 @@ local function flog_update_graph(
 
   -- Rebuild output/line commits
   while commit_index <= ncommits do
+    local vim_commit_index = commit_index - 1
     local commit = commits[commit_index]
     local hash = commit.hash
     local len = commit.len
@@ -834,14 +836,9 @@ local function flog_update_graph(
     -- Update line position
     commit.line = total_lines
 
-    if enable_nvim then
-      -- Re-record commit
-      commits_by_hash[hash] = commit
-    end
-
     -- Add subject
     output[total_lines] = commit.subject
-    line_commits[total_lines] = commit
+    line_commits[total_lines] = vim_commit_index
     total_lines = total_lines + 1
 
     if len > 1 then
@@ -854,7 +851,7 @@ local function flog_update_graph(
       if collapsed then
         -- Add collapsed body
         output[total_lines] = commit.collapsed_body
-        line_commits[total_lines] = commit
+        line_commits[total_lines] = vim_commit_index
         total_lines = total_lines + 1
       else
         -- Add body
@@ -862,7 +859,7 @@ local function flog_update_graph(
         local body = commit.body
         while body_index < len do
           output[total_lines] = body[body_index]
-          line_commits[total_lines] = commit
+          line_commits[total_lines] = vim_commit_index
           body_index = body_index + 1
           total_lines = total_lines + 1
         end
@@ -875,7 +872,7 @@ local function flog_update_graph(
       local suffix = commit.suffix
       while suffix_index <= suffix_len do
         output[total_lines] = suffix[suffix_index]
-        line_commits[total_lines] = commit
+        line_commits[total_lines] = vim_commit_index
         suffix_index = suffix_index + 1
         total_lines = total_lines + 1
       end
