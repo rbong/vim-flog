@@ -142,15 +142,15 @@ for branch_idx in range(1, 9)
   exec 'highlight link ' . branch . 'AfterCommit ' . branch
 
   " Start of a merge - saves the branch that the merge starts on (see below)
-  exec 'syntax match ' . branch . 'MergeStart contained nextgroup=' . next_merge_branch . ',' . next_merge_branch . 'End /\v%(%u251c|%u256d|%u2570)/'
+  exec 'syntax match ' . branch . 'MergeStart contained nextgroup=' . next_merge_branch . ' /\v%(%u251c|%u256d|%u2570)/'
   exec 'highlight link ' . branch . 'MergeStart ' . branch
 
-  " Horizontal merge character
-  exec 'syntax match ' . merge . 'Horizontal contained /\v%(%u2500|%u252c|%u2534|%u256e|%u256f)/'
-  exec 'highlight link ' . merge . 'Horizontal ' . branch
+  " Commit inside a merge that is not a merge
+  exec 'syntax match ' . branch . 'MergeSkip contained /\%u2502/'
+  exec 'highlight link ' . branch . 'MergeSkip ' . branch
 
   " Branches to the right of a merge
-  exec 'syntax match ' . branch . 'AfterMerge contained nextgroup=' . next_branch . 'AfterMerge /\v%(  | %u2502|)/'
+  exec 'syntax match ' . branch . 'AfterMerge contained nextgroup=' . next_branch . 'AfterMerge /\v%(  | %u2502)/'
   exec 'highlight link ' . branch . 'AfterMerge ' . branch
 
   " Start of missing parents line
@@ -165,6 +165,7 @@ endfor
 " Dynamically generate highlight groups for merges
 for merge_idx in range(1, 9)
   let merge = 'flogMerge' . merge_idx
+  let original_branch = 'flogBranch' . merge_idx
 
   for branch_idx in range(1, 9)
     let branch = 'flogBranch' . branch_idx
@@ -174,12 +175,8 @@ for merge_idx in range(1, 9)
     let next_merge_branch = merge . 'Branch' . next_branch_idx
 
     " Merge branches
-    exec 'syntax match ' . merge_branch . ' contained contains=' . merge . 'Horizontal nextgroup=' . next_merge_branch ',' . next_merge_branch . 'End /\v%(%u2500|%u252c)\v%(%u2500|%u252c|%u2534|%u250a|%u253c)/'
-    exec 'highlight link ' . merge_branch . ' ' . branch
-
-    " End of a merge - lead into a simplified highlight group
-    exec 'syntax match ' . merge_branch . 'End contained contains=' . merge . 'Horizontal nextgroup=' . next_branch . 'AfterMerge /\v%u2500%(%u2524|%u256e|%u256f)/'
-    exec 'highlight link ' . merge_branch . 'End ' . branch
+    exec 'syntax match ' . merge_branch . ' contained contains=' . branch . 'MergeSkip nextgroup=' . next_merge_branch . ',' . next_branch . 'AfterMerge /\v%u2500%(%u2500|%u2502|%u252c|%u2534|%u250a|%u2524|%u253c|%u256e|%u256f)/'
+    exec 'highlight link ' . merge_branch . ' ' . original_branch
   endfor
 endfor
 
