@@ -189,8 +189,8 @@ if !hasmapto('<Plug>(FlogCollapseCommit)')
   nmap <buffer> <nowait> < <Plug>(FlogCollapseCommit)
   vmap <buffer> < <Plug>(FlogCollapseCommit)
 endif
-nnoremap <buffer> <nowait> <silent> <Plug>(FlogCollapseCommit) :<C-U>call flog#floggraph#collapse#AtLine('.')<CR>
-vnoremap <buffer> <silent> <Plug>(FlogCollapseCommit) :<C-U>call flog#floggraph#collapse#Range("'<", "'>")<CR>
+nnoremap <buffer> <nowait> <silent> <Plug>(FlogCollapseCommit) :<C-U>call flog#floggraph#collapse#CollapseAtLine('.')<CR>
+vnoremap <buffer> <silent> <Plug>(FlogCollapseCommit) :<C-U>call flog#floggraph#collapse#CollapseRange("'<", "'>")<CR>
 
 if !hasmapto('<Plug>(FlogExpandCommit)')
   nmap <buffer> <nowait> > <Plug>(FlogExpandCommit)

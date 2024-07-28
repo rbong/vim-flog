@@ -26,6 +26,10 @@ function! flog#floggraph#collapse#Set(hash, collapse = 1, redraw = v:true) abort
   return l:collapse
 endfunction
 
+function! flog#floggraph#collapse#Collapse(hash) abort
+  return flog#floggraph#collapse#Set(a:hash, 1)
+endfunction
+
 function! flog#floggraph#collapse#Expand(hash) abort
   return flog#floggraph#collapse#Set(a:hash, 0)
 endfunction
@@ -44,6 +48,10 @@ function! flog#floggraph#collapse#AtLine(line = '.', collapse = 1) abort
   endif
 
   return flog#floggraph#collapse#Set(l:commit.hash, a:collapse)
+endfunction
+
+function!flog#floggraph#collapse#CollapseAtLine(line = '.') abort
+  return flog#floggraph#collapse#AtLine(a:line, 1)
 endfunction
 
 function!flog#floggraph#collapse#ExpandAtLine(line = '.') abort
@@ -90,6 +98,10 @@ function! flog#floggraph#collapse#Range(start_line, end_line, collapse = 1) abor
   call flog#floggraph#buf#Redraw()
 
   return a:collapse
+endfunction
+
+function! flog#floggraph#collapse#CollapseRange(start_line, end_line) abort
+  return flog#floggraph#collapse#Range(a:start_line, a:end_line, 1)
 endfunction
 
 function! flog#floggraph#collapse#ExpandRange(start_line, end_line) abort
