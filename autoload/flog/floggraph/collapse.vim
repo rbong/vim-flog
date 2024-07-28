@@ -26,12 +26,33 @@ function! flog#floggraph#collapse#Set(hash, collapse = 1, redraw = v:true) abort
   return l:collapse
 endfunction
 
+function! flog#floggraph#collapse#SetAll(collapse = v:true, redraw = v:true) abort
+  let l:state = flog#state#GetBufState()
+
+  let l:state.collapsed_commits = {}
+  let l:state.opts.default_collapsed = a:collapse
+
+  if a:redraw
+    call flog#floggraph#buf#Redraw()
+  endif
+
+  return a:collapse
+endfunction
+
 function! flog#floggraph#collapse#Collapse(hash) abort
   return flog#floggraph#collapse#Set(a:hash, 1)
 endfunction
 
+function! flog#floggraph#collapse#CollapseAll() abort
+  return flog#floggraph#collapse#SetAll(v:true)
+endfunction
+
 function! flog#floggraph#collapse#Expand(hash) abort
   return flog#floggraph#collapse#Set(a:hash, 0)
+endfunction
+
+function! flog#floggraph#collapse#ExpandAll() abort
+  return flog#floggraph#collapse#SetAll(v:false)
 endfunction
 
 function! flog#floggraph#collapse#Toggle(hash) abort

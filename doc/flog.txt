@@ -479,11 +479,21 @@ option which includes multiline output like '-patch' is used.
   Collapse the body of the commit under the cursor.
   In visual mode, collapses the body of all commits under the cursor.
 
+                                                     *<Plug>(FlogCollapseAll)*
+g<                                                                   *flog-g<*
+
+  Clear all collapsed/expanded commits and set |:Flog_-default-collapsed|.
+
                                                     *<Plug>(FlogExpandCommit)*
 >                                                                     *flog->*
 
   Expand the body of the commit under the cursor.
   In visual mode, expands the body of all commits under the cursor.
+
+                                                       *<Plug>(FlogExpandAll)*
+g>                                                                   *flog-g>*
+
+  Clear all collapsed/expanded commits and set |:Flog_-default-expanded|.
 
                                             *<Plug>(FlogToggleCollapseCommit)*
 =                                                                     *flog-=*
