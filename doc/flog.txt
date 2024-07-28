@@ -126,11 +126,12 @@ These commands open Flog.
 :Flog -limit=<limit>                                            *:Flog_-limit*
 
   Passes the "-L=<limit>" argument to "git log".
-  The patch displayed can be disabled with |:Flog_-no-patch|.
+  Implies |:Flog_-patch|.
 
-  You can also specify this argument by passing a range to the command.
-  You can also visually select lines and run the command.
-  This will use the current file and selected lines for the limit.
+  You can also specify this argument by passing a range to |:Flog|.
+
+  You can also visually select lines and run |:Flog|.
+  This will use the selected file/lines for the limit.
 
 :Flog -max-count=<number>                                   *:Flog_-max-count*
 
@@ -527,7 +528,7 @@ gx                                                                   *flog-gx*
                                                    *<Plug>(FlogToggleNoPatch)*
 gp                                                                   *flog-gp*
 
-  Toggle |:Flog-patch| between off/default.
+  Toggle |:Flog-patch|.
 
                                                           *<Plug>(FlogSearch)*
 g/                                                                   *flog-g/*

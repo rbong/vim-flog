@@ -71,7 +71,7 @@ function! flog#cmd#flog#args#Parse(current_opts, workdir, args) abort
     elseif l:arg ==# '-no-patch'
       let a:current_opts.patch = v:false
     elseif l:arg ==# '-patch='
-      let a:current_opts.patch = v:null
+      let a:current_opts.patch = -1
     elseif l:arg =~# '^-skip=\d\+'
       let a:current_opts.skip = flog#args#ParseArg(l:arg)
     elseif l:arg ==# '-skip='

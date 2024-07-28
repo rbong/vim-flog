@@ -46,11 +46,20 @@ function! flog#floggraph#opts#TogglePatch() abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:opts = flog#state#GetBufState().opts
 
-  if l:opts.patch == v:false
-    let l:opts.patch = v:null
-  else
-    let l:opts.patch = v:false
+  let l:is_patch_implied = flog#opts#IsPatchImplied(l:opts)
+
+  " Get current patch value
+  let l:patch = l:opts.patch
+  if l:patch == -1
+    let l:patch = l:is_patch_implied
   endif
+
+  " Set new patch value
+  let l:patch = !l:patch
+  if l:patch == l:is_patch_implied
+    let l:patch = -1
+  endif
+  let l:opts.patch = l:patch
 
   call flog#floggraph#buf#Update()
 

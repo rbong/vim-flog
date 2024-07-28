@@ -40,7 +40,7 @@ function! flog#state#GetInternalDefaultOpts() abort
         \ 'reflog': v:false,
         \ 'reverse': v:false,
         \ 'graph': v:true,
-        \ 'patch': v:null,
+        \ 'patch': -1,
         \ 'skip': '',
         \ 'order': '',
         \ 'max_count': '5000',
