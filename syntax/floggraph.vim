@@ -117,7 +117,7 @@ hi default link flogDiffRemoved   diffRemoved
 " Graph Highlighting
 
 " Cluster all branch 1 groups
-syntax cluster flogBranch1 contains=flogBranch1,flogBranch1Commit,flogBranch1MergeStart,flogBranch1ComplexMergeStart,flogBranch1MissingParentsStart
+syntax cluster flogBranch1 contains=flogBranch1,flogBranch1Commit,flogBranch1MergeStart,flogBranch1MissingParentsStart
 
 " Dynamically generate highlight groups for branches
 for branch_idx in range(1, 9)
@@ -131,7 +131,7 @@ for branch_idx in range(1, 9)
   exec 'highlight link flogGraphBranch' . branch_idx . ' ' . branch
 
   " Branches at the start of the line - leads into other groups
-  exec 'syntax match ' . branch . ' contained nextgroup=' . next_branch . ',' . next_branch . 'Commit,' . next_branch . 'MergeStart,' . next_branch . 'ComplexMergeStart,' . next_branch . 'MissingParentsStart,flogCollapsedCommit,@flogDiff /\v%(  |%u2502 |%u2502$)/'
+  exec 'syntax match ' . branch . ' contained nextgroup=' . next_branch . ',' . next_branch . 'Commit,' . next_branch . 'MergeStart,' . next_branch . 'MissingParentsStart,flogCollapsedCommit,@flogDiff /\v%(  |%u2502 |%u2502$)/'
 
   " Commit indicators
   exec 'syntax match ' . branch . 'Commit contained nextgroup=' . next_branch . 'AfterCommit,@flogCommitInfo /\%u2022 /'
@@ -152,14 +152,6 @@ for branch_idx in range(1, 9)
   " Branches to the right of a merge
   exec 'syntax match ' . branch . 'AfterMerge contained nextgroup=' . next_branch . 'AfterMerge /\v%(  | %u2502|)/'
   exec 'highlight link ' . branch . 'AfterMerge ' . branch
-
-  " Start of complex merge line
-  exec 'syntax match ' . branch . 'ComplexMergeStart contained nextgroup=' . next_branch . 'ComplexMerge /\v%( |%u2502)\ze%u2570%u2524/'
-  exec 'highlight link ' . branch . 'ComplexMergeStart ' . branch
-
-  " Branches to right of complex merge line start
-  exec 'syntax match ' . branch . 'ComplexMerge contained nextgroup=' . next_branch . 'ComplexMerge /\v%(  | %u2502|%u2570%u2524)/'
-  exec 'highlight link ' . branch . 'ComplexMerge ' . branch
 
   " Start of missing parents line
   exec 'syntax match ' . branch . 'MissingParentsStart contained nextgroup=' . next_branch . 'MissingParents /\v%u250a /'
