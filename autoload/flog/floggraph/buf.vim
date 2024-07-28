@@ -67,7 +67,7 @@ function! flog#floggraph#buf#GetName(instance_number, opts) abort
   endif
   if a:opts.patch == v:true
     let l:name .= ' [patch]'
-	elseif a:opts.patch == v:false
+  elseif a:opts.patch == v:false
     let l:name .= ' [no_patch]'
   endif
   if !empty(a:opts.skip)

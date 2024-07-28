@@ -53,7 +53,7 @@ function! flog#floggraph#git#BuildLogArgs() abort
   endif
   if l:opts.patch == v:true
     let l:args .= ' --patch'
-	elseif l:opts.patch == v:false
+  elseif l:opts.patch == v:false
     let l:args .= ' --no-patch'
   endif
   if !empty(l:opts.skip)
