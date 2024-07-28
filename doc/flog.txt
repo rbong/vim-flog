@@ -97,7 +97,6 @@ These commands open Flog.
   By default, pass neither flag.
 
   This option can be set to default with "Flog -patch=" (nothing after "=").
-  Be aware that enabling this option can crash large repositories.
 
 :Flog -graph                                                    *:Flog_-graph*
 :Flog -no-graph                                              *:Flog_-no-graph*
