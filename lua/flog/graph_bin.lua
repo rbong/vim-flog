@@ -14,8 +14,8 @@ flog_get_graph(
     -- enable_graph
     arg[2] == 'true',
     -- default_collapsed
-    arg[2] == 'true',
+    arg[3] == 'true',
     -- cmd
-    arg[3],
+    arg[4],
     -- collapsed_commits
     {})
