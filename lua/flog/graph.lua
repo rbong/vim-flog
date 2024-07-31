@@ -4,27 +4,6 @@
 -- Init error strings
 local graph_error = 'flog: internal error drawing graph'
 
--- Init graph strings
-local current_commit_str = '• '
-local commit_branch_str = '│ '
-local commit_empty_str = '  '
-local merge_all_str = '┼'
-local merge_up_down_left_str = '┤'
-local merge_up_down_right_str = '├'
-local merge_up_down_str = '│'
-local merge_up_left_right_str = '┴'
-local merge_up_left_str = '╯'
-local merge_up_right_str = '╰'
-local merge_up_str = ' '
-local merge_down_left_right_str = '┬'
-local merge_down_left_str = '╮'
-local merge_down_right_str = '╭'
-local merge_left_right_str = '─'
-local merge_empty_str = ' '
-local missing_parent_str = '┊ '
-local missing_parent_branch_str = '│ '
-local missing_parent_empty_str = '  '
-
 local function flog_get_graph(
     enable_vim,
     enable_nvim,
@@ -37,6 +16,42 @@ local function flog_get_graph(
   -- Resolve Vim values
   enable_graph = enable_graph and enable_graph ~= 0
   default_collapsed = default_collapsed and default_collapsed ~= 0
+
+  -- Init graph characters
+  local branch_ch = '│'
+  local horizontal_line_ch = '─'
+  local branch_fade_ch = '┊'
+  local upper_left_corner_ch = '╯'
+  local upper_right_corner_ch = '╰'
+  local lower_left_corner_ch = '╮'
+  local lower_right_corner_ch = '╭'
+  local disconnected_commit_ch = '•'
+  local initial_commit_ch = '•'
+  local branch_commit_ch = '•'
+  local branch_merge_commit_ch = '•'
+  local branch_tip_commit_ch = '•'
+  local branch_tip_merge_commit_ch = '•'
+  local merge_left_ch = '┬'
+  local merge_right_ch = '┬'
+  local merge_up_ch = '┴'
+  local merge_branch_left_ch = '┤'
+  local fork_branch_left_ch = '┤'
+  local merge_branch_right_ch = '├'
+  local fork_branch_right_ch = '├'
+  local merge_up_branch_ch = '┼'
+  local merge_fork_branch_ch = '┼'
+  local empty_ch = ' '
+
+  -- Init padded strings
+  local branch_str = branch_ch .. ' '
+  local branch_fade_str = branch_fade_ch .. ' '
+  local empty_branch_str = '  '
+  local disconnected_commit_str = disconnected_commit_ch .. ' '
+  local initial_commit_str = initial_commit_ch .. ' '
+  local branch_commit_str = branch_commit_ch .. ' '
+  local branch_merge_commit_str = branch_merge_commit_ch .. ' '
+  local branch_tip_commit_str = branch_tip_commit_ch .. ' '
+  local branch_tip_merge_commit_str = branch_tip_merge_commit_ch .. ' '
 
   -- Init commit parsing data
   local commits = {}
@@ -352,30 +367,54 @@ local function flog_get_graph(
           if is_commit then
             -- Draw current commit
 
-            commit_prefix[ncommit_strings] = current_commit_str
+            if nparents > 1 then
+              if is_continuing_branch then
+                -- Merge commit on continuing branch
+                commit_prefix[ncommit_strings] = branch_merge_commit_str
+              else
+                -- Merge commit on branch tip
+                commit_prefix[ncommit_strings] = branch_tip_merge_commit_str
+              end
+            elseif nparents == 1 then
+              if is_continuing_branch then
+                -- Commit on continuing branch
+                commit_prefix[ncommit_strings] = branch_commit_str
+              else
+                -- Commit on branch tip
+                commit_prefix[ncommit_strings] = branch_tip_commit_str
+              end
+            else
+              if is_continuing_branch then
+                -- Initial commit
+                commit_prefix[ncommit_strings] = initial_commit_str
+              else
+                -- Disconnected commit
+                commit_prefix[ncommit_strings] = disconnected_commit_str
+              end
+            end
 
             if ncommit_lines > 1 then
               if nparents > 0 then
                 -- Draw branch on multiline commit
-                commit_multiline_prefix[ncommit_strings] = commit_branch_str
+                commit_multiline_prefix[ncommit_strings] = branch_str
               else
                 -- Draw empty branch on multiline commit
-                commit_multiline_prefix[ncommit_strings] = commit_empty_str
+                commit_multiline_prefix[ncommit_strings] = empty_branch_str
               end
             end
           elseif is_continuing_branch then
             -- Draw unrelated branch
 
-            commit_prefix[ncommit_strings] = commit_branch_str
+            commit_prefix[ncommit_strings] = branch_str
             if ncommit_lines > 1 then
-              commit_multiline_prefix[ncommit_strings] = commit_branch_str
+              commit_multiline_prefix[ncommit_strings] = branch_str
             end
           else
             -- Draw empty branch
 
-            commit_prefix[ncommit_strings] = commit_empty_str
+            commit_prefix[ncommit_strings] = empty_branch_str
             if ncommit_lines > 1 then
-              commit_multiline_prefix[ncommit_strings] = commit_empty_str
+              commit_multiline_prefix[ncommit_strings] = empty_branch_str
             end
           end
         end
@@ -396,11 +435,11 @@ local function flog_get_graph(
         if branch_index > 1 then
           if has_merges_to_left then
             -- Draw left merge line
-            merge_line[nmerge_strings] = merge_left_right_str
+            merge_line[nmerge_strings] = horizontal_line_ch
           else
             -- No merge to left
             -- Draw empty space
-            merge_line[nmerge_strings] = merge_empty_str
+            merge_line[nmerge_strings] = empty_ch
           end
 
           -- Update visual merge info
@@ -414,49 +453,64 @@ local function flog_get_graph(
             if has_merges_to_left then
               if has_merges_to_right then
                 if is_commit then
-                  -- Merge left and right into commit
-                  merge_line[nmerge_strings] = merge_all_str
+                  if moved_parent_branch_index then
+                    -- Merge left into commit branch and fork right
+                    merge_line[nmerge_strings] = merge_fork_branch_ch
+                  else
+                    -- Merge left and right up into commit branch
+                    merge_line[nmerge_strings] = merge_up_branch_ch
+                  end
                 elseif is_parent then
                   if branch_index < commit_branch_index then
-                    -- Branch right
-                    merge_line[nmerge_strings] = merge_up_down_right_str
+                    -- Fork continuing branch right
+                    merge_line[nmerge_strings] = fork_branch_right_ch
                   else
-                    -- Branch left
-                    merge_line[nmerge_strings] = merge_up_down_left_str
+                    -- Fork continuing branch left
+                    merge_line[nmerge_strings] = fork_branch_left_ch
                   end
                 else
-                  -- Continue unrelated commit
-                  merge_line[nmerge_strings] = merge_up_down_str
+                  -- Continue unrelated branch
+                  merge_line[nmerge_strings] = branch_ch
                 end
               else
-                -- Merge up, down, left
-                merge_line[nmerge_strings] = merge_up_down_left_str
+                if is_commit then
+                  -- Merge left into commit branch
+                  merge_line[nmerge_strings] = merge_branch_left_ch
+                else
+                  -- Fork continuing branch left
+                  merge_line[nmerge_strings] = fork_branch_left_ch
+                end
               end
             else
               if has_merges_to_right then
-                -- Merge up, down, right
-                merge_line[nmerge_strings] = merge_up_down_right_str
+                if is_commit and not moved_parent_branch_index then
+                  -- Merge right into commit branch
+                  merge_line[nmerge_strings] = merge_branch_right_ch
+                else
+                  -- Fork continuing branch right
+                  merge_line[nmerge_strings] = fork_branch_right_ch
+                end
               else
-                -- Merge up, down
-                merge_line[nmerge_strings] = merge_up_down_str
+                -- Continue unrelated branch
+                merge_line[nmerge_strings] = branch_ch
               end
             end
           else
             if has_merges_to_left then
               if has_merges_to_right then
-                -- Merge up, left, right
-                merge_line[nmerge_strings] = merge_up_left_right_str
+                -- Merge up into branch
+                merge_line[nmerge_strings] = merge_up_ch
               else
-                -- Merge up, left
-                merge_line[nmerge_strings] = merge_up_left_str
+                -- Curve from branch above to left
+                merge_line[nmerge_strings] = upper_left_corner_ch
               end
             else
               if has_merges_to_right then
-                -- Merge up, right
-                merge_line[nmerge_strings] = merge_up_right_str
+                -- Curve from branch above to right
+                merge_line[nmerge_strings] = upper_right_corner_ch
               else
-                -- Merge up
-                merge_line[nmerge_strings] = merge_up_str
+                -- No merges
+                merge_line[nmerge_strings] = empty_ch
               end
             end
           end
@@ -464,40 +518,42 @@ local function flog_get_graph(
           if branch_hash then
             if has_merges_to_left then
               if has_merges_to_right then
-                -- Merge down, left, right
-                merge_line[nmerge_strings] = merge_down_left_right_str
+                if branch_index < commit_branch_index then
+                  -- Merge branch right
+                  merge_line[nmerge_strings] = merge_right_ch
+                else
+                  -- Merge branch left
+                  merge_line[nmerge_strings] = merge_left_ch
+                end
               else
-                -- Merge down, left
-                merge_line[nmerge_strings] = merge_down_left_str
+                -- Curve from branch below to left
+                merge_line[nmerge_strings] = lower_left_corner_ch
               end
             else
               if has_merges_to_right then
-                -- Merge down, right
-                merge_line[nmerge_strings] = merge_down_right_str
+                -- Curve from branch below to right
+                merge_line[nmerge_strings] = lower_right_corner_ch
               else
-                -- Merge down
-                -- Not possible to merge down only
+                -- No branch above, but there is one below
                 error(graph_error)
               end
             end
           else
             if has_merges_to_left then
               if has_merges_to_right then
-                -- Merge left, right
-                merge_line[nmerge_strings] = merge_left_right_str
+                -- Line continuing merge
+                merge_line[nmerge_strings] = horizontal_line_ch
               else
-                -- Merge left
-                -- Not possible to merge left only
+                -- There is a merge to the left but nothing to the right, above, or below
                 error(graph_error)
               end
             else
               if has_merges_to_right then
-                -- Merge right
-                -- Not possible to merge right only
+                -- There is a merge to the right but nothing to the left, above, or below
                 error(graph_error)
               else
                 -- No merges
-                merge_line[nmerge_strings] = merge_empty_str
+                merge_line[nmerge_strings] = empty_ch
               end
             end
           end
@@ -510,14 +566,14 @@ local function flog_get_graph(
         -- Draw missing parents lines
 
         if is_missing_parent then
-          missing_parents_line_1[nmissing_parents_strings] = missing_parent_str
-          missing_parents_line_2[nmissing_parents_strings] = missing_parent_empty_str
+          missing_parents_line_1[nmissing_parents_strings] = branch_fade_str
+          missing_parents_line_2[nmissing_parents_strings] = empty_branch_str
         elseif branch_hash then
-          missing_parents_line_1[nmissing_parents_strings] = missing_parent_branch_str
-          missing_parents_line_2[nmissing_parents_strings] = missing_parent_branch_str
+          missing_parents_line_1[nmissing_parents_strings] = branch_str
+          missing_parents_line_2[nmissing_parents_strings] = branch_str
         else
-          missing_parents_line_1[nmissing_parents_strings] = missing_parent_empty_str
-          missing_parents_line_2[nmissing_parents_strings] = missing_parent_empty_str
+          missing_parents_line_1[nmissing_parents_strings] = empty_branch_str
+          missing_parents_line_2[nmissing_parents_strings] = empty_branch_str
         end
 
         -- Remove missing parent
