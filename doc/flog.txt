@@ -941,6 +941,16 @@ g:flog_get_author_args                                *g:flog_get_author_args*
 
   See also "git shortlog --help".
 
+g:flog_enable_extended_chars                    *g:flog_enable_extended_chars*
+
+  Whether to enable experimental extra characters in the commit graph.
+
+	These are special Unicode characters U+F5D0 through U+F5FB made specifically
+	for drawing Git branches.
+
+	For best results, requires terminal support. Currently supported by the Kitty
+	terminal.
+
 g:flog_commit_start_token                          *g:flog_commit_start_token*
 
   The internal token to use to find commit start. Provided as an option in

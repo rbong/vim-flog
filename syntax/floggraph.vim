@@ -131,22 +131,26 @@ for branch_idx in range(1, 9)
   exec 'highlight link flogGraphBranch' . branch_idx . ' ' . branch
 
   " Branches at the start of the line - leads into other groups
-  exec 'syntax match ' . branch . ' contained nextgroup=' . next_branch . ',' . next_branch . 'Commit,' . next_branch . 'MergeStart,' . next_branch . 'MissingParentsStart,flogCollapsedCommit,@flogDiff /\v%(  |%u2502 |%u2502$)/'
+  exec 'syntax match ' . branch . ' contained nextgroup=' . next_branch . ',' . next_branch . 'Commit,' . next_branch . 'MergeStart,' . next_branch . 'MissingParentsStart,flogCollapsedCommit,@flogDiff /\v  |%u2502 |%u2502$|%uf5d1 |%uf5d1$/'
 
   " Commit indicators
-  exec 'syntax match ' . branch . 'Commit contained nextgroup=' . next_branch . 'AfterCommit,@flogCommitInfo /\%u2022 /'
-  exec 'highlight link ' . branch . 'Commit flogCommit'
+  exec 'syntax match ' . branch . 'Commit contained nextgroup=' . next_branch . 'AfterCommit,@flogCommitInfo /\v(%u2022|%uf5ef|%uf5f6|%uf5f7|%uf5f9|%uf5fa|%uf5fb) /'
+  if g:flog_enable_extended_chars
+    exec 'highlight link ' . branch . 'Commit ' . branch
+  else
+    exec 'highlight link ' . branch . 'Commit flogCommit'
+  endif
 
   " Branches to the right of the commit indicator
-  exec 'syntax match ' . branch . 'AfterCommit contained nextgroup=' . next_branch . 'AfterCommit,@flogCommitInfo /\v%(  |%u2502 |%u2502$)/'
+  exec 'syntax match ' . branch . 'AfterCommit contained nextgroup=' . next_branch . 'AfterCommit,@flogCommitInfo /\v  |%u2502 |%u2502$|%uf5d1 |%uf5d1$/'
   exec 'highlight link ' . branch . 'AfterCommit ' . branch
 
   " Start of a merge - saves the branch that the merge starts on (see below)
-  exec 'syntax match ' . branch . 'MergeStart contained nextgroup=' . next_merge_branch . ' /\v%(%u251c|%u256d|%u2570)/'
+  exec 'syntax match ' . branch . 'MergeStart contained nextgroup=' . next_merge_branch . ' /\v%u251c|%u256d|%u2570|%uf5da|%uf5db|%uf5d6|%uf5d8/'
   exec 'highlight link ' . branch . 'MergeStart ' . branch
 
   " Horizontal line inside of a merge
-  exec 'syntax match ' . merge . 'Horizontal contained /\%u2500/'
+  exec 'syntax match ' . merge . 'Horizontal contained /\v%u2500|%uf5d0/'
   exec 'highlight link ' . merge . 'Horizontal ' . branch
 
   " Branches to the right of a merge
@@ -154,11 +158,11 @@ for branch_idx in range(1, 9)
   exec 'highlight link ' . branch . 'AfterMerge ' . branch
 
   " Start of missing parents line
-  exec 'syntax match ' . branch . 'MissingParentsStart contained nextgroup=' . next_branch . 'MissingParents /\v%u250a /'
+  exec 'syntax match ' . branch . 'MissingParentsStart contained nextgroup=' . next_branch . 'MissingParents /\v%u250a |%uf5d4 /'
   exec 'highlight link ' . branch . 'MissingParentsStart ' . branch
 
   " Branches to right of missing parents start
-  exec 'syntax match ' . branch . 'MissingParents contained nextgroup=' . next_branch . 'MissingParents /\v%(..|.$)/'
+  exec 'syntax match ' . branch . 'MissingParents contained nextgroup=' . next_branch . 'MissingParents /\v..|.$/'
   exec 'highlight link ' . branch . 'MissingParents ' . branch
 endfor
 
@@ -174,7 +178,7 @@ for merge_idx in range(1, 9)
     let next_merge_branch = merge . 'Branch' . next_branch_idx
 
     " Merge branches
-    exec 'syntax match ' . merge_branch . ' contained contains=' . merge . 'Horizontal nextgroup=' . next_merge_branch . ',' . next_branch . 'AfterMerge /\v%u2500./'
+    exec 'syntax match ' . merge_branch . ' contained contains=' . merge . 'Horizontal nextgroup=' . next_merge_branch . ',' . next_branch . 'AfterMerge /\v%u2500.|%uf5d0./'
     exec 'highlight link ' . merge_branch . ' ' . branch
   endfor
 endfor

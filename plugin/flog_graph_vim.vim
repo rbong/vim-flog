@@ -28,6 +28,9 @@ def g:FlogGetVimBinGraph(git_cmd: string): dict<any>
   # start_token
   cmd ..= shellescape(g:flog_commit_start_token)
   cmd ..= ' '
+  # enable_extended_chars
+  cmd ..= g:flog_enable_extended_chars ? 'true' : 'false'
+  cmd ..= ' '
   # enable_graph
   cmd ..= state.opts.graph ? 'true' : 'false'
   cmd ..= ' '
@@ -283,6 +286,8 @@ def g:FlogGetVimInternalGraph(git_cmd: string): dict<any>
   cmd ..= 'true, '
   # start_token
   cmd ..= 'vim.eval("g:flog_commit_start_token"), '
+  # enable_extended_chars
+  cmd ..= 'vim.eval("g:flog_enable_extended_chars"), '
   # enable_graph
   cmd ..= 'vim.eval("g:flog_tmp_enable_graph"), '
   # default_collapsed

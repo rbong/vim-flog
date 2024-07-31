@@ -11,11 +11,13 @@ flog_get_graph(
     true,
     -- start_token
     arg[1],
+    -- enable_extended_chars
+    arg[2],
     -- enable_graph
-    arg[2] == 'true',
-    -- default_collapsed
     arg[3] == 'true',
+    -- default_collapsed
+    arg[4] == 'true',
     -- cmd
-    arg[4],
+    arg[5],
     -- collapsed_commits
     {})

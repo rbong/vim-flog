@@ -9,6 +9,7 @@ local function flog_get_graph(
     enable_nvim,
     enable_porcelain,
     start_token,
+    enable_extended_chars,
     enable_graph,
     default_collapsed,
     cmd,
@@ -16,6 +17,7 @@ local function flog_get_graph(
   -- Resolve Vim values
   enable_graph = enable_graph and enable_graph ~= 0
   default_collapsed = default_collapsed and default_collapsed ~= 0
+  enable_extended_chars = enable_extended_chars and enable_extended_chars ~= 0
 
   -- Init graph characters
   local branch_ch = '│'
@@ -41,6 +43,32 @@ local function flog_get_graph(
   local merge_up_branch_ch = '┼'
   local merge_fork_branch_ch = '┼'
   local empty_ch = ' '
+
+  -- Init extended graph characters
+  if enable_extended_chars then
+    branch_ch = ''
+    horizontal_line_ch = ''
+    branch_fade_ch = ''
+    upper_left_corner_ch = ''
+    upper_right_corner_ch = ''
+    lower_left_corner_ch = ''
+    lower_right_corner_ch = ''
+    disconnected_commit_ch = ''
+    initial_commit_ch = ''
+    branch_commit_ch = ''
+    branch_merge_commit_ch = ''
+    branch_tip_commit_ch = ''
+    branch_tip_merge_commit_ch = ''
+    merge_left_ch = ''
+    merge_right_ch = ''
+    merge_up_ch = ''
+    merge_branch_left_ch = ''
+    fork_branch_left_ch = ''
+    merge_branch_right_ch = ''
+    fork_branch_right_ch = ''
+    merge_up_branch_ch = ''
+    merge_fork_branch_ch = ''
+  end
 
   -- Init padded strings
   local branch_str = branch_ch .. ' '
