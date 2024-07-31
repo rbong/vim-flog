@@ -14,6 +14,7 @@ def g:FlogGetVimBinGraph(git_cmd: string): dict<any>
   flog#floggraph#buf#AssertFlogBuf()
   const state = flog#state#GetBufState()
 
+  const default_collapsed = state.opts.default_collapsed
   const collapsed_commits = state.collapsed_commits
 
   # Get paths
@@ -31,7 +32,7 @@ def g:FlogGetVimBinGraph(git_cmd: string): dict<any>
   cmd ..= state.opts.graph ? 'true' : 'false'
   cmd ..= ' '
   # default_collapsed
-  cmd ..= state.opts.default_collapsed ? 'true' : 'false'
+  cmd ..= default_collapsed ? 'true' : 'false'
   cmd ..= ' '
   # cmd
   cmd ..= shellescape(git_cmd)
@@ -111,6 +112,9 @@ def g:FlogGetVimBinGraph(git_cmd: string): dict<any>
 
     if len > 1
       var collapsed = has_key(collapsed_commits, hash)
+      if collapsed == nil
+        collapsed = default_collapsed
+      endif
 
       # Add collapsed body to output
 
@@ -205,7 +209,12 @@ def g:FlogUpdateVimBinGraph(graph: dict<any>): dict<any>
     total_lines += 1
 
     if len > 1
-      if has_key(collapsed_commits, commit.hash)
+      var collapsed = has_key(collapsed_commits, hash)
+      if collapsed == nil
+        collapsed = default_collapsed
+      endif
+
+      if collapsed
         # Add collapsed body
         add(output, commit.collapsed_body)
         add(line_commits, commit_index)
