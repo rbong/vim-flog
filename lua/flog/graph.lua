@@ -36,6 +36,7 @@ local function flog_get_graph(
     collapsed_commits)
   -- Resolve Vim values
   enable_graph = enable_graph and enable_graph ~= 0
+  default_collapsed = default_collapsed and default_collapsed ~= 0
 
   -- Init commit parsing data
   local commits = {}
