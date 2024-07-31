@@ -28,10 +28,21 @@ git_commit_tag 4-a
 git_checkout 1-b
 git_merge -m 1-c 2-a 3-a 4-a
 
-VIM_OUT="$TMP/out"
+FLOG_CMD="Flog -format=%s"
+
+VIM_OUT="$TMP/basic_out"
 run_vim_command <<EOF
-Flog -format=%s
+$FLOG_CMD
 silent w $VIM_OUT
 EOF
 
-diff_data "$TMP/out" "graph_octopus_out"
+diff_data "$VIM_OUT" "graph_octopus_out"
+
+VIM_OUT="$TMP/extended_out"
+run_vim_command <<EOF
+let g:flog_enable_extended_chars = 1
+$FLOG_CMD
+silent w $VIM_OUT
+EOF
+
+diff_data "$VIM_OUT" "graph_octopus_extended_out"

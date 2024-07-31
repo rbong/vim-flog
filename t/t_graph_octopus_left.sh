@@ -32,10 +32,21 @@ git_tag 2-b
 git_checkout 1-b
 git_commit_tag 1-c
 
-VIM_OUT="$TMP/out"
+FLOG_CMD="Flog -format=%s -rev=1-c -rev=2-b"
+
+VIM_OUT="$TMP/basic_out"
 run_vim_command <<EOF
-Flog -format=%s -rev=1-c -rev=2-b
+$FLOG_CMD
 silent w $VIM_OUT
 EOF
 
-diff_data "$TMP/out" "graph_octopus_left_out"
+diff_data "$VIM_OUT" "graph_octopus_left_out"
+
+VIM_OUT="$TMP/extended_out"
+run_vim_command <<EOF
+let g:flog_enable_extended_chars = 1
+$FLOG_CMD
+silent w $VIM_OUT
+EOF
+
+diff_data "$VIM_OUT" "graph_octopus_left_extended_out"

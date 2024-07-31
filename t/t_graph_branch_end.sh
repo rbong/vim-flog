@@ -41,10 +41,21 @@ git_commit_tag 2-b
 git_checkout 1-c
 git_merge -m 1-e 2-b 3-b 4-b
 
-VIM_OUT="$TMP/out"
+FLOG_CMD="Flog -order=date -format=%s"
+
+VIM_OUT="$TMP/basic_out"
 run_vim_command <<EOF
-Flog -order=date -format=%s
+$FLOG_CMD
 silent w $VIM_OUT
 EOF
 
-diff_data "$TMP/out" "graph_branch_end_out"
+diff_data "$VIM_OUT" "graph_branch_end_out"
+
+VIM_OUT="$TMP/extended_out"
+run_vim_command <<EOF
+let g:flog_enable_extended_chars = 1
+$FLOG_CMD
+silent w $VIM_OUT
+EOF
+
+diff_data "$VIM_OUT" "graph_branch_end_extended_out"
