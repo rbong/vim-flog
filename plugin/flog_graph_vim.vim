@@ -30,6 +30,9 @@ def g:FlogGetVimBinGraph(git_cmd: string): dict<any>
   # enable_graph
   cmd ..= state.opts.graph ? 'true' : 'false'
   cmd ..= ' '
+  # default_collapsed
+  cmd ..= state.opts.default_collapsed ? 'true' : 'false'
+  cmd ..= ' '
   # cmd
   cmd ..= shellescape(git_cmd)
 
