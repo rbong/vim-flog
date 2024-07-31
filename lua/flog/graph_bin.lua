@@ -12,7 +12,7 @@ flog_get_graph(
     -- start_token
     arg[1],
     -- enable_extended_chars
-    arg[2],
+    arg[2] == 'true',
 		-- enable_extra_padding
     arg[3] == 'true',
     -- enable_graph
