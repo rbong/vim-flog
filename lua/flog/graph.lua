@@ -492,7 +492,7 @@ local function flog_get_graph(
                     merge_line[nmerge_strings] = merge_up_branch_ch
                   end
                 elseif is_parent then
-                  if branch_index < commit_branch_index then
+                  if not commit_branch_index or branch_index < commit_branch_index then
                     -- Fork continuing branch right
                     merge_line[nmerge_strings] = fork_branch_right_ch
                   else
@@ -549,7 +549,7 @@ local function flog_get_graph(
           if branch_hash then
             if has_merges_to_left then
               if has_merges_to_right then
-                if branch_index < commit_branch_index then
+                if not commit_branch_index or branch_index < commit_branch_index then
                   -- Merge branch right
                   merge_line[nmerge_strings] = merge_right_ch
                 else
