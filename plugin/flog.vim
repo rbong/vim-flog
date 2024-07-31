@@ -14,27 +14,45 @@ let g:flog_lua_not_found = 'flog: Lua not found'
 
 " Settings
 
-let g:flog_write_commit_graph = v:true
+if !has_key(g:, 'flog_write_commit_graph')
+  let g:flog_write_commit_graph = v:true
+endif
 
-let g:flog_write_commit_graph_args = '--reachable --progress'
+if !has_key(g:, 'flog_write_commit_graph_args')
+  let g:flog_write_commit_graph_args = '--reachable --progress'
+endif
 
-let g:flog_enable_status = v:false
+if !has_key(g:, 'flog_enable_status')
+  let g:flog_enable_status = v:false
+endif
 
-let g:flog_enable_extended_chars = v:false
+if !has_key(g:, 'flog_enable_extended_chars')
+  let g:flog_enable_extended_chars = v:false
+endif
 
-let g:flog_enable_extra_padding = v:false
+if !has_key(g:, 'flog_enable_extra_padding')
+  let g:flog_enable_extra_padding = v:false
+endif
 
-let g:flog_check_lua_version = v:true
+if !has_key(g:, 'flog_check_lua_version')
+  let g:flog_check_lua_version = v:true
+endif
 
-let g:flog_get_author_args = '--all --no-merges --max-count=100000'
+if !has_key(g:, 'flog_get_author_args')
+  let g:flog_get_author_args = '--all --no-merges --max-count=100000'
+endif
 
-let g:flog_commit_start_token = '__START'
+if !has_key(g:, 'flog_commit_start_token')
+  let g:flog_commit_start_token = '__START'
+endif
 
-let g:flog_order_types = [
-      \ { 'name': 'date', 'args': '--date-order' },
-      \ { 'name': 'author', 'args': '--author-date-order' },
-      \ { 'name': 'topo', 'args': '--topo-order' },
-      \ ]
+if !has_key(g:, 'flog_order_types')
+  let g:flog_order_types = [
+        \ { 'name': 'date', 'args': '--date-order' },
+        \ { 'name': 'author', 'args': '--author-date-order' },
+        \ { 'name': 'topo', 'args': '--topo-order' },
+        \ ]
+endif
 
 " Data
 
