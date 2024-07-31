@@ -953,6 +953,11 @@ g:flog_enable_extended_chars                    *g:flog_enable_extended_chars*
 
   Defaults to false.
 
+g:flog_enable_extra_padding                      *g:flog_enable_extra_padding*
+
+  Whether to add an extra line of padding after commits with no merges.
+  Defaults to false.
+
 g:flog_commit_start_token                          *g:flog_commit_start_token*
 
   The internal token to use to find commit start. Provided as an option in

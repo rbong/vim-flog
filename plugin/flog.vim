@@ -22,6 +22,8 @@ let g:flog_enable_status = v:false
 
 let g:flog_enable_extended_chars = v:false
 
+let g:flog_enable_extra_padding = v:false
+
 let g:flog_check_lua_version = v:true
 
 let g:flog_get_author_args = '--all --no-merges --max-count=100000'

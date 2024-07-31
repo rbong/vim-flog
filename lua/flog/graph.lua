@@ -10,6 +10,7 @@ local function flog_get_graph(
     enable_porcelain,
     start_token,
     enable_extended_chars,
+    enable_extra_padding,
     enable_graph,
     default_collapsed,
     cmd,
@@ -18,6 +19,7 @@ local function flog_get_graph(
   enable_graph = enable_graph and enable_graph ~= 0
   default_collapsed = default_collapsed and default_collapsed ~= 0
   enable_extended_chars = enable_extended_chars and enable_extended_chars ~= 0
+  enable_extra_padding = enable_extra_padding and enable_extra_padding ~= 0
 
   -- Init graph characters
   local branch_ch = '│'
@@ -189,9 +191,10 @@ local function flog_get_graph(
     local merge_line = {}
     -- The number of strings in merge line
     local nmerge_strings = 0
-    -- The two lines indicating missing parents after the merge line
-    local missing_parents_line_1 = {}
-    local missing_parents_line_2 = {}
+    -- The line indicating missing parents after the merge line
+    local missing_parents_line = {}
+    -- An extra line of padding
+    local padding_line = {}
     -- The number of strings in missing parent lines
     local nmissing_parents_strings = 0
 
@@ -594,14 +597,14 @@ local function flog_get_graph(
         -- Draw missing parents lines
 
         if is_missing_parent then
-          missing_parents_line_1[nmissing_parents_strings] = branch_fade_str
-          missing_parents_line_2[nmissing_parents_strings] = empty_branch_str
+          missing_parents_line[nmissing_parents_strings] = branch_fade_str
+          padding_line[nmissing_parents_strings] = empty_branch_str
         elseif branch_hash then
-          missing_parents_line_1[nmissing_parents_strings] = branch_str
-          missing_parents_line_2[nmissing_parents_strings] = branch_str
+          missing_parents_line[nmissing_parents_strings] = branch_str
+          padding_line[nmissing_parents_strings] = branch_str
         else
-          missing_parents_line_1[nmissing_parents_strings] = empty_branch_str
-          missing_parents_line_2[nmissing_parents_strings] = empty_branch_str
+          missing_parents_line[nmissing_parents_strings] = empty_branch_str
+          padding_line[nmissing_parents_strings] = empty_branch_str
         end
 
         -- Remove missing parent
@@ -636,6 +639,8 @@ local function flog_get_graph(
       or (nparents == 0 and nbranches == 0)
       or (nparents == 1 and branch_indexes[parents[1]] ~= commit_branch_index))
     local should_out_missing_parents = nmissing_parents > 0
+    local should_out_padding = should_out_missing_parents or (
+      enable_extra_padding and not should_out_merge)
 
     if enable_vim or enable_nvim then
       -- Output using Vim
@@ -733,15 +738,16 @@ local function flog_get_graph(
       if should_out_missing_parents then
         vim_line_commits[vim_out_index] = vim_commit_index
 
-        vim_commit_suffix[vim_commit_suffix_index] = table.concat(missing_parents_line_1, '')
+        vim_commit_suffix[vim_commit_suffix_index] = table.concat(missing_parents_line, '')
         vim_out[vim_out_index] = vim_commit_suffix[vim_commit_suffix_index]
 
         vim_out_index = vim_out_index + 1
         vim_commit_suffix_index = vim_commit_suffix_index + 1
-
+      end
+      if should_out_padding then
         vim_line_commits[vim_out_index] = vim_commit_index
 
-        vim_commit_suffix[vim_commit_suffix_index] = table.concat(missing_parents_line_2, '')
+        vim_commit_suffix[vim_commit_suffix_index] = table.concat(padding_line, '')
         vim_out[vim_out_index] = vim_commit_suffix[vim_commit_suffix_index]
 
         vim_out_index = vim_out_index + 1
@@ -776,8 +782,10 @@ local function flog_get_graph(
         print(ncommit_lines)
 
         -- Print suffix length
-        print((should_out_merge and 1 or 0)
-          + (should_out_missing_parents and 2 or 0))
+        print(
+          (should_out_merge and 1 or 0) +
+          (should_out_missing_parents and 1 or 0) +
+          (should_out_padding and 1 or 0))
 
         -- Print collapsed format
         if ncommit_lines > 1 then
@@ -818,12 +826,13 @@ local function flog_get_graph(
       -- Print missing parents out
 
       if should_out_missing_parents then
-        for _, str in ipairs(missing_parents_line_1) do
+        for _, str in ipairs(missing_parents_line) do
           io.write(str)
         end
         io.write('\n')
-
-        for _, str in ipairs(missing_parents_line_2) do
+      end
+      if should_out_padding then
+        for _, str in ipairs(padding_line) do
           io.write(str)
         end
         io.write('\n')

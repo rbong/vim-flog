@@ -14,6 +14,7 @@ function! flog#graph#nvim#Get(git_cmd) abort
         \ v:true,
         \ g:flog_commit_start_token,
         \ g:flog_enable_extended_chars ? v:true : v:false,
+				\ g:flog_enable_extra_padding ? v:true : v:false,
         \ state.opts.graph ? v:true : v:false,
         \ state.opts.default_collapsed ? v:true : v:false,
         \ a:git_cmd,

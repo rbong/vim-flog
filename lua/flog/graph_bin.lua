@@ -13,11 +13,13 @@ flog_get_graph(
     arg[1],
     -- enable_extended_chars
     arg[2],
-    -- enable_graph
+		-- enable_extra_padding
     arg[3] == 'true',
-    -- default_collapsed
+    -- enable_graph
     arg[4] == 'true',
+    -- default_collapsed
+    arg[5] == 'true',
     -- cmd
-    arg[5],
+    arg[6],
     -- collapsed_commits
     {})
