@@ -117,10 +117,8 @@ def g:FlogGetVimBinGraph(git_cmd: string): dict<any>
     total_lines += 1
 
     if len > 1
-      var collapsed
-      if !has_key(collapsed_commits, hash)
-        collapsed = default_collapsed
-      else
+      var collapsed = default_collapsed
+      if has_key(collapsed_commits, hash)
         collapsed = collapsed_commits[hash]
       endif
 
@@ -217,10 +215,8 @@ def g:FlogUpdateVimBinGraph(graph: dict<any>): dict<any>
     total_lines += 1
 
     if len > 1
-      var collapsed
-      if !has_key(collapsed_commits, hash)
-        collapsed = default_collapsed
-      else
+      var collapsed = default_collapsed
+      if has_key(collapsed_commits, hash)
         collapsed = collapsed_commits[hash]
       endif
 
