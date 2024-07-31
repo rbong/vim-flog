@@ -158,7 +158,7 @@ for branch_idx in range(1, 9)
   exec 'highlight link ' . branch . 'MissingParentsStart ' . branch
 
   " Branches to right of missing parents start
-  exec 'syntax match ' . branch . 'MissingParents contained nextgroup=' . next_branch . 'MissingParents /\v%(  |%u2502 |%u2502$|%u250a |%u250a$)/'
+  exec 'syntax match ' . branch . 'MissingParents contained nextgroup=' . next_branch . 'MissingParents /\v%(..|.$)/'
   exec 'highlight link ' . branch . 'MissingParents ' . branch
 endfor
 
