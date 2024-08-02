@@ -145,8 +145,8 @@ function! flog#floggraph#nav#SkipTo(skip) abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
 
-	let l:skip = empty(a:skip) ? 0 : a:skip
-	let l:old_skip = empty(l:state.opts.skip) ? 0 : l:state.opts.skip
+  let l:skip = empty(a:skip) ? 0 : a:skip
+  let l:old_skip = empty(l:state.opts.skip) ? 0 : l:state.opts.skip
 
   let l:skip_opt = string(l:skip)
   if l:skip_opt ==# '0'
@@ -160,17 +160,17 @@ function! flog#floggraph#nav#SkipTo(skip) abort
   let l:state.opts.skip = l:skip_opt
 
   let l:old_commit = flog#floggraph#commit#GetAtLine('.')
-	let l:old_hash = empty(l:old_commit) ? '' : l:old_commit.hash
+  let l:old_hash = empty(l:old_commit) ? '' : l:old_commit.hash
 
   call flog#floggraph#buf#Update()
 
-	if empty(l:old_hash) || get(l:state.commits_by_hash, l:old_hash, -1) < 0
-		if l:skip < l:old_skip
-			normal! G
-		else
-			normal! gg
-		endif
-	endif
+  if empty(l:old_hash) || get(l:state.commits_by_hash, l:old_hash, -1) < 0
+    if l:skip < l:old_skip
+      normal! G
+    else
+      normal! gg
+    endif
+  endif
 
   return l:skip
 endfunction
