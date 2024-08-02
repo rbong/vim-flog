@@ -560,16 +560,16 @@ local function flog_get_graph(
                 merge_line[nmerge_strings] = lower_left_corner_ch
               end
             else
-							-- Curve from branch below to right
-							merge_line[nmerge_strings] = lower_right_corner_ch
+              -- Curve from branch below to right
+              merge_line[nmerge_strings] = lower_right_corner_ch
             end
           else
             if has_merges_to_left then
-							-- Line continuing merge
-							merge_line[nmerge_strings] = horizontal_line_ch
+              -- Line continuing merge
+              merge_line[nmerge_strings] = horizontal_line_ch
             else
-							-- No merges
-							merge_line[nmerge_strings] = empty_ch
+              -- No merges
+              merge_line[nmerge_strings] = empty_ch
             end
           end
         end
