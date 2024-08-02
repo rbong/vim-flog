@@ -458,7 +458,6 @@ local function flog_get_graph(
 
         -- Update merge info after drawing commit
 
-        is_continuing_branch = is_continuing_branch or is_commit or branch_index == moved_parent_branch_index
         local has_merges_to_right = nmerges_left > 0 and nmerges_right > 0
 
         -- Draw left character
@@ -479,7 +478,7 @@ local function flog_get_graph(
 
         -- Draw right character
 
-        if is_continuing_branch then
+        if is_continuing_branch or is_commit or branch_index == moved_parent_branch_index then
           if branch_hash then
             if has_merges_to_left then
               if has_merges_to_right then
