@@ -90,7 +90,7 @@ Comparison with gitgraph.nvim using [git/git](https://github.com/git/git):
 ```
 # Baseline
 % time nvim -c 'qa'
-nvim -c 'qa'  0.25s user 0.05s system 98% cpu 0.300 total
+0.25s user 0.05s system 98% cpu 0.300 total
 
 # gitgraph.nvim
 % time vim -c "lua require('gitgraph').draw({}, { all = true, max_count = 3000 })" -c qa
