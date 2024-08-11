@@ -69,7 +69,7 @@ gitgraph.nvim is a work in progress, so the details related to that plugin here 
 
 Flog is, at the time of writing, also actively maintained.
 
-**Branch drawing algorithm*
+**Branch drawing algorithm**
 
 gv.vim and gitv rely on the output of `git log --graph`.
 Flog draws the git branch graph itself.
