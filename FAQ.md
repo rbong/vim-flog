@@ -93,7 +93,7 @@ Comparison with gitgraph.nvim using [git/git](https://github.com/git/git):
 0.25s user 0.05s system 98% cpu 0.300 total
 
 # gitgraph.nvim
-% time vim -c "lua require('gitgraph').draw({}, { all = true, max_count = 3000 })" -c qa
+% time nvim -c "lua require('gitgraph').draw({}, { all = true, max_count = 3000 })" -c qa
 29.59s user 0.69s system 99% cpu 30.312 total
 
 # Flog
