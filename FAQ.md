@@ -121,11 +121,12 @@ gitgraph.nvim is also customizable.
 Flog supports Vim and Neovim, as do gv.vim and gitv.
 gitgraph.nvim only supports Neovim.
 
-**Git client integration**
+**Plugin integration**
 
 Flog is designed as an extension to [fugitive.vim](https://github.com/tpope/vim-fugitive).
-gitv also integrates with fugitive.vim.
-The other plugins do not integrate with third-party git plugins by default.
+gitv is also an extension for fugitive.vim.
+gv.vim requires fugitive.vim, but has less integration features by design.
+gitgraph.nvim has hooks to integrate with plugins such as [diffview](https://github.com/sindrets/diffview.nvim).
 
 **Code quality and testing strategy**
 
