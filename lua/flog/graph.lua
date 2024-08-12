@@ -349,11 +349,6 @@ local function flog_get_graph(
               -- Draw new parent branch
               branch_out[merge_branch_index] = branch_str
 
-              -- Update graph width
-              if merge_branch_index > graph_width then
-                graph_width = merge_branch_index
-              end
-
               -- Record visual parent
               nvisual_parents = nvisual_parents + 1
               visual_parents[nvisual_parents] = new_parent_hash
