@@ -215,7 +215,7 @@ local function flog_get_graph(
 
     -- Build commit output
 
-    local commit_branch_str
+    local commit_str
 
     if enable_graph then
       -- Find commit branch
@@ -235,11 +235,11 @@ local function flog_get_graph(
 
         -- Set commit char for commit on existing branch
         if ncommit_parents > 1 then
-          commit_branch_str = branch_merge_commit_str
+          commit_str = branch_merge_commit_str
         elseif ncommit_parents == 1 then
-          commit_branch_str = branch_commit_str
+          commit_str = branch_commit_str
         else
-          commit_branch_str = initial_commit_str
+          commit_str = initial_commit_str
         end
       else
         -- Handle commit on new branch
@@ -252,17 +252,23 @@ local function flog_get_graph(
 
         -- Set commit char for commit on new branch
         if ncommit_parents > 1 then
-          commit_branch_str = branch_tip_merge_commit_str
+          commit_str = branch_tip_merge_commit_str
         elseif ncommit_parents == 1 then
-          commit_branch_str = branch_tip_commit_str
+          commit_str = branch_tip_commit_str
         else
-          commit_branch_str = disconnected_commit_str
+          commit_str = disconnected_commit_str
         end
       end
 
+      -- Get graph width of commit
+      if commit_branch_index > graph_width then
+        commit_graph_width = commit_branch_index
+      else
+        commit_graph_width = graph_width
+      end
+
       -- Set up commit output
-      commit_graph_width = math.max(commit_branch_index, graph_width)
-      branch_out[commit_branch_index] = commit_branch_str
+      branch_out[commit_branch_index] = commit_str
       branch_out[commit_graph_width + 1] = commit_out[1]
       -- Draw commit output
       commit_subject_line = table.concat(branch_out, '', 1, commit_graph_width + 1)
