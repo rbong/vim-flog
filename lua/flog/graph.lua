@@ -198,12 +198,12 @@ local function flog_get_graph(
     local missing_parents = {}
     local nmissing_parents = 0
 
-    local visual_parents
-    local nvisual_parents = 0
+    local vim_commit_parents
+    local nvim_parents = 0
     if enable_vim then
-      visual_parents = vim.list()
+      vim_commit_parents = vim.list()
     else
-      visual_parents = {}
+      vim_commit_parents = {}
     end
 
     local should_out_merge_line = false
@@ -352,8 +352,8 @@ local function flog_get_graph(
               branch_out[merge_branch_index] = branch_str
 
               -- Record visual parent
-              nvisual_parents = nvisual_parents + 1
-              visual_parents[nvisual_parents] = new_parent_hash
+              nvim_parents = nvim_parents + 1
+              vim_commit_parents[nvim_parents] = new_parent_hash
 
               -- Record missing parent
               if commit_index == last_hash_appearance[new_parent_hash] then
@@ -379,8 +379,8 @@ local function flog_get_graph(
             nexisting_parents_found = nexisting_parents_found + 1
 
             -- Record visual parent
-            nvisual_parents = nvisual_parents + 1
-            visual_parents[nvisual_parents] = merge_branch_hash
+            nvim_parents = nvim_parents + 1
+            vim_commit_parents[nvim_parents] = merge_branch_hash
 
             -- Record missing parent
             if commit_index == last_hash_appearance[merge_branch_hash] then
@@ -420,8 +420,8 @@ local function flog_get_graph(
           end
 
           -- Record visual parent
-          nvisual_parents = nvisual_parents + 1
-          visual_parents[nvisual_parents] = new_parent_hash
+          nvim_parents = nvim_parents + 1
+          vim_commit_parents[nvim_parents] = new_parent_hash
 
           -- Record missing parent
           if commit_index == last_hash_appearance[new_parent_hash] then
@@ -494,8 +494,8 @@ local function flog_get_graph(
                 end
 
                 -- Record visual parent
-                nvisual_parents = nvisual_parents + 1
-                visual_parents[nvisual_parents] = new_parent_hash
+                nvim_parents = nvim_parents + 1
+                vim_commit_parents[nvim_parents] = new_parent_hash
 
                 -- Record missing parent
                 if commit_index == last_hash_appearance[new_parent_hash] then
@@ -521,8 +521,8 @@ local function flog_get_graph(
               nexisting_parents_found = nexisting_parents_found + 1
 
               -- Record visual parent
-              nvisual_parents = nvisual_parents + 1
-              visual_parents[nvisual_parents] = merge_branch_hash
+              nvim_parents = nvim_parents + 1
+              vim_commit_parents[nvim_parents] = merge_branch_hash
 
               -- Record missing parent
               if commit_index == last_hash_appearance[merge_branch_hash] then
@@ -627,7 +627,7 @@ local function flog_get_graph(
 
       -- Set commit details
       vim_commit.hash = commit_hash
-      vim_commit.parents = visual_parents
+      vim_commit.parents = vim_commit_parents
       vim_commit.refs = commit.refs
       vim_commit.line = out_line
       vim_commit.col = commit_col
@@ -709,8 +709,8 @@ local function flog_get_graph(
         print(commit_hash)
 
         -- Print commit visual parents
-        print(nvisual_parents)
-        for _, parent in ipairs(visual_parents) do
+        print(nvim_parents)
+        for _, parent in ipairs(vim_commit_parents) do
           print(parent)
         end
 
