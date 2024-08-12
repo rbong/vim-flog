@@ -139,7 +139,9 @@ It has not yet gone through aggressive optimization like Flog yet, and it is cle
 
 **Testing strategy**
 
-gitv.vim and gv.vim do not have tests.
+gitv.vim does not have tests.
+gv.vim has tests.
+Flog and gitgraph.nvim have different testing philosophies.
 
 Flog focuses on integration tests.
 Because of aggressive removal of function call overhead for optimization, Flog has no small functions to individually unit test for branch drawing.
