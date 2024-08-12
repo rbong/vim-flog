@@ -143,9 +143,10 @@ gitv.vim does not have tests.
 gv.vim has tests.
 Flog and gitgraph.nvim have different testing philosophies.
 
-Flog focuses on integration tests.
-Because of aggressive removal of function call overhead for optimization, Flog has no small functions to individually unit test for branch drawing.
-This also allows ensuring the plugin works end-to-end.
+Flog focuses on integration tests instead of unit tests.
+There is only one branch drawing function in Flog for optimization.
+This eliminates function call overhead, but means that we don't have small branch drawing functions to individually unit test.
+Integration tests also ensure the plugin works end-to-end.
 
 gitgraph.nvim has unit tests.
 These types of tests typically allow more easily identifying the exact spot where code is failing.
