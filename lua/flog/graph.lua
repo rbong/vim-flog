@@ -643,7 +643,7 @@ local function flog_get_graph(
         vim_commit.collapsed_body = commit_multiline_prefix .. commit_collapsed_body
 
         -- Draw body
-        if commit_collapsed then
+        if commit_collapsed and commit_collapsed ~= 0 then
           vim_line_commits[vim_out_index] = vim_commit_index
           vim_out[vim_out_index] = vim_commit.collapsed_body
           vim_out_index = vim_out_index + 1
@@ -820,7 +820,7 @@ local function flog_update_graph(
         collapsed = default_collapsed
       end
 
-      if collapsed then
+      if collapsed and collapsed ~= 0 then
         -- Add collapsed body
         output[total_lines] = commit.collapsed_body
         line_commits[total_lines] = vim_commit_index
