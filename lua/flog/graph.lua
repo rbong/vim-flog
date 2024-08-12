@@ -81,7 +81,7 @@ local function flog_get_graph(
 
   -- Init Vim output
   local vim_out
-  local vim_out_index = 1
+  local out_line = 1
   local vim_commits
   local vim_commits_by_hash
   local vim_line_commits
@@ -624,16 +624,16 @@ local function flog_get_graph(
       vim_commit.hash = commit_hash
       vim_commit.parents = visual_parents
       vim_commit.refs = commit.refs
-      vim_commit.line = vim_out_index
+      vim_commit.line = out_line
       vim_commit.col = commit_col
       vim_commit.format_col = commit_format_col
       vim_commit.len = ncommit_lines
 
       -- Draw commit subject
       vim_commit.subject = commit_subject_line
-      vim_line_commits[vim_out_index] = vim_commit_index
-      vim_out[vim_out_index] = vim_commit.subject
-      vim_out_index = vim_out_index + 1
+      vim_line_commits[out_line] = vim_commit_index
+      vim_out[out_line] = vim_commit.subject
+      out_line = out_line + 1
 
       -- Draw multiline output
       if ncommit_lines > 1 then
@@ -644,9 +644,9 @@ local function flog_get_graph(
 
         -- Draw body
         if commit_collapsed and commit_collapsed ~= 0 then
-          vim_line_commits[vim_out_index] = vim_commit_index
-          vim_out[vim_out_index] = vim_commit.collapsed_body
-          vim_out_index = vim_out_index + 1
+          vim_line_commits[out_line] = vim_commit_index
+          vim_out[out_line] = vim_commit.collapsed_body
+          out_line = out_line + 1
 
           while commit_out_index <= ncommit_lines do
             vim_commit_body[commit_out_index - 1] = commit_multiline_prefix .. commit_out[commit_out_index]
@@ -656,9 +656,9 @@ local function flog_get_graph(
           while commit_out_index <= ncommit_lines do
             vim_commit_body[commit_out_index - 1] = commit_multiline_prefix .. commit_out[commit_out_index]
 
-            vim_line_commits[vim_out_index] = vim_commit_index
-            vim_out[vim_out_index] = vim_commit_body[commit_out_index - 1]
-            vim_out_index = vim_out_index + 1
+            vim_line_commits[out_line] = vim_commit_index
+            vim_out[out_line] = vim_commit_body[commit_out_index - 1]
+            out_line = out_line + 1
 
             commit_out_index = commit_out_index + 1
           end
@@ -669,24 +669,24 @@ local function flog_get_graph(
       local vim_commit_suffix_index = 0
       if should_out_merge_line then
         vim_commit_suffix_index = vim_commit_suffix_index + 1
-        vim_line_commits[vim_out_index] = vim_commit_index
-        vim_out[vim_out_index] = merge_line
-        vim_out_index = vim_out_index + 1
+        vim_line_commits[out_line] = vim_commit_index
+        vim_out[out_line] = merge_line
+        out_line = out_line + 1
         vim_commit_suffix[vim_commit_suffix_index] = merge_line
       end
       if nmissing_parents > 0 then
         vim_commit_suffix_index = vim_commit_suffix_index + 1
-        vim_line_commits[vim_out_index] = vim_commit_index
-        vim_out[vim_out_index] = missing_parents_line
-        vim_out_index = vim_out_index + 1
+        vim_line_commits[out_line] = vim_commit_index
+        vim_out[out_line] = missing_parents_line
+        out_line = out_line + 1
         vim_commit_suffix[vim_commit_suffix_index] = missing_parents_line
       end
       if should_pad then
         local padding_line = table.concat(branch_out, '', 1, graph_width)
         vim_commit_suffix_index = vim_commit_suffix_index + 1
-        vim_line_commits[vim_out_index] = vim_commit_index
-        vim_out[vim_out_index] = padding_line
-        vim_out_index = vim_out_index + 1
+        vim_line_commits[out_line] = vim_commit_index
+        vim_out[out_line] = padding_line
+        out_line = out_line + 1
         vim_commit_suffix[vim_commit_suffix_index] = padding_line
       end
       vim_commit.suffix_len = vim_commit_suffix_index
