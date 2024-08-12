@@ -186,6 +186,8 @@ local function flog_get_graph(
 
     local commit_col
     local commit_format_col
+    local commit_merge_col
+    local commit_merge_end_col
 
     local commit_subject_line
     local commit_multiline_prefix
@@ -317,9 +319,9 @@ local function flog_get_graph(
         local nexisting_parents_found = 0
 
         -- Find start of merge
-        local merge_start_branch_index = 1
-        while merge_start_branch_index < commit_branch_index do
-          local branch_hash = branch_hashes[merge_start_branch_index]
+        commit_merge_col = 1
+        while commit_merge_col < commit_branch_index do
+          local branch_hash = branch_hashes[commit_merge_col]
           if branch_hash == nil then
             if ncommit_new_parents > 0 then
               break
@@ -327,11 +329,11 @@ local function flog_get_graph(
           elseif commit_existing_parent_hashes[branch_hash] then
             break
           end
-          merge_start_branch_index = merge_start_branch_index + 1
+          commit_merge_col = commit_merge_col + 1
         end
 
         -- Handle parents to left of commit
-        local merge_branch_index = merge_start_branch_index
+        local merge_branch_index = commit_merge_col
         while merge_branch_index < commit_branch_index do
           local merge_branch_hash = branch_hashes[merge_branch_index]
 
@@ -360,7 +362,7 @@ local function flog_get_graph(
               end
 
               -- Parent
-              if merge_branch_index == merge_start_branch_index then
+              if merge_branch_index == commit_merge_col then
                 -- Draw first new parent merging to right
                 merge_out[merge_out_index] = lower_right_corner_str
               else
@@ -439,7 +441,7 @@ local function flog_get_graph(
           should_pad = false
 
           -- Draw commit merge string
-          if merge_start_branch_index == commit_branch_index then
+          if commit_merge_col == commit_branch_index then
             -- Draw merge start at commit
             if branch_hashes[commit_branch_index] then
               merge_out[merge_out_index] = merge_branch_right_str
@@ -545,9 +547,12 @@ local function flog_get_graph(
             end
           end
 
+          -- Store merge end column
+          commit_merge_end_col = merge_branch_index
+
           -- Build merge line
           merge_line = (
-            table.concat(branch_out, '', 1, merge_start_branch_index - 1)
+            table.concat(branch_out, '', 1, commit_merge_col - 1)
             .. table.concat(merge_out, '')
             .. table.concat(branch_out, '', merge_branch_index + 1, graph_width))
 
@@ -668,6 +673,8 @@ local function flog_get_graph(
       -- Draw commit suffix
       local vim_commit_suffix_index = 0
       if should_out_merge_line then
+        vim_commit.merge_col = commit_merge_col
+        vim_commit.merge_end_col = commit_merge_end_col
         vim_commit_suffix_index = vim_commit_suffix_index + 1
         vim_line_commits[out_line] = vim_commit_index
         vim_out[out_line] = merge_line
