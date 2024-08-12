@@ -757,7 +757,7 @@ local function flog_get_graph(
     end
   end
 
-  if enable_vim or enable_nvim then
+  if enable_vim_out then
     local dict_out = {
       output = vim_out,
       commits = vim_commits,
