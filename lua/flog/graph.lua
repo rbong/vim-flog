@@ -577,8 +577,8 @@ local function flog_get_graph(
         -- Set fading parent branch strings
         local missing_parents_index = 1
         while missing_parents_index <= nmissing_parents do
-          local missing_parent_branch_index = branch_indexes[missing_parents[missing_parents_index]]
-          branch_out[missing_parent_branch_index] = branch_fade_str
+          local parent_branch_index = branch_indexes[missing_parents[missing_parents_index]]
+          branch_out[parent_branch_index] = branch_fade_str
           missing_parents_index = missing_parents_index + 1
         end
 
@@ -588,9 +588,9 @@ local function flog_get_graph(
         -- Remove missing parents
         missing_parents_index = 1
         while missing_parents_index <= nmissing_parents do
-          local missing_parent_branch_index = branch_indexes[missing_parents[missing_parents_index]]
-          branch_out[missing_parent_branch_index] = '  '
-          branch_hashes[missing_parent_branch_index] = nil
+          local parent_branch_index = branch_indexes[missing_parents[missing_parents_index]]
+          branch_out[parent_branch_index] = '  '
+          branch_hashes[parent_branch_index] = nil
           missing_parents_index = missing_parents_index + 1
         end
 
