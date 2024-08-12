@@ -560,7 +560,7 @@ local function flog_get_graph(
             branch_hashes[commit_branch_index] = moved_hash
             branch_indexes[moved_hash] = commit_branch_index
 
-            -- Resize branches after moving parent under commit
+            -- Resize graph width after moving parent under commit
             while graph_width > 0 and branch_hashes[graph_width] == nil do
               graph_width = graph_width - 1
             end
@@ -594,7 +594,7 @@ local function flog_get_graph(
           missing_parents_index = missing_parents_index + 1
         end
 
-        -- Resize branches for removed missing parents
+        -- Resize graph width for removed missing parents
         while graph_width > 0 and branch_hashes[graph_width] == nil do
           graph_width = graph_width - 1
         end
