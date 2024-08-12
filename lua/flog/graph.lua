@@ -348,6 +348,8 @@ local function flog_get_graph(
 
               -- Draw new parent branch
               branch_out[merge_branch_index] = branch_str
+
+              -- Update graph width
               if merge_branch_index > graph_width then
                 graph_width = merge_branch_index
               end
@@ -414,6 +416,8 @@ local function flog_get_graph(
 
           -- Draw new parent branch
           branch_out[merge_branch_index] = branch_str
+
+          -- Update graph width
           if merge_branch_index > graph_width then
             graph_width = merge_branch_index
           end
@@ -486,6 +490,8 @@ local function flog_get_graph(
 
                 -- Draw new parent branch
                 branch_out[merge_branch_index] = branch_str
+
+                -- Update graph width
                 if merge_branch_index > graph_width then
                   graph_width = merge_branch_index
                 end
