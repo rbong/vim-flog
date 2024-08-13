@@ -65,54 +65,54 @@ highlight default link flogRefHeadBranch Special
 
 syntax cluster flogDiff contains=flogDiffAdded,flogDiffBDiffer,flogDiffChanged,flogDiffComment,flogDiffCommon,flogDiffDiffer,flogDiffFile,flogDiffIdentical,flogDiffIndexLine,flogDiffIsA,flogDiffLine,flogDiffNewFile,flogDiffNoEOL,flogDiffOldFile,flogDiffOnly,flogDiffRemoved
 
-syn match flogDiffOnly      contained /Only in .*/
-syn match flogDiffIdentical contained /Files .* and .* are identical$/
-syn match flogDiffDiffer    contained /Files .* and .* differ$/
-syn match flogDiffBDiffer   contained /Binary files .* and .* differ$/
-syn match flogDiffIsA       contained /File .* is a .* while file .* is a .*/
-syn match flogDiffNoEOL     contained /\\ No newline at end of file .*/
-syn match flogDiffCommon    contained /Common subdirectories: .*/
+syntax match flogDiffOnly      contained /Only in .*/
+syntax match flogDiffIdentical contained /Files .* and .* are identical$/
+syntax match flogDiffDiffer    contained /Files .* and .* differ$/
+syntax match flogDiffBDiffer   contained /Binary files .* and .* differ$/
+syntax match flogDiffIsA       contained /File .* is a .* while file .* is a .*/
+syntax match flogDiffNoEOL     contained /\\ No newline at end of file .*/
+syntax match flogDiffCommon    contained /Common subdirectories: .*/
 
-syn match flogDiffRemoved contained /-.*/
-syn match flogDiffRemoved contained /<.*/
-syn match flogDiffAdded   contained /+.*/
-syn match flogDiffAdded   contained />.*/
-syn match flogDiffChanged contained /! .*/
+syntax match flogDiffRemoved contained /-.*/
+syntax match flogDiffRemoved contained /<.*/
+syntax match flogDiffAdded   contained /+.*/
+syntax match flogDiffAdded   contained />.*/
+syntax match flogDiffChanged contained /! .*/
 
-syn match flogDiffSubname contained containedin=flogDiffSubname /@@..*/ms=s+3
-syn match flogDiffLine    contained /@.*/
+syntax match flogDiffSubname contained containedin=flogDiffSubname /@@..*/ms=s+3
+syntax match flogDiffLine    contained /@.*/
 
-syn match flogDiffLine contained /\*\*\*\*.*/
-syn match flogDiffLine contained /---$/
-syn match flogDiffLine contained /\d\+\%(,\d\+\)\=[cda]\d\+\>.*/
+syntax match flogDiffLine contained /\*\*\*\*.*/
+syntax match flogDiffLine contained /---$/
+syntax match flogDiffLine contained /\d\+\%(,\d\+\)\=[cda]\d\+\>.*/
 
-syn match flogDiffFile    contained /diff\>.*/
-syn match flogDiffFile    contained /+++ .*/
-syn match flogDiffFile    contained /Index: .*/
-syn match flogDiffFile    contained /==== .*/
-syn match flogDiffOldFile contained /\*\*\* .*/
-syn match flogDiffNewFile contained /--- .*/
+syntax match flogDiffFile    contained /diff\>.*/
+syntax match flogDiffFile    contained /+++ .*/
+syntax match flogDiffFile    contained /Index: .*/
+syntax match flogDiffFile    contained /==== .*/
+syntax match flogDiffOldFile contained /\*\*\* .*/
+syntax match flogDiffNewFile contained /--- .*/
 
-syn match flogDiffIndexLine contained /index \x\x\x\x.*/
-syn match flogDiffComment   contained /#.*/
+syntax match flogDiffIndexLine contained /index \x\x\x\x.*/
+syntax match flogDiffComment   contained /#.*/
 
 " Link to original highlight groups
-hi default link flogDiffAdded     diffAdded
-hi default link flogDiffBDiffer   diffBDiffer
-hi default link flogDiffChanged   diffChanged
-hi default link flogDiffComment   diffComment
-hi default link flogDiffCommon    diffCommon
-hi default link flogDiffDiffer    diffDiffer
-hi default link flogDiffFile      diffFile
-hi default link flogDiffIdentical diffIdentical
-hi default link flogDiffIndexLine diffIndexLine
-hi default link flogDiffIsA       diffIsA
-hi default link flogDiffLine      diffLine
-hi default link flogDiffNewFile   diffNewFile
-hi default link flogDiffNoEOL     diffNoEOL
-hi default link flogDiffOldFile   diffOldFile
-hi default link flogDiffOnly      diffOnly
-hi default link flogDiffRemoved   diffRemoved
+highlight default link flogDiffAdded     diffAdded
+highlight default link flogDiffBDiffer   diffBDiffer
+highlight default link flogDiffChanged   diffChanged
+highlight default link flogDiffComment   diffComment
+highlight default link flogDiffCommon    diffCommon
+highlight default link flogDiffDiffer    diffDiffer
+highlight default link flogDiffFile      diffFile
+highlight default link flogDiffIdentical diffIdentical
+highlight default link flogDiffIndexLine diffIndexLine
+highlight default link flogDiffIsA       diffIsA
+highlight default link flogDiffLine      diffLine
+highlight default link flogDiffNewFile   diffNewFile
+highlight default link flogDiffNoEOL     diffNoEOL
+highlight default link flogDiffOldFile   diffOldFile
+highlight default link flogDiffOnly      diffOnly
+highlight default link flogDiffRemoved   diffRemoved
 
 " Graph Highlighting
 
