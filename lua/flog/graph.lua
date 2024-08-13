@@ -209,6 +209,7 @@ local function flog_get_graph(
     end
 
     local should_out_merge_line = false
+    local should_move_last_parent_under_commit = false
     local should_pad = enable_extra_padding
 
     -- Commit collapsed state
@@ -402,7 +403,6 @@ local function flog_get_graph(
         end
 
         -- Handle parent under commit
-        local should_move_last_parent_under_commit = false
         if new_parent_index <= ncommit_new_parents then
           -- Add a new parent under the commit
 
@@ -633,6 +633,7 @@ local function flog_get_graph(
       vim_commit.line = out_line
       vim_commit.col = commit_col
       vim_commit.format_col = commit_format_col
+      vim_commit.moved_parent = should_move_last_parent_under_commit
       vim_commit.len = ncommit_lines
 
       -- Draw commit subject
