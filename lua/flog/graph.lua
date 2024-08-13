@@ -204,7 +204,7 @@ local function flog_get_graph(
     local nvim_parents = 0
     if enable_vim then
       vim_commit_parents = vim.list()
-    else
+    elseif enable_nvim then
       vim_commit_parents = {}
     end
 
