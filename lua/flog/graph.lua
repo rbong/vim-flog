@@ -198,6 +198,8 @@ local function flog_get_graph(
     local missing_parents = {}
     local nmissing_parents = 0
 
+    local vim_commit_index = commit_index - 1
+
     local vim_commit_parents
     local nvim_parents = 0
     if enable_vim then
@@ -621,7 +623,6 @@ local function flog_get_graph(
         vim_commit_body = {}
         vim_commit_suffix = {}
       end
-      local vim_commit_index = commit_index - 1
       vim_commit.body = vim_commit_body
       vim_commit.suffix = vim_commit_suffix
 
