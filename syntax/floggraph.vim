@@ -8,7 +8,7 @@ runtime! syntax/diff.vim
 
 syntax match flogLineStart nextgroup=@flogBranch1,@flogCommitInfo,flogCollapsedCommit,@flogDiff /^/
 
-" Commit Highlighting
+" Commit highlighting
 
 syntax cluster flogCommitInfo contains=flogHash,flogAuthor,flogRef,flogDate
 
@@ -44,7 +44,7 @@ syntax match flogCollapsedCommit contained /== \d\+ hidden lines ==$/
 
 highlight default link flogCollapsedCommit Comment
 
-" Ref Highlighting
+" Ref highlighting
 
 syntax match flogRefTag    contained containedin=flogRef /\vtag: \zs.{-}\ze%(, |)\)/
 syntax match flogRefRemote contained containedin=flogRef /\vremotes\/\zs.{-}\ze%(, |)\)/
@@ -60,7 +60,7 @@ highlight default link flogRefHead       Keyword
 highlight default link flogRefHeadArrow  flogRef
 highlight default link flogRefHeadBranch Special
 
-" Diff Highlighting
+" Diff highlighting
 " Copied from syntax/diff.vim
 
 syntax cluster flogDiff contains=flogDiffAdded,flogDiffBDiffer,flogDiffChanged,flogDiffComment,flogDiffCommon,flogDiffDiffer,flogDiffFile,flogDiffIdentical,flogDiffIndexLine,flogDiffIsA,flogDiffLine,flogDiffNewFile,flogDiffNoEOL,flogDiffOldFile,flogDiffOnly,flogDiffRemoved
@@ -114,7 +114,7 @@ highlight default link flogDiffOldFile   diffOldFile
 highlight default link flogDiffOnly      diffOnly
 highlight default link flogDiffRemoved   diffRemoved
 
-" Graph Highlighting
+" Graph highlighting
 
 " Cluster all branch 1 groups
 syntax cluster flogBranch1 contains=flogBranch1,flogBranch1Commit,flogBranch1MergeStart,flogBranch1MissingParentsStart
