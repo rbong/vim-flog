@@ -85,22 +85,6 @@ Flog loads faster than gitv.
 Flog sometimes loads slower than gv.vim.
 Flog loads faster than gitgraph.nvim.
 
-Comparison with gitgraph.nvim using [git/git](https://github.com/git/git):
-
-```
-# Baseline
-% time nvim -c 'qa'
-0.25s user 0.05s system 98% cpu 0.300 total
-
-# gitgraph.nvim
-% time nvim -c "lua require('gitgraph').draw({}, { all = true, max_count = 3000 })" -c qa
-29.59s user 0.69s system 99% cpu 30.312 total
-
-# Flog
-% time nvim README.md -c 'Flog -all -max-count=3000' -c 'qa'
-0.77s user 0.10s system 122% cpu 0.709 total
-```
-
 **Branch highlighting**
 
 gv.vim does not have branch highlighting.
