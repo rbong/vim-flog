@@ -785,40 +785,40 @@ local function flog_update_graph(
     default_collapsed,
     graph,
     collapsed_commits)
-  -- Init data
-  local commits = graph.commits
-  local commit_index = 1
-  local commits_by_hash = graph.commits_by_hash
-  local line_commits
-  local output
-  local total_lines = 1
+  -- Init vim output
+  local vim_out
+  local out_line = 1
+  local vim_commits = graph.commits
+  local vim_commits_by_hash = graph.commits_by_hash
+  local vim_line_commits
 
   if not enable_nvim then
-    line_commits = vim.list()
-    output = vim.list()
+    vim_out = vim.list()
+    vim_line_commits = vim.list()
   else
-    line_commits = {}
-    output = {}
+    vim_out = {}
+    vim_line_commits = {}
   end
 
   -- Find number of commits
   local ncommits = #commits
 
   -- Rebuild output/line commits
+  local commit_index = 1
   while commit_index <= ncommits do
     local vim_commit_index = commit_index - 1
-    local commit = commits[commit_index]
+    local commit = vim_commits[commit_index]
     local hash = commit.hash
     local len = commit.len
     local suffix_len = commit.suffix_len
 
     -- Update line position
-    commit.line = total_lines
+    commit.line = out_line
 
     -- Add subject
-    output[total_lines] = commit.subject
-    line_commits[total_lines] = vim_commit_index
-    total_lines = total_lines + 1
+    vim_out[out_line] = commit.subject
+    vim_line_commits[out_line] = vim_commit_index
+    out_line = out_line + 1
 
     if len > 1 then
       local collapsed = collapsed_commits[hash]
@@ -829,18 +829,18 @@ local function flog_update_graph(
 
       if collapsed and collapsed ~= 0 then
         -- Add collapsed body
-        output[total_lines] = commit.collapsed_body
-        line_commits[total_lines] = vim_commit_index
-        total_lines = total_lines + 1
+        vim_out[out_line] = commit.collapsed_body
+        vim_line_commits[out_line] = vim_commit_index
+        out_line = out_line + 1
       else
         -- Add body
         local body_index = 1
         local body = commit.body
         while body_index < len do
-          output[total_lines] = body[body_index]
-          line_commits[total_lines] = vim_commit_index
+          vim_out[out_line] = body[body_index]
+          vim_line_commits[out_line] = vim_commit_index
           body_index = body_index + 1
-          total_lines = total_lines + 1
+          out_line = out_line + 1
         end
       end
     end
@@ -850,10 +850,10 @@ local function flog_update_graph(
       local suffix_index = 1
       local suffix = commit.suffix
       while suffix_index <= suffix_len do
-        output[total_lines] = suffix[suffix_index]
-        line_commits[total_lines] = vim_commit_index
+        vim_out[out_line] = suffix[suffix_index]
+        vim_line_commits[out_line] = vim_commit_index
         suffix_index = suffix_index + 1
-        total_lines = total_lines + 1
+        out_line = out_line + 1
       end
     end
 
@@ -863,10 +863,10 @@ local function flog_update_graph(
 
   -- Return
   local dict_out = {
-    output = output,
-    commits = commits,
-    commits_by_hash = commits_by_hash,
-    line_commits = line_commits,
+    output = vim_out,
+    commits = vim_commits,
+    commits_by_hash = vim_commits_by_hash,
+    line_commits = vim_line_commits,
   }
   if enable_nvim then
     return dict_out
