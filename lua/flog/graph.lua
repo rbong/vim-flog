@@ -91,7 +91,7 @@ local function flog_get_graph(
     vim_commits = vim.list()
     vim_commits_by_hash = vim.dict()
     vim_line_commits = vim.list()
-  else
+  elseif enable_nvim then
     vim_out = {}
     vim_commits = {}
     vim_commits_by_hash = { [vim.type_idx] = vim.types.dictionary }
