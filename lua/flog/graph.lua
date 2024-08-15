@@ -94,7 +94,7 @@ local function flog_get_graph(
   else
     vim_out = {}
     vim_commits = {}
-    vim_commits_by_hash = {}
+    vim_commits_by_hash = { [vim.type_idx] = vim.types.dictionary }
     vim_line_commits = {}
   end
 
@@ -619,9 +619,9 @@ local function flog_get_graph(
         vim_commit_body = vim.dict()
         vim_commit_suffix = vim.dict()
       else
-        vim_commit = {}
-        vim_commit_body = {}
-        vim_commit_suffix = {}
+        vim_commit = { [vim.type_idx] = vim.types.dictionary }
+        vim_commit_body = { [vim.type_idx] = vim.types.dictionary }
+        vim_commit_suffix = { [vim.type_idx] = vim.types.dictionary }
       end
       vim_commit.body = vim_commit_body
       vim_commit.suffix = vim_commit_suffix
