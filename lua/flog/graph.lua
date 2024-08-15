@@ -200,22 +200,26 @@ local function flog_get_graph(
 
     local vim_commit_index = commit_index - 1
 
-    local vim_commit_parents
-    local nvim_parents = 0
-    if enable_vim then
-      vim_commit_parents = vim.list()
-    elseif enable_nvim then
-      vim_commit_parents = {}
-    end
-
     local should_out_merge_line = false
     local should_move_last_parent_under_commit = false
     local should_pad = enable_extra_padding
 
-    -- Commit collapsed state
     local commit_collapsed = collapsed_commits[commit_hash]
     if commit_collapsed == nil then
       commit_collapsed = default_collapsed
+    end
+
+    local vim_commit_parents
+    local nvim_parents = 0
+    local vim_commit_merge_crossovers
+
+    -- Vim variables
+    if enable_vim then
+      vim_commit_parents = vim.list()
+      vim_commit_merge_crossovers = vim.dict()
+    elseif enable_nvim then
+      vim_commit_parents = {}
+      vim_commit_merge_crossovers = { [vim.type_idx] = vim.types.dictionary }
     end
 
     -- Build commit output
@@ -391,9 +395,21 @@ local function flog_get_graph(
               missing_parents[nmissing_parents] = merge_branch_hash
             end
 
+            -- Record crossover
+            if is_vimlike and merge_out_index > 1 then
+              vim_commit_merge_crossovers[tostring(merge_branch_index - 1)] = 1
+            end
+
             -- Draw existing parent merging to right
             merge_out[merge_out_index] = fork_branch_right_str
           else
+            -- Handle unrelated branch
+
+            -- Record crossover
+            if is_vimlike then
+              vim_commit_merge_crossovers[tostring(merge_branch_index - 1)] = 1
+            end
+
             -- Draw unrelated branch
             merge_out[merge_out_index] = branch_horizontal_str
           end
@@ -532,6 +548,11 @@ local function flog_get_graph(
                 missing_parents[nmissing_parents] = merge_branch_hash
               end
 
+              -- Record crossover
+              if is_vimlike and nexisting_parents_found + new_parent_index < ncommit_parents then
+                vim_commit_merge_crossovers[tostring(merge_branch_index - 1)] = 1
+              end
+
               -- Draw parent
               if should_move_last_parent_under_commit then
                 -- Draw moved parent
@@ -544,6 +565,13 @@ local function flog_get_graph(
                 merge_out[merge_out_index] = fork_branch_left_horizontal_str
               end
             else
+              -- Handle unrelated branch
+
+              -- Record crossover
+              if is_vimlike then
+                vim_commit_merge_crossovers[tostring(merge_branch_index - 1)] = 1
+              end
+
               -- Draw unrelated branch
               merge_out[merge_out_index] = branch_horizontal_str
             end
@@ -677,6 +705,7 @@ local function flog_get_graph(
       if should_out_merge_line then
         vim_commit.merge_col = commit_merge_col
         vim_commit.merge_end_col = commit_merge_end_col
+        vim_commit.merge_crossovers = vim_commit_merge_crossovers
         vim_commit_suffix_index = vim_commit_suffix_index + 1
         vim_line_commits[out_line] = vim_commit_index
         vim_out[out_line] = merge_line
