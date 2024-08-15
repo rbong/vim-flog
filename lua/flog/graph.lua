@@ -803,7 +803,7 @@ local function flog_update_graph(
   end
 
   -- Find number of commits
-  local ncommits = #commits
+  local ncommits = #vim_commits
 
   -- Rebuild output/line commits
   local commit_index = 1
