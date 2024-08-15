@@ -17,7 +17,7 @@ local function flog_get_graph(
   default_collapsed = default_collapsed and default_collapsed ~= 0
   enable_extended_chars = enable_extended_chars and enable_extended_chars ~= 0
   enable_extra_padding = enable_extra_padding and enable_extra_padding ~= 0
-  local enable_vim_out = enable_vim or enable_nvim
+  local is_vimlike = enable_vim or enable_nvim
 
   -- Init graph strings
   local branch_str = '│ '
@@ -155,7 +155,7 @@ local function flog_get_graph(
   end
 
   -- Output number of commits
-  if not enable_vim_out and enable_porcelain then
+  if not is_vimlike and enable_porcelain then
     print(ncommits)
   end
 
@@ -609,7 +609,7 @@ local function flog_get_graph(
     end
 
     -- Output commit
-    if enable_vim_out then
+    if is_vimlike then
       -- Init vim commit output
       local vim_commit
       local vim_commit_body
@@ -766,7 +766,7 @@ local function flog_get_graph(
     end
   end
 
-  if enable_vim_out then
+  if is_vimlike then
     local dict_out = {
       output = vim_out,
       commits = vim_commits,
