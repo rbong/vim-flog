@@ -9,11 +9,11 @@ jobs:
         include:
           - vim_type: "Vim"
             vim_version: "v8.2.4212"
-            lua_version: "luajit-git"
+            lua_version: "luajit-2.1.0-beta3"
             nvim: "false"
           - vim_type: "Vim"
             vim_version: "v9.0.1205"
-            lua_version: "luajit-git"
+            lua_version: "luajit-2.1.0-beta3"
             nvim: "false"
           - vim_type: "Neovim"
             vim_version: "head"
@@ -24,7 +24,7 @@ jobs:
         with:
           fetch-depth: 5
       - name: "install lua"
-        uses: "jkl1337/gh-actions-lua@v10.0.0"
+        uses: "leafo/gh-actions-lua@v10.0.0"
         with:
           luaVersion: "${{ matrix.lua_version }}"
         if: "${{ matrix.lua_version }}"
