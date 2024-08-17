@@ -222,6 +222,8 @@ function M.get_graph(
     elseif enable_nvim then
       vim_commit_parents = {}
       vim_commit_merge_crossovers = { [vim.type_idx] = vim.types.dictionary }
+    else
+      vim_commit_parents = {}
     end
 
     -- Build commit output
