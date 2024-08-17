@@ -5,10 +5,7 @@
 function! flog#graph#nvim#Get(git_cmd) abort
   let l:state = flog#state#GetBufState()
 
-  let l:graph_lib = flog#lua#GetLibPath('graph.lua')
-  exec 'luafile ' . fnameescape(l:graph_lib)
-
-  return v:lua.flog_get_graph(
+  return v:lua.require('flog/graph').get_graph(
         \ v:false,
         \ v:true,
         \ v:true,
@@ -25,10 +22,7 @@ endfunction
 function! flog#graph#nvim#Update(graph) abort
   let l:state = flog#state#GetBufState()
 
-  let l:graph_lib = flog#lua#GetLibPath('graph.lua')
-  exec 'luafile ' . fnameescape(l:graph_lib)
-
-  return v:lua.flog_update_graph(
+  return v:lua.require('flog/graph').update_graph(
         \ v:true,
         \ l:state.opts.default_collapsed ? v:true : v:false,
         \ a:graph,

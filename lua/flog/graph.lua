@@ -1,7 +1,9 @@
 -- This script parses git log output and produces the commit graph
 -- It is optimized for speed, not brevity or readability
 
-local function flog_get_graph(
+local M = {}
+
+function M.get_graph(
     enable_vim,
     enable_nvim,
     enable_porcelain,
@@ -816,7 +818,7 @@ local function flog_get_graph(
   end
 end
 
-local function flog_update_graph(
+function M.update_graph(
     enable_nvim,
     default_collapsed,
     graph,
@@ -911,5 +913,7 @@ local function flog_update_graph(
   end
 end
 
-_G.flog_get_graph = flog_get_graph
-_G.flog_update_graph = flog_update_graph
+_G.flog_get_graph = M.get_graph
+_G.flog_update_graph = M.update_graph
+
+return M
