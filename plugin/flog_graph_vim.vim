@@ -279,7 +279,7 @@ def g:FlogGetVimInternalGraph(git_cmd: string): dict<any>
   exec 'luafile ' .. fnameescape(graph_lib)
 
   # Set temporary vars
-  g:flog_tmp_instance_number = state.instance_number,
+  g:flog_tmp_instance_number = state.instance_number
   g:flog_tmp_enable_graph = state.opts.graph
   g:flog_tmp_default_collapsed = state.opts.default_collapsed
   g:flog_tmp_git_cmd = git_cmd
