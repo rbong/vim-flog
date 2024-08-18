@@ -3,8 +3,11 @@
 
 local M = {}
 
+-- Some state is only used inside Neovim, it is kept inside Lua for performance reasons
+local internal_state_store = {}
+
 function M.get_graph(
-    instance_num,
+    instance_number,
     is_vim,
     is_nvim,
     enable_porcelain,
@@ -99,6 +102,13 @@ function M.get_graph(
     vim_commits = {}
     vim_commits_by_hash = { [vim.type_idx] = vim.types.dictionary }
     vim_line_commits = {}
+  end
+
+  -- Init internal state
+  local internal_state
+  if is_nvim then
+    internal_state = { commits = {} }
+    internal_state_store[instance_number] = internal_state
   end
 
   -- Run command
@@ -212,17 +222,17 @@ function M.get_graph(
       commit_collapsed = default_collapsed
     end
 
-    local vim_commit_parents
-    local nvim_parents = 0
-    local vim_commit_merge_crossovers
+    -- Internal state
+    local commit_merge_crossovers
+    if is_nvim then
+      commit_merge_crossovers = {}
+    end
 
     -- Vim variables
+    local vim_commit_parents
+    local nvim_parents = 0
     if is_vim then
       vim_commit_parents = vim.list()
-      vim_commit_merge_crossovers = vim.dict()
-    elseif is_nvim then
-      vim_commit_parents = {}
-      vim_commit_merge_crossovers = { [vim.type_idx] = vim.types.dictionary }
     else
       vim_commit_parents = {}
     end
@@ -406,8 +416,8 @@ function M.get_graph(
             end
 
             -- Record crossover
-            if is_vimlike and merge_out_index > 1 then
-              vim_commit_merge_crossovers[tostring(merge_branch_index - 1)] = 1
+            if is_nvim and merge_out_index > 1 then
+              commit_merge_crossovers[merge_branch_index] = 1
             end
 
             -- Draw existing parent merging to right
@@ -416,8 +426,8 @@ function M.get_graph(
             -- Handle unrelated branch
 
             -- Record crossover
-            if is_vimlike then
-              vim_commit_merge_crossovers[tostring(merge_branch_index - 1)] = 1
+            if is_nvim then
+              commit_merge_crossovers[merge_branch_index] = 1
             end
 
             -- Draw unrelated branch
@@ -559,8 +569,8 @@ function M.get_graph(
               end
 
               -- Record crossover
-              if is_vimlike and nexisting_parents_found + new_parent_index < ncommit_parents then
-                vim_commit_merge_crossovers[tostring(merge_branch_index - 1)] = 1
+              if is_nvim and nexisting_parents_found + new_parent_index < ncommit_parents then
+                commit_merge_crossovers[merge_branch_index] = 1
               end
 
               -- Draw parent
@@ -578,8 +588,8 @@ function M.get_graph(
               -- Handle unrelated branch
 
               -- Record crossover
-              if is_vimlike then
-                vim_commit_merge_crossovers[tostring(merge_branch_index - 1)] = 1
+              if is_nvim then
+                commit_merge_crossovers[merge_branch_index] = 1
               end
 
               -- Draw unrelated branch
@@ -674,6 +684,15 @@ function M.get_graph(
       vim_commit.moved_parent = should_move_last_parent_under_commit
       vim_commit.len = ncommit_lines
 
+      -- Set internal state
+      if is_nvim then
+        internal_state.commits[commit_index] = {
+          merge_crossovers = commit_merge_crossovers,
+          merge_col = commit_merge_col,
+          merge_end_col = commit_merge_end_col,
+        }
+      end
+
       -- Draw commit subject
       vim_commit.subject = commit_subject_line
       vim_line_commits[out_line] = vim_commit_index
@@ -713,9 +732,6 @@ function M.get_graph(
       -- Draw commit suffix
       local vim_commit_suffix_index = 0
       if should_out_merge_line then
-        vim_commit.merge_col = commit_merge_col
-        vim_commit.merge_end_col = commit_merge_end_col
-        vim_commit.merge_crossovers = vim_commit_merge_crossovers
         vim_commit_suffix_index = vim_commit_suffix_index + 1
         vim_line_commits[out_line] = vim_commit_index
         vim_out[out_line] = merge_line
@@ -916,7 +932,16 @@ function M.update_graph(
   end
 end
 
+function M.get_internal_graph_state(instance_number)
+  return internal_state_store[instance_number]
+end
+
+function M.clear_internal_graph_state(instance_number)
+  internal_state_store[instance_number] = nil
+end
+
 _G.flog_get_graph = M.get_graph
 _G.flog_update_graph = M.update_graph
+_G.flog_clear_internal_graph_state = M.clear_internal_graph_state
 
 return M
