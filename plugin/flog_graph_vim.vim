@@ -190,6 +190,7 @@ def g:FlogUpdateVimBinGraph(graph: dict<any>): dict<any>
   flog#floggraph#buf#AssertFlogBuf()
   const state = flog#state#GetBufState()
 
+  const default_collapsed = state.opts.default_collapsed
   const collapsed_commits = state.collapsed_commits
 
   # Init data
