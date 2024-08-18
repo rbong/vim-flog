@@ -33,7 +33,16 @@ EOF
 
 diff_data "$VIM_OUT" "graph_merge_multiline_out"
 
-VIM_OUT="$TMP/extended_out"
+VIM_OUT="$TMP/hidden_basic_out"
+run_vim_command <<EOF
+$FLOG_CMD
+normal <
+silent w $VIM_OUT
+EOF
+
+diff_data "$VIM_OUT" "graph_merge_multiline_hidden_out"
+
+VIM_OUT="$TMP/extended_hidden_out"
 run_vim_command <<EOF
 let g:flog_enable_extended_chars = 1
 $FLOG_CMD
@@ -41,3 +50,13 @@ silent w $VIM_OUT
 EOF
 
 diff_data "$VIM_OUT" "graph_merge_multiline_extended_out"
+
+VIM_OUT="$TMP/hidden_extended_out"
+run_vim_command <<EOF
+let g:flog_enable_extended_chars = 1
+$FLOG_CMD
+normal <
+silent w $VIM_OUT
+EOF
+
+diff_data "$VIM_OUT" "graph_merge_multiline_hidden_extended_out"
