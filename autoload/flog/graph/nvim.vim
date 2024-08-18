@@ -6,6 +6,7 @@ function! flog#graph#nvim#Get(git_cmd) abort
   let l:state = flog#state#GetBufState()
 
   return v:lua.require('flog/graph').get_graph(
+        \ l:state.instance_number,
         \ v:false,
         \ v:true,
         \ v:true,

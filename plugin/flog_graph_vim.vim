@@ -25,6 +25,9 @@ def g:FlogGetVimBinGraph(git_cmd: string): dict<any>
   cmd ..= ' '
   cmd ..= shellescape(script_path)
   cmd ..= ' '
+  # instance_number
+  cmd ..= state.instance_number
+  cmd ..= ' '
   # start_token
   cmd ..= shellescape(g:flog_commit_start_token)
   cmd ..= ' '
@@ -274,6 +277,7 @@ def g:FlogGetVimInternalGraph(git_cmd: string): dict<any>
   exec 'luafile ' .. fnameescape(graph_lib)
 
   # Set temporary vars
+  g:flog_tmp_instance_number = state.instance_number,
   g:flog_tmp_enable_graph = state.opts.graph
   g:flog_tmp_default_collapsed = state.opts.default_collapsed
   g:flog_tmp_git_cmd = git_cmd
@@ -281,6 +285,8 @@ def g:FlogGetVimInternalGraph(git_cmd: string): dict<any>
 
   # Build command
   var cmd = 'flog_get_graph('
+  # instance_number
+  cmd ..= 'vim.eval("g:flog_tmp_instance_number"), '
   # is_vim
   cmd ..= 'true, '
   # is_nvim
@@ -306,6 +312,7 @@ def g:FlogGetVimInternalGraph(git_cmd: string): dict<any>
   var result = luaeval(cmd)
 
   # Cleanup
+  unlet! g:flog_tmp_instance_number
   unlet! g:flog_tmp_enable_graph
   unlet! g:flog_tmp_git_cmd
   unlet! g:flog_tmp_collapsed_commits

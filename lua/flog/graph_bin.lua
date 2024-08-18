@@ -3,6 +3,8 @@
 require('flog/graph')
 
 flog_get_graph(
+    -- instance_number
+    arg[1],
     -- is_vim
     false,
     -- is_nvim
@@ -10,16 +12,16 @@ flog_get_graph(
     -- enable_porcelain
     true,
     -- start_token
-    arg[1],
+    arg[2],
     -- enable_extended_chars
-    arg[2] == 'true',
-    -- enable_extra_padding
     arg[3] == 'true',
-    -- enable_graph
+    -- enable_extra_padding
     arg[4] == 'true',
-    -- default_collapsed
+    -- enable_graph
     arg[5] == 'true',
+    -- default_collapsed
+    arg[6] == 'true',
     -- cmd
-    arg[6],
+    arg[7],
     -- collapsed_commits
     {})

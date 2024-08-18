@@ -4,6 +4,7 @@
 local M = {}
 
 function M.get_graph(
+    instance_num,
     is_vim,
     is_nvim,
     enable_porcelain,
