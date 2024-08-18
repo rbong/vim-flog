@@ -3,9 +3,9 @@
 require('flog/graph')
 
 flog_get_graph(
-    -- enable_vim
+    -- is_vim
     false,
-    -- enable_nvim
+    -- is_nvim
     false,
     -- enable_porcelain
     true,

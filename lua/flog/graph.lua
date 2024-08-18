@@ -4,8 +4,8 @@
 local M = {}
 
 function M.get_graph(
-    enable_vim,
-    enable_nvim,
+    is_vim,
+    is_nvim,
     enable_porcelain,
     start_token,
     enable_extended_chars,
@@ -19,7 +19,7 @@ function M.get_graph(
   default_collapsed = default_collapsed and default_collapsed ~= 0
   enable_extended_chars = enable_extended_chars and enable_extended_chars ~= 0
   enable_extra_padding = enable_extra_padding and enable_extra_padding ~= 0
-  local is_vimlike = enable_vim or enable_nvim
+  local is_vimlike = is_vim or is_nvim
 
   -- Init graph strings
   local branch_str = '│ '
@@ -88,12 +88,12 @@ function M.get_graph(
   local vim_commits_by_hash
   local vim_line_commits
 
-  if enable_vim then
+  if is_vim then
     vim_out = vim.list()
     vim_commits = vim.list()
     vim_commits_by_hash = vim.dict()
     vim_line_commits = vim.list()
-  elseif enable_nvim then
+  elseif is_nvim then
     vim_out = {}
     vim_commits = {}
     vim_commits_by_hash = { [vim.type_idx] = vim.types.dictionary }
@@ -216,10 +216,10 @@ function M.get_graph(
     local vim_commit_merge_crossovers
 
     -- Vim variables
-    if enable_vim then
+    if is_vim then
       vim_commit_parents = vim.list()
       vim_commit_merge_crossovers = vim.dict()
-    elseif enable_nvim then
+    elseif is_nvim then
       vim_commit_parents = {}
       vim_commit_merge_crossovers = { [vim.type_idx] = vim.types.dictionary }
     else
@@ -651,7 +651,7 @@ function M.get_graph(
       local vim_commit
       local vim_commit_body
       local vim_commit_suffix
-      if enable_vim then
+      if is_vim then
         vim_commit = vim.dict()
         vim_commit_body = vim.dict()
         vim_commit_suffix = vim.dict()
@@ -812,7 +812,7 @@ function M.get_graph(
       line_commits = vim_line_commits,
     }
 
-    if enable_vim then
+    if is_vim then
       return vim.dict(dict_out)
     else
       return dict_out
@@ -821,7 +821,7 @@ function M.get_graph(
 end
 
 function M.update_graph(
-    enable_nvim,
+    is_nvim,
     default_collapsed,
     graph,
     collapsed_commits)
@@ -832,7 +832,7 @@ function M.update_graph(
   local vim_commits_by_hash = graph.commits_by_hash
   local vim_line_commits
 
-  if not enable_nvim then
+  if not is_nvim then
     vim_out = vim.list()
     vim_line_commits = vim.list()
   else
@@ -908,7 +908,7 @@ function M.update_graph(
     commits_by_hash = vim_commits_by_hash,
     line_commits = vim_line_commits,
   }
-  if enable_nvim then
+  if is_nvim then
     return dict_out
   else
     return vim.dict(dict_out)

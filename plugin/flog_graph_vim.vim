@@ -281,9 +281,9 @@ def g:FlogGetVimInternalGraph(git_cmd: string): dict<any>
 
   # Build command
   var cmd = 'flog_get_graph('
-  # enable_vim
+  # is_vim
   cmd ..= 'true, '
-  # enable_nvim
+  # is_nvim
   cmd ..= 'false, '
   # enable_porcelain
   cmd ..= 'true, '
@@ -336,7 +336,7 @@ def g:FlogUpdateVimInternalGraph(graph: dict<any>): dict<any>
 
   # Build command
   var cmd = 'flog_update_graph('
-  # enable_nvim
+  # is_nvim
   cmd ..= 'false, '
   # default_collapsed
   cmd ..= 'vim.eval("g:flog_tmp_default_collapsed"), '
