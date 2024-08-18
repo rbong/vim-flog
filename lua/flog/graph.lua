@@ -663,12 +663,12 @@ function M.get_graph(
       local vim_commit_suffix
       if is_vim then
         vim_commit = vim.dict()
-        vim_commit_body = vim.dict()
-        vim_commit_suffix = vim.dict()
+        vim_commit_body = vim.list()
+        vim_commit_suffix = vim.list()
       else
         vim_commit = { [vim.type_idx] = vim.types.dictionary }
-        vim_commit_body = { [vim.type_idx] = vim.types.dictionary }
-        vim_commit_suffix = { [vim.type_idx] = vim.types.dictionary }
+        vim_commit_body = {}
+        vim_commit_suffix = {}
       end
       vim_commit.body = vim_commit_body
       vim_commit.suffix = vim_commit_suffix
