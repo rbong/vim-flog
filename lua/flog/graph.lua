@@ -629,23 +629,23 @@ function M.get_graph(
         should_pad = true
 
         -- Set fading parent branch strings
-        local missing_parents_index = 1
-        while missing_parents_index <= nmissing_parents do
-          local parent_branch_index = branch_indexes[missing_parents[missing_parents_index]]
+        local missing_parent_index = 1
+        while missing_parent_index <= nmissing_parents do
+          local parent_branch_index = branch_indexes[missing_parents[missing_parent_index]]
           branch_out[parent_branch_index] = branch_fade_str
-          missing_parents_index = missing_parents_index + 1
+          missing_parent_index = missing_parent_index + 1
         end
 
         -- Build missing parents output
         missing_parents_line = table.concat(branch_out, '', 1, graph_width)
 
         -- Remove missing parents
-        missing_parents_index = 1
-        while missing_parents_index <= nmissing_parents do
-          local parent_branch_index = branch_indexes[missing_parents[missing_parents_index]]
+        missing_parent_index = 1
+        while missing_parent_index <= nmissing_parents do
+          local parent_branch_index = branch_indexes[missing_parents[missing_parent_index]]
           branch_out[parent_branch_index] = '  '
           branch_hashes[parent_branch_index] = nil
-          missing_parents_index = missing_parents_index + 1
+          missing_parent_index = missing_parent_index + 1
         end
 
         -- Resize graph width for removed missing parents
