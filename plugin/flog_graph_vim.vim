@@ -207,6 +207,7 @@ def g:FlogUpdateVimBinGraph(graph: dict<any>): dict<any>
   # Rebuild output/line commits
   while commit_index < ncommits
     var commit = commits[commit_index]
+    var hash = commit.hash
     var len = commit.len
     var suffix_len = commit.suffix_len
 
