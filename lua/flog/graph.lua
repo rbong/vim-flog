@@ -622,7 +622,7 @@ function M.get_graph(
               end
 
               -- Record crossover
-              if is_nvim and nexisting_parents_found + new_parent_index < ncommit_parents then
+              if is_nvim then
                 commit_merge_crossovers[merge_branch_index] = 1
               end
 
