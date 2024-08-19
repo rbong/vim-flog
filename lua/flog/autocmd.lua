@@ -5,6 +5,8 @@ local flog_hl = require("flog/highlight")
 local M = {}
 
 function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
+  local winid = vim.fn.bufwinid(buffer)
+
   -- Create group and clear previous autocmds
   local group = vim.api.nvim_create_augroup("Floggraph", { clear = true })
 
@@ -19,11 +21,11 @@ function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
     -- Create autocmds
     return {
       vim.api.nvim_create_autocmd(
-        { "CursorMoved", "WinResized" },
+        { "WinScrolled", "WinResized" },
         {
-          buffer = buffer,
           callback = hl_cb,
           group = group,
+          pattern = tostring(winid),
         }
       ),
     }
