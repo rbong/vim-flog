@@ -37,16 +37,19 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
   return function (ev)
     -- Update wincol
     if vim.fn.win_getid() == winid then
+      local number_opt = vim.o.number
+      local relativenumber_opt = vim.o.relativenumber
+      vim.o.number = false
+      vim.o.relativenumber = false
       wincol = vim.fn.wincol()
+      vim.o.number = number_opt
+      vim.o.relativenumber = relativenumber_opt
     end
 
     -- Get line/col
     local start_line = vim.fn.line('w0', winid)
     local end_line = vim.fn.line('w$', winid)
-    local start_col = vim.fn.virtcol('.', false, winid) - wincol + 2
-    if vim.o.number or vim.o.relativenumber then
-      start_col = start_col + vim.o.numberwidth
-    end
+    local start_col = wincol
     local end_col = start_col + vim.fn.winwidth(0) - 1
 
     -- Get start/end branch index from screen position/size
