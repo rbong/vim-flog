@@ -29,6 +29,9 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
   local commits = internal_state.commits
   local hl_cache = internal_state.hl_cache
 
+  -- Initialize memoization
+  local memo = {}
+
   return function (ev)
     -- Update wincol
     if vim.fn.win_getid() == winid then
@@ -66,6 +69,13 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
       end
     end
 
+    -- Get start branch memo
+    local branch_memo = memo[start_branch_index]
+    if branch_memo == nil then
+      branch_memo = {}
+      memo[start_branch_index] = branch_memo
+    end
+
     local commit_index
     local commit
     for line = start_line, end_line do
@@ -79,10 +89,26 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
         end
       end
 
-      if not enable_extended_chars and line == commit.line then
-        -- Set highlight groups for commit subject
-        for branch_index = start_branch_index, math.min(commit.format_branch_index, end_branch_index) do
-          if branch_index ~= commit.branch_index then
+      if branch_memo[line] == nil or branch_memo[line] < end_branch_index then
+        branch_memo[line] = end_branch_index
+
+        if not enable_extended_chars and line == commit.line then
+          -- Set highlight groups for commit subject
+          for branch_index = start_branch_index, math.min(commit.format_branch_index, end_branch_index) do
+            if branch_index ~= commit.branch_index then
+              local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
+              vim.api.nvim_buf_add_highlight(
+                buffer,
+                -1,
+                hl_group_names[current_hl[branch_index]],
+                line - 1,
+                col - 1,
+                col)
+            end
+          end
+        elseif line < commit.suffix_line then
+          -- Set highlight groups for commit body
+          for branch_index = start_branch_index, math.min(commit.format_branch_index, end_branch_index) do
             local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
             vim.api.nvim_buf_add_highlight(
               buffer,
@@ -92,97 +118,12 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
               col - 1,
               col)
           end
-        end
-      elseif line < commit.suffix_line then
-        -- Set highlight groups for commit body
-        for branch_index = start_branch_index, math.min(commit.format_branch_index, end_branch_index) do
-          local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
-          vim.api.nvim_buf_add_highlight(
-            buffer,
-            -1,
-            hl_group_names[current_hl[branch_index]],
-            line - 1,
-            col - 1,
-            col)
-        end
-      elseif commit.has_merge and line == commit.suffix_line then
-        -- Set highlight groups for the merge line
+        elseif commit.has_merge and line == commit.suffix_line then
+          -- Set highlight groups for the merge line
 
-        -- Set highlight groups before merge
-        for branch_index = start_branch_index, commit.merge_branch_index - 1 do
-          local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
-          vim.api.nvim_buf_add_highlight(
-            buffer,
-            -1,
-            hl_group_names[current_hl[branch_index]],
-            line - 1,
-            col - 1,
-            col)
-        end
-
-        local merge_col = vim.fn.virtcol2col(winid, line, 2 * commit.merge_branch_index - 1)
-        local end_merge_col = vim.fn.virtcol2col(winid, line, 2 * commit.merge_end_branch_index - 1)
-
-        -- Set highlight groups for merge
-        if commit.moved_parent then
-          local commit_col = vim.fn.virtcol2col(winid, line, 2 * commit.branch_index - 1)
-
-          vim.api.nvim_buf_add_highlight(
-            buffer,
-            -1,
-            hl_group_names[current_hl[commit.branch_index] or commit_hl_cache[commit.branch_index]],
-            line - 1,
-            merge_col - 1,
-            commit_col)
-
-          vim.api.nvim_buf_add_highlight(
-            buffer,
-            -1,
-            hl_group_names[current_hl[commit.merge_end_branch_index] or commit_hl_cache[commit.merge_end_branch_index]],
-            line - 1,
-            commit_col,
-            end_merge_col)
-        else
-          vim.api.nvim_buf_add_highlight(
-            buffer,
-            -1,
-            hl_group_names[current_hl[commit.branch_index] or commit_hl_cache[commit.branch_index]],
-            line - 1,
-            merge_col - 1,
-            end_merge_col)
-        end
-
-        -- Set highlight groups for branch crossovers
-        for branch_index, _ in pairs(commit.merge_crossovers) do
-          local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
-          local hl = current_hl[branch_index]
-          if hl ~= nil then
-            vim.api.nvim_buf_add_highlight(
-              buffer,
-              -1,
-              hl_group_names[hl],
-              line - 1,
-              col - 1,
-              col)
-          end
-        end
-
-        -- Set highlight groups for post-merge
-        for branch_index = math.max(commit.merge_end_branch_index, start_branch_index), math.min(commit.suffix_graph_width, end_branch_index) do
-          local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
-          vim.api.nvim_buf_add_highlight(
-            buffer,
-            -1,
-            hl_group_names[current_hl[branch_index]],
-            line - 1,
-            col - 1,
-            col)
-        end
-      else
-        -- Set highlight groups for the rest of the commit suffix
-        for branch_index = start_branch_index, math.min(commit.suffix_graph_width, end_branch_index) do
-          local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
-          if col > 0 then
+          -- Set highlight groups before merge
+          for branch_index = start_branch_index, commit.merge_branch_index - 1 do
+            local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
             vim.api.nvim_buf_add_highlight(
               buffer,
               -1,
@@ -190,6 +131,79 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
               line - 1,
               col - 1,
               col)
+          end
+
+          local merge_col = vim.fn.virtcol2col(winid, line, 2 * commit.merge_branch_index - 1)
+          local end_merge_col = vim.fn.virtcol2col(winid, line, 2 * commit.merge_end_branch_index - 1)
+
+          -- Set highlight groups for merge
+          if commit.moved_parent then
+            local commit_col = vim.fn.virtcol2col(winid, line, 2 * commit.branch_index - 1)
+
+            vim.api.nvim_buf_add_highlight(
+              buffer,
+              -1,
+              hl_group_names[current_hl[commit.branch_index] or commit_hl_cache[commit.branch_index]],
+              line - 1,
+              merge_col - 1,
+              commit_col)
+
+            vim.api.nvim_buf_add_highlight(
+              buffer,
+              -1,
+              hl_group_names[current_hl[commit.merge_end_branch_index] or commit_hl_cache[commit.merge_end_branch_index]],
+              line - 1,
+              commit_col,
+              end_merge_col)
+          else
+            vim.api.nvim_buf_add_highlight(
+              buffer,
+              -1,
+              hl_group_names[current_hl[commit.branch_index] or commit_hl_cache[commit.branch_index]],
+              line - 1,
+              merge_col - 1,
+              end_merge_col)
+          end
+
+          -- Set highlight groups for branch crossovers
+          for branch_index, _ in pairs(commit.merge_crossovers) do
+            local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
+            local hl = current_hl[branch_index]
+            if hl ~= nil then
+              vim.api.nvim_buf_add_highlight(
+                buffer,
+                -1,
+                hl_group_names[hl],
+                line - 1,
+                col - 1,
+                col)
+            end
+          end
+
+          -- Set highlight groups for post-merge
+          for branch_index = math.max(commit.merge_end_branch_index, start_branch_index), math.min(commit.suffix_graph_width, end_branch_index) do
+            local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
+            vim.api.nvim_buf_add_highlight(
+              buffer,
+              -1,
+              hl_group_names[current_hl[branch_index]],
+              line - 1,
+              col - 1,
+              col)
+          end
+        else
+          -- Set highlight groups for the rest of the commit suffix
+          for branch_index = start_branch_index, math.min(commit.suffix_graph_width, end_branch_index) do
+            local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
+            if col > 0 then
+              vim.api.nvim_buf_add_highlight(
+                buffer,
+                -1,
+                hl_group_names[current_hl[branch_index]],
+                line - 1,
+                col - 1,
+                col)
+            end
           end
         end
       end
