@@ -18,6 +18,7 @@ local hl_group_names = {
 
 function M.nvim_get_graph_hl_callback(buffer, instance_number)
   local winid = vim.fn.bufwinid(buffer)
+  local wincol = vim.fn.wincol()
 
   -- Read options
   local enable_extended_chars = vim.g.flog_enable_extended_chars and vim.g.flog_enable_extended_chars ~= 0
@@ -29,10 +30,15 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
   local hl_cache = internal_state.hl_cache
 
   return function (ev)
+    -- Update wincol
+    if vim.fn.win_getid() == winid then
+      wincol = vim.fn.wincol()
+    end
+
     -- Get line/col
-    local start_line = vim.fn.line('w0')
-    local end_line = vim.fn.line('w$')
-    local start_col = vim.fn.virtcol('.') - vim.fn.wincol() + 2
+    local start_line = vim.fn.line('w0', winid)
+    local end_line = vim.fn.line('w$', winid)
+    local start_col = vim.fn.virtcol('.', false, winid) - wincol + 2
     if vim.o.number or vim.o.relativenumber then
       start_col = start_col + vim.o.numberwidth
     end
