@@ -32,6 +32,7 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
   -- Initialize memoization
   local line_memos = {}
   local branch_memos = {}
+  local merge_memo = {}
 
   return function (ev)
     -- Update wincol
@@ -97,7 +98,7 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
         local branch_memo = branch_memos[line]
         if branch_memo == nil then
           branch_memo = {}
-          branch_memo[line] = branch_memo
+          branch_memos[line] = branch_memo
         end
 
         if not enable_extended_chars and line == commit.line then
@@ -148,50 +149,53 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
             end
           end
 
-          local merge_col = vim.fn.virtcol2col(winid, line, 2 * commit.merge_branch_index - 1)
-          local end_merge_col = vim.fn.virtcol2col(winid, line, 2 * commit.merge_end_branch_index - 1)
+          if merge_memo[line] == nil then
+            merge_memo[line] = 1
+            local merge_col = vim.fn.virtcol2col(winid, line, 2 * commit.merge_branch_index - 1)
+            local end_merge_col = vim.fn.virtcol2col(winid, line, 2 * commit.merge_end_branch_index - 1)
 
-          -- Set highlight groups for merge
-          if commit.moved_parent then
-            local commit_col = vim.fn.virtcol2col(winid, line, 2 * commit.branch_index - 1)
+            -- Set highlight groups for merge
+            if commit.moved_parent then
+              local commit_col = vim.fn.virtcol2col(winid, line, 2 * commit.branch_index - 1)
 
-            vim.api.nvim_buf_add_highlight(
-              buffer,
-              -1,
-              hl_group_names[current_hl[commit.branch_index] or commit_hl_cache[commit.branch_index]],
-              line - 1,
-              merge_col - 1,
-              commit_col)
-
-            vim.api.nvim_buf_add_highlight(
-              buffer,
-              -1,
-              hl_group_names[current_hl[commit.merge_end_branch_index] or commit_hl_cache[commit.merge_end_branch_index]],
-              line - 1,
-              commit_col,
-              end_merge_col)
-          else
-            vim.api.nvim_buf_add_highlight(
-              buffer,
-              -1,
-              hl_group_names[current_hl[commit.branch_index] or commit_hl_cache[commit.branch_index]],
-              line - 1,
-              merge_col - 1,
-              end_merge_col)
-          end
-
-          -- Set highlight groups for branch crossovers
-          for branch_index, _ in pairs(commit.merge_crossovers) do
-            local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
-            local hl = current_hl[branch_index]
-            if hl ~= nil then
               vim.api.nvim_buf_add_highlight(
                 buffer,
                 -1,
-                hl_group_names[hl],
+                hl_group_names[current_hl[commit.branch_index] or commit_hl_cache[commit.branch_index]],
                 line - 1,
-                col - 1,
-                col)
+                merge_col - 1,
+                commit_col)
+
+              vim.api.nvim_buf_add_highlight(
+                buffer,
+                -1,
+                hl_group_names[current_hl[commit.merge_end_branch_index] or commit_hl_cache[commit.merge_end_branch_index]],
+                line - 1,
+                commit_col,
+                end_merge_col)
+            else
+              vim.api.nvim_buf_add_highlight(
+                buffer,
+                -1,
+                hl_group_names[current_hl[commit.branch_index] or commit_hl_cache[commit.branch_index]],
+                line - 1,
+                merge_col - 1,
+                end_merge_col)
+            end
+
+            -- Set highlight groups for branch crossovers
+            for branch_index, _ in pairs(commit.merge_crossovers) do
+              local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
+              local hl = current_hl[branch_index]
+              if hl ~= nil then
+                vim.api.nvim_buf_add_highlight(
+                  buffer,
+                  -1,
+                  hl_group_names[hl],
+                  line - 1,
+                  col - 1,
+                  col)
+              end
             end
           end
 
