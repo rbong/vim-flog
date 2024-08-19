@@ -339,12 +339,15 @@ def g:FlogUpdateVimInternalGraph(graph: dict<any>): dict<any>
   exec 'luafile ' .. fnameescape(graph_lib)
 
   # Set temporary vars
+  g:flog_tmp_instance_number = state.instance_number
   g:flog_tmp_default_collapsed = state.opts.default_collapsed
   g:flog_tmp_graph = graph
   g:flog_tmp_collapsed_commits = state.collapsed_commits
 
   # Build command
   var cmd = 'flog_update_graph('
+  # instance_number
+  cmd ..= 'vim.eval("g:flog_tmp_instance_number"), '
   # is_nvim
   cmd ..= 'false, '
   # default_collapsed

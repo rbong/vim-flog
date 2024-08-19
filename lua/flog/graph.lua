@@ -105,10 +105,20 @@ function M.get_graph(
   end
 
   -- Init internal state
-  local internal_state
+  local internal_commits
+  local current_hl
+  local hl_cache
+  local next_commit_hl
   if is_nvim then
-    internal_state = { commits = {} }
-    internal_state_store[instance_number] = internal_state
+    internal_commits = {}
+    current_hl = {}
+    hl_cache = {}
+    next_commit_hl = {}
+    internal_state_store[instance_number] = {
+      commits = internal_commits,
+      line_commits = vim_line_commits,
+      hl_cache = hl_cache,
+    }
   end
 
   -- Run command
@@ -177,6 +187,7 @@ function M.get_graph(
   local branch_indexes = {}
   local branch_out = {}
   local graph_width = 0
+  local max_graph_width = 0
 
   -- Draw graph
 
@@ -195,9 +206,10 @@ function M.get_graph(
     -- Init output data
 
     local commit_branch_index
+    local commit_graph_width
     local commit_merge_branch_index
     local commit_merge_end_branch_index
-    local commit_graph_width
+    local commit_suffix_graph_width = graph_width
 
     local commit_col
     local commit_format_col
@@ -221,8 +233,11 @@ function M.get_graph(
     end
 
     -- Internal state
+    local commit_hl = next_commit_hl
     local commit_merge_crossovers
     if is_nvim then
+      commit_hl = next_commit_hl
+      next_commit_hl = {}
       commit_merge_crossovers = {}
     end
 
@@ -286,6 +301,18 @@ function M.get_graph(
       -- Get graph width of commit
       if commit_branch_index > graph_width then
         commit_graph_width = commit_branch_index
+
+        -- Update max graph width
+        if commit_graph_width > max_graph_width then
+          max_graph_width = commit_graph_width
+
+          -- Set default branch highlighting
+          if is_nvim then
+            local hl = (max_graph_width - 1) % 9 + 1
+            commit_hl[max_graph_width] = hl
+            current_hl[max_graph_width] = hl
+          end
+        end
       else
         commit_graph_width = graph_width
       end
@@ -321,8 +348,8 @@ function M.get_graph(
     end
 
     -- Calculate commit column
-    commit_col = 1 + 2 * (commit_branch_index - 1)
-    commit_format_col = 1 + 2 * commit_graph_width
+    commit_col = 2 * commit_branch_index - 1
+    commit_format_col = 2 * commit_graph_width + 1
 
     -- Output subsequent graph lines
 
@@ -415,7 +442,7 @@ function M.get_graph(
             end
 
             -- Record crossover
-            if is_nvim and merge_out_index > 1 then
+            if is_nvim then
               commit_merge_crossovers[merge_branch_index] = 1
             end
 
@@ -454,6 +481,18 @@ function M.get_graph(
           -- Update graph width
           if merge_branch_index > graph_width then
             graph_width = merge_branch_index
+
+            -- Update max graph width
+            if graph_width > max_graph_width then
+              max_graph_width = graph_width
+
+              -- Set default branch highlighting
+              if is_nvim then
+                local hl = (max_graph_width - 1) % 9 + 1
+                commit_hl[max_graph_width] = hl
+                current_hl[max_graph_width] = hl
+              end
+            end
           end
 
           -- Record visual parent
@@ -528,6 +567,18 @@ function M.get_graph(
                 -- Update graph width
                 if merge_branch_index > graph_width then
                   graph_width = merge_branch_index
+
+                  -- Update max graph width
+                  if graph_width > max_graph_width then
+                    max_graph_width = graph_width
+
+                    -- Set default branch highlighting
+                    if is_nvim then
+                      local hl = (max_graph_width - 1) % 9 + 1
+                      commit_hl[max_graph_width] = hl
+                      current_hl[max_graph_width] = hl
+                    end
+                  end
                 end
 
                 -- Record visual parent
@@ -596,8 +647,9 @@ function M.get_graph(
             end
           end
 
-          -- Store merge end branch
+          -- Store merge end details
           commit_merge_end_branch_index = merge_branch_index
+          commit_suffix_graph_width = graph_width
 
           -- Build merge line
           merge_line = (
@@ -617,6 +669,22 @@ function M.get_graph(
             -- Resize graph width after moving parent under commit
             while graph_width > 0 and branch_hashes[graph_width] == nil do
               graph_width = graph_width - 1
+            end
+          end
+
+          -- Update moved commit branch highlighting
+          if is_nvim and ncommit_parents == 1 and ncommit_new_parents == 1 then
+            local parent_branch_index = branch_indexes[commit_new_parents[1]]
+            local new_parent_hl = current_hl[commit_branch_index]
+            if new_parent_hl ~= current_hl[parent_branch_index] then
+              commit_hl[parent_branch_index] = new_parent_hl
+              current_hl[parent_branch_index] = new_parent_hl
+            end
+
+            local new_commit_hl = (commit_branch_index - 1) % 9 + 1
+            if new_commit_hl ~= current_hl[commit_branch_index] then
+              commit_hl[commit_branch_index] = new_commit_hl
+              current_hl[commit_branch_index] = new_commit_hl
             end
           end
         end
@@ -680,15 +748,29 @@ function M.get_graph(
       vim_commit.line = out_line
       vim_commit.col = commit_col
       vim_commit.format_col = commit_format_col
-      vim_commit.moved_parent = should_move_last_parent_under_commit
       vim_commit.len = ncommit_lines
 
       -- Set internal state
       if is_nvim then
-        internal_state.commits[commit_index] = {
-          merge_crossovers = commit_merge_crossovers,
+        local commit_suffix_line
+        if ncommit_lines > 1 and commit_collapsed and commit_collapsed ~= 0 then
+          commit_suffix_line = out_line + 2
+        else
+          commit_suffix_line = out_line + ncommit_lines
+        end
+
+        internal_commits[commit_index] = {
+          line = out_line,
+          branch_index = commit_branch_index,
+          format_branch_index = commit_graph_width,
+          suffix_line = commit_suffix_line,
+          has_merge = should_out_merge_line,
           merge_branch_index = commit_merge_branch_index,
           merge_end_branch_index = commit_merge_end_branch_index,
+          suffix_graph_width = commit_suffix_graph_width,
+          merge_crossovers = commit_merge_crossovers,
+          moved_parent = should_move_last_parent_under_commit,
+          hl = commit_hl,
         }
       end
 
@@ -818,6 +900,42 @@ function M.get_graph(
         print(table.concat(branch_out, '', 1, graph_width))
       end
     end
+
+    -- Update branch highlighting after output
+    if is_nvim then
+      -- Update branch highlight cache
+
+      -- Update cache every 100 commits for fast index lookup
+      if (commit_index - 1) % 100 == 0 then
+        local commit_hl_cache = {}
+        for branch_index = 1, max_graph_width do
+          commit_hl_cache[branch_index] = current_hl[branch_index]
+        end
+        hl_cache[commit_index] = commit_hl_cache
+      end
+
+      -- Reset branch highlighting
+
+      -- Reset branch highlighting for ending commit branch
+      if branch_hashes[commit_branch_index] == nil then
+        local new_hl = (commit_branch_index - 1) % 9 + 1
+        if new_hl ~= current_hl[commit_branch_index] then
+          next_commit_hl[commit_branch_index] = new_hl
+          current_hl[commit_branch_index] = new_hl
+        end
+      end
+
+      -- Reset branch highlighting for removed missing branches
+      for missing_parent_index = 1, nmissing_parents do
+        local branch_index = branch_indexes[missing_parents[missing_parent_index]]
+        local new_hl = (branch_index - 1) % 9 + 1
+
+        if new_hl ~= current_hl[branch_index] then
+          next_commit_hl[branch_index] = new_hl
+          current_hl[branch_index] = new_hl
+        end
+      end
+    end
   end
 
   if is_vimlike then
@@ -837,6 +955,7 @@ function M.get_graph(
 end
 
 function M.update_graph(
+    instance_number,
     is_nvim,
     default_collapsed,
     graph,
@@ -867,9 +986,28 @@ function M.update_graph(
     local hash = commit.hash
     local len = commit.len
     local suffix_len = commit.suffix_len
+    local collapsed = collapsed_commits[hash]
+    if collapsed == nil then
+      collapsed = default_collapsed
+    end
 
-    -- Update line position
+
+    -- Update commit
     commit.line = out_line
+
+    -- Update internal state
+    if is_nvim then
+      local commit_suffix_line
+      if len > 1 and collapsed and collapsed ~= 0 then
+        commit_suffix_line = out_line + 2
+      else
+        commit_suffix_line = out_line + len
+      end
+
+      local internal_commit = internal_state_store[instance_number].commits[commit_index]
+      internal_commit.line = out_line
+      internal_commit.suffix_line = commit_suffix_line
+    end
 
     -- Add subject
     vim_out[out_line] = commit.subject
@@ -877,12 +1015,6 @@ function M.update_graph(
     out_line = out_line + 1
 
     if len > 1 then
-      local collapsed = collapsed_commits[hash]
-
-      if collapsed == nil then
-        collapsed = default_collapsed
-      end
-
       if collapsed and collapsed ~= 0 then
         -- Add collapsed body
         vim_out[out_line] = commit.collapsed_body

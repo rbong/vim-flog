@@ -6,8 +6,6 @@ let b:current_syntax = 'floggraph'
 
 runtime! syntax/diff.vim
 
-syntax match flogLineStart nextgroup=@flogBranch1,@flogCommitInfo,flogCollapsedCommit,@flogDiff /^/
-
 " Commit highlighting
 
 syntax cluster flogCommitInfo contains=flogHash,flogAuthor,flogRef,flogDate
@@ -116,72 +114,79 @@ highlight default link flogDiffRemoved   diffRemoved
 
 " Graph highlighting
 
-" Cluster all branch 1 groups
-syntax cluster flogBranch1 contains=flogBranch1,flogBranch1Commit,flogBranch1MergeStart,flogBranch1MissingParentsStart
+if has('nvim')
+  syntax match flogBranches nextgroup=@flogCommitInfo,flogCollapsedCommit,@flogDiff /\v^%(%u2022|%u2500|%u2502|%u250a|%u251c|%u2524|%u252c|%u2534|%u253c|%u256d|%u256e|%u256f|%u2570|%uf5d0|%uf5d1|%uf5d4|%uf5d6|%uf5d7|%uf5d8|%uf5d9|%uf5da|%uf5db|%uf5dd|%uf5de|%uf5e0|%uf5e1|%uf5e5|%uf5e6|%uf5ea|%uf5ef|%uf5f6|%uf5f7|%uf5f9|%uf5fa|%uf5fb| )*/
+else
+  " Start of line, lead into branches or commit body
+  syntax match flogLineStart nextgroup=@flogBranch1,@flogCommitInfo,flogCollapsedCommit,@flogDiff /^/
 
-" Dynamically generate highlight groups for branches
-for branch_idx in range(1, 9)
-  let branch = 'flogBranch' . branch_idx
-  let merge = 'flogMerge' . branch_idx
-  let next_branch_idx = branch_idx % 9 + 1
-  let next_branch = 'flogBranch' . next_branch_idx
-  let next_merge_branch = 'flogMerge' . branch_idx . 'Branch' . next_branch_idx
+  " Cluster all branch 1 groups
+  syntax cluster flogBranch1 contains=flogBranch1,flogBranch1Commit,flogBranch1MergeStart,flogBranch1MissingParentsStart
 
-  " Support both flogGraphBranch* and flogBranch
-  exec 'highlight link flogGraphBranch' . branch_idx . ' ' . branch
-
-  " Branches at the start of the line - leads into other groups
-  exec 'syntax match ' . branch . ' contained nextgroup=' . next_branch . ',' . next_branch . 'Commit,' . next_branch . 'MergeStart,' . next_branch . 'MissingParentsStart,flogCollapsedCommit,@flogDiff /\v  |%u2502 |%u2502$|%uf5d1 |%uf5d1$/'
-
-  " Commit indicators
-  exec 'syntax match ' . branch . 'Commit contained nextgroup=' . next_branch . 'AfterCommit,@flogCommitInfo /\v(%u2022|%uf5ef|%uf5f6|%uf5f7|%uf5f9|%uf5fa|%uf5fb) /'
-  if g:flog_enable_extended_chars
-    exec 'highlight link ' . branch . 'Commit ' . branch
-  else
-    exec 'highlight link ' . branch . 'Commit flogCommit'
-  endif
-
-  " Branches to the right of the commit indicator
-  exec 'syntax match ' . branch . 'AfterCommit contained nextgroup=' . next_branch . 'AfterCommit,@flogCommitInfo /\v  |%u2502 |%u2502$|%uf5d1 |%uf5d1$/'
-  exec 'highlight link ' . branch . 'AfterCommit ' . branch
-
-  " Start of a merge - saves the branch that the merge starts on (see below)
-  exec 'syntax match ' . branch . 'MergeStart contained nextgroup=' . next_merge_branch . ' /\v%u251c|%u256d|%u2570|%uf5da|%uf5db|%uf5d6|%uf5d8/'
-  exec 'highlight link ' . branch . 'MergeStart ' . branch
-
-  " Horizontal line inside of a merge
-  exec 'syntax match ' . merge . 'Horizontal contained /\v%u2500|%uf5d0/'
-  exec 'highlight link ' . merge . 'Horizontal ' . branch
-
-  " Branches to the right of a merge
-  exec 'syntax match ' . branch . 'AfterMerge contained nextgroup=' . next_branch . 'AfterMerge / ./'
-  exec 'highlight link ' . branch . 'AfterMerge ' . branch
-
-  " Start of missing parents line
-  exec 'syntax match ' . branch . 'MissingParentsStart contained nextgroup=' . next_branch . 'MissingParents /\v%u250a |%uf5d4 /'
-  exec 'highlight link ' . branch . 'MissingParentsStart ' . branch
-
-  " Branches to right of missing parents start
-  exec 'syntax match ' . branch . 'MissingParents contained nextgroup=' . next_branch . 'MissingParents /\v..|.$/'
-  exec 'highlight link ' . branch . 'MissingParents ' . branch
-endfor
-
-" Dynamically generate highlight groups for merges
-for merge_idx in range(1, 9)
-  let merge = 'flogMerge' . merge_idx
-
+  " Dynamically generate highlight groups for branches
   for branch_idx in range(1, 9)
     let branch = 'flogBranch' . branch_idx
-    let merge_branch = merge . 'Branch' . branch_idx
+    let merge = 'flogMerge' . branch_idx
     let next_branch_idx = branch_idx % 9 + 1
     let next_branch = 'flogBranch' . next_branch_idx
-    let next_merge_branch = merge . 'Branch' . next_branch_idx
+    let next_merge_branch = 'flogMerge' . branch_idx . 'Branch' . next_branch_idx
 
-    " Merge branches
-    exec 'syntax match ' . merge_branch . ' contained contains=' . merge . 'Horizontal nextgroup=' . next_merge_branch . ',' . next_branch . 'AfterMerge /\v%u2500.|%uf5d0./'
-    exec 'highlight link ' . merge_branch . ' ' . branch
+    " Support both flogGraphBranch* and flogBranch
+    exec 'highlight link flogGraphBranch' . branch_idx . ' ' . branch
+
+    " Branches at the start of the line - leads into other groups
+    exec 'syntax match ' . branch . ' contained nextgroup=' . next_branch . ',' . next_branch . 'Commit,' . next_branch . 'MergeStart,' . next_branch . 'MissingParentsStart,flogCollapsedCommit,@flogDiff /\v  |%u2502 |%u2502$|%uf5d1 |%uf5d1$/'
+
+    " Commit indicators
+    exec 'syntax match ' . branch . 'Commit contained nextgroup=' . next_branch . 'AfterCommit,@flogCommitInfo /\v(%u2022|%uf5ef|%uf5f6|%uf5f7|%uf5f9|%uf5fa|%uf5fb) /'
+    if g:flog_enable_extended_chars
+      exec 'highlight link ' . branch . 'Commit ' . branch
+    else
+      exec 'highlight link ' . branch . 'Commit flogCommit'
+    endif
+
+    " Branches to the right of the commit indicator
+    exec 'syntax match ' . branch . 'AfterCommit contained nextgroup=' . next_branch . 'AfterCommit,@flogCommitInfo /\v  |%u2502 |%u2502$|%uf5d1 |%uf5d1$/'
+    exec 'highlight link ' . branch . 'AfterCommit ' . branch
+
+    " Start of a merge - saves the branch that the merge starts on (see below)
+    exec 'syntax match ' . branch . 'MergeStart contained nextgroup=' . next_merge_branch . ' /\v%u251c|%u256d|%u2570|%uf5da|%uf5db|%uf5d6|%uf5d8/'
+    exec 'highlight link ' . branch . 'MergeStart ' . branch
+
+    " Horizontal line inside of a merge
+    exec 'syntax match ' . merge . 'Horizontal contained /\v%u2500|%uf5d0/'
+    exec 'highlight link ' . merge . 'Horizontal ' . branch
+
+    " Branches to the right of a merge
+    exec 'syntax match ' . branch . 'AfterMerge contained nextgroup=' . next_branch . 'AfterMerge / ./'
+    exec 'highlight link ' . branch . 'AfterMerge ' . branch
+
+    " Start of missing parents line
+    exec 'syntax match ' . branch . 'MissingParentsStart contained nextgroup=' . next_branch . 'MissingParents /\v%u250a |%uf5d4 /'
+    exec 'highlight link ' . branch . 'MissingParentsStart ' . branch
+
+    " Branches to right of missing parents start
+    exec 'syntax match ' . branch . 'MissingParents contained nextgroup=' . next_branch . 'MissingParents /\v..|.$/'
+    exec 'highlight link ' . branch . 'MissingParents ' . branch
   endfor
-endfor
+
+  " Dynamically generate highlight groups for merges
+  for merge_idx in range(1, 9)
+    let merge = 'flogMerge' . merge_idx
+
+    for branch_idx in range(1, 9)
+      let branch = 'flogBranch' . branch_idx
+      let merge_branch = merge . 'Branch' . branch_idx
+      let next_branch_idx = branch_idx % 9 + 1
+      let next_branch = 'flogBranch' . next_branch_idx
+      let next_merge_branch = merge . 'Branch' . next_branch_idx
+
+      " Merge branches
+      exec 'syntax match ' . merge_branch . ' contained contains=' . merge . 'Horizontal nextgroup=' . next_merge_branch . ',' . next_branch . 'AfterMerge /\v%u2500.|%uf5d0./'
+      exec 'highlight link ' . merge_branch . ' ' . branch
+    endfor
+  endfor
+endif
 
 if &background ==# 'dark'
   highlight default flogBranch1 ctermfg=magenta guifg=green1

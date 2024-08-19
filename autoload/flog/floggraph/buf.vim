@@ -162,6 +162,14 @@ function! flog#floggraph#buf#Update() abort
   " Set buffer name
   silent! exec 'file ' . flog#floggraph#buf#GetName(l:state.instance_number, l:opts)
 
+  " Initialize Neovim autocommands
+  if has('nvim')
+    call v:lua.require('flog/autocmd').nvim_create_graph_autocmds(
+          \ l:state.graph_bufnr,
+          \ l:state.instance_number,
+          \ l:state.opts.graph)
+  endif
+
   " Execute user autocommands
   if exists('#User#FlogUpdate')
     doautocmd User FlogUpdate
@@ -193,6 +201,14 @@ function! flog#floggraph#buf#Redraw() abort
 
   " Restore commit position
   call flog#floggraph#commit#RestorePosition(l:graph_win, l:last_commit)
+
+  " Initialize Neovim autocommands
+  if has('nvim')
+    call v:lua.require('flog/autocmd').nvim_create_graph_autocmds(
+          \ l:state.graph_bufnr,
+          \ l:state.instance_number,
+          \ l:state.opts.graph)
+  endif
 
   return l:state.graph_bufnr
 endfunction
