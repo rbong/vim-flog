@@ -106,7 +106,7 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
 
         if not enable_extended_chars and line == commit.line then
           -- Set highlight groups for commit subject
-          for branch_index = start_branch_index, math.min(commit.format_branch_index, end_branch_index) do
+          for branch_index = start_branch_index, math.min(commit.format_branch_index - 1, end_branch_index) do
             if branch_index ~= commit.branch_index and branch_memo[branch_index] == nil then
               branch_memo[branch_index] = 1
               local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
@@ -121,7 +121,7 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
           end
         elseif line < commit.suffix_line then
           -- Set highlight groups for commit body
-          for branch_index = start_branch_index, math.min(commit.format_branch_index, end_branch_index) do
+          for branch_index = start_branch_index, math.min(commit.format_branch_index - 1, end_branch_index) do
             if branch_memo[branch_index] == nil then
               branch_memo[branch_index] = 1
               local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)

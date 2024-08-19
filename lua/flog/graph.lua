@@ -764,7 +764,7 @@ function M.get_graph(
         internal_commits[commit_index] = {
           line = out_line,
           branch_index = commit_branch_index,
-          format_branch_index = commit_graph_width,
+          format_branch_index = commit_graph_width + 1,
           suffix_line = commit_suffix_line,
           has_merge = should_out_merge_line,
           merge_branch_index = commit_merge_branch_index,
