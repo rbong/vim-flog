@@ -24,6 +24,7 @@ function! flog#graph#nvim#Update(graph) abort
   let l:state = flog#state#GetBufState()
 
   return v:lua.require('flog/graph').update_graph(
+        \ l:state.instance_number,
         \ v:true,
         \ l:state.opts.default_collapsed ? v:true : v:false,
         \ a:graph,
