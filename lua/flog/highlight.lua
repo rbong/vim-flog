@@ -162,7 +162,7 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
         end
 
         -- Set highlight groups for post-merge
-        for branch_index = commit.merge_end_branch_index, math.min(commit.suffix_graph_width, end_branch_index) do
+        for branch_index = math.max(commit.merge_end_branch_index, start_branch_index), math.min(commit.suffix_graph_width, end_branch_index) do
           local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
           vim.api.nvim_buf_add_highlight(
             buffer,
