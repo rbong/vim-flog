@@ -74,6 +74,9 @@ function! flog#floggraph#side_win#Open(cmd, keep_focus, is_tmp) abort
 
     if a:is_tmp
       call flog#floggraph#side_win#CloseTmp()
+      if !&equalalways
+        wincmd =
+      endif
     endif
 
     for l:win_id in l:new_win_ids
