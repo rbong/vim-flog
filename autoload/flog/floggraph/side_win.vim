@@ -90,7 +90,7 @@ function! flog#floggraph#side_win#Open(cmd, keep_focus, is_tmp) abort
       " they *would* be if temp windows were closed first, but this is a hard
       " problem
       if !&equalalways
-        wincmd =
+        tabdo wincmd =
         call flog#win#UnlockSavedSizes(l:saved_sizes)
       endif
     endif
