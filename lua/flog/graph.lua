@@ -28,7 +28,6 @@ function M.get_graph(
   -- Init graph strings
   local branch_str = '│ '
   local horizontal_str = '──'
-  local branch_horizontal_str = '│─'
   local branch_fade_str = '┊ '
   local upper_left_corner_str = '╯ '
   local upper_right_corner_str = '╰─'
@@ -56,7 +55,6 @@ function M.get_graph(
   if enable_extended_chars then
     branch_str = ' '
     horizontal_str = ''
-    branch_horizontal_str = ''
     branch_fade_str = ' '
     upper_left_corner_str = ' '
     upper_right_corner_str = ''
@@ -452,13 +450,8 @@ function M.get_graph(
           else
             -- Handle unrelated branch
 
-            -- Record crossover
-            if is_nvim then
-              commit_merge_crossovers[merge_branch_index] = 1
-            end
-
             -- Draw unrelated branch
-            merge_out[merge_out_index] = branch_horizontal_str
+            merge_out[merge_out_index] = horizontal_str
           end
 
           merge_branch_index = merge_branch_index + 1
@@ -640,13 +633,8 @@ function M.get_graph(
             else
               -- Handle unrelated branch
 
-              -- Record crossover
-              if is_nvim then
-                commit_merge_crossovers[merge_branch_index] = 1
-              end
-
               -- Draw unrelated branch
-              merge_out[merge_out_index] = branch_horizontal_str
+              merge_out[merge_out_index] = horizontal_str
             end
           end
 
