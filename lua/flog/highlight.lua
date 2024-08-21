@@ -18,7 +18,15 @@ local hl_group_names = {
 
 function M.nvim_get_graph_hl_callback(buffer, instance_number)
   local winid = vim.fn.bufwinid(buffer)
+
+  -- Get initial wincol
+  local number_opt = vim.o.number
+  local relativenumber_opt = vim.o.relativenumber
+  vim.o.number = false
+  vim.o.relativenumber = false
   local wincol = vim.fn.wincol()
+  vim.o.number = number_opt
+  vim.o.relativenumber = relativenumber_opt
 
   -- Read options
   local enable_extended_chars = vim.g.flog_enable_extended_chars and vim.g.flog_enable_extended_chars ~= 0
@@ -37,8 +45,8 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
   return function (ev)
     -- Update wincol
     if vim.fn.win_getid() == winid then
-      local number_opt = vim.o.number
-      local relativenumber_opt = vim.o.relativenumber
+      number_opt = vim.o.number
+      relativenumber_opt = vim.o.relativenumber
       vim.o.number = false
       vim.o.relativenumber = false
       wincol = vim.fn.wincol()
