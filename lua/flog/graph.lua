@@ -403,7 +403,6 @@ function M.get_graph(
               -- Update graph width
               if merge_branch_index > graph_width then
                 graph_width = merge_branch_index
-                commit_suffix_graph_width = merge_branch_index
               end
 
               -- Set new branch highlighting
@@ -494,7 +493,6 @@ function M.get_graph(
           -- Update graph width
           if merge_branch_index > graph_width then
             graph_width = merge_branch_index
-            commit_suffix_graph_width = merge_branch_index
           end
 
           -- Record visual parent
@@ -569,9 +567,6 @@ function M.get_graph(
                 -- Update graph width
                 if merge_branch_index > graph_width then
                   graph_width = merge_branch_index
-                  commit_suffix_graph_width = merge_branch_index
-
-                  -- Update max graph width
                   if graph_width > max_graph_width then
                     max_graph_width = graph_width
                   end
@@ -656,6 +651,7 @@ function M.get_graph(
 
           -- Store merge end details
           commit_merge_end_branch_index = merge_branch_index
+          commit_suffix_graph_width = math.max(commit_merge_end_branch_index, graph_width)
 
           -- Build merge line
           merge_line = (
@@ -688,6 +684,10 @@ function M.get_graph(
             end
           end
         end
+      end
+
+      if not should_out_merge_line then
+        commit_suffix_graph_width = graph_width
       end
 
       if nmissing_parents > 0 then
