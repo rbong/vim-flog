@@ -308,7 +308,7 @@ function M.get_graph(
           if is_nvim then
             local hl = 1
             if max_graph_width > 1 then
-              hl = current_hl[max_graph_width - 1] % 9 + 1
+              hl = current_hl[max_graph_width - 1] % 8 + 1
             end
             commit_hl[max_graph_width] = hl
             current_hl[max_graph_width] = hl
@@ -412,9 +412,9 @@ function M.get_graph(
                 local right_hl = current_hl[merge_branch_index + 1]
                 local merge_hl = current_hl[commit_branch_index]
 
-                local hl = (above_hl or left_hl or right_hl or merge_hl) % 9 + 1
+                local hl = (above_hl or left_hl or right_hl or merge_hl) % 8 + 1
                 while hl == left_hl or hl == right_hl or hl == merge_hl or hl == above_hl do
-                  hl = hl % 9 + 1
+                  hl = hl % 8 + 1
                 end
 
                 commit_hl[merge_branch_index] = hl
@@ -579,9 +579,9 @@ function M.get_graph(
                   local right_hl = current_hl[merge_branch_index + 1]
                   local merge_hl = current_hl[commit_branch_index]
 
-                  local hl = (above_hl or left_hl or right_hl or merge_hl) % 9 + 1
+                  local hl = (above_hl or left_hl or right_hl or merge_hl) % 8 + 1
                   while hl == left_hl or hl == right_hl or hl == merge_hl or hl == above_hl do
-                    hl = hl % 9 + 1
+                    hl = hl % 8 + 1
                   end
 
                   commit_hl[merge_branch_index] = hl
