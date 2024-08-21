@@ -674,7 +674,7 @@ function M.get_graph(
             end
           end
 
-          -- Update moved commit branch highlighting
+          -- Update commit branch highlighting to parent branch
           if is_nvim and ncommit_parents == 1 and ncommit_new_parents == 1 then
             local parent_branch_index = branch_indexes[commit_new_parents[1]]
             local new_parent_hl = current_hl[commit_branch_index]
@@ -918,6 +918,15 @@ function M.get_graph(
         if new_hl ~= current_hl[commit_branch_index] then
           next_commit_hl[commit_branch_index] = new_hl
           current_hl[commit_branch_index] = new_hl
+        end
+      end
+
+      -- Reset branch highlighting for moved parent branch
+      if should_move_last_parent_under_commit then
+        local new_hl = (commit_merge_end_branch_index - 1) % 9 + 1
+        if new_hl ~= current_hl[commit_merge_end_branch_index] then
+          next_commit_hl[commit_merge_end_branch_index] = new_hl
+          current_hl[commit_merge_end_branch_index] = new_hl
         end
       end
 
