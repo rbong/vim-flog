@@ -146,7 +146,7 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
           -- Set highlight groups for the merge line
 
           -- Set highlight groups before merge
-          for branch_index = start_branch_index, math.min(commit.merge_branch_index - 1, end_branch_index) do
+          for branch_index = start_branch_index, math.min(commit.merge_branch_index, end_branch_index) do
             if branch_memo[branch_index] == nil then
               branch_memo[branch_index] = 1
               local col = vim.fn.virtcol2col(winid, line, 2 * branch_index - 1)
@@ -162,8 +162,8 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
 
           if merge_memo[line] == nil then
             merge_memo[line] = 1
-            local merge_col = vim.fn.virtcol2col(winid, line, 2 * commit.merge_branch_index - 1)
-            local end_merge_col = vim.fn.virtcol2col(winid, line, 2 * commit.merge_end_branch_index - 1)
+            local merge_col = vim.fn.virtcol2col(winid, line, 2 * commit.merge_branch_index)
+            local end_merge_col = vim.fn.virtcol2col(winid, line, 2 * commit.merge_end_branch_index - 2)
 
             -- Set highlight groups for merge
             if commit.moved_parent then
