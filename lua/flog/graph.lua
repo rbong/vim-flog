@@ -408,13 +408,13 @@ function M.get_graph(
 
               -- Set new branch highlighting
               if is_nvim and merge_branch_index > 1 then
-                local up_hl = current_hl[merge_branch_index]
+                local above_hl = current_hl[merge_branch_index]
                 local left_hl = current_hl[merge_branch_index - 1]
                 local right_hl = current_hl[merge_branch_index + 1]
                 local merge_hl = current_hl[commit_branch_index]
 
-                local hl = (up_hl or left_hl or right_hl or merge_hl) % 9 + 1
-                while hl == left_hl or hl == right_hl or hl == merge_hl or hl == up_hl do
+                local hl = (above_hl or left_hl or right_hl or merge_hl) % 9 + 1
+                while hl == left_hl or hl == right_hl or hl == merge_hl or hl == above_hl do
                   hl = hl % 9 + 1
                 end
 
@@ -579,13 +579,13 @@ function M.get_graph(
 
                 -- Set new branch highlighting
                 if is_nvim and merge_branch_index > 1 then
-                  local up_hl = current_hl[merge_branch_index]
+                  local above_hl = current_hl[merge_branch_index]
                   local left_hl = current_hl[merge_branch_index - 1]
                   local right_hl = current_hl[merge_branch_index + 1]
                   local merge_hl = current_hl[commit_branch_index]
 
-                  local hl = (up_hl or left_hl or right_hl or merge_hl) % 9 + 1
-                  while hl == left_hl or hl == right_hl or hl == merge_hl or hl == up_hl do
+                  local hl = (above_hl or left_hl or right_hl or merge_hl) % 9 + 1
+                  while hl == left_hl or hl == right_hl or hl == merge_hl or hl == above_hl do
                     hl = hl % 9 + 1
                   end
 
