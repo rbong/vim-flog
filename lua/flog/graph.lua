@@ -682,12 +682,6 @@ function M.get_graph(
               commit_hl[parent_branch_index] = new_parent_hl
               current_hl[parent_branch_index] = new_parent_hl
             end
-
-            local new_commit_hl = (commit_branch_index - 1) % 9 + 1
-            if new_commit_hl ~= current_hl[commit_branch_index] then
-              commit_hl[commit_branch_index] = new_commit_hl
-              current_hl[commit_branch_index] = new_commit_hl
-            end
           end
         end
       end
