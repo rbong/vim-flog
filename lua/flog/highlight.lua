@@ -13,7 +13,6 @@ local hl_group_names = {
   "flogBranch6",
   "flogBranch7",
   "flogBranch8",
-  "flogBranch9",
 }
 
 function M.nvim_get_graph_hl_callback(buffer, instance_number)

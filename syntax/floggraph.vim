@@ -124,10 +124,10 @@ else
   syntax cluster flogBranch1 contains=flogBranch1,flogBranch1Commit,flogBranch1MergeStart,flogBranch1MissingParentsStart
 
   " Dynamically generate highlight groups for branches
-  for branch_idx in range(1, 9)
+  for branch_idx in range(1, 8)
     let branch = 'flogBranch' . branch_idx
     let merge = 'flogMerge' . branch_idx
-    let next_branch_idx = branch_idx % 9 + 1
+    let next_branch_idx = branch_idx % 8 + 1
     let next_branch = 'flogBranch' . next_branch_idx
     let next_merge_branch = 'flogMerge' . branch_idx . 'Branch' . next_branch_idx
 
@@ -171,13 +171,13 @@ else
   endfor
 
   " Dynamically generate highlight groups for merges
-  for merge_idx in range(1, 9)
+  for merge_idx in range(1, 8)
     let merge = 'flogMerge' . merge_idx
 
-    for branch_idx in range(1, 9)
+    for branch_idx in range(1, 8)
       let branch = 'flogBranch' . branch_idx
       let merge_branch = merge . 'Branch' . branch_idx
-      let next_branch_idx = branch_idx % 9 + 1
+      let next_branch_idx = branch_idx % 8 + 1
       let next_branch = 'flogBranch' . next_branch_idx
       let next_merge_branch = merge . 'Branch' . next_branch_idx
 
@@ -189,25 +189,23 @@ else
 endif
 
 if &background ==# 'dark'
-  highlight default flogBranch1 ctermfg=magenta guifg=green1
-  highlight default flogBranch2 ctermfg=green   guifg=yellow1
-  highlight default flogBranch3 ctermfg=yellow  guifg=orange1
-  highlight default flogBranch4 ctermfg=cyan    guifg=greenyellow
-  highlight default flogBranch5 ctermfg=red     guifg=springgreen1
-  highlight default flogBranch6 ctermfg=yellow  guifg=cyan1
-  highlight default flogBranch7 ctermfg=green   guifg=slateblue1
-  highlight default flogBranch8 ctermfg=cyan    guifg=magenta1
-  highlight default flogBranch9 ctermfg=magenta guifg=purple1
+  highlight default flogBranch1 ctermfg=green       guifg=green1
+  highlight default flogBranch2 ctermfg=yellow      guifg=yellow1
+  highlight default flogBranch3 ctermfg=darkyellow  guifg=orange1
+  highlight default flogBranch4 ctermfg=blue        guifg=dodgerblue1
+  highlight default flogBranch5 ctermfg=cyan        guifg=cyan1
+  highlight default flogBranch6 ctermfg=magenta     guifg=purple1
+  highlight default flogBranch7 ctermfg=darkmagenta guifg=violet
+  highlight default flogBranch8 ctermfg=red         guifg=indianred3
 else
-  highlight default flogBranch1 ctermfg=darkyellow  guifg=orangered3
-  highlight default flogBranch2 ctermfg=darkgreen   guifg=orange2
-  highlight default flogBranch3 ctermfg=blue        guifg=yellow3
-  highlight default flogBranch4 ctermfg=darkmagenta guifg=olivedrab4
-  highlight default flogBranch5 ctermfg=red         guifg=green4
-  highlight default flogBranch6 ctermfg=darkyellow  guifg=paleturquoise3
-  highlight default flogBranch7 ctermfg=darkgreen   guifg=deepskyblue4
-  highlight default flogBranch8 ctermfg=blue        guifg=darkslateblue
-  highlight default flogBranch9 ctermfg=darkmagenta guifg=darkviolet
+  highlight default flogBranch1 ctermfg=darkgreen   guifg=olivedrab4
+  highlight default flogBranch2 ctermfg=darkyellow  guifg=yellowgreen
+  highlight default flogBranch3 ctermfg=yellow      guifg=orange1
+  highlight default flogBranch4 ctermfg=darkblue    guifg=paleturquoise3
+  highlight default flogBranch5 ctermfg=darkcyan    guifg=deepskyblue3
+  highlight default flogBranch6 ctermfg=darkmagenta guifg=darkviolet
+  highlight default flogBranch7 ctermfg=magenta     guifg=violetred1
+  highlight default flogBranch8 ctermfg=darkred     guifg=orangered3
 endif
 
 highlight link flogBranch0 flogBranch1
