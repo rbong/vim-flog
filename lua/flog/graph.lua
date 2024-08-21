@@ -306,7 +306,10 @@ function M.get_graph(
 
           -- Set default branch highlighting
           if is_nvim then
-            local hl = (max_graph_width - 1) % 9 + 1
+            local hl = 1
+            if max_graph_width > 1 then
+              hl = current_hl[max_graph_width - 1] % 9 + 1
+            end
             commit_hl[max_graph_width] = hl
             current_hl[max_graph_width] = hl
           end
@@ -403,6 +406,22 @@ function M.get_graph(
                 commit_suffix_graph_width = merge_branch_index
               end
 
+              -- Set new branch highlighting
+              if is_nvim and merge_branch_index > 1 then
+                local up_hl = current_hl[merge_branch_index]
+                local left_hl = current_hl[merge_branch_index - 1]
+                local right_hl = current_hl[merge_branch_index + 1]
+                local merge_hl = current_hl[commit_branch_index]
+
+                local hl = (up_hl or left_hl or right_hl or merge_hl) % 9 + 1
+                while hl == left_hl or hl == right_hl or hl == merge_hl or hl == up_hl do
+                  hl = hl % 9 + 1
+                end
+
+                commit_hl[merge_branch_index] = hl
+                current_hl[merge_branch_index] = hl
+              end
+
               -- Record visual parent
               nvim_parents = nvim_parents + 1
               vim_commit_parents[nvim_parents] = new_parent_hash
@@ -413,7 +432,7 @@ function M.get_graph(
                 missing_parents[nmissing_parents] = new_parent_hash
               end
 
-              -- Parent
+              -- Draw parent
               if merge_branch_index == commit_merge_branch_index then
                 -- Draw first new parent merging to right
                 merge_out[merge_out_index] = lower_right_corner_str
@@ -476,18 +495,6 @@ function M.get_graph(
           if merge_branch_index > graph_width then
             graph_width = merge_branch_index
             commit_suffix_graph_width = merge_branch_index
-
-            -- Update max graph width
-            if graph_width > max_graph_width then
-              max_graph_width = graph_width
-
-              -- Set default branch highlighting
-              if is_nvim then
-                local hl = (max_graph_width - 1) % 9 + 1
-                commit_hl[max_graph_width] = hl
-                current_hl[max_graph_width] = hl
-              end
-            end
           end
 
           -- Record visual parent
@@ -567,14 +574,23 @@ function M.get_graph(
                   -- Update max graph width
                   if graph_width > max_graph_width then
                     max_graph_width = graph_width
-
-                    -- Set default branch highlighting
-                    if is_nvim then
-                      local hl = (max_graph_width - 1) % 9 + 1
-                      commit_hl[max_graph_width] = hl
-                      current_hl[max_graph_width] = hl
-                    end
                   end
+                end
+
+                -- Set new branch highlighting
+                if is_nvim and merge_branch_index > 1 then
+                  local up_hl = current_hl[merge_branch_index]
+                  local left_hl = current_hl[merge_branch_index - 1]
+                  local right_hl = current_hl[merge_branch_index + 1]
+                  local merge_hl = current_hl[commit_branch_index]
+
+                  local hl = (up_hl or left_hl or right_hl or merge_hl) % 9 + 1
+                  while hl == left_hl or hl == right_hl or hl == merge_hl or hl == up_hl do
+                    hl = hl % 9 + 1
+                  end
+
+                  commit_hl[merge_branch_index] = hl
+                  current_hl[merge_branch_index] = hl
                 end
 
                 -- Record visual parent
@@ -885,48 +901,14 @@ function M.get_graph(
       end
     end
 
-    -- Update branch highlighting after output
     if is_nvim then
-      -- Update branch highlight cache
-
-      -- Update cache every 100 commits for fast index lookup
+      -- Update highlight cache every 100 commits for fast index lookup
       if (commit_index - 1) % 100 == 0 then
         local commit_hl_cache = {}
         for branch_index = 1, max_graph_width do
           commit_hl_cache[branch_index] = current_hl[branch_index]
         end
         hl_cache[commit_index] = commit_hl_cache
-      end
-
-      -- Reset branch highlighting
-
-      -- Reset branch highlighting for ending commit branch
-      if branch_hashes[commit_branch_index] == nil then
-        local new_hl = (commit_branch_index - 1) % 9 + 1
-        if new_hl ~= current_hl[commit_branch_index] then
-          next_commit_hl[commit_branch_index] = new_hl
-          current_hl[commit_branch_index] = new_hl
-        end
-      end
-
-      -- Reset branch highlighting for moved parent branch
-      if should_move_last_parent_under_commit then
-        local new_hl = (commit_merge_end_branch_index - 1) % 9 + 1
-        if new_hl ~= current_hl[commit_merge_end_branch_index] then
-          next_commit_hl[commit_merge_end_branch_index] = new_hl
-          current_hl[commit_merge_end_branch_index] = new_hl
-        end
-      end
-
-      -- Reset branch highlighting for removed missing branches
-      for missing_parent_index = 1, nmissing_parents do
-        local branch_index = branch_indexes[missing_parents[missing_parent_index]]
-        local new_hl = (branch_index - 1) % 9 + 1
-
-        if new_hl ~= current_hl[branch_index] then
-          next_commit_hl[branch_index] = new_hl
-          current_hl[branch_index] = new_hl
-        end
       end
     end
   end
