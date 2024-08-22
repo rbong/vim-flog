@@ -406,7 +406,7 @@ function M.get_graph(
               end
 
               -- Set new branch highlighting
-              if is_nvim and merge_branch_index > 1 then
+              if is_nvim then
                 local above_hl = current_hl[merge_branch_index]
                 local left_hl = current_hl[merge_branch_index - 1]
                 local right_hl = current_hl[merge_branch_index + 1]
@@ -573,7 +573,7 @@ function M.get_graph(
                 end
 
                 -- Set new branch highlighting
-                if is_nvim and merge_branch_index > 1 then
+                if is_nvim then
                   local above_hl = current_hl[merge_branch_index]
                   local left_hl = current_hl[merge_branch_index - 1]
                   local right_hl = current_hl[merge_branch_index + 1]
