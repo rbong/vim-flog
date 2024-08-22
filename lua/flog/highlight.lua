@@ -15,9 +15,7 @@ local hl_group_names = {
   "flogBranch8",
 }
 
-function M.nvim_get_graph_hl_callback(buffer, instance_number)
-  local winid = vim.fn.bufwinid(buffer)
-
+function M.nvim_get_graph_hl_callback(buffer, winid, instance_number)
   -- Get initial wincol
   local number_opt = vim.o.number
   local relativenumber_opt = vim.o.relativenumber
