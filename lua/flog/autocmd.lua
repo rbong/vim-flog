@@ -1,5 +1,6 @@
 -- This file contains functions for speeding up speed sensitive autocommands in Neovim.
 
+local flog_graph = require("flog/graph")
 local flog_hl = require("flog/highlight")
 
 local M = {}
@@ -26,6 +27,16 @@ function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
           callback = hl_cb,
           group = group,
           pattern = tostring(winid),
+        }
+      ),
+      vim.api.nvim_create_autocmd(
+        { "BufWipeout" },
+        {
+          buffer = buffer,
+          callback = function (ev)
+            flog_graph.clear_internal_graph_state(instance_number)
+          end,
+          group = group,
         }
       ),
     }
