@@ -1042,7 +1042,6 @@ function M.get_internal_graph_state(instance_number)
   return internal_state_store[instance_number]
 end
 
--- TODO: Call on bufwinleave
 function M.clear_internal_graph_state(instance_number)
   internal_state_store[instance_number] = nil
 end
