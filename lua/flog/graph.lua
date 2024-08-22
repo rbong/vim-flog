@@ -412,8 +412,8 @@ function M.get_graph(
                 local right_hl = current_hl[merge_branch_index + 1]
                 local merge_hl = current_hl[commit_branch_index]
 
-                local hl = (above_hl or left_hl or right_hl or merge_hl) % 8 + 1
-                while hl == left_hl or hl == right_hl or hl == merge_hl or hl == above_hl do
+                local hl = (left_hl or 0) % 8 + 1
+                while hl == right_hl or hl == merge_hl or hl == above_hl do
                   hl = hl % 8 + 1
                 end
 
@@ -579,8 +579,8 @@ function M.get_graph(
                   local right_hl = current_hl[merge_branch_index + 1]
                   local merge_hl = current_hl[commit_branch_index]
 
-                  local hl = (above_hl or left_hl or right_hl or merge_hl) % 8 + 1
-                  while hl == left_hl or hl == right_hl or hl == merge_hl or hl == above_hl do
+                  local hl = (left_hl or 0) % 8 + 1
+                  while hl == right_hl or hl == merge_hl or hl == above_hl do
                     hl = hl % 8 + 1
                   end
 
