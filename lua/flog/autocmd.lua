@@ -5,9 +5,7 @@ local flog_hl = require("flog/highlight")
 
 local M = {}
 
-function M.nvim_init_hl_autocmd(group, buffer, instance_number)
-  local winid = vim.fn.bufwinid(buffer)
-
+function M.nvim_init_hl_autocmd(group, buffer, winid, instance_number)
   local hl_cb = flog_hl.nvim_get_graph_hl_callback(buffer, winid, instance_number)
   hl_cb({})
 
@@ -22,16 +20,18 @@ function M.nvim_init_hl_autocmd(group, buffer, instance_number)
 end
 
 function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
+  local winid = vim.fn.bufwinid(buffer)
+  local has_hl = { [vim.fn.bufwinid(buffer)] = true }
+
   -- Create group and clear previous autocmds
   local group = vim.api.nvim_create_augroup("Floggraph", { clear = true })
 
   -- Clear highlighting
   vim.api.nvim_buf_clear_namespace(buffer, -1, 0, -1)
-
   if enable_graph and enable_graph ~= 0 then
     -- Create autocmds
 
-    M.nvim_init_hl_autocmd(group, buffer, instance_number)
+    M.nvim_init_hl_autocmd(group, buffer, winid, instance_number)
 
     vim.api.nvim_create_autocmd(
       { "BufWipeout" },
@@ -49,8 +49,10 @@ function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
       {
         buffer = buffer,
         callback = function (ev)
-          if vim.fn.bufnr() == buffer then
-            M.nvim_init_hl_autocmd(group, buffer, instance_number)
+          winid = vim.fn.bufwinid(buffer)
+          if not has_hl[winid] and vim.fn.bufnr() == buffer then
+            has_hl[winid] = true
+            M.nvim_init_hl_autocmd(group, buffer, winid, instance_number)
           end
         end,
         group = group,
