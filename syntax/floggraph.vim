@@ -190,22 +190,22 @@ endif
 
 if &background ==# 'dark'
   highlight default flogBranch1 ctermfg=green       guifg=green1
-  highlight default flogBranch2 ctermfg=yellow      guifg=yellow1
-  highlight default flogBranch3 ctermfg=darkyellow  guifg=orange1
-  highlight default flogBranch4 ctermfg=blue        guifg=dodgerblue1
-  highlight default flogBranch5 ctermfg=cyan        guifg=cyan1
-  highlight default flogBranch6 ctermfg=magenta     guifg=purple1
-  highlight default flogBranch7 ctermfg=darkmagenta guifg=violet
-  highlight default flogBranch8 ctermfg=red         guifg=indianred3
+  highlight default flogBranch2 ctermfg=yellow      guifg=yellow
+  highlight default flogBranch3 ctermfg=darkred     guifg=orange1
+  highlight default flogBranch4 ctermfg=red         guifg=indianred3
+  highlight default flogBranch5 ctermfg=magenta     guifg=orchid1
+  highlight default flogBranch6 ctermfg=darkmagenta guifg=purple1
+  highlight default flogBranch7 ctermfg=blue        guifg=royalblue1
+  highlight default flogBranch8 ctermfg=cyan        guifg=cyan2
 else
-  highlight default flogBranch1 ctermfg=darkgreen   guifg=olivedrab4
-  highlight default flogBranch2 ctermfg=darkyellow  guifg=yellowgreen
-  highlight default flogBranch3 ctermfg=yellow      guifg=orange1
-  highlight default flogBranch4 ctermfg=darkblue    guifg=paleturquoise3
-  highlight default flogBranch5 ctermfg=darkcyan    guifg=deepskyblue3
-  highlight default flogBranch6 ctermfg=darkmagenta guifg=darkviolet
-  highlight default flogBranch7 ctermfg=magenta     guifg=violetred1
-  highlight default flogBranch8 ctermfg=darkred     guifg=orangered3
+  highlight default flogBranch1 ctermfg=darkgreen   guifg=green3
+  highlight default flogBranch2 ctermfg=darkyellow  guifg=gold2
+  highlight default flogBranch3 ctermfg=red         guifg=orange2
+  highlight default flogBranch4 ctermfg=darkred     guifg=orangered3
+  highlight default flogBranch5 ctermfg=darkmagenta guifg=deeppink2
+  highlight default flogBranch6 ctermfg=magenta     guifg=darkviolet
+  highlight default flogBranch7 ctermfg=darkblue    guifg=deepskyblue4
+  highlight default flogBranch8 ctermfg=darkcyan    guifg=cyan3
 endif
 
 highlight link flogBranch0 flogBranch1
