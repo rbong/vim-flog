@@ -191,18 +191,18 @@ endif
 if &background ==# 'dark'
   highlight default flogBranch1 ctermfg=green       guifg=green1
   highlight default flogBranch2 ctermfg=yellow      guifg=yellow
-  highlight default flogBranch3 ctermfg=darkred     guifg=orange1
+  highlight default flogBranch3 ctermfg=darkmagenta guifg=orange1
   highlight default flogBranch4 ctermfg=red         guifg=indianred3
   highlight default flogBranch5 ctermfg=magenta     guifg=orchid1
-  highlight default flogBranch6 ctermfg=darkmagenta guifg=purple1
+  highlight default flogBranch6 ctermfg=darkred     guifg=purple1
   highlight default flogBranch7 ctermfg=blue        guifg=royalblue1
   highlight default flogBranch8 ctermfg=cyan        guifg=cyan2
 else
   highlight default flogBranch1 ctermfg=darkgreen   guifg=green3
   highlight default flogBranch2 ctermfg=darkyellow  guifg=gold2
   highlight default flogBranch3 ctermfg=red         guifg=orange2
-  highlight default flogBranch4 ctermfg=darkred     guifg=orangered3
-  highlight default flogBranch5 ctermfg=darkmagenta guifg=deeppink2
+  highlight default flogBranch4 ctermfg=darkmagenta guifg=orangered3
+  highlight default flogBranch5 ctermfg=darkred     guifg=deeppink2
   highlight default flogBranch6 ctermfg=magenta     guifg=darkviolet
   highlight default flogBranch7 ctermfg=darkblue    guifg=deepskyblue4
   highlight default flogBranch8 ctermfg=darkcyan    guifg=cyan3
