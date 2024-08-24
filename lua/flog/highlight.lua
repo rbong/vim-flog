@@ -35,7 +35,6 @@ function M.nvim_get_graph_hl_callback(buffer, winid, instance_number)
   local hl_cache = internal_state.hl_cache
 
   -- Initialize memoization
-  local line_memos = {}
   local branch_memos = {}
   local merge_memo = {}
 
@@ -79,13 +78,6 @@ function M.nvim_get_graph_hl_callback(buffer, winid, instance_number)
       end
     end
 
-    -- Initialize line-based memoization
-    local line_memo = line_memos[start_branch_index]
-    if line_memo == nil then
-      line_memo = {}
-      line_memos[start_branch_index] = line_memo
-    end
-
     local commit_index
     local commit
     for line = start_line, end_line do
@@ -99,17 +91,20 @@ function M.nvim_get_graph_hl_callback(buffer, winid, instance_number)
         end
       end
 
-      if line_memo[line] == nil or line_memo[line] < end_branch_index then
-        line_memo[line] = end_branch_index
+      -- Initialize branch memoization
+      local branch_memo = branch_memos[line]
+      if branch_memo == nil then
+        branch_memo = {}
+        branch_memos[line] = branch_memo
+      end
+      local memo_start_branch_index = branch_memo[start_branch_index]
+      if memo_start_branch_index then
+        memo_start_branch_index = memo_start_branch_index + 1
+      else
+        memo_start_branch_index = start_branch_index
+      end
 
-        -- Initialize branch-based memoization
-        local branch_memo = branch_memos[line]
-        if branch_memo == nil then
-          branch_memo = {}
-          branch_memos[line] = branch_memo
-        end
-        local memo_start_branch_index = branch_memo[start_branch_index] or start_branch_index
-
+      if memo_start_branch_index <= end_branch_index then
         if not enable_extended_chars and line == commit.line then
           -- Set highlight groups for commit subject
           for branch_index = memo_start_branch_index, math.min(commit.format_branch_index - 1, end_branch_index) do
