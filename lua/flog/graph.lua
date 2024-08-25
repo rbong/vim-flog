@@ -23,6 +23,10 @@ function M.get_graph(
   default_collapsed = default_collapsed and default_collapsed ~= 0
   enable_extended_chars = enable_extended_chars and enable_extended_chars ~= 0
   enable_extra_padding = enable_extra_padding and enable_extra_padding ~= 0
+  local enable_dynamic_branch_hl = (
+    is_nvim
+    and vim.g.flog_enable_dynamic_branch_hl
+    and vim.g.flog_enable_dynamic_branch_hl ~= 0)
   local is_vimlike = is_vim or is_nvim
 
   -- Init graph strings
@@ -107,7 +111,7 @@ function M.get_graph(
   local current_hl
   local hl_cache
   local next_commit_hl
-  if is_nvim then
+  if enable_dynamic_branch_hl then
     internal_commits = {}
     current_hl = {}
     hl_cache = {}
@@ -233,7 +237,7 @@ function M.get_graph(
     -- Internal state
     local commit_hl = next_commit_hl
     local commit_merge_crossovers
-    if is_nvim then
+    if enable_dynamic_branch_hl then
       commit_hl = next_commit_hl
       next_commit_hl = {}
       commit_merge_crossovers = {}
@@ -305,7 +309,7 @@ function M.get_graph(
           max_graph_width = commit_graph_width
 
           -- Set default branch highlighting
-          if is_nvim then
+          if enable_dynamic_branch_hl then
             local hl = 1
             if max_graph_width > 1 then
               hl = current_hl[max_graph_width - 1] % 8 + 1
@@ -406,7 +410,7 @@ function M.get_graph(
               end
 
               -- Set new branch highlighting
-              if is_nvim then
+              if enable_dynamic_branch_hl then
                 local above_hl = current_hl[merge_branch_index]
                 local left_hl = current_hl[merge_branch_index - 1]
                 local right_hl = current_hl[merge_branch_index + 1]
@@ -459,7 +463,7 @@ function M.get_graph(
             end
 
             -- Record crossover
-            if is_nvim then
+            if enable_dynamic_branch_hl then
               commit_merge_crossovers[merge_branch_index] = 1
             end
 
@@ -573,7 +577,7 @@ function M.get_graph(
                 end
 
                 -- Set new branch highlighting
-                if is_nvim then
+                if enable_dynamic_branch_hl then
                   local above_hl = current_hl[merge_branch_index]
                   local left_hl = current_hl[merge_branch_index - 1]
                   local right_hl = current_hl[merge_branch_index + 1]
@@ -626,7 +630,7 @@ function M.get_graph(
               end
 
               -- Record crossover
-              if is_nvim then
+              if enable_dynamic_branch_hl then
                 commit_merge_crossovers[merge_branch_index] = 1
               end
 
@@ -675,7 +679,7 @@ function M.get_graph(
           end
 
           -- Update commit branch highlighting to parent branch
-          if is_nvim and ncommit_parents == 1 and ncommit_new_parents == 1 then
+          if enable_dynamic_branch_hl and ncommit_parents == 1 and ncommit_new_parents == 1 then
             local parent_branch_index = branch_indexes[commit_new_parents[1]]
             local new_parent_hl = current_hl[commit_branch_index]
             if new_parent_hl ~= current_hl[parent_branch_index] then
@@ -751,7 +755,7 @@ function M.get_graph(
       vim_commit.len = ncommit_lines
 
       -- Set internal state
-      if is_nvim then
+      if enable_dynamic_branch_hl then
         local commit_suffix_line
         if ncommit_lines > 1 and commit_collapsed and commit_collapsed ~= 0 then
           commit_suffix_line = out_line + 2
@@ -901,7 +905,7 @@ function M.get_graph(
       end
     end
 
-    if is_nvim then
+    if enable_dynamic_branch_hl then
       -- Update highlight cache every 100 commits for fast index lookup
       if (commit_index - 1) % 100 == 0 then
         local commit_hl_cache = {}
@@ -937,6 +941,10 @@ function M.update_graph(
     collapsed_commits)
   -- Resolve Vim values
   default_collapsed = default_collapsed and default_collapsed ~= 0
+  local enable_dynamic_branch_hl = (
+    is_nvim
+    and vim.g.flog_enable_dynamic_branch_hl
+    and vim.g.flog_enable_dynamic_branch_hl ~= 0)
 
   -- Init vim output
   local vim_out
@@ -974,7 +982,7 @@ function M.update_graph(
     commit.line = out_line
 
     -- Update internal state
-    if is_nvim then
+    if enable_dynamic_branch_hl then
       local commit_suffix_line
       if len > 1 and collapsed and collapsed ~= 0 then
         commit_suffix_line = out_line + 2

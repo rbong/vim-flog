@@ -114,7 +114,7 @@ highlight default link flogDiffRemoved   diffRemoved
 
 " Graph highlighting
 
-if has('nvim')
+if has('nvim') && g:flog_enable_dynamic_branch_hl
   syntax match flogBranches nextgroup=@flogCommitInfo,flogCollapsedCommit,@flogDiff /\v^%(%u2022|%u2500|%u2502|%u250a|%u251c|%u2524|%u252c|%u2534|%u253c|%u256d|%u256e|%u256f|%u2570|%uf5d0|%uf5d1|%uf5d4|%uf5d6|%uf5d7|%uf5d8|%uf5d9|%uf5da|%uf5db|%uf5dd|%uf5de|%uf5e0|%uf5e1|%uf5e5|%uf5e6|%uf5ea|%uf5ef|%uf5f6|%uf5f7|%uf5f9|%uf5fa|%uf5fb| )*/
 else
   " Start of line, lead into branches or commit body

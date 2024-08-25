@@ -958,6 +958,19 @@ g:flog_enable_extra_padding                      *g:flog_enable_extra_padding*
   Whether to add an extra line of padding after commits with no merges.
   Defaults to false.
 
+g:flog_enable_dynamic_branch_hl              *g:flog_enable_dynamic_branch_hl*
+
+  When enabled, branch color will follow branches when moving through the
+  graph, and horizontal lines will be colored based on relevant branches.
+  Branches of the same color won't be placed next to each other.
+
+  When disabled, more rudimentary branch colors will be used. Branch color is
+  based solely on the column of the branch. Branch color does not follow
+  branches when they move. Horizontal line color is based on start column.
+
+  Only available in Neovim.
+  Defaults to true.
+
 g:flog_commit_start_token                          *g:flog_commit_start_token*
 
   The internal token to use to find commit start. Provided as an option in

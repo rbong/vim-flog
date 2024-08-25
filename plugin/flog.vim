@@ -33,6 +33,10 @@ if !has_key(g:, 'flog_enable_extra_padding')
   let g:flog_enable_extra_padding = v:false
 endif
 
+if !has_key(g:, 'flog_enable_dynamic_branch_hl')
+  let g:flog_enable_dynamic_branch_hl = v:true
+endif
+
 if !has_key(g:, 'flog_check_lua_version')
   let g:flog_check_lua_version = v:true
 endif
