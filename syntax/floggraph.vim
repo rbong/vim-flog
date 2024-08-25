@@ -123,11 +123,13 @@ else
   " Cluster all branch 1 groups
   syntax cluster flogBranch1 contains=flogBranch1,flogBranch1Commit,flogBranch1MergeStart,flogBranch1MissingParentsStart
 
+  let num_branch_colors = get(g:, 'flog_num_branch_colors', 8)
+
   " Dynamically generate highlight groups for branches
-  for branch_idx in range(1, 8)
+  for branch_idx in range(1, num_branch_colors)
     let branch = 'flogBranch' . branch_idx
     let merge = 'flogMerge' . branch_idx
-    let next_branch_idx = branch_idx % 8 + 1
+    let next_branch_idx = branch_idx % num_branch_colors + 1
     let next_branch = 'flogBranch' . next_branch_idx
     let next_merge_branch = 'flogMerge' . branch_idx . 'Branch' . next_branch_idx
 
@@ -171,13 +173,13 @@ else
   endfor
 
   " Dynamically generate highlight groups for merges
-  for merge_idx in range(1, 8)
+  for merge_idx in range(1, num_branch_colors)
     let merge = 'flogMerge' . merge_idx
 
-    for branch_idx in range(1, 8)
+    for branch_idx in range(1, num_branch_colors)
       let branch = 'flogBranch' . branch_idx
       let merge_branch = merge . 'Branch' . branch_idx
-      let next_branch_idx = branch_idx % 8 + 1
+      let next_branch_idx = branch_idx % num_branch_colors + 1
       let next_branch = 'flogBranch' . next_branch_idx
       let next_merge_branch = merge . 'Branch' . next_branch_idx
 

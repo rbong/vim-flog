@@ -971,6 +971,13 @@ g:flog_enable_dynamic_branch_hl              *g:flog_enable_dynamic_branch_hl*
   Only available in Neovim.
   Defaults to true.
 
+g:flog_num_branch_colors                            *g:flog_num_branch_colors*
+
+  The number of unique branch colors to cycle through. This can be used when
+  customizing highlight groups. At a minimum, 4 branch colors are required.
+
+  Defaults to 8.
+
 g:flog_commit_start_token                          *g:flog_commit_start_token*
 
   The internal token to use to find commit start. Provided as an option in
