@@ -20,6 +20,12 @@ function M.nvim_init_hl_autocmd(group, buffer, winid, instance_number)
 end
 
 function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
+  -- Resolve Vim values
+  enable_graph = enable_graph and enable_graph ~= 0
+  local enable_dynamic_branch_hl = (
+    vim.g.flog_enable_dynamic_branch_hl
+    and vim.g.flog_enable_dynamic_branch_hl ~= 0)
+
   local winid = vim.fn.bufwinid(buffer)
   local has_hl = { [vim.fn.bufwinid(buffer)] = true }
 
@@ -28,7 +34,8 @@ function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
 
   -- Clear highlighting
   vim.api.nvim_buf_clear_namespace(buffer, -1, 0, -1)
-  if enable_graph and enable_graph ~= 0 then
+
+  if enable_graph and enable_dynamic_branch_hl then
     -- Create autocmds
 
     M.nvim_init_hl_autocmd(group, buffer, winid, instance_number)
