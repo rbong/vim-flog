@@ -4,18 +4,12 @@ local flog_graph = require('flog/graph')
 
 local M = {}
 
-local hl_group_names = {
-  "flogBranch1",
-  "flogBranch2",
-  "flogBranch3",
-  "flogBranch4",
-  "flogBranch5",
-  "flogBranch6",
-  "flogBranch7",
-  "flogBranch8",
-}
-
 function M.nvim_get_graph_hl_callback(buffer, winid, instance_number)
+  local hl_group_names = {}
+  for i = 1, (vim.g.flog_num_branch_colors or 8) do
+    hl_group_names[i] = 'flogBranch' .. tostring(i)
+  end
+
   -- Get initial wincol
   local number_opt = vim.o.number
   local relativenumber_opt = vim.o.relativenumber

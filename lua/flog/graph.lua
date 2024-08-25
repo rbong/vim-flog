@@ -111,11 +111,13 @@ function M.get_graph(
   local current_hl
   local hl_cache
   local next_commit_hl
+  local num_branch_colors
   if enable_dynamic_branch_hl then
     internal_commits = {}
     current_hl = {}
     hl_cache = {}
     next_commit_hl = {}
+    num_branch_colors = math.max(vim.g.flog_num_branch_colors or 8, 4)
     internal_state_store[instance_number] = {
       commits = internal_commits,
       line_commits = vim_line_commits,
@@ -312,7 +314,7 @@ function M.get_graph(
           if enable_dynamic_branch_hl then
             local hl = 1
             if max_graph_width > 1 then
-              hl = current_hl[max_graph_width - 1] % 8 + 1
+              hl = current_hl[max_graph_width - 1] % num_branch_colors + 1
             end
             commit_hl[max_graph_width] = hl
             current_hl[max_graph_width] = hl
@@ -416,9 +418,9 @@ function M.get_graph(
                 local right_hl = current_hl[merge_branch_index + 1]
                 local merge_hl = current_hl[commit_branch_index]
 
-                local hl = (left_hl or 0) % 8 + 1
+                local hl = (left_hl or 0) % num_branch_colors + 1
                 while hl == right_hl or hl == merge_hl or hl == above_hl do
-                  hl = hl % 8 + 1
+                  hl = hl % num_branch_colors + 1
                 end
 
                 commit_hl[merge_branch_index] = hl
@@ -583,9 +585,9 @@ function M.get_graph(
                   local right_hl = current_hl[merge_branch_index + 1]
                   local merge_hl = current_hl[commit_branch_index]
 
-                  local hl = (left_hl or 0) % 8 + 1
+                  local hl = (left_hl or 0) % num_branch_colors + 1
                   while hl == right_hl or hl == merge_hl or hl == above_hl do
-                    hl = hl % 8 + 1
+                    hl = hl % num_branch_colors + 1
                   end
 
                   commit_hl[merge_branch_index] = hl
