@@ -935,6 +935,9 @@ function M.update_graph(
     default_collapsed,
     graph,
     collapsed_commits)
+  -- Resolve Vim values
+  default_collapsed = default_collapsed and default_collapsed ~= 0
+
   -- Init vim output
   local vim_out
   local out_line = 1
