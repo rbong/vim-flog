@@ -32,9 +32,6 @@ function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
   -- Create group and clear previous autocmds
   local group = vim.api.nvim_create_augroup("Floggraph", { clear = true })
 
-  -- Clear highlighting
-  vim.api.nvim_buf_clear_namespace(buffer, -1, 0, -1)
-
   if enable_graph and enable_dynamic_branch_hl then
     -- Create autocmds
 
