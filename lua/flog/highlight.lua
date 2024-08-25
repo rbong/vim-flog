@@ -55,7 +55,11 @@ function M.nvim_get_graph_hl_callback(buffer, winid, instance_number)
     local end_branch_index = math.floor((end_col - 1) / 2) + 1
 
     -- Get commit at top of screen
-    local start_commit_index = line_commits[start_line] + 1
+    local start_commit_index = line_commits[start_line]
+    if start_commit_index == nil then
+      return
+    end
+    start_commit_index = start_commit_index + 1
 
     -- Get initial branch highlight numbers from cache
     local current_hl = {}
