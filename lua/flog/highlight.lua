@@ -29,10 +29,19 @@ function M.nvim_get_graph_hl_callback(buffer, winid, instance_number)
   local hl_cache = internal_state.hl_cache
 
   -- Initialize memoization
-  local branch_memos = {}
-  local merge_memo = {}
+  local branch_memos
+  local merge_memo
+  local nupdates = 0
 
   return function (ev)
+    -- Clear highlighting every 250 updates
+    if nupdates % 250 == 0 then
+      branch_memos = {}
+      merge_memo = {}
+      vim.api.nvim_buf_clear_namespace(buffer, -1, 0, -1)
+    end
+    nupdates = nupdates + 1
+
     -- Update wincol
     if vim.fn.win_getid() == winid then
       number_opt = vim.o.number
