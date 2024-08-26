@@ -34,7 +34,7 @@ function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
   local has_hl = { [winid] = true }
 
   -- Create group and clear previous autocmds
-  local group = vim.api.nvim_create_augroup("Floggraph", { clear = true })
+  local group = vim.api.nvim_create_augroup("Floggraph" .. tostring(instance_number), { clear = true })
 
   if enable_graph and enable_dynamic_branch_hl then
     -- Create autocmds
