@@ -4,7 +4,7 @@ local flog_graph = require('flog/graph')
 
 local M = {}
 
-function M.nvim_get_graph_hl_callback(buffer, winid, instance_number)
+function M.nvim_get_graph_hl_callback(buffer, instance_number)
   local hl_group_names = {}
   for i = 1, (vim.g.flog_num_branch_colors or 8) do
     hl_group_names[i] = 'flogBranch' .. tostring(i)
@@ -34,6 +34,8 @@ function M.nvim_get_graph_hl_callback(buffer, winid, instance_number)
   local nupdates = 0
 
   return function (ev)
+    local winid = tonumber(ev.match)
+
     -- Clear highlighting every 250 updates
     if nupdates % 250 == 0 then
       branch_memos = {}

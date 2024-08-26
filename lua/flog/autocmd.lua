@@ -5,10 +5,8 @@ local flog_hl = require("flog/highlight")
 
 local M = {}
 
-function M.nvim_init_hl_autocmd(group, buffer, winid, instance_number)
-  local hl_cb = flog_hl.nvim_get_graph_hl_callback(buffer, winid, instance_number)
-  hl_cb({})
-
+function M.nvim_init_hl_autocmd(group, winid, hl_cb)
+  hl_cb({ match = winid })
   return vim.api.nvim_create_autocmd(
     { "WinScrolled", "WinResized" },
     {
@@ -35,7 +33,8 @@ function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
   if enable_graph and enable_dynamic_branch_hl then
     -- Create autocmds
 
-    M.nvim_init_hl_autocmd(group, buffer, winid, instance_number)
+    local hl_cb = flog_hl.nvim_get_graph_hl_callback(buffer, instance_number)
+    M.nvim_init_hl_autocmd(group, winid, hl_cb)
 
     vim.api.nvim_create_autocmd(
       { "BufWipeout" },
@@ -56,7 +55,7 @@ function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
           winid = vim.fn.bufwinid(buffer)
           if not has_hl[winid] and vim.fn.bufnr() == buffer then
             has_hl[winid] = true
-            M.nvim_init_hl_autocmd(group, buffer, winid, instance_number)
+            M.nvim_init_hl_autocmd(group, winid, hl_cb)
           end
         end,
         group = group,
