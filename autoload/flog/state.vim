@@ -33,6 +33,7 @@ function! flog#state#GetInternalDefaultOpts() abort
         \ 'format': '%ad [%h] {%an}%d %s',
         \ 'date': 'iso',
         \ 'all': v:false,
+        \ 'auto_update': v:false,
         \ 'bisect': v:false,
         \ 'default_collapsed': v:false,
         \ 'first_parent': v:false,

@@ -51,6 +51,22 @@ These commands open Flog.
   Disabled when |:Flog_-limit| is set.
   Disabled by default.
 
+:Flog -auto-update                                        *:Flog_-auto-update*
+:Flog -no-auto-update                                  *:Flog_-no-auto-update*
+
+  When enabled, watch the Git directory and update the buffer when it changes.
+
+  On Linux, it may be useful to increase the maximum number of watched files:
+>
+  sudo sysctl fs.inotify.max_user_watches=524288
+<
+
+  When disabled, attempt to update whenever running commands in the buffer.
+  This will not always succeed.
+
+  Only available in Neovim.
+  Disabled by default.
+
 :Flog -bisect                                                  *:Flog_-bisect*
 :Flog -no-bisect                                            *:Flog_-no-bisect*
 

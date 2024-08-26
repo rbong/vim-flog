@@ -162,8 +162,13 @@ function! flog#floggraph#buf#Update() abort
   " Set buffer name
   silent! exec 'file ' . flog#floggraph#buf#GetName(l:state.instance_number, l:opts)
 
-  " Initialize Neovim autocommands
   if has('nvim')
+    " Initialize Neovim auto-updates
+    if flog#floggraph#opts#ShouldAutoUpdate()
+      call v:lua.require('flog/watch').nvim_register_floggraph_buf()
+    end
+
+    " Initialize Neovim autocommands
     call v:lua.require('flog/autocmd').nvim_create_graph_autocmds(
           \ l:state.graph_bufnr,
           \ l:state.instance_number,

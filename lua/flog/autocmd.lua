@@ -2,6 +2,7 @@
 
 local flog_graph = require("flog/graph")
 local flog_hl = require("flog/highlight")
+local flog_watch = require("flog/watch")
 
 local M = {}
 
@@ -36,22 +37,12 @@ function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
   -- Create group and clear previous autocmds
   local group = vim.api.nvim_create_augroup("Floggraph" .. tostring(instance_number), { clear = true })
 
-  if enable_graph and enable_dynamic_branch_hl then
-    -- Create autocmds
+  local should_add_hl_autocmds = enable_graph and enable_dynamic_branch_hl
+  if should_add_hl_autocmds then
+    -- Create highlight autocmds
 
     local get_hl_cb = flog_hl.nvim_get_graph_hl_callback(buffer, instance_number)
     M.nvim_init_hl_autocmd(group, buffer, winid, get_hl_cb)
-
-    vim.api.nvim_create_autocmd(
-      { "BufWipeout" },
-      {
-        buffer = buffer,
-        callback = function (ev)
-          flog_graph.clear_internal_graph_state(instance_number)
-        end,
-        group = group,
-      }
-    )
 
     vim.api.nvim_create_autocmd(
       { "WinEnter" },
@@ -67,11 +58,24 @@ function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
         group = group,
       }
     )
-
-    return group
   end
 
-  return {}
+  -- Create BufWipeout autocmd
+  vim.api.nvim_create_autocmd(
+    { "BufWipeout" },
+    {
+      buffer = buffer,
+      callback = function (ev)
+        if should_add_hl_autocmds then
+          flog_graph.clear_internal_graph_state(instance_number)
+        end
+        flog_watch.nvim_unregister_floggraph_buf()
+      end,
+      group = group,
+    }
+  )
+
+  return group
 end
 
 return M

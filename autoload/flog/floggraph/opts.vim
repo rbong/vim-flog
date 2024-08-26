@@ -1,5 +1,5 @@
 "
-" This file contains functions for modifying options in "floggraph" buffers.
+" This file contains functions for handling options in "floggraph" buffers.
 "
 
 function! flog#floggraph#opts#Toggle(name) abort
@@ -96,4 +96,12 @@ function! flog#floggraph#opts#CycleOrder() abort
   call flog#floggraph#buf#Update()
 
   return l:order
+endfunction
+
+function! flog#floggraph#opts#ShouldAutoUpdate() abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
+  let l:opts = flog#state#GetResolvedOpts(l:state)
+
+  return l:opts.auto_update
 endfunction

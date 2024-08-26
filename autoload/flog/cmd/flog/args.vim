@@ -38,6 +38,10 @@ function! flog#cmd#flog#args#Parse(current_opts, workdir, args) abort
       let a:current_opts.all = v:true
     elseif l:arg ==# '-no-all'
       let a:current_opts.all = v:false
+    elseif l:arg ==# '-auto-update'
+      let a:current_opts.auto_update = v:true
+    elseif l:arg ==# '-no-auto-update'
+      let a:current_opts.auto_update = v:false
     elseif l:arg ==# '-bisect'
       let a:current_opts.bisect = v:true
     elseif l:arg ==# '-no-bisect'
@@ -290,6 +294,8 @@ function! flog#cmd#flog#args#Complete(arg_lead, cmd_line, cursor_pos) abort
         \ '-all ',
         \ '--no-all ',
         \ '-author=',
+        \ '-auto-update ',
+        \ '-no-auto-update ',
         \ '-bisect ',
         \ '-no-bisect ',
         \ '-date=',

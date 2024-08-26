@@ -13,11 +13,16 @@ function! flog#Exec(cmd, focus = v:false, static = v:false, tmp = v:false) abort
   endif
 
   let l:graph_win = flog#win#Save()
+  let l:should_auto_update = flog#floggraph#opts#ShouldAutoUpdate()
 
   call flog#floggraph#side_win#Open(a:cmd, a:focus, a:tmp)
 
-  if !a:static
-    call flog#floggraph#buf#Update()
+  if !a:static && !l:should_auto_update
+    if flog#win#Is(l:graph_win)
+      call flog#floggraph#buf#Update()
+    else
+      call flog#floggraph#buf#InitUpdateHook(flog#win#GetSavedBufnr(l:graph_win))
+    endif
   endif
 
   return a:cmd
