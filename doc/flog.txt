@@ -1161,4 +1161,52 @@ The following items are supported:
                         "git write-tree" before the command is run. This is
                         useful for diffing unstaged files with "git add -N".
 
+==============================================================================
+HIGHLIGHT GROUPS                                       *flog-highlight-groups*                
+                                                               *hl-flogBranch*
+flogBranchX                                                   *hl-flogBranchX*
+
+  The highlight groups "flogBranch1", "flogBranch2", "flogBranch3", etc.
+  determine the color of the branches and merges in the commit graph.
+
+  The number of branches can be controlled with |g:flog_num_branch_colors|.
+
+flogHash                                                         *hl-flogHash*
+
+  Determines the color of the commit hash.
+
+flogAuthor                                                     *hl-flogAuthor*
+
+  Determines the color of the commit author name.
+
+flogDate                                                         *hl-flogDate*
+
+  Determines the color of the commit date.
+
+flogRef                                                           *hl-flogRef*
+
+  Determines the overall color of the commit ref.
+  For example: "(branch1, branch2, tag: my-tag)"
+
+flogRefTag                                                     *hl-flogRefTag*
+
+  Determines the color of tags in the commit ref.
+
+flogRefRemote                                               *hl-flogRefRemote*
+
+  Determines the color of remotes in the commit ref.
+  For example: in "remotes/my-remote", "my-remote" is highlighted.
+
+flogRefHead                                                   *hl-flogRefHead*
+
+  Determines the color of the "HEAD" text in the commit ref.
+
+flogRefHeadArrow                                         *hl-flogRefHeadArrow*
+
+  Determines the color of the arrow after "HEAD" in the commit ref.
+
+flogRefHeadBranch                                       *hl-flogRefHeadBranch*
+
+  Determines the color of the branch after "HEAD ->" in the commit ref.
+
  vim:tw=78:ts=8:ft=help
