@@ -1067,7 +1067,7 @@ info.
 
 Side windows are opened with |flog#Exec()|.
 
-These windows can be set to temporary. Temporary windows will close when
+These windows can be set to temporary. Temporary windows will close before
 other temporary windows are opened. Temporary windows close when Flog
 closes.
 
