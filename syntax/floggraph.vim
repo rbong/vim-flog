@@ -6,7 +6,7 @@ let b:current_syntax = 'floggraph'
 
 runtime! syntax/diff.vim
 
-" Commit highlighting
+" Commit format highlighting
 
 syntax cluster flogCommitInfo contains=flogHash,flogAuthor,flogRef,flogDate
 
@@ -32,31 +32,26 @@ exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v%
 exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . weekday_name_pattern . ' ' . iso_time_pattern . '%( |$)/'
 exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . month_name_pattern . ' \d{1,2} \d{4}' . '%( |$)/'
 
-highlight default link flogHash   Statement
-highlight default link flogAuthor String
-highlight default link flogRef    Directory
-highlight default link flogDate   Number
-
-" Collapsed commit indicator
-syntax match flogCollapsedCommit contained /== \d\+ hidden lines ==$/
-
-highlight default link flogCollapsedCommit Comment
-
-" Ref highlighting
-
+" Commit ref
 syntax match flogRefTag    contained containedin=flogRef /\vtag: \zs.{-}\ze%(, |)\)/
 syntax match flogRefRemote contained containedin=flogRef /\vremotes\/\zs.{-}\ze%(, |)\)/
-
-highlight default link flogRefTag    String
-highlight default link flogRefRemote Statement
-
 syntax match flogRefHead       contained containedin=flogRef nextgroup=flogRefHeadArrow  /\<HEAD/
 syntax match flogRefHeadArrow  contained                     nextgroup=flogRefHeadBranch / -> /
 syntax match flogRefHeadBranch contained                                                 /[^,)]\+/
 
+" Collapsed commit indicator
+syntax match flogCollapsedCommit contained /== \d\+ hidden lines ==$/
+
+highlight default link flogHash   Statement
+highlight default link flogAuthor String
+highlight default link flogDate   Number
+highlight default link flogRef    Directory
+highlight default link flogRefTag    String
+highlight default link flogRefRemote Statement
 highlight default link flogRefHead       Keyword
 highlight default link flogRefHeadArrow  flogRef
 highlight default link flogRefHeadBranch Special
+highlight default link flogCollapsedCommit Comment
 
 " Diff highlighting
 " Copied from syntax/diff.vim
