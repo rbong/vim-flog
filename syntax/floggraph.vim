@@ -6,8 +6,6 @@ let b:current_syntax = 'floggraph'
 
 runtime! syntax/diff.vim
 
-syntax match flogLineStart nextgroup=@flogBranch1,@flogCommitInfo,flogCollapsedCommit,@flogDiff /^/
-
 " Commit highlighting
 
 syntax cluster flogCommitInfo contains=flogHash,flogAuthor,flogRef,flogDate
@@ -115,6 +113,9 @@ highlight default link flogDiffOnly      diffOnly
 highlight default link flogDiffRemoved   diffRemoved
 
 " Graph highlighting
+
+" Start of line, lead into branches or commit body
+syntax match flogLineStart nextgroup=@flogBranch1,@flogCommitInfo,flogCollapsedCommit,@flogDiff /^/
 
 " Cluster all branch 1 groups
 syntax cluster flogBranch1 contains=flogBranch1,flogBranch1Commit,flogBranch1MergeStart,flogBranch1MissingParentsStart
