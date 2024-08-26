@@ -54,7 +54,7 @@ function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
       {
         buffer = buffer,
         callback = function (ev)
-          winid = vim.fn.bufwinid(buffer)
+          winid = vim.fn.win_getid()
           if not has_hl[winid] and vim.fn.bufnr() == buffer then
             has_hl[winid] = true
             M.nvim_init_hl_autocmd(group, winid, get_hl_cb)
