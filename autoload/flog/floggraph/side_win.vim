@@ -60,14 +60,12 @@ function! flog#floggraph#side_win#Open(cmd, keep_focus, is_tmp) abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
 
+  if a:is_tmp
+    call flog#floggraph#side_win#CloseTmp()
+  endif
+
   let l:graph_win = flog#win#Save()
   let l:saved_win_ids = flog#win#GetAllIds()
-
-  " See below
-  let l:saved_sizes = {}
-  if !&equalalways
-    let l:saved_sizes = flog#win#SaveSizes(l:saved_win_ids)
-  endif
 
   exec a:cmd
   let l:final_win = flog#win#Save()
@@ -77,23 +75,6 @@ function! flog#floggraph#side_win#Open(cmd, keep_focus, is_tmp) abort
 
   if !empty(l:new_win_ids)
     call flog#win#Restore(l:graph_win)
-
-    if a:is_tmp
-      " Lock unchanged windows to only equalize what is necessary
-      if !&equalalways
-        call flog#win#LockUnchangedSavedSizes(l:saved_sizes)
-      endif
-
-      call flog#floggraph#side_win#CloseTmp()
-
-      " Equalize select windows. Ideally we could set window sizes to what
-      " they *would* be if temp windows were closed first, but this is a hard
-      " problem
-      if !&equalalways
-        tabdo wincmd =
-        call flog#win#UnlockSavedSizes(l:saved_sizes)
-      endif
-    endif
 
     for l:win_id in l:new_win_ids
       silent! call win_gotoid(l:win_id)
