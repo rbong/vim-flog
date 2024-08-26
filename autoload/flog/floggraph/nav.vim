@@ -108,8 +108,6 @@ endfunction
 function! flog#floggraph#nav#NextCommit(count = 1) abort
   call flog#floggraph#buf#AssertFlogBuf()
   
-  let l:prev_line = line('.')
-
   let l:commit = flog#floggraph#commit#GetNext(a:count)
 
   if !empty(l:commit)
@@ -125,8 +123,6 @@ endfunction
 
 function! flog#floggraph#nav#NextRefCommit(count = 1) abort
   call flog#floggraph#buf#AssertFlogBuf()
-
-  let l:prev_line = line('.')
 
   let [l:nrefs, l:commit] = flog#floggraph#commit#GetNextRef(a:count)
 
