@@ -2,6 +2,42 @@
 " This file contains functions for navigating in "floggraph" buffers.
 "
 
+function! flog#floggraph#nav#HandlePreJump()
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
+
+  let l:prev_line = line('.')
+  let l:prev_commit = flog#floggraph#commit#GetAtLine(l:prev_line)
+
+  return [l:prev_line, l:prev_commit]
+endfunction
+
+function! flog#floggraph#nav#HandlePostJump(pre_jump_info, set_jump_mark = v:true, push_to_jumplist = v:true)
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
+
+  let l:prev_line = a:pre_jump_info[0]
+  let l:prev_commit = a:pre_jump_info[1]
+  if empty(l:prev_commit)
+    return v:false
+  endif
+
+  let l:new_line = line('.')
+  let l:new_commit = flog#floggraph#commit#GetAtLine(l:new_line)
+  if empty(l:new_commit)
+    return v:false
+  endif
+
+  if a:push_to_jumplist
+    call flog#floggraph#jumplist#Push(l:prev_line)
+  endif
+
+  if l:prev_commit.hash != l:new_commit.hash && a:set_jump_mark
+    call flog#floggraph#mark#SetJump(l:prev_line, a:push_to_jumplist)
+  endif
+  return v:true
+endfunction
+
 function! flog#floggraph#nav#JumpToCommit(hash, set_jump_mark = v:true, push_to_jumplist = v:true) abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
@@ -17,20 +53,14 @@ function! flog#floggraph#nav#JumpToCommit(hash, set_jump_mark = v:true, push_to_
 
   let l:commit = l:state.commits[l:commit_index]
 
-  let l:prev_line = line('.')
-  let l:prev_commit = flog#floggraph#commit#GetAtLine(l:prev_line)
+  let l:pre_jump_info = flog#floggraph#nav#HandlePreJump()
 
   let l:line = max([l:commit.line, 1])
   let l:col = max([l:commit.col, 1])
 
   call flog#win#SetVcol(l:line, l:col)
 
-  if a:push_to_jumplist
-    call flog#floggraph#jumplist#Push(l:prev_line)
-  endif
-  if l:prev_commit.hash != l:commit.hash && a:set_jump_mark
-    call flog#floggraph#mark#SetJump(l:prev_line, a:push_to_jumplist)
-  endif
+  call flog#floggraph#nav#HandlePostJump(l:pre_jump_info, a:set_jump_mark, a:push_to_jumplist)
 
   return [l:line, l:col]
 endfunction
@@ -249,4 +279,11 @@ function! flog#floggraph#nav#JumpToCommitStart() abort
   call flog#win#SetVcol(l:commit.line, l:new_col)
 
   return l:new_col
+endfunction
+
+function! flog#floggraph#nav#Motion(motion) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:pre_jump_info = flog#floggraph#nav#HandlePreJump()
+  exec 'normal! ' . a:motion
+  return flog#floggraph#nav#HandlePostJump(l:pre_jump_info)
 endfunction
