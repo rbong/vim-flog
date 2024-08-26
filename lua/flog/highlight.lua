@@ -26,7 +26,7 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
 
   return function (winid)
     return function (ev)
-      if vim.fn.win_getid() ~= winid then
+      if vim.fn.win_getid() ~= winid or vim.fn.bufnr() ~= buffer then
         return
       end
 
