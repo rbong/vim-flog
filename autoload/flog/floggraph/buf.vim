@@ -211,16 +211,30 @@ function! flog#floggraph#buf#FinishUpdateHook(bufnr) abort
   return a:bufnr
 endfunction
 
+function! flog#floggraph#buf#ExecuteUpdateHookWhenSafe(bufnr) abort
+  if !exists('##SafeState')
+    return flog#floggraph#buf#FinishUpdateHook(a:bufnr)
+  endif
+
+  if bufnr() != a:bufnr
+    return -1
+  endif
+
+  let l:buf = string(a:bufnr)
+  augroup FlogGraphBufUpdate
+    exec 'autocmd! * <buffer=' . l:buf . '>'
+    exec 'autocmd SafeState <buffer=' . l:buf . '> call flog#floggraph#buf#FinishUpdateHook(' . l:buf . ')'
+  augroup END
+
+  return a:bufnr
+endfunction
+
 function! flog#floggraph#buf#InitUpdateHook(bufnr) abort
   let l:buf = string(a:bufnr)
 
   augroup FlogGraphBufUpdate
     exec 'autocmd! * <buffer=' . l:buf . '>'
-    if exists('##SafeState')
-      exec 'autocmd SafeState <buffer=' . l:buf . '> call flog#floggraph#buf#FinishUpdateHook(' . l:buf . ')'
-    else
-      exec 'autocmd WinEnter <buffer=' . l:buf . '> call flog#floggraph#buf#FinishUpdateHook(' . l:buf . ')'
-    endif
+    exec 'autocmd BufEnter <buffer=' . l:buf . '> call flog#floggraph#buf#ExecuteUpdateHookWhenSafe(' . l:buf . ')'
   augroup END
 
   return a:bufnr
