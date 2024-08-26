@@ -513,8 +513,5 @@ nnoremap <buffer> <silent> <Plug>(FlogRebaseHelp) :help flog-rebase-mappings<CR>
 " Override Vim movement mappings
 
 for mapping in get(g:, 'flog_jumplist_default_mappings', ['gg', 'G', '<C-U>', '<C-D>'])
-  exec 'nnoremap <buffer> <silent> ' . mapping
-        \ . ' :<C-U>let g:flog_tmp_count = v:count == 0 ? "" : v:count<CR>'
-        \ . ':<C-U>call flog#floggraph#mark#SetJump()<CR>'
-        \ . ':<C-U>exec "normal! " . g:flog_tmp_count . "' . mapping . '"<CR>'
+  exec 'nnoremap <buffer> <silent> ' . mapping . ' :<C-U>call flog#floggraph#nav#Motion(v:count . "<C-V>' . mapping . '")<CR>'
 endfor
