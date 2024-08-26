@@ -14,7 +14,7 @@ function M.nvim_init_hl_autocmd(group, winid, get_hl_cb)
     {
       callback = hl_cb,
       group = group,
-      pattern = tostring(winid),
+      buffer = vim.api.nvim_get_current_buf()
     }
   )
 end
