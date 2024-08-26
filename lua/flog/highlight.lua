@@ -4,7 +4,7 @@ local flog_graph = require('flog/graph')
 
 local M = {}
 
-function M.nvim_get_graph_hl_callback(buffer, winid, instance_number)
+function M.nvim_get_graph_hl_callback(buffer, instance_number)
   local hl_group_names = {}
   for i = 1, (vim.g.flog_num_branch_colors or 8) do
     hl_group_names[i] = 'flogBranch' .. tostring(i)
@@ -29,10 +29,21 @@ function M.nvim_get_graph_hl_callback(buffer, winid, instance_number)
   local hl_cache = internal_state.hl_cache
 
   -- Initialize memoization
-  local branch_memos = {}
-  local merge_memo = {}
+  local branch_memos
+  local merge_memo
+  local nupdates = 0
 
   return function (ev)
+    local winid = tonumber(ev.match)
+
+    -- Clear highlighting every 250 updates
+    if nupdates % 250 == 0 then
+      branch_memos = {}
+      merge_memo = {}
+      vim.api.nvim_buf_clear_namespace(buffer, -1, 0, -1)
+    end
+    nupdates = nupdates + 1
+
     -- Update wincol
     if vim.fn.win_getid() == winid then
       number_opt = vim.o.number
@@ -55,7 +66,11 @@ function M.nvim_get_graph_hl_callback(buffer, winid, instance_number)
     local end_branch_index = math.floor((end_col - 1) / 2) + 1
 
     -- Get commit at top of screen
-    local start_commit_index = line_commits[start_line] + 1
+    local start_commit_index = line_commits[start_line]
+    if start_commit_index == nil then
+      return
+    end
+    start_commit_index = start_commit_index + 1
 
     -- Get initial branch highlight numbers from cache
     local current_hl = {}
