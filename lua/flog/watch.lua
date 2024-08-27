@@ -19,6 +19,7 @@ function M.nvim_start_watching(dir)
         if timer then
           timer:stop()
           timer:close()
+          timer = nil
         end
         timer = vim.defer_fn(
           function ()
