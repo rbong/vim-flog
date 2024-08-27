@@ -135,8 +135,8 @@ These commands open Flog.
   Passes the "--pretty=format:<format>" argument to "git log".
   Multiline formats are supported.
 
-  To support highlighting, special items should go at the start.
-  This includes date, hash, author, and refs.
+  Some special characters may be required for format highlighting.
+  See also |g:flog_enable_dynamic_commit_hl|.
 
 :Flog -limit=<limit>                                            *:Flog_-limit*
 
@@ -987,6 +987,17 @@ g:flog_enable_dynamic_branch_hl              *g:flog_enable_dynamic_branch_hl*
   Only available in Neovim.
   Defaults to true.
 
+g:flog_enable_dynamic_commit_hl              *g:flog_enable_dynamic_commit_hl*
+
+  When disabled, base highlighting on visual characters in |:Flog_-format|.
+  Special items must go at the start of the format.
+  See |flog-highlight-groups| for details on the required format.
+
+  When enabled, inject hidden characters into the output for highlighting.
+
+  Available in both Vim and Neovim.
+  Defaults to false.
+
 g:flog_num_branch_colors                            *g:flog_num_branch_colors*
 
   The number of unique branch colors to cycle through. This can be used when
@@ -1211,9 +1222,15 @@ flogHash                                                         *hl-flogHash*
 
   Determines the color of the commit hash.
 
+  When |g:flog_enable_dynamic_commit_hl| is off, the hash must be surrounded
+  in square brackets.
+
 flogAuthor                                                     *hl-flogAuthor*
 
   Determines the color of the commit author name.
+
+  When |g:flog_enable_dynamic_commit_hl| is off, the hash must be surrounded
+  in curly brackets.
 
 flogDate                                                         *hl-flogDate*
 

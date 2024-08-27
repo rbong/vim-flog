@@ -2,6 +2,41 @@
 " This file contains functions for working with git for "floggraph" buffers.
 "
 
+function! flog#floggraph#git#HandleDynamicLogFormatItem(dict, item, end) abort
+  if a:item ==# '%d' || a:item ==# '%D'
+    " Ref names
+    let a:dict.result .= "\e[r" . a:item . "\e[R"
+  elseif a:item =~# '^%[hHpPtT]$'
+    " Hash
+    let a:dict.result .= "\e[h" . a:item . "\e[H"
+    return 1
+  elseif !a:end && (a:item ==# '%a' || a:item ==# '%c')
+    " Partial item
+    return 0
+  elseif a:item =~# '^%[ac][dDrtiIsh]$'
+    " Date
+    let a:dict.result .= "\e[d" . a:item . "\e[D"
+    return 1
+  elseif a:item =~# '^%[ac].$'
+    " Name
+    let a:dict.result .= "\e[n" . a:item . "\e[N"
+    return 1
+  endif
+
+  " Other
+  let a:dict.result .= a:item
+  return 1
+endfunction
+
+function! flog#floggraph#git#BuildDynamicLogFormat(str) abort
+  let l:dict = { 'result': '' }
+  call flog#format#ParseFormat(
+        \ a:str,
+        \ l:dict,
+        \ function('flog#floggraph#git#HandleDynamicLogFormatItem'))
+  return l:dict.result
+endfunction
+
 function! flog#floggraph#git#BuildLogFormat() abort
   let l:state = flog#state#GetBufState()
   let l:opts = flog#state#GetResolvedOpts(l:state)
@@ -12,7 +47,11 @@ function! flog#floggraph#git#BuildLogFormat() abort
   " Add commit data
   let l:format .= '%n%h%n%p%n%D%n'
   " Add user format
-  let l:format .= l:opts.format
+  if g:flog_enable_dynamic_commit_hl
+    let l:format .= flog#floggraph#git#BuildDynamicLogFormat(l:opts.format)
+  else
+    let l:format .= l:opts.format
+  endif
 
   return flog#shell#Escape(l:format)
 endfunction

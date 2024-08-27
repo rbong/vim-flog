@@ -3,6 +3,8 @@
 silent setlocal
       \ bufhidden=wipe
       \ buftype=nofile
+      \ concealcursor=n
+      \ conceallevel=2
       \ cursorline
       \ nobuflisted
       \ nomodeline

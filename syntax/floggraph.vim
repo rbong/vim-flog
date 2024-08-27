@@ -10,27 +10,36 @@ runtime! syntax/diff.vim
 
 syntax cluster flogCommitInfo contains=flogHash,flogAuthor,flogRef,flogDate
 
-syntax match flogHash   contained nextgroup=flogAuthor,flogRef,flogDate  /\v%(\].*)@<!\[[0-9a-f]{4,}\]%( |$)/
-syntax match flogAuthor contained nextgroup=flogHash,flogRef,flogDate    /\v%(\}.*)@<!\{.{-}\}%( |$)/
-syntax match flogRef    contained nextgroup=flogHash,flogAuthor,flogDate /\%().*\)\@<!(\%(tag: \| -> \|, \|[^ \\)?*[]\+\)\+)\%( \|$\)/
+if g:flog_enable_dynamic_commit_hl
+  syntax match flogConceal conceal /\e\[./
 
-" Date patterns
-let weekday_name_pattern = '%(Mon|Monday|Tue|Tuesday|Wed|Wednesday|Thu|Thursday|Fri|Friday|Sat|Saturday|Sun|Sunday)'
-let month_name_pattern = '%(Jan|January|Feb|February|Mar|March|Apr|April|May|Jun|June|Jul|July|Aug|August|Sep|September|Oct|October|Nov|November|Dec|December)'
-let iso_date_pattern = '%(\d{4}-\d\d-\d\d|%())'
-let iso_time_pattern = '%(\d\d:\d\d%(:\d\d%( ?[+-]\d\d:?\d\d)?)?)'
+  syntax region flogHash   start=/\e\[h/ end=/\e\[H/me=e-3 contains=flogConceal
+  syntax region flogAuthor start=/\e\[n/ end=/\e\[N/me=e-3 contains=flogConceal
+  syntax region flogRef    start=/\e\[r/ end=/\e\[R/me=e-3 contains=flogConceal
+  syntax region flogDate   start=/\e\[d/ end=/\e\[D/me=e-3 contains=flogConceal
+else
+  syntax match flogHash   contained nextgroup=flogAuthor,flogRef,flogDate  /\v%(\].*)@<!\[[0-9a-f]{4,}\]%( |$)/
+  syntax match flogAuthor contained nextgroup=flogHash,flogRef,flogDate    /\v%(\}.*)@<!\{.{-}\}%( |$)/
+  syntax match flogRef    contained nextgroup=flogHash,flogAuthor,flogDate /\%().*\)\@<!(\%(tag: \| -> \|, \|[^ \\)?*[]\+\)\+)\%( \|$\)/
 
-" ISO format
-exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . iso_date_pattern . '%([T ]' . iso_time_pattern . ')?%( |$)/'
-" RFC format
-exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . weekday_name_pattern . ', \d{1,2} ' . month_name_pattern . ' \d{4}%( ' . iso_time_pattern . ')?%( |$)/'
-" Local format
-exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . weekday_name_pattern . ' ' . month_name_pattern . ' \d{1,2}%( ' . iso_time_pattern . ')? \d{4}' . '%( |$)/'
-" Relative format
-exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v%(\d+ %([yY]ear|[mM]onth|[wW]eek|[dD]ay|[hH]our|[mM]inute|[sS]econd)s? [aA]go)%( |$)/'
-" Human formats
-exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . weekday_name_pattern . ' ' . iso_time_pattern . '%( |$)/'
-exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . month_name_pattern . ' \d{1,2} \d{4}' . '%( |$)/'
+  " Date patterns
+  let weekday_name_pattern = '%(Mon|Monday|Tue|Tuesday|Wed|Wednesday|Thu|Thursday|Fri|Friday|Sat|Saturday|Sun|Sunday)'
+  let month_name_pattern = '%(Jan|January|Feb|February|Mar|March|Apr|April|May|Jun|June|Jul|July|Aug|August|Sep|September|Oct|October|Nov|November|Dec|December)'
+  let iso_date_pattern = '%(\d{4}-\d\d-\d\d|%())'
+  let iso_time_pattern = '%(\d\d:\d\d%(:\d\d%( ?[+-]\d\d:?\d\d)?)?)'
+
+  " ISO format
+  exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . iso_date_pattern . '%([T ]' . iso_time_pattern . ')?%( |$)/'
+  " RFC format
+  exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . weekday_name_pattern . ', \d{1,2} ' . month_name_pattern . ' \d{4}%( ' . iso_time_pattern . ')?%( |$)/'
+  " Local format
+  exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . weekday_name_pattern . ' ' . month_name_pattern . ' \d{1,2}%( ' . iso_time_pattern . ')? \d{4}' . '%( |$)/'
+  " Relative format
+  exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v%(\d+ %([yY]ear|[mM]onth|[wW]eek|[dD]ay|[hH]our|[mM]inute|[sS]econd)s? [aA]go)%( |$)/'
+  " Human formats
+  exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . weekday_name_pattern . ' ' . iso_time_pattern . '%( |$)/'
+  exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . month_name_pattern . ' \d{1,2} \d{4}' . '%( |$)/'
+endif
 
 " Commit ref
 syntax match flogRefTag    contained containedin=flogRef /\vtag: \zs.{-}\ze%(, |)\)/

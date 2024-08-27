@@ -28,9 +28,14 @@ function! flog#state#Create() abort
 endfunction
 
 function! flog#state#GetInternalDefaultOpts() abort
+  let l:format = '%ad [%h] {%an}%d %s'
+  if g:flog_enable_dynamic_commit_hl
+    let l:format = '%ad %h %an%d %s'
+  endif
+
   let l:defaults = {
         \ 'raw_args': '',
-        \ 'format': '%ad [%h] {%an}%d %s',
+        \ 'format': l:format,
         \ 'date': 'iso',
         \ 'all': v:false,
         \ 'auto_update': v:false,
