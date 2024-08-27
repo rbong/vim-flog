@@ -144,6 +144,7 @@ function! flog#floggraph#format#HandleCommandItem(dict, item, end) abort
   endif
 
   if empty(l:formatted_item)
+    let a:dict.result = ''
     return -1
   endif
 
