@@ -33,8 +33,8 @@ exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v'
 exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . month_name_pattern . ' \d{1,2} \d{4}' . '%( |$)/'
 
 " Commit ref
-syntax match flogRefTag    contained containedin=flogRef /\vtag: \zs.{-}\ze%(, |)\)/
-syntax match flogRefRemote contained containedin=flogRef /\vremotes\/\zs.{-}\ze%(, |)\)/
+syntax match flogRefTag        contained containedin=flogRef /\vtag: \zs.{-}\ze%(, |)\)/
+syntax match flogRefRemote     contained containedin=flogRef /\vremotes\/\zs.{-}\ze%(, |)\)/
 syntax match flogRefHead       contained containedin=flogRef nextgroup=flogRefHeadArrow  /\<HEAD/
 syntax match flogRefHeadArrow  contained                     nextgroup=flogRefHeadBranch / -> /
 syntax match flogRefHeadBranch contained                                                 /[^,)]\+/
@@ -42,15 +42,15 @@ syntax match flogRefHeadBranch contained                                        
 " Collapsed commit indicator
 syntax match flogCollapsedCommit contained /== \d\+ hidden lines ==$/
 
-highlight default link flogHash   Statement
-highlight default link flogAuthor String
-highlight default link flogDate   Number
-highlight default link flogRef    Directory
-highlight default link flogRefTag    String
-highlight default link flogRefRemote Statement
-highlight default link flogRefHead       Keyword
-highlight default link flogRefHeadArrow  flogRef
-highlight default link flogRefHeadBranch Special
+highlight default link flogHash            Statement
+highlight default link flogAuthor          String
+highlight default link flogDate            Number
+highlight default link flogRef             Directory
+highlight default link flogRefTag          String
+highlight default link flogRefRemote       Statement
+highlight default link flogRefHead         Keyword
+highlight default link flogRefHeadArrow    flogRef
+highlight default link flogRefHeadBranch   Special
 highlight default link flogCollapsedCommit Comment
 
 " Diff highlighting
