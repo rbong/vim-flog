@@ -69,7 +69,7 @@ function M.nvim_create_graph_autocmds(buffer, instance_number, enable_graph)
         if should_add_hl_autocmds then
           flog_graph.clear_internal_graph_state(instance_number)
         end
-        flog_watch.nvim_unregister_floggraph_buf()
+        flog_watch.nvim_unregister_floggraph_buf(buffer)
       end,
       group = group,
     }

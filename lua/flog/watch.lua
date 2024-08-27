@@ -126,13 +126,7 @@ function M.nvim_register_floggraph_buf()
   return M.nvim_add_buf(buf, git_dir)
 end
 
-function M.nvim_unregister_floggraph_buf()
-  vim.fn['flog#floggraph#buf#AssertFlogBuf']()
-  if (vim.fn['flog#fugitive#IsGitBuf']() or 0) == 0 then
-    return false
-  end
-
-  local buf = vim.fn.bufnr()
+function M.nvim_unregister_floggraph_buf(buf)
   return M.nvim_remove_buf(buf)
 end
 
