@@ -13,10 +13,10 @@ syntax cluster flogCommitInfo contains=flogHash,flogAuthor,flogRef,flogDate
 if g:flog_enable_dynamic_commit_hl
   syntax match flogConceal conceal /\e\[./
 
-  syntax region flogHash   start=/\e\[h/ end=/\e\[H/me=e-3 contains=flogConceal
-  syntax region flogAuthor start=/\e\[n/ end=/\e\[N/me=e-3 contains=flogConceal
-  syntax region flogRef    start=/\e\[r/ end=/\e\[R/me=e-3 contains=flogConceal
-  syntax region flogDate   start=/\e\[d/ end=/\e\[D/me=e-3 contains=flogConceal
+  syntax region flogHash   start=/\e\[h/ end=/\e\[H\|$/me=e-3 contains=flogConceal
+  syntax region flogAuthor start=/\e\[n/ end=/\e\[N\|$/me=e-3 contains=flogConceal
+  syntax region flogRef    start=/\e\[r/ end=/\e\[R\|$/me=e-3 contains=flogConceal
+  syntax region flogDate   start=/\e\[d/ end=/\e\[D\|$/me=e-3 contains=flogConceal
 else
   syntax match flogHash   contained nextgroup=flogAuthor,flogRef,flogDate  /\v%(\].*)@<!\[[0-9a-f]{4,}\]%( |$)/
   syntax match flogAuthor contained nextgroup=flogHash,flogRef,flogDate    /\v%(\}.*)@<!\{.{-}\}%( |$)/
