@@ -2,6 +2,10 @@
 " This file contains public Flog API functions.
 "
 
+function! flog#Version() abort
+  return '3.0.0'
+endfunction
+
 function! flog#Exec(cmd, focus = v:false, static = v:false, tmp = v:false) abort
   if empty(a:cmd)
     return ''
