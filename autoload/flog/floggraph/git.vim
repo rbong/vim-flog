@@ -6,6 +6,7 @@ function! flog#floggraph#git#HandleDynamicLogFormatItem(dict, item, end) abort
   if a:item ==# '%d' || a:item ==# '%D'
     " Ref names
     let a:dict.result .= "\e[r" . a:item . "\e[R"
+    return 1
   elseif a:item =~# '^%[hHpPtT]$'
     " Hash
     let a:dict.result .= "\e[h" . a:item . "\e[H"
