@@ -37,7 +37,7 @@ function! flog#ExecTmp(cmd, ...) abort
 endfunction
 
 function! flog#Format(cmd) abort
-  return flog#format#FormatCommand(a:cmd)
+  return flog#floggraph#format#FormatCommand(a:cmd)
 endfunction
 
 " Deprecations
