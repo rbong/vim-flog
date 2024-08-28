@@ -1,8 +1,8 @@
 "
-" This file contains functions for manipulating the register in "floggraph" buffers.
+" This file contains functions for yanking text from "floggraph" buffers.
 "
 
-function! flog#floggraph#reg#YankHash(reg = '"', line = '.', count = 1) abort
+function! flog#floggraph#yank#Hashes(reg = '"', line = '.', count = 1) abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
 
@@ -37,7 +37,7 @@ function! flog#floggraph#reg#YankHash(reg = '"', line = '.', count = 1) abort
   return l:i
 endfunction
 
-function! flog#floggraph#reg#YankHashRange(reg = '"', start_line = "'<", end_line = "'>") abort
+function! flog#floggraph#yank#HashRange(reg = '"', start_line = "'<", end_line = "'>") abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
 
@@ -55,5 +55,5 @@ function! flog#floggraph#reg#YankHashRange(reg = '"', start_line = "'<", end_lin
     return 0
   endif
 
-  return flog#floggraph#reg#YankHash(a:reg, a:start_line, l:end_index - l:start_index + 1)
+  return flog#floggraph#yank#Hashes(a:reg, a:start_line, l:end_index - l:start_index + 1)
 endfunction

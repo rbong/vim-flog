@@ -54,8 +54,8 @@ if !hasmapto('<Plug>(FlogYank)')
   nmap <buffer> y<C-G> <Plug>(FlogYank)
   vmap <buffer> y<C-G> <Plug>(FlogYank)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogYank) :<C-U>call flog#floggraph#reg#YankHash(v:register, '.', max([1, v:count]))<CR>
-vnoremap <buffer> <silent> <Plug>(FlogYank) :<C-U>call flog#floggraph#reg#YankHashRange(v:register, "'<", "'>")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogYank) :<C-U>call flog#floggraph#yank#Hashes(v:register, '.', max([1, v:count]))<CR>
+vnoremap <buffer> <silent> <Plug>(FlogYank) :<C-U>call flog#floggraph#yank#HashRange(v:register, "'<", "'>")<CR>
 
 if !hasmapto('<Plug>(FlogUpdate)')
   nmap <buffer> u <Plug>(FlogUpdate)
