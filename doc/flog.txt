@@ -325,6 +325,29 @@ y<C-G>                                                           *flog-y<C-G>*
 
   In visual mode, copies the selected commit hashes to a register.
 
+                                                        *<Plug>(FlogYankText)*
+y<C-T>                                                           *flog-y<C-T>*
+
+  Yanks sanitized text, removing the graph and hidden commit characters added
+  for |g:flog_enable_dynamic_commit_hl|.
+
+  In normal mode, copy the line under the cursor to a register.
+  Accepts a count.
+
+  In visual mode, copies the selected lines to a register.
+  Lines with no commit output are skipped in visual mode.
+
+                                               *<Plug>(FlogYankTextWithGraph)*
+y<C-X>                                                           *flog-y<C-X>*
+
+  Yanks sanitized text, removing hidden commit characters added for
+  |g:flog_enable_dynamic_commit_hl|. Includes the graph.
+
+  In normal mode, copy the line under the cursor to a register.
+  Accepts a count.
+
+  In visual mode, copies the selected lines to a register.
+
                                                           *<Plug>(FlogUpdate)*
 u                                                                     *flog-u*
 

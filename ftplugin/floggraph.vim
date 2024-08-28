@@ -59,6 +59,20 @@ endif
 nnoremap <buffer> <silent> <Plug>(FlogYank) :<C-U>call flog#floggraph#yank#Hashes(v:register, '.', v:count1)<CR>
 vnoremap <buffer> <silent> <Plug>(FlogYank) :<C-U>call flog#floggraph#yank#HashRange(v:register, "'<", "'>")<CR>
 
+if !hasmapto('<Plug>(FlogYankText)')
+  nmap <buffer> y<C-T> <Plug>(FlogYankText)
+  vmap <buffer> y<C-T> <Plug>(FlogYankText)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogYankText) :<C-U>call flog#floggraph#yank#SanitizedText(v:register, '.', v:count1, 0, 0)<CR>
+vnoremap <buffer> <silent> <Plug>(FlogYankText) :<C-U>call flog#floggraph#yank#SanitizedTextRange(v:register, "'<", "'>", 0)<CR>
+
+if !hasmapto('<Plug>(FlogYankTextWithGraph)')
+  nmap <buffer> y<C-X> <Plug>(FlogYankTextWithGraph)
+  vmap <buffer> y<C-X> <Plug>(FlogYankTextWithGraph)
+endif
+nnoremap <buffer> <silent> <Plug>(FlogYankTextWithGraph) :<C-U>call flog#floggraph#yank#SanitizedText(v:register, '.', v:count1, 1, 0)<CR>
+vnoremap <buffer> <silent> <Plug>(FlogYankTextWithGraph) :<C-U>call flog#floggraph#yank#SanitizedTextRange(v:register, "'<", "'>", 1)<CR>
+
 if !hasmapto('<Plug>(FlogUpdate)')
   nmap <buffer> u <Plug>(FlogUpdate)
 endif
