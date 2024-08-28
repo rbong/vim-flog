@@ -2,30 +2,34 @@
 " This file contains functions for handling commits in "floggraph" buffers.
 "
 
-function! flog#floggraph#commit#GetAtLine(line = '.') abort
+function! flog#floggraph#commit#GetIndexAtLine(line = '.') abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
 
   let l:lnum = type(a:line) == v:t_number ? a:line : line(a:line)
+  return get(l:state.line_commits, l:lnum - 1, -1)
+endfunction
 
-  let l:commit_index = get(l:state.line_commits, l:lnum - 1, -1)
-  if l:commit_index < 0
-    return {}
-  endif
+function! flog#floggraph#commit#GetAtLine(line = '.') abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
 
-  return l:state.commits[l:commit_index]
+  let l:commit_index = flog#floggraph#commit#GetIndexAtLine(a:line)
+  return get(l:state.commits, l:commit_index, {})
+endfunction
+
+function! flog#floggraph#commit#GetIndexByHash(hash) abort
+  call flog#floggraph#buf#AssertFlogBuf()
+  let l:state = flog#state#GetBufState()
+  return get(l:state.commits_by_hash, a:hash, -1)
 endfunction
 
 function! flog#floggraph#commit#GetByHash(hash) abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
 
-  let l:commit_index = get(l:state.commits_by_hash, a:hash, -1)
-  if l:commit_index < 0
-    return {}
-  endif
-
-  return l:state.commits[l:commit_index]
+  let l:commit_index = flog#floggraph#commit#GetIndexByHash(a:hash)
+  return get(l:state.commits, l:commit_index, {})
 endfunction
 
 function! flog#floggraph#commit#GetByRef(ref) abort
@@ -47,9 +51,7 @@ function! flog#floggraph#commit#GetNext(offset = 1) abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
 
-  let l:commit = flog#floggraph#commit#GetAtLine('.')
-  let l:commit_index = index(l:state.commits, l:commit)
-
+  let l:commit_index = flog#floggraph#commit#GetIndexAtLine('.')
   if l:commit_index < 0 || l:commit_index + a:offset < 0
     return {}
   endif

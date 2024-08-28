@@ -11,13 +11,11 @@ function! flog#floggraph#yank#Commits(reg = '"', line = '.', count = 1, expr = '
     return 0
   endif
 
-  let l:commit = flog#floggraph#commit#GetAtLine(a:line)
-  if empty(l:commit)
+  let l:commit_index = flog#floggraph#commit#GetIndexAtLine(a:line)
+  if l:commit_index < 0
     call setreg(a:reg, [], 'v')
     return 0
   endif
-
-  let l:commit_index = index(l:state.commits, l:commit)
 
   let l:lines = []
   for l:i in range(a:count)
@@ -43,14 +41,8 @@ function! flog#floggraph#yank#GetCommitRangeCount(start_line = "'<", end_line = 
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
 
-  let l:start_commit = flog#floggraph#commit#GetAtLine(a:start_line)
-  let l:end_commit = flog#floggraph#commit#GetAtLine(a:end_line)
-  if empty(l:start_commit) || empty(l:end_commit)
-    return 0
-  endif
-
-  let l:start_index = index(l:state.commits, l:start_commit)
-  let l:end_index = index(l:state.commits, l:end_commit)
+  let l:start_index = flog#floggraph#commit#GetIndexAtLine(a:start_line)
+  let l:end_index = flog#floggraph#commit#GetIndexAtLine(a:end_line)
   if l:start_index < 0 || l:end_index < 0
     return 0
   endif
