@@ -2,12 +2,11 @@
 " This file contains functions for handling commits in "floggraph" buffers.
 "
 
-function! flog#floggraph#commit#GetAtLine(...) abort
-  let l:line = get(a:, 1, '.')
+function! flog#floggraph#commit#GetAtLine(line = '.') abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
 
-  let l:lnum = type(l:line) == v:t_number ? l:line : line(l:line)
+  let l:lnum = type(a:line) == v:t_number ? a:line : line(a:line)
 
   let l:commit_index = get(l:state.line_commits, l:lnum - 1, -1)
   if l:commit_index < 0
