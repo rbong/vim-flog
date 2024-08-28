@@ -304,8 +304,8 @@ git                                                                 *flog-git*
                                                             *<Plug>(FlogYank)*
 y<C-G>                                                           *flog-y<C-G>*
 
-  In normal mode, copy the short commit hash under the current line to a
-  register. Accepts a count.
+  In normal mode, copy the short commit hash under the cursor to a register.
+  Accepts a count.
 
   In visual mode, copies the selected commit hashes to a register.
 
