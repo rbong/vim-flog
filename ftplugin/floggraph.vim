@@ -54,7 +54,7 @@ if !hasmapto('<Plug>(FlogYank)')
   nmap <buffer> y<C-G> <Plug>(FlogYank)
   vmap <buffer> y<C-G> <Plug>(FlogYank)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogYank) :<C-U>call flog#floggraph#yank#Hashes(v:register, '.', max([1, v:count]))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogYank) :<C-U>call flog#floggraph#yank#Hashes(v:register, '.', v:count1)<CR>
 vnoremap <buffer> <silent> <Plug>(FlogYank) :<C-U>call flog#floggraph#yank#HashRange(v:register, "'<", "'>")<CR>
 
 if !hasmapto('<Plug>(FlogUpdate)')
@@ -103,8 +103,8 @@ endif
 if !hasmapto('<Plug>(FlogPrevCommit)')
   nmap <buffer> ( <Plug>(FlogPrevCommit)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogNextCommit) :<C-U>call flog#floggraph#nav#NextCommit(max([1, v:count]))<CR>
-nnoremap <buffer> <silent> <Plug>(FlogPrevCommit) :<C-U>call flog#floggraph#nav#PrevCommit(max([1, v:count]))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogNextCommit) :<C-U>call flog#floggraph#nav#NextCommit(v:count1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogPrevCommit) :<C-U>call flog#floggraph#nav#PrevCommit(v:count1)<CR>
 
 if !hasmapto('<Plug>(FlogVNextCommitRight)')
   nmap <buffer> <C-N> <Plug>(FlogVNextCommitRight)
@@ -112,8 +112,8 @@ endif
 if !hasmapto('<Plug>(FlogVPrevCommitRight)')
   nmap <buffer> <C-P> <Plug>(FlogVPrevCommitRight)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogVNextCommitRight) :<C-U>call flog#floggraph#nav#NextCommit(max([1, v:count])) \| vertical belowright Flogsplitcommit<CR>
-nnoremap <buffer> <silent> <Plug>(FlogVPrevCommitRight) :<C-U>call flog#floggraph#nav#PrevCommit(max([1, v:count])) \| vertical belowright Flogsplitcommit<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVNextCommitRight) :<C-U>call flog#floggraph#nav#NextCommit(v:count1) \| vertical belowright Flogsplitcommit<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVPrevCommitRight) :<C-U>call flog#floggraph#nav#PrevCommit(v:count1) \| vertical belowright Flogsplitcommit<CR>
 
 if !hasmapto('<Plug>(FlogVNextRefRight)')
   nmap <buffer> ]r <Plug>(FlogVNextRefRight)
@@ -121,8 +121,8 @@ endif
 if !hasmapto('<Plug>(FlogVPrevRefRight)')
   nmap <buffer> [r <Plug>(FlogVPrevRefRight)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogVNextRefRight) :<C-U>call flog#floggraph#nav#NextRefCommit(max([1, v:count]))<CR>
-nnoremap <buffer> <silent> <Plug>(FlogVPrevRefRight) :<C-U>call flog#floggraph#nav#PrevRefCommit(max([1, v:count]))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVNextRefRight) :<C-U>call flog#floggraph#nav#NextRefCommit(v:count1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVPrevRefRight) :<C-U>call flog#floggraph#nav#PrevRefCommit(v:count1)<CR>
 
 if !hasmapto('<Plug>(FlogJumpToParent)')
   nmap <buffer> } <Plug>(FlogJumpToParent)
@@ -130,8 +130,8 @@ endif
 if !hasmapto('<Plug>(FlogJumpToChild)')
   nmap <buffer> { <Plug>(FlogJumpToChild)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogJumpToParent) :<C-U>call flog#floggraph#nav#JumpToParent(max([1, v:count]))<CR>
-nnoremap <buffer> <silent> <Plug>(FlogJumpToChild) :<C-U>call flog#floggraph#nav#JumpToChild(max([1, v:count]))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogJumpToParent) :<C-U>call flog#floggraph#nav#JumpToParent(v:count1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogJumpToChild) :<C-U>call flog#floggraph#nav#JumpToChild(v:count1)<CR>
 
 if !hasmapto('<Plug>(FlogJumpToNewer)')
   nmap <buffer> <C-I> <Plug>(FlogJumpToNewer)
@@ -139,18 +139,18 @@ endif
 if !hasmapto('<Plug>(FlogJumpToOlder)')
   nmap <buffer> <C-O> <Plug>(FlogJumpToOlder)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogJumpToNewer) :<C-U>call flog#floggraph#nav#JumpToNewer(max([1, v:count]))<CR>
-nnoremap <buffer> <silent> <Plug>(FlogJumpToOlder) :<C-U>call flog#floggraph#nav#JumpToOlder(max([1, v:count]))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogJumpToNewer) :<C-U>call flog#floggraph#nav#JumpToNewer(v:count1)<CR>
+nnoremap <buffer> <silent> <Plug>(FlogJumpToOlder) :<C-U>call flog#floggraph#nav#JumpToOlder(v:count1)<CR>
 
 if !hasmapto('<Plug>(FlogSkipAhead)')
   nmap <buffer> ]] <Plug>(FlogSkipAhead)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogSkipAhead) :<C-U>call flog#floggraph#nav#SkipAhead(max([v:count, 1]))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogSkipAhead) :<C-U>call flog#floggraph#nav#SkipAhead(v:count1)<CR>
 
 if !hasmapto('<Plug>(FlogSkipBack)')
   nmap <buffer> [[ <Plug>(FlogSkipBack)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogSkipBack) :<C-U>call flog#floggraph#nav#SkipBack(max([v:count, 1]))<CR>
+nnoremap <buffer> <silent> <Plug>(FlogSkipBack) :<C-U>call flog#floggraph#nav#SkipBack(v:count1)<CR>
 
 if !hasmapto('<Plug>(FlogSetSkip)')
   nmap <buffer> gcg <Plug>(FlogSetSkip)
