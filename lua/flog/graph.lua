@@ -324,16 +324,6 @@ function M.get_graph(
         -- Update max graph width
         if commit_graph_width > max_graph_width then
           max_graph_width = commit_graph_width
-
-          -- Set default branch highlighting
-          if enable_dynamic_branch_hl then
-            local hl = 1
-            if max_graph_width > 1 then
-              hl = current_hl[max_graph_width - 1] % num_branch_colors + 1
-            end
-            commit_hl[max_graph_width] = hl
-            current_hl[max_graph_width] = hl
-          end
         end
       else
         commit_graph_width = graph_width
