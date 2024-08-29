@@ -1,10 +1,6 @@
 # Flog FAQ
 
-## How do I get Flog to run faster?
-
-The answer depends on your issue.
-
-**Flog is slow the first time it runs for a repo**
+## Why does Flog hang the first time I run it?
 
 The first time Flog runs for a repo, it runs `git commit-graph write`.
 This ultimately makes it run faster.
@@ -21,7 +17,7 @@ Set args (defaults shown):
 let g:flog_write_commit_graph_args = '--reachable --progress'
 ```
 
-**Flog gets slower over time for repos**
+## Why is Flog getting slower over time for me?
 
 The commit graph will eventually become out of date.
 
@@ -31,115 +27,65 @@ You can update it by running:
 git commit-graph write --reachable --progress
 ```
 
-**Flog takes a long time to load for many commits**
+## How do I reduce the number of commits?
 
-By default, Flog will shows 5,000 commits.
+Flog will shows 5,000 commits by default.
 
-Launch with less commits:
+Show 2,000 commits one time:
 
 ```
 :Flog -max-count=2000
 ```
 
-Launch with less commits by default:
+Show 2,000 commits by default:
 
 ```
 let g:flog_permanent_default_opts = { 'max_count': 2000 }
 ```
 
-**Flog takes a long time to load for complex git branch graphs**
+## How can I disable the graph and show only commits?
 
 Toggle the graph with `gx` or launch with `:Flog -no-graph`.
 
-**Other issues**
-
-Please [post an issue](https://github.com/rbong/vim-flog/issues/) or [discussion](https://github.com/rbong/vim-flog/discussions) if you run into any other speed problems.
-
 ## What are the differences with other branch viewers?
 
+**gv.vim**
+
 [gv.vim](https://github.com/junegunn/gv.vim) is an ultra-light branch viewer.
-[gitv](https://github.com/gregsexton/gitv) is a fully featured branch viewer.
-[gitgraph.nvim](https://github.com/isakbm/gitgraph.nvim) is a Neovim branch viewer with very particular branch drawing.
+It is not very customizable by design.
 
-**Maintenance**
+Flog is more fully featured than gv.vim and has nicer looking branches and highlighting.
+Flog has comparable speed to gv.vim, but is more complex.
 
-gv.vim is maintained.
-gitv is not maintained.
-gitgraph.nvim is a work in progress, so the details related to that plugin here may change.
+**gitv**
 
-Flog is, at the time of writing, also actively maintained.
+[gitv](https://github.com/gregsexton/gitv) is also a fully featured branch viewer.
 
-**Branch drawing algorithm**
+However, gitv however is not maintained.
+Flog aims to be a successor to gitv and is improved in every practical way.
 
-gv.vim and gitv rely on the output of `git log --graph`.
-Flog draws the git branch graph itself.
-This allows for branch highlighting and beautiful git branch graphs.
+**gitgraph.nvim**
 
-gitgraph.nvim also draws the graph itself.
-Its graph drawing algorithm aims for a better graph on large repos.
-It currently is much slower at the initial rendering of the graph.
+[gitgraph.nvim](https://github.com/isakbm/gitgraph.nvim) is a fully featured Neovim branch viewer still under development.
 
-**Initial load time**
+Flog may be slower than gitgraph.nvim when scrolling in large repos on weaker machines.
+As a tradeoff, gitgraph.nvim has better scrolling performance, but has exponentially worse loading time and memory use.
 
-Flog loads faster than gitv.
-Flog sometimes loads slower than gv.vim.
-Flog loads faster than gitgraph.nvim.
+Flog's branch representation is more straightforward.
+gitgraph.nvim has an opinionated branch drawing algorithm, but currently, any potential advantages are undocumented.
 
-**Branch highlighting**
+Flog is an extension for [fugitive.vim](https://github.com/tpope/vim-fugitive).
+gitgraph.nvim has hooks for plugins like [diffview](https://github.com/sindrets/diffview.nvim).
 
-gv.vim does not have branch highlighting.
-gitv has similar branch highlighting to Flog, however it may cause more lag.
+Flog has features that have no equivalent in gitgraph.nvim, such as commit marks, some navigation mappings, and contextually aware command completion.
 
-gitgraph.nvim currently has more accurate branch highlighting than Flog.
-Branch highlighting may also be more performant in gitgraph.nvim while scrolling in large repos and on weaker machines.
+gitgraph.nvim is written in pure Lua.
+Flog supports both Vim and Neovim, so it uses both Vimscript and Lua.
 
-**Customization**
+Flog and gitgraph.nvim are both well written.
+Flog's code has aggressive optimizations and legacy support, so gitgraph.nvim currently has cleaner code.
 
-Flog allows you to customize your output format and other features.
-Flog is more customizable and flexible than gitv.
-gv.vim does not have any customization or flexibility by design.
-gitgraph.nvim is also customizable.
-
-**Editor support**
-
-Flog supports Vim and Neovim, as do gv.vim and gitv.
-gitgraph.nvim only supports Neovim.
-
-**Plugin integration**
-
-Flog is designed as an extension to [fugitive.vim](https://github.com/tpope/vim-fugitive).
-gitv is also an extension for fugitive.vim.
-gv.vim requires fugitive.vim, but has less integration features by design.
-gitgraph.nvim has hooks to integrate with plugins such as [diffview](https://github.com/sindrets/diffview.nvim).
-
-**Code quality and testing strategy**
-
-Flog's code was originally based off of gitv.vim, which is not maintained.
-Since then it has seen many improvements.
-
-gv.vim is a simple plugin with good quality code.
-
-gitgraph.nvim is a good quality plugin.
-It has not yet gone through aggressive optimization like Flog yet, and it is cleaner and more readable.
-
-**Testing strategy**
-
-gitv.vim does not have tests.
-gv.vim has tests.
-Flog and gitgraph.nvim have different testing philosophies.
-
-Flog focuses on integration tests instead of unit tests.
-There is only one branch drawing function in Flog for optimization.
-This eliminates function call overhead, but means that we don't have small branch drawing functions to individually unit test.
-Integration tests also ensure the plugin works end-to-end.
-
-gitgraph.nvim has unit tests.
-These types of tests typically allow more easily identifying the exact spot where code is failing.
-
-**Other features**
-
-Flog has features which have no equivalent in the other branch viewers.
-This includes commit marks, some navigation mappings, and contextually aware command completion.
+Both plugins have test coverage but have different testing philosophies.
 
 ## How can I learn how to use flog?
 
