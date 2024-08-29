@@ -292,6 +292,21 @@ function M.get_graph(
           commit_branch_index = commit_branch_index + 1
         end
 
+        -- Set new branch highlighting
+        if enable_dynamic_branch_hl then
+          local above_hl = current_hl[commit_branch_index]
+          local left_hl = current_hl[commit_branch_index - 1]
+          local right_hl = current_hl[commit_branch_index + 1]
+
+          local hl = (left_hl or 0) % num_branch_colors + 1
+          while hl == right_hl or hl == above_hl do
+            hl = hl % num_branch_colors + 1
+          end
+
+          commit_hl[commit_branch_index] = hl
+          current_hl[commit_branch_index] = hl
+        end
+
         -- Set commit char for commit on new branch
         if ncommit_parents > 1 then
           commit_str = branch_tip_merge_commit_str
