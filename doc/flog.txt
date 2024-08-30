@@ -230,8 +230,6 @@ These commands are wrappers to |:Git|.
   While in the |:Flog| window, completion is available for the current line or
   range.
 
-  By default, returns focus to the |:Flog| window after running the command.
-
   It updates the |:Flog| window after returning to it by default.
 
   If called outside of a |:Flog| window, calls |:Git| and ignores anything
@@ -241,11 +239,11 @@ These commands are wrappers to |:Git|.
 
   Same as |:Floggit|, but use |:Git!|.
 
-:Floggit --focus                              *:Floggit_--focus* *:Floggit_-f*
-:Floggit -f
+:Floggit --blur                                *:Floggit_--blur* *:Floggit_-b*
+:Floggit -b
 
-  Instead of returning focus to the |:Flog| window after running the command,
-  retain focus.
+  Instead of keeping focus in the window after running the command, return to
+  the |:Flog| window.
 
 :Floggit --static                            *:Floggit_--static* *:Floggit_-s*
 :Floggit -s
@@ -1054,14 +1052,14 @@ g:flog_order_types                                        *g:flog_order_types*
 FUNCTIONS                                                     *flog-functions*
 
                                                                  *flog#Exec()*
-flog#Exec({command}[, {focus}[, {static}[, {tmp}]]])
+flog#Exec({command}[, {blur}[, {static}[, {tmp}]]])
 
   Runs {command}.
 
   Any window opened by the command will be considered a |flog-side-window|.
 
-  By default, focus returns to the |:Flog| window after running the command.
-  {focus} allows the command to retain focus.
+  By default, the last window opened will keep focus.
+  {blur} causes the focus to return to the |:Flog| window.
 
   By default, updates the |:Flog| window after running the command.
   {static} causes the window not to update after running the command.
@@ -1074,7 +1072,7 @@ flog#Exec({command}[, {focus}[, {static}[, {tmp}]]])
 <
 
                                                               *flog#ExecTmp()*
-flog#ExecTmp({command}[, {focus}[, {static}]])
+flog#ExecTmp({command}[, {blur}[, {static}]])
 
   Same as |flog#Exec()|, but always open the command in a temporary
   |flog-side-window|.

@@ -16,7 +16,7 @@ silent setlocal
 " Commands
 
 command! -buffer -bang -range=0 -complete=customlist,flog#cmd#flog#args#Complete -nargs=* Flogsetargs call flog#cmd#FlogSetArgs([<f-args>], !empty('<bang>'))
-command! -buffer Flogsplitcommit call flog#Exec(flog#Format('<mods> Gsplit %h'), 0, 1, 1)
+command! -buffer Flogsplitcommit call flog#Exec(flog#Format('<mods> Gsplit %h'), 1, 1, 1)
 command! -buffer Flogmarks call flog#floggraph#mark#PrintAll()
 
 " Deprecated commands
@@ -38,7 +38,7 @@ nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitRight) :vertical belowright Fl
 if !hasmapto('<Plug>(FlogVSplitCommitPathsRight)')
   nmap <buffer> <Tab> <Plug>(FlogVSplitCommitPathsRight)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitPathsRight) :<C-U>exec flog#Format('vertical belowright Floggit -s -t show %h -- %p')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVSplitCommitPathsRight) :<C-U>exec flog#Format('vertical belowright Floggit -b -s -t show %h -- %p')<CR>
 
 if !hasmapto('<Plug>(FlogGit)')
   nmap <buffer> git <Plug>(FlogGit)
@@ -88,9 +88,9 @@ if !hasmapto('<Plug>(FlogVSplitUnstaged)')
   nmap <buffer> gU <Plug>(FlogVSplitUnstaged)
 endif
 
-nnoremap <buffer> <silent> <Plug>(FlogVSplitStaged) :<C-U>vertical belowright Floggit -s -t diff --cached<CR>
-nnoremap <buffer> <silent> <Plug>(FlogVSplitUntracked) :<C-U>exec flog#Format('silent Git add -N . \| vertical belowright Floggit -s -t diff \| silent Git read-tree %t')<CR>
-nnoremap <buffer> <silent> <Plug>(FlogVSplitUnstaged) :<C-U>vertical belowright Floggit -s -t diff<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVSplitStaged) :<C-U>vertical belowright Floggit -b -s -t diff --cached<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVSplitUntracked) :<C-U>exec flog#Format('silent Git add -N . \| vertical belowright Floggit -b -s -t diff \| silent Git read-tree %t')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVSplitUnstaged) :<C-U>vertical belowright Floggit -b -s -t diff<CR>
 
 if !hasmapto('<Plug>(FlogCloseTmpWin)')
   nmap <buffer> dq <Plug>(FlogCloseTmpWin)
@@ -320,11 +320,11 @@ if !hasmapto('<Plug>(FlogVDiffSplitPathsRight)')
   vmap <buffer> DV <Plug>(FlogVDiffSplitPathsRight)
 endif
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>exec flog#Format('vertical belowright Floggit -s -t diff HEAD %h')<CR>
-vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>exec flog#Format("vertical belowright Floggit -s -t diff %(h'>) %(h'<)")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>exec flog#Format('vertical belowright Floggit -b -s -t diff HEAD %h')<CR>
+vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitRight) :<C-U>exec flog#Format("vertical belowright Floggit -b -s -t diff %(h'>) %(h'<)")<CR>
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>exec flog#Format('vertical belowright Floggit -s -t diff HEAD %h -- %p')<CR>
-vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>exec flog#Format("vertical belowright Floggit -s -t diff HEAD %(h'<) %(h'>) -- %p")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>exec flog#Format('vertical belowright Floggit -b -s -t diff HEAD %h -- %p')<CR>
+vnoremap <buffer> <silent> <Plug>(FlogVDiffSplitPathsRight) :<C-U>exec flog#Format("vertical belowright Floggit -b -s -t diff HEAD %(h'<) %(h'>) -- %p")<CR>
 
 if !hasmapto('<Plug>(FlogVDiffSplitLastCommitRight)')
   nmap <buffer> d! <Plug>(FlogVDiffSplitLastCommitRight)
@@ -334,9 +334,9 @@ if !hasmapto('<Plug>(FlogVDiffSplitLastCommitPathsRight)')
   nmap <buffer> D! <Plug>(FlogVDiffSplitLastCommitPathsRight)
 endif
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitRight) :<C-U>exec flog#Format("vertical belowright Floggit -s -t diff %(h'!) %H")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitRight) :<C-U>exec flog#Format("vertical belowright Floggit -b -s -t diff %(h'!) %H")<CR>
 
-nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitPathsRight) :<C-U>exec flog#Format("vertical belowright Floggit -s -t diff %(h'!) %H -- %p")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVDiffSplitLastCommitPathsRight) :<C-U>exec flog#Format("vertical belowright Floggit -b -s -t diff %(h'!) %H -- %p")<CR>
 
 if !hasmapto('<Plug>(FlogDiffHelp)')
   nmap <buffer> d? <Plug>(FlogDiffHelp)
@@ -348,17 +348,17 @@ nnoremap <buffer> <silent> <Plug>(FlogDiffHelp) :help flog-diff-mappings<CR>
 if !hasmapto('<Plug>(FlogCommit)')
   nmap <buffer> cc <Plug>(FlogCommit)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogCommit) :<C-U>Floggit -f commit<CR>
+nnoremap <buffer> <silent> <Plug>(FlogCommit) :<C-U>Floggit commit<CR>
 
 if !hasmapto('<Plug>(FlogAmend)')
   nmap <buffer> ca <Plug>(FlogAmend)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogAmend) :<C-U>Floggit -f commit --amend<CR>
+nnoremap <buffer> <silent> <Plug>(FlogAmend) :<C-U>Floggit commit --amend<CR>
 
 if !hasmapto('<Plug>(FlogAmendNoEdit)')
   nmap <buffer> ce <Plug>(FlogAmendNoEdit)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogAmendNoEdit) :<C-U>Floggit -f commit --amend --no-edit<CR>
+nnoremap <buffer> <silent> <Plug>(FlogAmendNoEdit) :<C-U>Floggit commit --amend --no-edit<CR>
 
 if !hasmapto('<Plug>(FlogFixup)')
   nmap <buffer> cf <Plug>(FlogFixup)
@@ -366,8 +366,8 @@ endif
 if !hasmapto('<Plug>(FlogFixupRebase)')
   nmap <buffer> cF <Plug>(FlogFixupRebase)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogFixup) :<C-U>exec flog#Format('Floggit -f commit --fixup=%H')<CR>
-nnoremap <buffer> <silent> <Plug>(FlogFixupRebase) :<C-U>exec flog#Format('Git commit --fixup=%H \| Floggit -f -c sequence.editor=true rebase --interactive --autosquash %H^')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogFixup) :<C-U>exec flog#Format('Floggit commit --fixup=%H')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogFixupRebase) :<C-U>exec flog#Format('Git commit --fixup=%H \| Floggit -c sequence.editor=true rebase --interactive --autosquash %H^')<CR>
 
 if !hasmapto('<Plug>(FlogSquash)')
   nmap <buffer> cs <Plug>(FlogSquash)
@@ -378,9 +378,9 @@ endif
 if !hasmapto('<Plug>(FlogSquashEdit)')
   nmap <buffer> cA <Plug>(FlogSquashEdit)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogSquash) :<C-U>exec flog#Format('Floggit -f commit --no-edit --squash=%H')<CR>
-nnoremap <buffer> <silent> <Plug>(FlogSquashRebase) :<C-U>exec flog#Format('Git commit --no-edit --squash=%H \| Floggit -f -c sequence.editor=true rebase --interactive --autosquash %H^')<CR>
-nnoremap <buffer> <silent> <Plug>(FlogSquashEdit) :<C-U>exec flog#Format('Floggit -f commit --edit --squash=%H')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogSquash) :<C-U>exec flog#Format('Floggit commit --no-edit --squash=%H')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogSquashRebase) :<C-U>exec flog#Format('Git commit --no-edit --squash=%H \| Floggit -c sequence.editor=true rebase --interactive --autosquash %H^')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogSquashEdit) :<C-U>exec flog#Format('Floggit commit --edit --squash=%H')<CR>
 
 if !hasmapto('<Plug>(FlogRevert)')
   nmap <buffer> crc <Plug>(FlogRevert)
@@ -392,11 +392,11 @@ if !hasmapto('<Plug>(FlogRevertNoEdit)')
   vmap <buffer> crn <Plug>(FlogRevertNoEdit)
 endif
 
-nnoremap <buffer> <silent> <Plug>(FlogRevert) :<C-U>exec flog#Format('Floggit -f revert %H')<CR>
-vnoremap <buffer> <silent> <Plug>(FlogRevert) :<C-U>exec flog#Format("Floggit -f revert %(h'<)^..%(h'>)")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRevert) :<C-U>exec flog#Format('Floggit revert %H')<CR>
+vnoremap <buffer> <silent> <Plug>(FlogRevert) :<C-U>exec flog#Format("Floggit revert %(h'<)^..%(h'>)")<CR>
 
-nnoremap <buffer> <silent> <Plug>(FlogRevertNoEdit) :<C-U>exec flog#Format('Floggit -f revert --no-edit %H')<CR>
-vnoremap <buffer> <silent> <Plug>(FlogRevertNoEdit) :<C-U>exec flog#Format("Floggit -f revert --no-edit %(h'<)^..%(h'>)")<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRevertNoEdit) :<C-U>exec flog#Format('Floggit revert --no-edit %H')<CR>
+vnoremap <buffer> <silent> <Plug>(FlogRevertNoEdit) :<C-U>exec flog#Format("Floggit revert --no-edit %(h'<)^..%(h'>)")<CR>
 
 if !hasmapto('<Plug>(FlogCheckout)')
   nmap <buffer> coo <Plug>(FlogCheckout)
@@ -462,57 +462,57 @@ nnoremap <buffer> <silent> <Plug>(FlogCommitHelp) :help flog-commit-mappings<CR>
 if !hasmapto('<Plug>(FlogRebaseInteractive)')
   nmap <buffer> ri <Plug>(FlogRebaseInteractive)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractive) :<C-U>exec flog#Format('Floggit -f rebase --interactive %H')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractive) :<C-U>exec flog#Format('Floggit rebase --interactive %H')<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveAutosquash)')
   nmap <buffer> rf <Plug>(FlogRebaseInteractiveAutosquash)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveAutosquash) :<C-U>exec flog#Format('Floggit -f -c sequence.editor=true rebase --interactive --autosquash %H')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveAutosquash) :<C-U>exec flog#Format('Floggit -c sequence.editor=true rebase --interactive --autosquash %H')<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveUpstream)')
   nmap <buffer> ru <Plug>(FlogRebaseInteractiveUpstream)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveUpstream) :<C-U>Floggit -f rebase --interactive @{upstream}<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveUpstream) :<C-U>Floggit rebase --interactive @{upstream}<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractivePush)')
   nmap <buffer> rp <Plug>(FlogRebaseInteractivePush)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractivePush) :<C-U>Floggit -f rebase --interactive @{push}<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractivePush) :<C-U>Floggit rebase --interactive @{push}<CR>
 
 if !hasmapto('<Plug>(FlogRebaseContinue)')
   nmap <buffer> rr <Plug>(FlogRebaseContinue)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseContinue) :<C-U>Floggit -f rebase --continue<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseContinue) :<C-U>Floggit rebase --continue<CR>
 
 if !hasmapto('<Plug>(FlogRebaseSkip)')
   nmap <buffer> rs <Plug>(FlogRebaseSkip)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseSkip) :<C-U>Floggit -f rebase --skip<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseSkip) :<C-U>Floggit rebase --skip<CR>
 
 if !hasmapto('<Plug>(FlogRebaseAbort)')
   nmap <buffer> ra <Plug>(FlogRebaseAbort)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseAbort) :<C-U>Floggit -f rebase --abort<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseAbort) :<C-U>Floggit rebase --abort<CR>
 
 if !hasmapto('<Plug>(FlogRebaseEditTodo)')
   nmap <buffer> re <Plug>(FlogRebaseEditTodo)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseEditTodo) :<C-U>Floggit -f rebase --edit-todo<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseEditTodo) :<C-U>Floggit rebase --edit-todo<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveReword)')
   nmap <buffer> rw <Plug>(FlogRebaseInteractiveReword)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveReword) :<C-U>exec flog#Format('Floggit -f rebase --interactive %H^ \| s/^pick/reword/e')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveReword) :<C-U>exec flog#Format('Floggit rebase --interactive %H^ \| s/^pick/reword/e')<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveEdit)')
   nmap <buffer> rm <Plug>(FlogRebaseInteractiveEdit)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveEdit) :<C-U>exec flog#Format('Floggit -f rebase --interactive %H^ \| s/^pick/edit/e')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveEdit) :<C-U>exec flog#Format('Floggit rebase --interactive %H^ \| s/^pick/edit/e')<CR>
 
 if !hasmapto('<Plug>(FlogRebaseInteractiveDrop)')
   nmap <buffer> rd <Plug>(FlogRebaseInteractiveDrop)
 endif
-nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveDrop) :<C-U>exec flog#Format('Floggit -f rebase --interactive %H^ \| s/^pick/drop/e')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogRebaseInteractiveDrop) :<C-U>exec flog#Format('Floggit rebase --interactive %H^ \| s/^pick/drop/e')<CR>
 
 if !hasmapto('<Plug>(FlogGitRebase)')
   nmap <buffer> r<Space> <Plug>(FlogGitRebase)

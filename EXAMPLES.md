@@ -67,12 +67,13 @@ Put this code inside of your `.vimrc`:
 
 ```vim
 augroup MyFlogSettings
-  autocmd FileType floggraph nno <buffer> dd :<C-U>exec flog#Format('vertical belowright Floggit -s -t diff HEAD %h')<CR>
-  autocmd FileType floggraph vno <buffer> dd :<C-U>exec flog#Format("vertical belowright Floggit -s -t diff %(h'>) %(h'<)")<CR>
+  autocmd FileType floggraph nno <buffer> dd :<C-U>exec flog#Format('vertical belowright Floggit -b -s -t diff HEAD %h')<CR>
+  autocmd FileType floggraph vno <buffer> dd :<C-U>exec flog#Format("vertical belowright Floggit -b -s -t diff %(h'>) %(h'<)")<CR>
 augroup END
 ```
 
 `Floggit` runs a command using Fugitive's `Git` command.
+The `-b` flag causes the focus to return to the commit graph window after runnign the command.
 The `-s` flag causes the commit graph to not explicitly update after running the command.
 The `-t` flag treats any windows it opens as temporary side windows.
 

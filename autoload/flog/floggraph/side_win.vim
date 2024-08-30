@@ -56,7 +56,7 @@ function! flog#floggraph#side_win#Initialize(state, is_tmp) abort
   return win_getid()
 endfunction
 
-function! flog#floggraph#side_win#Open(cmd, keep_focus, is_tmp) abort
+function! flog#floggraph#side_win#Open(cmd, blur, is_tmp) abort
   call flog#floggraph#buf#AssertFlogBuf()
   let l:state = flog#state#GetBufState()
 
@@ -90,13 +90,13 @@ function! flog#floggraph#side_win#Open(cmd, keep_focus, is_tmp) abort
     endif
   endif
 
-  if !a:keep_focus
+  if a:blur
     call flog#win#Restore(l:graph_win)
   endif
 
   return flog#win#GetSavedId(l:final_win)
 endfunction
 
-function! flog#floggraph#side_win#OpenTmp(cmd, keep_focus) abort
-  return flog#floggraph#side_win#Open(a:cmd, a:keep_focus, v:true)
+function! flog#floggraph#side_win#OpenTmp(cmd, blur) abort
+  return flog#floggraph#side_win#Open(a:cmd, a:blur, v:true)
 endfunction
