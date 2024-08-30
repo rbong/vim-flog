@@ -2,18 +2,16 @@
 
 [![test status](https://github.com/rbong/vim-flog/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/rbong/vim-flog/actions)
 
-Flog is a fast, beautiful, and powerful git branch viewer for Vim.
+Flog is a blazingly fast, stunningly beautiful, exceptionally powerful Git branch viewer for Vim/Neovim.
 
 ![flog in action](img/screen-graph.png)
 
 ## Prerequisites
 
-In Vim 8/9, [LuaJIT 2.1](https://luajit.org/download.html) must be installed.
-
-On systems without LuaJIT available, you may also use [Lua](https://www.lua.org/) 5.1,
-however this is less performant.
-
 Neovim is supported natively.
+
+For Vim 8/9, [LuaJIT 2.1](https://luajit.org/download.html) must be installed.
+[Lua](https://www.lua.org/) 5.1 is also supported but less performant than LuaJIT.
 
 ## Installation
 
