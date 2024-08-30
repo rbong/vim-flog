@@ -2,7 +2,7 @@
 
 ## Checking Out a Branch
 
-1. Open the git branch graph with `:Flog` (if this runs slowly for you, see [FAQ](FAQ.md)).
+1. Open the git branch graph with `:Flog`.
 2. Make sure your commit is in the git branch graph by pressing `a` to toggle showing all commits.
 3. Navigate to your branch. There are a couple ways to do this:
   - Use builtin Vim navigation like `/`, `j`, `k`, etc.
