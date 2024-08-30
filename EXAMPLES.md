@@ -73,7 +73,7 @@ augroup END
 ```
 
 `Floggit` runs a command using Fugitive's `Git` command.
-The `-s` flag prevents the Flog buffer from updating after running the command.
+The `-s` flag causes the commit graph to not explicitly update after running the command.
 The `-t` flag treats any windows it opens as temporary side windows.
 
 The `flog#Format()` function uses special format specifier items, similar to `printf()`, to get contextual information from Flog.
