@@ -4,12 +4,8 @@ set -e
 
 TEST_DIR=$(realpath -- "$(dirname -- "$0")")
 
-. "$TEST_DIR/lib_dir.sh"
-. "$TEST_DIR/lib_diff.sh"
 . "$TEST_DIR/lib_git.sh"
-. "$TEST_DIR/lib_vim.sh"
-
-TMP=$(create_tmp_dir graph_merge_complex)
+. "$TEST_DIR/lib_test.sh"
 
 WORKTREE=$(git_init graph_merge_complex)
 cd "$WORKTREE"
@@ -26,21 +22,4 @@ git_checkout 1-b
 git_merge -m 1-c 2-a 3-a
 git_merge -m 1-d 2-b 3-b
 
-FLOG_CMD="Flog -format=%s"
-
-VIM_OUT="$TMP/basic_out"
-run_vim_command <<EOF
-$FLOG_CMD
-silent w $VIM_OUT
-EOF
-
-diff_data "$VIM_OUT" "graph_merge_complex_out"
-
-VIM_OUT="$TMP/extended_out"
-run_vim_command <<EOF
-let g:flog_enable_extended_chars = 1
-$FLOG_CMD
-silent w $VIM_OUT
-EOF
-
-diff_data "$VIM_OUT" "graph_merge_complex_extended_out"
+test_flog_graph "graph_merge_complex" "Flog -format=%s"
