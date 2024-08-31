@@ -7,15 +7,15 @@ License: Same terms as Vim itself (see |license|)
 ==============================================================================
 INTRODUCTION                                                      *flog-intro*
 
-Flog is a lightweight git branch viewer for Vim. It provides several helpful
-commands and mappings to interact with the git branch graph.
+Flog is a fast, beautiful, and powerful git branch viewer for Vim/Neovim.
+It integrates with the |fugitive| git plugin.
 
 ==============================================================================
 PREREQUISITES                                                   *flog-prereqs*
 
 Flog supports Vim 8, Vim 9, and Neovim.
 
-Flog requires the |fugitive| plugin to be installed.
+Flog requires the |fugitive| git plugin to be installed.
 
 In Vim 8/9, Flog requires LuaJIT 2.1 to be installed on the system.
 
@@ -29,6 +29,9 @@ COMMANDS                                                       *flog-commands*
 FLOG OPEN COMMANDS                                        *flog-open-commands*
 
 These commands open Flog.
+
+The options shown here can be configured via |g:flog_default_opts| and
+|g:flog_permanent_default_opts|.
 
 :Flog                                                                  *:Flog*
 
@@ -61,7 +64,7 @@ These commands open Flog.
   sudo sysctl fs.inotify.max_user_watches=524288
 <
 
-  When disabled, attempt to update whenever running commands in the buffer.
+  When disabled, attempt to update when using |:Floggit|.
   This will not always succeed.
 
   Only available in Neovim.
@@ -135,8 +138,14 @@ These commands open Flog.
   Passes the "--pretty=format:<format>" argument to "git log".
   Multiline formats are supported.
 
-  Some special characters may be required for format highlighting.
-  See also |g:flog_enable_dynamic_commit_hl|.
+  When |g:flog_enable_dynamic_commit_hl| is enabled, defaults to
+  "%ad %h %an%d %s".
+
+  When |g:flog_enable_dynamic_commit_hl| is not enabled, defaults to
+  "%ad [%h] {%an}%d %s". The extra characters in the output enable
+  syntax-based highlighting. See |flog-highlight-groups| for details.
+
+  See "format:<format-string>" in "git log --help" for supported placeholders.
 
 :Flog -limit=<limit>                                            *:Flog_-limit*
 
@@ -151,8 +160,9 @@ These commands open Flog.
 :Flog -max-count=<number>                                   *:Flog_-max-count*
 
   Passes the "--max-count=<number>" argument to "git log".
-
   Defaults to 5000.
+
+  See also: |flog-]]|, |flog-[[|.
 
 :Flog -order=<type>                                             *:Flog_-order*
 :Flog -sort=<type>                                               *:Flog_-sort*
@@ -163,6 +173,9 @@ These commands open Flog.
   "--topo-order" to "git log", respectfully.
 
   Defaults to "topo" when |:Flog_-graph| is enabled and "date" otherwise.
+
+  The "--topo-order" option is always enabled when |:Flog_-graph| is enabled
+  ("git log" supports multiple order options).
 
 :Flog -skip=<number>                                             *:Flog_-skip*
 
@@ -209,7 +222,8 @@ These commands open Flog.
   Parse the remaining arguments as if they were passed to |:Flog_-raw-args|.
   Does not require escaping spaces.
 
-:Flogsplit                                                        *:Flogsplit*
+:Flogsp                                                 *:Flogsp* *:Flogsplit*
+:Flogsplit
 
   Open Flog in a split. Supports |<mods>|. Behaves the same as |:Flog|
   otherwise.
@@ -217,20 +231,18 @@ These commands open Flog.
 ------------------------------------------------------------------------------
 FLOG GIT COMMANDS                                          *flog-git-commands*
 
-These commands are wrappers to |:Git|.
+:Floggit                                                   *:Floggit* *:Flogg*
+:Flogg
 
-:Floggit                                                            *:Floggit*
-
-  Open a git command via |:Git| using |flog#Exec()|.
-
+  Run a git command using |:Git|.
   All arguments supported by |:Git| are supported.
 
   Revision, file, and option completion is available for this command.
 
-  While in the |:Flog| window, completion is available for the current line or
-  range.
+  While in the |:Flog| window, contextual completion is available.
+  This completes commit refs under the cursor or in the selected visual range.
 
-  It updates the |:Flog| window after returning to it by default.
+  This command updates the |:Flog| window after returning to it by default.
 
   If called outside of a |:Flog| window, calls |:Git| and ignores anything
   relating to Flog.
@@ -242,35 +254,39 @@ These commands are wrappers to |:Git|.
 :Floggit --blur                                *:Floggit_--blur* *:Floggit_-b*
 :Floggit -b
 
-  Instead of keeping focus in the window after running the command, return to
-  the |:Flog| window.
+  Return to the |:Flog| window after running the command.
 
 :Floggit --static                            *:Floggit_--static* *:Floggit_-s*
 :Floggit -s
 
-  Prevent updating |:Flog| after running the command.
+  Don't update |:Flog| after running the command.
+  Has no effect if |:Flog_-auto-update| is enabled.
 
 :Floggit --tmp                                  *:Floggit_--tmp* *:Floggit_-t*
 :Floggit -t
 
-  Any windows will run in a temporary |flog-side-window|.
+  Set any windows opened by the command to temporary |flog-side-window|s.
+  Other temporary side windows are closed first.
 
 ------------------------------------------------------------------------------
 FLOG BUFFER COMMANDS                                    *flog-buffer-commands*
 
 These commands only work in the |:Flog| buffer.
 
-:Flogsetargs                                                    *:Flogsetargs*
+:Flogset                                             *:Flogset* *:Flogsetargs*
+:Flogsetargs
 
   Update the arguments passed to |:Flog| or |:Flogsplit|. Can only be run in a
   |:Flog| window. Merges new arguments with the current arguments.
 
-:Flogsetargs!                                                  *:Flogsetargs!*
+:Flogset!                                         *:Flogset!:* *:Flogsetargs!*
+:Flogsetargs!
 
-  Same as |:Flogsetargs|, but overwrite all of the current arguments instead
+  Same as |:Flogset|, but overwrite all of the current arguments instead
   of updating them.
 
-:Flogsplitcommit                                            *:Flogsplitcommit*
+:Flogspc                                         *:Flogspc* *:Flogsplitcommit*
+:Flogsplitcommit
 
   Open a commit under the cursor using |:Gsplit| in a |flog-temp-window|. Can
   only be run in the |:Flog| window.
@@ -456,20 +472,26 @@ CTRL-O                                                           *flog-CTRL-O*
                                                      *<Plug>(FlogJumpToNewer)*
 CTRL-I                                                           *flog-CTRL-I*
 
-  Same as |flog-CTRL-O|, but jump forwards in history.
+  Jump forwards in the |flog-jump-history|.
+
+  Accepts a count.
+  Sets |flog-''| to the last commit under the cursor.
 
                                                        *<Plug>(FlogSkipAhead)*
 ]]                                                                   *flog-]]*
 
-  Go forward in the commit history by |:Flog_-max-count| commits, if that
-  option is set.
+  Go forwards in the commit history by |:Flog_-max-count| commits, if that
+  option is set, by updating |:Flog_-skip|.
 
   Accepts a count.
 
                                                         *<Plug>(FlogSkipBack)*
 [[                                                                   *flog-[[*
 
-  Same as |flog-]]|, but go backwards.
+  Go backwards in the commit history by |:Flog_-max-count| commits, if that
+  option is set, by updating |:Flog_-skip|.
+
+  Accepts a count.
 
                                                          *<Plug>(FlogSetSkip)*
 gcg                                                                 *flog-gcg*
@@ -485,7 +507,7 @@ gct                                                                 *flog-gct*
                                                         *<Plug>(FlogClearRev)*
 gcc                                                                 *flog-gcc*
 
-  Unset |:Flog-rev|.
+  Unset |:Flog_-rev|.
 
 ------------------------------------------------------------------------------
 COMMIT MARK MAPPINGS                                      *flog-mark-mappings*
@@ -508,7 +530,7 @@ m{a-zA-Z'}                                                            *flog-m*
 COLLAPSE MAPPINGS                                     *flog-collapse-mappings*
 
 Collapse mappings only apply when a multiline log format is used, or if an
-option which includes multiline output like '-patch' is used.
+option which includes multiline output like |:Flog_-patch| is used.
 
                                                   *<Plug>(FlogCollapseCommit)*
  <                                                                    *flog-<*
@@ -544,75 +566,75 @@ ARGUMENT MODIFIER MAPPINGS                            *flog-argument-mappings*
                                                        *<Plug>(FlogToggleAll)*
 a                                                                     *flog-a*
 
-  Toggle |:Flog-all|.
+  Toggle |:Flog_-all|.
 
                                                     *<Plug>(FlogToggleBisect)*
 gb                                                                   *flog-gb*
 
-  Toggle |:Flog-bisect|.
+  Toggle |:Flog_-bisect|.
 
                                              *<Plug>(FlogToggleNoFirstParent)*
 gP                                                                   *flog-gP*
 
-  Toggle |:Flog-first-parent|.
+  Toggle |:Flog_-first-parent|.
 
                                                   *<Plug>(FlogToggleNoMerges)*
 gm                                                                   *flog-gm*
 
-  Toggle |:Flog-merges|.
+  Toggle |:Flog_-merges|.
 
                                                     *<Plug>(FlogToggleReflog)*
 gr                                                                   *flog-gr*
 
-  Toggle |:Flog-reflog|.
+  Toggle |:Flog_-reflog|.
 
                                                    *<Plug>(FlogToggleNoGraph)*
 gx                                                                   *flog-gx*
 
-  Toggle |:Flog-graph|.
+  Toggle |:Flog_-graph|.
 
                                                    *<Plug>(FlogToggleNoPatch)*
 gp                                                                   *flog-gp*
 
-  Toggle |:Flog-patch|.
+  Toggle |:Flog_-patch|.
 
                                                           *<Plug>(FlogSearch)*
 g/                                                                   *flog-g/*
 
   Open the command line with ":Flogsetargs -search=".
-  See also |:Flog-search|.
+  See also |:Flog_-search|.
 
                                                      *<Plug>(FlogPatchSearch)*
 g\                                                                   *flog-g\*
 
   Open the command line with ":Flogsetargs -patch-search=".
-  See also |:Flog-patch-search|.
+  See also |:Flog_-patch-search|.
 
                                                       *<Plug>(FlogCycleOrder)*
 goo                                                                 *flog-goo*
 
-  Cycle through the different |:Flog-order| options.
+  Cycle through the different |:Flog_-order| options.
   The order of sort types can be changed with |g:flog_order_types|.
 
                                                        *<Plug>(FlogOrderDate)*
 god                                                                 *flog-god*
 
-  Set |:Flog-order| to "date".
+  Set |:Flog_-order| to "date".
 
                                                      *<Plug>(FlogOrderAuthor)*
 goa                                                                 *flog-goa*
 
-  Set |:Flog-order| to "author".
+  Set |:Flog_-order| to "author".
 
                                                        *<plug>(FlogOrderTopo)*
 got                                                                 *flog-got*
 
-  Set |:Flog-order| to "topo".
+  Set |:Flog_-order| to "topo".
 
                                                    *<Plug>(FlogToggleReverse)*
 gor                                                                 *flog-gor*
 
-  Toggle |:Flog-reverse|.
+  Toggle |:Flog_-reverse|.
 
 ------------------------------------------------------------------------------
 DIFF MAPPINGS                                             *flog-diff-mappings*
@@ -869,8 +891,7 @@ r<Space>                                                       *flog-r<Space>*
 
   Start a command line with ":Floggit rebase ".
 
-  See also |:Floggit|.
-  See also "git rebase --help".
+  See also: |:Floggit|, "git rebase --help".
 
                                                       *<Plug>(FlogRebaseHelp)*
 r?                                                                   *flog-r?*
@@ -885,13 +906,11 @@ g:flog_default_opts                                      *g:flog_default_opts*
   A |dict| containing the default values for arguments to |:Flog|.
 
   Keys in the dictionary use underscores instead of dashes.
-
-  For example, the option for |:Flog-max-count| is "max_count", not
+  For example, the option for |:Flog_-max-count| is "max_count", not
   "max-count".
 
   Boolean args are always positive.
-
-  For example, the option for |:Flog-merges| is "merges", not "no_merges".
+  For example, the option for |:Flog_-merges| is "merges", not "no_merges".
 
   Example:
 >
@@ -903,7 +922,7 @@ g:flog_permanent_default_opts                  *g:flog_permanent_default_opts*
   Similar to |g:flog_default_opts|, but the arguments are used as internal
   defaults when clearing arguments using |:Flogsetargs| or |:Flogsetargs!|.
 
-  Has lower presidence than |g:flog_default_arguments|.
+  Has lower precedence than |g:flog_default_arguments|.
 
 g:flog_write_commit_graph                          *g:flog_write_commit_graph*
 
@@ -938,13 +957,11 @@ g:flog_override_default_mappings            *g:flog_override_default_mappings*
 g:flog_check_lua_version                            *g:flog_check_lua_version*
 
   When enabled, check that the installed version of Lua is supported.
-
   Defaults to true.
 
 g:flog_lua_bin                                                *g:flog_lua_bin*
 
   The Lua interpretter to use when |g:flog_use_internal_lua| is disabled.
-
   Defaults to "luajit".
 
 g:flog_use_internal_lua                              *g:flog_use_internal_lua*
@@ -959,6 +976,7 @@ g:flog_use_internal_lua                              *g:flog_use_internal_lua*
     --enable-luainterp=dynamic \
     --with-luajit
 <
+
   You must have both LuaJIT and the LuaJIT development files installed on your
   system to use this option. For example, on Ubuntu run:
 >
@@ -982,7 +1000,7 @@ g:flog_enable_extended_chars                    *g:flog_enable_extended_chars*
 
   Whether to enable experimental extra characters in the commit graph.
 
-  These are special Unicode characters U+F5D0 through U+F5FB made specifically
+  These are special Unicode characters starting at U+F5D0 made specifically
   for drawing Git branches.
 
   For best results, requires terminal support. Currently supported by the Kitty
@@ -1010,9 +1028,9 @@ g:flog_enable_dynamic_branch_hl              *g:flog_enable_dynamic_branch_hl*
 
 g:flog_enable_dynamic_commit_hl              *g:flog_enable_dynamic_commit_hl*
 
-  When disabled, base highlighting on visual characters in |:Flog_-format|.
-  Special items must go at the start of the format.
-  See |flog-highlight-groups| for details on the required format.
+  When disabled, base highlighting on syntactic characters in |:Flog_-format|.
+  Special items must go at the start of the format. See the default format for
+  an example.
 
   When enabled, inject hidden characters into the output for highlighting.
 
@@ -1025,6 +1043,8 @@ g:flog_num_branch_colors                            *g:flog_num_branch_colors*
   customizing highlight groups. At a minimum, 4 branch colors are required.
 
   Defaults to 8.
+
+  See also |hl-flogBranchX|.
 
 g:flog_commit_start_token                          *g:flog_commit_start_token*
 
@@ -1048,6 +1068,8 @@ g:flog_order_types                                        *g:flog_order_types*
     \ ]
 <
 
+  See also |:Flog_-order|.
+
 ==============================================================================
 FUNCTIONS                                                     *flog-functions*
 
@@ -1055,16 +1077,7 @@ FUNCTIONS                                                     *flog-functions*
 flog#Exec({command}[, {blur}[, {static}[, {tmp}]]])
 
   Runs {command}.
-
-  Any window opened by the command will be considered a |flog-side-window|.
-
-  By default, the last window opened will keep focus.
-  {blur} causes the focus to return to the |:Flog| window.
-
-  By default, updates the |:Flog| window after running the command.
-  {static} causes the window not to update after running the command.
-
-  {tmp} causes any windows to run in a temporary |flog-side-window|.
+  Uses the same options as |:Floggit|, but can be used to run any command.
 
   Example:
 >
@@ -1074,8 +1087,7 @@ flog#Exec({command}[, {blur}[, {static}[, {tmp}]]])
                                                               *flog#ExecTmp()*
 flog#ExecTmp({command}[, {blur}[, {static}]])
 
-  Same as |flog#Exec()|, but always open the command in a temporary
-  |flog-side-window|.
+  Same as |flog#Exec()|, but always emable {tmp}.
 
                                                                *flog#Format()*
 flog#Format({command})
@@ -1086,6 +1098,8 @@ flog#Format({command})
 >
     flog#Format('Git show %h')
 <
+
+  This can be used to format commands before passing them to |flog#Exec()|.
 
 ==============================================================================
 AUTOCOMMANDS                                               *flog-autocommands*
@@ -1113,7 +1127,7 @@ SIDE WINDOWS                                                *flog-side-window*
 Flog can open windows beside the commit branch graph to show more commit
 info.
 
-Side windows are opened with |flog#Exec()|.
+Side windows are opened with |flog#Exec()| or |:Floggit|.
 
 These windows can be set to temporary. Temporary windows will close before
 other temporary windows are opened. Temporary windows close when Flog
@@ -1216,11 +1230,11 @@ The following items are supported:
   %(l'x)                The local branch at the given mark "x".
 
                                                                      *flog-%p*
-  %p                    If |:Flog-limit| is set, resolves to the path passed
+  %p                    If |:Flog_-limit| is set, resolves to the path passed
                         to the limit, escaping it.
 
                         Otherwise, resolves to the paths passed to
-                        |:Flog-path|, if any, escaping them and joining them
+                        |:Flog_-path|, if any, escaping them and joining them
                         with spaces.
 
                                                                      *flog-%t*
@@ -1230,7 +1244,15 @@ The following items are supported:
                         useful for diffing unstaged files with "git add -N".
 
 ==============================================================================
-HIGHLIGHT GROUPS                                       *flog-highlight-groups*                
+HIGHLIGHT GROUPS                                       *flog-highlight-groups*
+
+These highlight groups can be modified to change the appearance of the graph.
+
+See also: |g:flog_enable_dynamic_commit_hl|,
+|g:flog_enable_dynamic_branch_hl|.
+
+Dynamic highlighting does not change what highlight groups are available.
+
                                                                *hl-flogBranch*
 flogBranchX                                                   *hl-flogBranchX*
 
