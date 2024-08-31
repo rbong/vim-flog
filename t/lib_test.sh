@@ -10,6 +10,7 @@ TEST_DIR=$(realpath -- "$(dirname -- "$0")")
 function test_flog_graph() {
   NAME="$1"
   CMD="$2"
+  CLEANUP="$3"
 
   TMP=$(create_tmp_dir "$NAME")
 
@@ -21,6 +22,10 @@ redir! >/dev/null | silent w $VIM_OUT | redir END
 EOF
   diff_data "$VIM_OUT" "${NAME}_out"
 
+  if [ "$CLEANUP" != "" ]; then
+    $CLEANUP
+  fi
+
   # Test extended chars
   VIM_OUT="$TMP/extended_out"
   run_vim_command <<EOF
@@ -29,6 +34,10 @@ $CMD
 redir! >/dev/null | silent w $VIM_OUT | redir END
 EOF
   diff_data "$VIM_OUT" "${NAME}_extended_out"
+
+  if [ "$CLEANUP" != "" ]; then
+    $CLEANUP
+  fi
 
   if [ "$NVIM" != "" -a "$NVIM" != "false" ]; then
     # Test highlights
@@ -40,6 +49,10 @@ redir! >/dev/null | silent w $VIM_OUT | redir END
 EOF
     diff_data "$VIM_OUT" "${NAME}_hl_out"
 
+    if [ "$CLEANUP" != "" ]; then
+      $CLEANUP
+    fi
+
     # Test extended chars/highglights
     VIM_OUT="$TMP/extended_hl_out"
     run_vim_command <<EOF
@@ -49,5 +62,9 @@ call flog#test#ShowNvimBufHl()
 redir! >/dev/null | silent w $VIM_OUT | redir END
 EOF
     diff_data "$VIM_OUT" "${NAME}_extended_hl_out"
+
+    if [ "$CLEANUP" != "" ]; then
+      $CLEANUP
+    fi
   fi
 }
