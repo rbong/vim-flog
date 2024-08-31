@@ -20,7 +20,7 @@ git_commit() {
 }
 
 git_merge() {
-  git merge -q --no-edit --no-ff "$@"
+  git merge -q --no-edit --no-ff --strategy=ours "$@"
 }
 
 git_tag() {
