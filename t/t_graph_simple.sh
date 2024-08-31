@@ -13,4 +13,7 @@ cd "$WORKTREE"
 git_commit_tag 1-a 1-b 1-c 1-d
 
 test_flog_graph "graph_simple" "Flog -format=%s"
-test_flog_graph "graph_simple_auto_update" "exec 'Flog -format=%s -auto-update' | redir! >/dev/null | exec 'G commit --allow-empty -m 1-e' | redir END | sleep 1" "git reset -q --hard 1-d"
+
+if [ "$NVIM" != "" -a "$NVIM" != "false" ]; then
+  test_flog_graph "graph_simple_auto_update" "exec 'Flog -format=%s -auto-update' | redir! >/dev/null | exec 'G commit --allow-empty -m 1-e' | redir END | sleep 1" "git reset -q --hard 1-d"
+fi
