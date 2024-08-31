@@ -19,29 +19,29 @@ git_commit_tag 1-a
 # Run :Flog from empty tab
 run_vim_command <<EOF
 Flog
-call flog#test#Assert('&filetype ==# "floggraph"')
 call flog#test#Assert('winnr("$") == 1')
 call flog#test#Assert('tabpagenr() == 1')
+call flog#test#Assert('&filetype ==# "floggraph"')
 
 normal gq
-call flog#test#Assert('&filetype !=# "floggraph"')
 call flog#test#Assert('winnr("$") == 1')
 call flog#test#Assert('tabpagenr() == 1')
+call flog#test#Assert('&filetype !=# "floggraph"')
 EOF
 
 # Run :Flog from non-empty tab
 run_vim_command <<EOF
 e README.md
 Flog
-call flog#test#Assert('&filetype ==# "floggraph"')
 call flog#test#Assert('winnr("$") == 1')
 call flog#test#Assert('tabpagenr() == 2')
+call flog#test#Assert('&filetype ==# "floggraph"')
 
 normal gq
-call flog#test#Assert('&filetype !=# "floggraph"')
-call flog#test#Assert('bufname() ==# "README.md"')
 call flog#test#Assert('winnr("$") == 1')
 call flog#test#Assert('tabpagenr() == 1')
+call flog#test#Assert('&filetype !=# "floggraph"')
+call flog#test#Assert('bufname() ==# "README.md"')
 EOF
 
 # Run :Flog with fake output
