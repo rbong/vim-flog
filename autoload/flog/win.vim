@@ -106,3 +106,13 @@ function! flog#win#SaveSizes(windows) abort
   endfor
   return sizes
 endfunction
+
+function! flog#win#IsTabEmpty() abort
+  return winnr('$') == 1
+        \ && line('$') == 1
+        \ && !&modified
+        \ && &filetype ==# ''
+        \ && &buftype ==# ''
+        \ && getline(1) ==# ''
+        \ && bufname() ==# ''
+endfunction

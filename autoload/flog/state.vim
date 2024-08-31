@@ -28,6 +28,8 @@ function! flog#state#Create() abort
 endfunction
 
 function! flog#state#GetInternalDefaultOpts() abort
+  let l:open_cmd = flog#win#IsTabEmpty() ? 'edit' : 'tabedit'
+
   let l:format = '%ad [%h] {%an}%d %s'
   if g:flog_enable_dynamic_commit_hl
     let l:format = '%ad %h %an%d %s'
@@ -50,7 +52,7 @@ function! flog#state#GetInternalDefaultOpts() abort
         \ 'skip': '',
         \ 'order': '',
         \ 'max_count': '5000',
-        \ 'open_cmd': 'tabedit',
+        \ 'open_cmd': l:open_cmd,
         \ 'search': '',
         \ 'patch_search': '',
         \ 'author': '',

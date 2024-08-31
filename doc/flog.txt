@@ -209,7 +209,9 @@ The options shown here can be configured via |g:flog_default_opts| and
 
   The command to use to open the window containing the graph.
   Must give initial focus to the window.
-  Defaults to |tabedit|.
+
+  Defaults to |:edit| when the tab is empty.
+  Otherwise, defaults to |:tabedit|.
 
 :Flog -raw-args=<args>                                       *:Flog_-raw-args*
 
