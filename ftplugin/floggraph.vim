@@ -17,6 +17,7 @@ silent setlocal
 
 command! -buffer -bang -range=0 -complete=customlist,flog#cmd#flog#args#Complete -nargs=* Flogsetargs call flog#cmd#FlogSetArgs([<f-args>], !empty('<bang>'))
 command! -buffer Flogsplitcommit call flog#Exec(flog#Format('<mods> Gsplit %h'), 1, 1, 1)
+cnoreabbrev Flogspc Flogsplitcommit
 command! -buffer Flogmarks call flog#floggraph#mark#PrintAll()
 
 " Deprecated commands
