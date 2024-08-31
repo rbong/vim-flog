@@ -17,17 +17,33 @@ cd "$WORKTREE"
 git_commit_tag 1-a
 
 run_vim_command <<EOF
-" Normal
+" Empty tab
+Flog
+
+call flog#test#Assert('&filetype ==# "floggraph"')
+call flog#test#Assert('winnr("$") == 1')
+call flog#test#Assert('tabpagenr() == 1')
+
+" Quit from empty tab
+normal gq
+
+call flog#test#Assert('&filetype !=# "floggraph"')
+call flog#test#Assert('winnr("$") == 1')
+call flog#test#Assert('tabpagenr() == 1')
+
+" Non-empty tab
+e README.md
 Flog
 
 call flog#test#Assert('&filetype ==# "floggraph"')
 call flog#test#Assert('winnr("$") == 1')
 call flog#test#Assert('tabpagenr() == 2')
 
-" Quit
+" Quit from Non-empty tab
 normal gq
 
 call flog#test#Assert('&filetype !=# "floggraph"')
+call flog#test#Assert('bufname() ==# "README.md"')
 call flog#test#Assert('winnr("$") == 1')
 call flog#test#Assert('tabpagenr() == 1')
 
