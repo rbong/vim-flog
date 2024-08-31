@@ -20,4 +20,4 @@ git_merge -m 1-d 2-b
 git_commit_tag 1-e
 
 test_flog_graph "graph_merge_multiline" "Flog -format=%s%n%s"
-test_flog_graph "graph_merge_multiline_hidden" "exec 'Flog -format=%s%n%s' | normal <"
+test_flog_graph "graph_merge_multiline_hidden" "exec 'Flog -format=%s%n%s' | redir! >/dev/null | exec 'normal <' | redir END"

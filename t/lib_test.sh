@@ -17,7 +17,7 @@ function test_flog_graph() {
   VIM_OUT="$TMP/basic_out"
   run_vim_command <<EOF
 $CMD
-silent w $VIM_OUT
+redir! >/dev/null | silent w $VIM_OUT | redir END
 EOF
   diff_data "$VIM_OUT" "${NAME}_out"
 
@@ -26,7 +26,7 @@ EOF
   run_vim_command <<EOF
 let g:flog_enable_extended_chars = 1
 $CMD
-silent w $VIM_OUT
+redir! >/dev/null | silent w $VIM_OUT | redir END
 EOF
   diff_data "$VIM_OUT" "${NAME}_extended_out"
 
@@ -36,7 +36,7 @@ EOF
     run_vim_command <<EOF
 $CMD
 call flog#test#ShowNvimBufHl()
-silent w $VIM_OUT
+redir! >/dev/null | silent w $VIM_OUT | redir END
 EOF
     diff_data "$VIM_OUT" "${NAME}_hl_out"
 
@@ -46,7 +46,7 @@ EOF
 let g:flog_enable_extended_chars = 1
 $CMD
 call flog#test#ShowNvimBufHl()
-silent w $VIM_OUT
+redir! >/dev/null | silent w $VIM_OUT | redir END
 EOF
     diff_data "$VIM_OUT" "${NAME}_extended_hl_out"
   fi

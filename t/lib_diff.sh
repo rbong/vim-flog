@@ -15,4 +15,5 @@ diff_data() {
   fi
 
   _diff_data "$1" "$2"
+  echo "Snapshot matches: $2"
 }
