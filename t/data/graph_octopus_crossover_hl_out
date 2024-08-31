@@ -1,0 +1,12 @@
+()• 1-b
+(flogBranch1)│ ()• 2-b
+(flogBranch1)│ (flogBranch2)├─┬─┬─(flogBranch5)╮ 
+(flogBranch1)│ (flogBranch2)│ (flogBranch3)│ (flogBranch4)│ ()• 5-a
+(flogBranch1)├(flogBranch5)───────╯ 
+(flogBranch1)│ (flogBranch2)│ (flogBranch3)│ ()• 4-a
+(flogBranch1)├(flogBranch4)─────╯ 
+(flogBranch1)│ (flogBranch2)│ ()• 3-a
+(flogBranch1)├(flogBranch3)───╯ 
+(flogBranch1)│ ()• 2-a
+(flogBranch1)├(flogBranch2)─╯ 
+()• 1-a

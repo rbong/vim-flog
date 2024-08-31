@@ -1,0 +1,9 @@
+()• 1-e
+()• 1-d
+(flogBranch1)├─(flogBranch2)╮ 
+(flogBranch1)│ ()• 2-b
+(flogBranch1)│ ()• 2-a
+()• (flogBranch2)│ ()1-c
+(flogBranch1)├(flogBranch2)─╯ 
+()• 1-b
+()• 1-a

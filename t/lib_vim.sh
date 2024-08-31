@@ -30,6 +30,7 @@ run_vim_command() {
 
   cat <<EOF > "$VIMRC"
 set nocompatible
+set lines=200
 filetype plugin indent on
 exec 'set rtp+=' . fnameescape("$FLOG_DIR")
 exec 'set rtp+=' . fnameescape("$FUGITIVE_DIR")

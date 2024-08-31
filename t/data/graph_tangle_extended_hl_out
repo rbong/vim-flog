@@ -1,0 +1,33 @@
+(flogBranch1) ()1-l
+(flogBranch1)(flogBranch2) 
+(flogBranch1) (flogBranch2) ()1-k
+(flogBranch1)(flogBranch4) 
+(flogBranch1) (flogBranch2) (flogBranch3) (flogBranch4) ()2-d
+(flogBranch1) (flogBranch2) (flogBranch3) (flogBranch4) ()1-j
+(flogBranch1)(flogBranch2) (flogBranch3) (flogBranch4) 
+(flogBranch1)   (flogBranch3) (flogBranch4) ()3-c
+(flogBranch1)(flogBranch3) (flogBranch4) 
+(flogBranch1)     (flogBranch4) ()4-a
+(flogBranch1)(flogBranch4) 
+(flogBranch1) ()1-i
+(flogBranch1)(flogBranch4) 
+(flogBranch1) (flogBranch4) ()1-h
+(flogBranch1)(flogBranch5) 
+(flogBranch1) (flogBranch4) (flogBranch5) ()2-c
+(flogBranch1) (flogBranch4)(flogBranch6) 
+(flogBranch1) (flogBranch4) (flogBranch5) (flogBranch6) ()1-g
+(flogBranch1) (flogBranch4) (flogBranch5) (flogBranch6) ()3-b
+(flogBranch1) (flogBranch4) (flogBranch5)(flogBranch6) 
+(flogBranch1) (flogBranch4) (flogBranch5) ()2-b
+(flogBranch1) (flogBranch4)(flogBranch7) 
+(flogBranch1) (flogBranch4) (flogBranch5) (flogBranch7) ()1-f
+(flogBranch1)(flogBranch7) 
+(flogBranch1) (flogBranch4) (flogBranch5) ()3-a
+(flogBranch1) (flogBranch4) (flogBranch5) ()2-a
+(flogBranch1) (flogBranch4) (flogBranch5) ()1-e
+(flogBranch1) (flogBranch4) (flogBranch5) ()1-d
+(flogBranch1)(flogBranch5) 
+(flogBranch1) (flogBranch4) ()1-c
+(flogBranch1)(flogBranch4) 
+(flogBranch1) ()1-b
+(flogBranch1) ()1-a

@@ -1,0 +1,12 @@
+(flogBranch1) ()1-b
+(flogBranch1) (flogBranch2) ()2-b
+(flogBranch1) (flogBranch2)(flogBranch5) 
+(flogBranch1) (flogBranch2) (flogBranch3) (flogBranch4) (flogBranch5) ()5-a
+(flogBranch1)(flogBranch5) 
+(flogBranch1) (flogBranch2) (flogBranch3) (flogBranch4) ()4-a
+(flogBranch1)(flogBranch4) 
+(flogBranch1) (flogBranch2) (flogBranch3) ()3-a
+(flogBranch1)(flogBranch3) 
+(flogBranch1) (flogBranch2) ()2-a
+(flogBranch1)(flogBranch2) 
+(flogBranch1) ()1-a

@@ -5,7 +5,7 @@ TEST_DIR=$(realpath -- "$(dirname -- "$0")")
 . "$TEST_DIR/lib_vim.sh"
 
 # Run a ":Flog" command and test the output.
-# Tests with defaults and extended chars.
+# Tests with defaults, extended chars, and highlights.
 # Compares with output data in "t/data".
 function test_flog_graph() {
   NAME="$1"
@@ -29,4 +29,25 @@ $CMD
 silent w $VIM_OUT
 EOF
   diff_data "$VIM_OUT" "${NAME}_extended_out"
+
+  if [ "$NVIM" != "" -a "$NVIM" != "false" ]; then
+    # Test highlights
+    VIM_OUT="$TMP/hl_out"
+    run_vim_command <<EOF
+$CMD
+call flog#test#ShowNvimBufHl()
+silent w $VIM_OUT
+EOF
+    diff_data "$VIM_OUT" "${NAME}_hl_out"
+
+    # Test extended chars/highglights
+    VIM_OUT="$TMP/extended_hl_out"
+    run_vim_command <<EOF
+let g:flog_enable_extended_chars = 1
+$CMD
+call flog#test#ShowNvimBufHl()
+silent w $VIM_OUT
+EOF
+    diff_data "$VIM_OUT" "${NAME}_extended_hl_out"
+  fi
 }

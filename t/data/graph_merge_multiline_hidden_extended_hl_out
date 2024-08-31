@@ -1,0 +1,16 @@
+(flogBranch1) ()1-e
+(flogBranch1) ()== 1 hidden lines ==
+(flogBranch1) ()1-d
+(flogBranch1) ()1-d
+(flogBranch1)(flogBranch2) 
+(flogBranch1) (flogBranch2) ()2-b
+(flogBranch1) (flogBranch2) ()2-b
+(flogBranch1) (flogBranch2) ()2-a
+(flogBranch1) (flogBranch2) ()2-a
+(flogBranch1) (flogBranch2) ()1-c
+(flogBranch1) (flogBranch2) ()1-c
+(flogBranch1)(flogBranch2) 
+(flogBranch1) ()1-b
+(flogBranch1) ()1-b
+(flogBranch1) ()1-a
+  ()1-a
