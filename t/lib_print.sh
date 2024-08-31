@@ -14,3 +14,9 @@ print_fail() {
 print_title() {
   echo -e "${COLOR_CYAN}running test $1...${COLOR_OFF}"
 }
+
+print_debug() {
+  if [ "$DEBUG" = "true" ]; then
+    echo "$@"
+  fi
+}
