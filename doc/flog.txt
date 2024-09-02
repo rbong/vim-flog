@@ -40,9 +40,9 @@ The options shown here can be configured via |g:flog_default_opts| and
   from the buffer.
 
   When opened in visual mode or passed a range, the selected range and
-  filename is passed to "-limit".
+  filename is passed to |:Flog_-limit|.
 
-  When called with range "0", passes the entire file to "-limit".
+  When called with range "0", passes the entire file to |:Flog_-limit|.
 
   The first time this is called, runs "git commit-graph write". This can be
   changed with |g:flog_write_commit_graph|.
