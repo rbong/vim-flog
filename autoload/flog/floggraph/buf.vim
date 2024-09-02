@@ -160,7 +160,7 @@ function! flog#floggraph#buf#Update() abort
   call flog#floggraph#commit#RestorePosition(l:graph_win, l:last_commit)
 
   " Set buffer name
-  silent! exec 'file ' . flog#floggraph#buf#GetName(l:state.instance_number, l:opts)
+  silent! exec 'keepalt file ' . flog#floggraph#buf#GetName(l:state.instance_number, l:opts)
 
   if has('nvim')
     " Initialize Neovim auto-updates
