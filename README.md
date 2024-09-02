@@ -8,18 +8,18 @@ Flog is a blazingly fast, stunningly beautiful, exceptionally powerful Git branc
 
 ## Features
 
-- Custom log formats
-- Collapsible multiline commit messages
-- Selected visual range history
+- Custom log format support
+- Multiline commit message support
+- Ability to view history of selected visual range
 - Contextual command completion
 - Many navigation mappings
-- Commit marks
-- Commit jump history
-- Intelligent cursor position
+- Commit-based marks and jump history
+- Ability to expand/collapse commit body
+- Intelligently save scroll position between updates
 - [Fugitive](https://github.com/tpope/vim-fugitive) integration
-- Pretty graph characters (currently only in [Kitty](https://github.com/kovidgoyal/kitty))
-- Auto updates (Neovim only)
+- Extended graph symbol support (currently only in [Kitty](https://github.com/kovidgoyal/kitty))
 - Dynamic branch highlighting (Neovim only)
+- Automatic updates (Neovim only)
 - And more!
 
 ## Installation
