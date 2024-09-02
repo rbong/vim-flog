@@ -13,6 +13,8 @@ silent setlocal
       \ nowrap
       \ readonly
 
+let b:minitrailspace_disable = v:true
+
 " Commands
 
 command! -buffer -bang -range=0 -complete=customlist,flog#cmd#flog#args#Complete -nargs=* Flogsetargs call flog#cmd#FlogSetArgs([<f-args>], !empty('<bang>'))
