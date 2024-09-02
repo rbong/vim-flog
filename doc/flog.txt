@@ -908,11 +908,10 @@ g:flog_default_opts                                      *g:flog_default_opts*
   A |dict| containing the default values for arguments to |:Flog|.
 
   Keys in the dictionary use underscores instead of dashes.
-  For example, the option for |:Flog_-max-count| is "max_count", not
-  "max-count".
+  For example, the key for |:Flog_-max-count| is "max_count", not "max-count".
 
   Boolean args are always positive.
-  For example, the option for |:Flog_-merges| is "merges", not "no_merges".
+  For example, the key for |:Flog_-merges| is "merges", not "no_merges".
 
   Example:
 >
@@ -980,7 +979,7 @@ g:flog_use_internal_lua                              *g:flog_use_internal_lua*
 <
 
   You must have both LuaJIT and the LuaJIT development files installed on your
-  system to use this option. For example, on Ubuntu run:
+  system to use this setting. For example, on Ubuntu run:
 >
   apt-get install luajit libluajit-5.1-dev
 <
@@ -1050,7 +1049,7 @@ g:flog_num_branch_colors                            *g:flog_num_branch_colors*
 
 g:flog_commit_start_token                          *g:flog_commit_start_token*
 
-  The internal token to use to find commit start. Provided as an option in
+  The internal token to use to find commit start. Provided as a setting in
   case your commit messages contain the default token alone on a line.
 
   Defaults to "__START".
