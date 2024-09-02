@@ -6,12 +6,14 @@ silent setlocal
       \ concealcursor=n
       \ conceallevel=2
       \ cursorline
+      \ foldcolumn=0
       \ nobuflisted
       \ nomodeline
       \ nomodifiable
       \ noswapfile
       \ nowrap
       \ readonly
+      \ signcolumn=no
 
 let b:minitrailspace_disable = v:true
 
