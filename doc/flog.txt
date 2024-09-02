@@ -254,21 +254,11 @@ FLOG GIT COMMANDS                                          *flog-git-commands*
   Same as |:Floggit|, but use |:Git!|.
 
 :Floggit --blur                                *:Floggit_--blur* *:Floggit_-b*
-:Floggit -b
-
-  Return to the |:Flog| window after running the command.
-
 :Floggit --static                            *:Floggit_--static* *:Floggit_-s*
-:Floggit -s
-
-  Don't update |:Flog| after running the command.
-  Has no effect if |:Flog_-auto-update| is enabled.
-
 :Floggit --tmp                                  *:Floggit_--tmp* *:Floggit_-t*
-:Floggit -t
 
-  Set any windows opened by the command to temporary |flog-side-window|s.
-  Other temporary side windows are closed first.
+  These options are passed to |flog#Exec()| to control the command behavior
+  if the command is run from the |:Flog| window.
 
 ------------------------------------------------------------------------------
 FLOG BUFFER COMMANDS                                    *flog-buffer-commands*
@@ -1078,7 +1068,20 @@ FUNCTIONS                                                     *flog-functions*
 flog#Exec({command}[, {blur}[, {static}[, {tmp}]]])
 
   Runs {command}.
-  Uses the same options as |:Floggit|, but can be used to run any command.
+
+  If the command is run from the |:Flog| window, use the options shown here.
+  If the command is run from any other window, simply execute the command.
+
+  When {blur} is true, return to the |:Flog| window after running the command.
+  Defaults to false.
+
+  When {static} is true, don't update |:Flog| after running the command.
+  Has no effect if |:Flog_-auto-update| is enabled.
+  Defaults to false.
+
+  When {tmp} is true, set any windows opened to temporary |flog-side-window|s.
+  Other temporary windows are closed before running the command.
+  Defaults to false.
 
   Example:
 >
