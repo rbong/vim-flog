@@ -6,12 +6,21 @@ Flog is a blazingly fast, stunningly beautiful, exceptionally powerful Git branc
 
 ![flog in action](img/screen-graph.png)
 
-## Prerequisites
+## Features
 
-Neovim is supported natively.
-
-For Vim 8/9, [LuaJIT 2.1](https://luajit.org/download.html) must be installed.
-[Lua](https://www.lua.org/) 5.1 is also supported but less performant than LuaJIT.
+- Custom log formats
+- Collapsible multiline commit messages
+- Selected visual range history
+- Contextual command completion
+- Many navigation mappings
+- Commit marks
+- Commit jump history
+- Intelligent cursor position
+- [Fugitive](https://github.com/tpope/vim-fugitive) integration
+- Pretty graph characters (currently only in [Kitty](https://github.com/kovidgoyal/kitty))
+- Auto updates (Neovim only)
+- Dynamic branch highlighting (Neovim only)
+- And more!
 
 ## Installation
 
@@ -35,21 +44,8 @@ For lazy.nvim users:
 },
 ```
 
-## Features
-
-- Custom log formats
-- Collapsible multiline commit messages
-- Selected visual range history
-- Contextual command completion
-- Many navigation mappings
-- Commit marks
-- Commit jump history
-- Intelligent cursor position
-- [Fugitive](https://github.com/tpope/vim-fugitive) integration
-- Pretty graph characters (currently only in [Kitty](https://github.com/kovidgoyal/kitty))
-- Auto updates (Neovim only)
-- Dynamic branch highlighting (Neovim only)
-- And more!
+In Vim, [LuaJIT 2.1](https://luajit.org/download.html) must be installed.
+[Lua](https://www.lua.org/) 5.1 is also supported but less performant than LuaJIT.
 
 ## Getting Started
 
