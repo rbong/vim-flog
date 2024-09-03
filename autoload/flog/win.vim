@@ -15,8 +15,7 @@ function! flog#win#Save() abort
         \ 'win_id': win_getid(),
         \ 'bufnr': bufnr(),
         \ 'view': winsaveview(),
-        \ 'vcol': flog#win#GetVcol('.'),
-        \ 'vcols': flog#win#GetVcol('$')
+        \ 'concealcol': flog#win#GetCols(line('.'), col('.'), -1).concealcol,
         \ }
 endfunction
 
@@ -31,7 +30,7 @@ function! flog#win#Restore(saved_win) abort
 
   if flog#win#Is(a:saved_win)
     call winrestview(a:saved_win.view)
-    call flog#win#RestoreVcol(a:saved_win)
+    call flog#win#RestoreConcealCol(a:saved_win)
   endif
 
   return l:new_win_id
@@ -51,27 +50,67 @@ function! flog#win#RestoreTopline(saved_win) abort
   return l:topline
 endfunction
 
-function! flog#win#GetVcol(expr) abort
-  return virtcol(a:expr)
-endfunction
+function! flog#win#GetCols(lnum, target_col, target_concealcol) abort
+  let l:line = getline(a:lnum)
 
-function! flog#win#SetVcol(line, vcol) abort
-  if exists('*setcursorcharpos')
-    return setcursorcharpos(a:line, a:vcol)
+  if len(l:line) == 0
+    return { 'col': 0, 'virtcol': 0, 'concealcol': 0 }
   endif
 
-  let l:line = a:line
-  if type(a:line) == v:t_string
-    let l:line = line(a:line)
-  endif
+  let l:col = 1
+  let l:virtcol = 1
+  let l:concealcol = 1
+  let l:conceal_region = -1
+  let l:conceal_width = -1
 
-  return cursor(a:line, virtcol2col(win_getid(), l:line, a:vcol))
+  let l:end_col = col([a:lnum, '$'])
+
+  while l:col <= l:end_col
+    if a:target_col >= 0 && a:target_col <= l:col && l:conceal_width != 0
+      break
+    endif
+    if a:target_concealcol >= 0 && a:target_concealcol <= l:concealcol && l:conceal_width != 0
+      break
+    endif
+
+    let l:width = len(strcharpart(l:line, l:virtcol - 1, 1))
+    if l:width <= 0
+      break
+    endif
+
+    let [l:is_concealed, l:conceal_ch, l:new_conceal_region] = synconcealed(a:lnum, l:col + 1)
+    let l:col += l:width
+    let l:virtcol += 1
+
+    if !l:is_concealed
+      let l:concealcol += 1
+      let l:conceal_region = -1
+      let l:conceal_width = -1
+    elseif l:new_conceal_region != l:conceal_region
+      let l:conceal_width = strwidth(l:conceal_ch)
+      let l:concealcol += l:conceal_width
+      let l:conceal_region = l:new_conceal_region
+    endif
+  endwhile
+
+  return { 'col': l:col, 'virtcol': l:virtcol, 'concealcol': l:concealcol }
 endfunction
 
-function! flog#win#RestoreVcol(saved_win) abort
-  let l:vcol = a:saved_win.vcol
-  call flog#win#SetVcol('.', l:vcol)
-  return l:vcol
+function! flog#win#GetConcealCol(expr) abort
+  let l:col = type(a:expr) == v:t_number ? a:expr : col(a:expr)
+  return flog#win#GetCols(line('.'), l:col, -1).concealcol
+endfunction
+
+function! flog#win#SetConcealCol(line, concealcol) abort
+  let l:lnum = type(a:line) == v:t_number ? a:line : line(a:line)
+  let l:col = flog#win#GetCols(l:lnum, -1, a:concealcol).col
+  return cursor(l:lnum, l:col)
+endfunction
+
+function! flog#win#RestoreConcealCol(saved_win) abort
+  let g:debug = a:saved_win
+  call flog#win#SetConcealCol('.', a:saved_win.concealcol)
+  return a:saved_win.concealcol
 endfunction
 
 function! flog#win#IsTabEmpty() abort

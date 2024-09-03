@@ -142,16 +142,16 @@ function! flog#floggraph#commit#RestoreOffset(saved_win, saved_commit) abort
 
   if l:line_offset == 0
     let l:new_col = 0
-    let l:saved_vcol = a:saved_win.vcol
+    let l:saved_col = a:saved_win.concealcol
 
-    if l:saved_vcol == a:saved_commit.col
+    if l:saved_col == a:saved_commit.col
       let l:new_col = flog#floggraph#commit#GetAtLine('.').col
-    elseif l:saved_vcol == a:saved_commit.format_col
+    elseif l:saved_col == a:saved_commit.format_col
       let l:new_col = flog#floggraph#commit#GetAtLine('.').format_col
     endif
 
     if l:new_col > 0
-      call flog#win#SetVcol('.', l:new_col)
+      call flog#win#SetConcealCol('.', l:new_col)
     endif
 
     return [0, l:new_col]
@@ -190,7 +190,7 @@ function! flog#floggraph#commit#RestorePosition(saved_win, saved_commit) abort
   " Restore parts of window position
   call flog#win#RestoreTopline(a:saved_win)
   if l:new_col == 0
-    call flog#win#RestoreVcol(a:saved_win)
+    call flog#win#RestoreConcealCol(a:saved_win)
   endif
 
   return a:saved_commit
