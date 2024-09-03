@@ -90,23 +90,6 @@ function! flog#win#RestoreVcol(saved_win) abort
   return l:vcol
 endfunction
 
-function! flog#win#SaveSizes(windows) abort
-  let l:sizes = {}
-  for l:window in a:windows
-    let l:tabwin = win_id2tabwin(l:window)
-    if l:tabwin == [0, 0]
-      continue
-    endif
-
-    let l:sizes[l:window] = [
-          \ winwidth(l:window),
-          \ winheight(l:window),
-          \ gettabwinvar(l:tabwin[0], l:tabwin[1], '&winfixwidth'),
-          \ gettabwinvar(l:tabwin[0], l:tabwin[1], '&winfixheight')]
-  endfor
-  return sizes
-endfunction
-
 function! flog#win#IsTabEmpty() abort
   return winnr('$') == 1
         \ && line('$') == 1
