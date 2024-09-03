@@ -288,5 +288,5 @@ function! flog#floggraph#buf#Close() abort
     endif
   endif
 
-  return flog#win#GetSavedId(l:graph_win)
+  return l:graph_win.win_id
 endfunction

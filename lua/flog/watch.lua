@@ -42,7 +42,7 @@ function M.nvim_start_watching(dir)
               end
             end
 
-            if not git_dirs[dir].bufs[vim.fn['flog#win#GetSavedBufnr'](saved_win)] then
+            if not git_dirs[dir].bufs[saved_win.bufnr] then
               vim.fn['flog#win#Restore'](saved_win)
             end
           end,

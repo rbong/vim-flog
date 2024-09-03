@@ -25,7 +25,7 @@ function! flog#Exec(cmd, blur = v:false, static = v:false, tmp = v:false) abort
     if flog#win#Is(l:graph_win)
       call flog#floggraph#buf#Update()
     else
-      call flog#floggraph#buf#InitUpdateHook(flog#win#GetSavedBufnr(l:graph_win))
+      call flog#floggraph#buf#InitUpdateHook(l:graph_win.bufnr)
     endif
   endif
 

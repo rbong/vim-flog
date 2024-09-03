@@ -94,7 +94,7 @@ function! flog#floggraph#side_win#Open(cmd, blur, is_tmp) abort
     call flog#win#Restore(l:graph_win)
   endif
 
-  return flog#win#GetSavedId(l:final_win)
+  return l:final_win.win_id
 endfunction
 
 function! flog#floggraph#side_win#OpenTmp(cmd, blur) abort

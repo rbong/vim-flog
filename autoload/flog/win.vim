@@ -11,42 +11,26 @@ function! flog#win#GetAllIds() abort
 endfunction
 
 function! flog#win#Save() abort
-  return [win_getid(), bufnr(), winsaveview(), flog#win#GetVcol('.'), flog#win#GetVcol('$')]
-endfunction
-
-function! flog#win#GetSavedId(saved_win) abort
-  return a:saved_win[0]
-endfunction
-
-function! flog#win#GetSavedBufnr(saved_win) abort
-  return a:saved_win[1]
-endfunction
-
-function! flog#win#GetSavedView(saved_win) abort
-  return a:saved_win[2]
-endfunction
-
-function! flog#win#GetSavedVcol(saved_win) abort
-  return a:saved_win[3]
-endfunction
-
-function! flog#win#GetSavedVcols(saved_win) abort
-  return a:saved_win[4]
+  return {
+        \ 'win_id': win_getid(),
+        \ 'bufnr': bufnr(),
+        \ 'view': winsaveview(),
+        \ 'vcol': flog#win#GetVcol('.'),
+        \ 'vcols': flog#win#GetVcol('$')
+        \ }
 endfunction
 
 function! flog#win#Is(saved_win) abort
-  return win_getid() == a:saved_win[0]
+  return win_getid() == a:saved_win.win_id
 endfunction
 
 function! flog#win#Restore(saved_win) abort
-  let [l:win_id, l:bufnr, l:view, _, _] = a:saved_win
-
-  silent! call win_gotoid(l:win_id)
+  silent! call win_gotoid(a:saved_win.win_id)
 
   let l:new_win_id = win_getid()
 
   if flog#win#Is(a:saved_win)
-    call winrestview(l:view)
+    call winrestview(a:saved_win.view)
     call flog#win#RestoreVcol(a:saved_win)
   endif
 
@@ -54,7 +38,7 @@ function! flog#win#Restore(saved_win) abort
 endfunction
 
 function! flog#win#RestoreTopline(saved_win) abort
-  let l:view = flog#win#GetSavedView(a:saved_win)
+  let l:view = a:saved_win.view
 
   if l:view.topline == 1
     return -1
@@ -85,7 +69,7 @@ function! flog#win#SetVcol(line, vcol) abort
 endfunction
 
 function! flog#win#RestoreVcol(saved_win) abort
-  let l:vcol = flog#win#GetSavedVcol(a:saved_win)
+  let l:vcol = a:saved_win.vcol
   call flog#win#SetVcol('.', l:vcol)
   return l:vcol
 endfunction

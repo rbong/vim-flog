@@ -133,7 +133,7 @@ function! flog#floggraph#commit#RestoreOffset(saved_win, saved_commit) abort
     return [-1, -1]
   endif
 
-  let l:saved_view = flog#win#GetSavedView(a:saved_win)
+  let l:saved_view = a:saved_win.view
 
   let l:line_offset = l:saved_view.lnum - a:saved_commit.line
   if l:line_offset < 0
@@ -142,7 +142,7 @@ function! flog#floggraph#commit#RestoreOffset(saved_win, saved_commit) abort
 
   if l:line_offset == 0
     let l:new_col = 0
-    let l:saved_vcol = flog#win#GetSavedVcol(a:saved_win)
+    let l:saved_vcol = a:saved_win.vcol
 
     if l:saved_vcol == a:saved_commit.col
       let l:new_col = flog#floggraph#commit#GetAtLine('.').col
