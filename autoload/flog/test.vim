@@ -26,8 +26,6 @@ function! flog#test#ShowNvimBufHl() abort
     endfor
   endfor
 
-  let g:debug = l:line_hl_groups
-
   " Build output
   let l:output = []
   for l:row in range(line('$'))
