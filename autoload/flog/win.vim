@@ -108,7 +108,6 @@ function! flog#win#SetConcealCol(line, concealcol) abort
 endfunction
 
 function! flog#win#RestoreConcealCol(saved_win) abort
-  let g:debug = a:saved_win
   call flog#win#SetConcealCol('.', a:saved_win.concealcol)
   return a:saved_win.concealcol
 endfunction
