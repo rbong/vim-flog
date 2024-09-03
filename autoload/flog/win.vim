@@ -65,7 +65,12 @@ function! flog#win#GetCols(lnum, target_col, target_concealcol) abort
   let l:end_col = col([a:lnum, '$'])
   while l:col <= l:end_col
     let [l:is_concealed, l:conceal_ch, l:new_conceal_region] = synconcealed(a:lnum, l:col)
-    let l:conceal_width = l:is_concealed ? strwidth(l:conceal_ch) : -1
+    let l:is_conceal_region_changed = l:new_conceal_region != l:conceal_region
+
+    let l:conceal_width = -1
+    if l:is_concealed
+      let l:conceal_width = l:is_conceal_region_changed ? strwidth(l:conceal_ch) : 0
+    endif
 
     if a:target_col >= 0 && a:target_col <= l:col && l:conceal_width != 0
       break
@@ -85,7 +90,7 @@ function! flog#win#GetCols(lnum, target_col, target_concealcol) abort
     if !l:is_concealed
       let l:conceal_region = -1
       let l:concealcol += 1
-    elseif l:new_conceal_region != l:conceal_region
+    elseif l:is_conceal_region_changed
       let l:conceal_region = l:new_conceal_region
       let l:concealcol += l:conceal_width
     endif
