@@ -62,6 +62,8 @@ function! flog#cmd#floggit#args#Parse(args) abort
     elseif l:arg ==# '-t'
       let l:flags.t = v:true
       let l:is_flag = v:true
+    elseif l:arg ==# '--focus' || l:arg ==# '-f'
+      call flog#deprecate#ShowWarning(':Floggit --focus', '":Floggit" (keeps focus by default) or ":Floggit --blur" (returns focus to Flog)')
     else
       call add(l:git_args, l:arg)
 
