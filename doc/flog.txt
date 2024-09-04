@@ -1065,7 +1065,9 @@ g:flog_order_types                                        *g:flog_order_types*
 FUNCTIONS                                                     *flog-functions*
 
                                                                  *flog#Exec()*
+                                                                 *flog.exec()*
 flog#Exec({command}[, {blur}[, {static}[, {tmp}]]])
+lua require("flog").exec({command}[, {blur}[, {static}[, {tmp}]]])
 
   Runs {command}.
 
@@ -1089,12 +1091,16 @@ flog#Exec({command}[, {blur}[, {static}[, {tmp}]]])
 <
 
                                                               *flog#ExecTmp()*
+                                                             *flog.exec_tmp()*
 flog#ExecTmp({command}[, {blur}[, {static}]])
+lua require("flog").exec_tmp({command}[, {blur}[, {static}]])
 
   Same as |flog#Exec()|, but always emable {tmp}.
 
                                                                *flog#Format()*
+                                                               *flog.format()*
 flog#Format({command})
+lua require("flog").format({command})
 
   Format a command according to |flog-command-format|.
 
