@@ -8,12 +8,12 @@ function M.version()
   return vim.fn["flog#Version"]()
 end
 
-function M.exec(cmd, blur, static, tmp)
-  return vim.fn["flog#Exec"](cmd, blur or false, static or false, tmp or false)
+function M.exec(cmd, opts)
+  return vim.fn["flog#Exec"](cmd, opts or {})
 end
 
-function M.exec_tmp(cmd, blur, static)
-  return vim.fn["flog#ExecTmp"](cmd, blur or false, static or false)
+function M.exec_tmp(cmd, opts)
+  return vim.fn["flog#ExecTmp"](cmd, opts or {})
 end
 
 function M.format(cmd)

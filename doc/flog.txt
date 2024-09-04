@@ -1066,23 +1066,23 @@ FUNCTIONS                                                     *flog-functions*
 
                                                                  *flog#Exec()*
                                                                  *flog.exec()*
-flog#Exec({command}[, {blur}[, {static}[, {tmp}]]])
-lua require("flog").exec({command}[, {blur}[, {static}[, {tmp}]]])
+flog#Exec({command}[, opts])
+lua require("flog").exec({command}[, opts])
 
   Runs {command}.
 
   If the command is run from the |:Flog| window, use the options shown here.
   If the command is run from any other window, simply execute the command.
 
-  When {blur} is true, return to the |:Flog| window after running the command.
+  When {opts.blur} is true, return to the |:Flog| window after running.
   Defaults to false.
 
-  When {static} is true, don't update |:Flog| after running the command.
+  When {opts.static} is true, don't update |:Flog| after running the command.
   Has no effect if |:Flog_-auto-update| is enabled.
   Defaults to false.
 
-  When {tmp} is true, set any windows opened to temporary |flog-side-window|s.
-  Other temporary windows are closed before running the command.
+  When {opts.tmp} is true, set any windows opened to temp |flog-side-window|s.
+  Other temp windows are closed before running the command.
   Defaults to false.
 
   Example:
@@ -1092,10 +1092,10 @@ lua require("flog").exec({command}[, {blur}[, {static}[, {tmp}]]])
 
                                                               *flog#ExecTmp()*
                                                              *flog.exec_tmp()*
-flog#ExecTmp({command}[, {blur}[, {static}]])
-lua require("flog").exec_tmp({command}[, {blur}[, {static}]])
+flog#ExecTmp({command}[, opts])
+lua require("flog").exec_tmp({command}[, opts])
 
-  Same as |flog#Exec()|, but always emable {tmp}.
+  Same as |flog#Exec()|, but default {opts.tmp} to true.
 
                                                                *flog#Format()*
                                                                *flog.format()*
