@@ -86,7 +86,7 @@ function! flog#cmd#floggit#args#Parse(args) abort
         \ 'is_flag': l:is_flag,
         \ 'subcommand': l:subcommand,
         \ 'git_args': l:git_args,
-        \ 'blur': l:flags.blur || l:flags.f,
+        \ 'blur': l:flags.blur || l:flags.b,
         \ 'static': l:flags.static || l:flags.s,
         \ 'tmp': l:flags.tmp || l:flags.t,
         \ 'flags': l:flags,
