@@ -27,7 +27,7 @@ function! flog#cmd#floggit#args#Parse(args) abort
   let l:subcommand = ''
   let l:flags = {
         \ 'blur': v:false,
-        \ 'f': v:false,
+        \ 'b': v:false,
         \ 'static': v:false,
         \ 's': v:false,
         \ 'tmp': v:false,
