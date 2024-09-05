@@ -1256,6 +1256,11 @@ The following items are supported:
                         |:Flog_-path|, if any, escaping them and joining them
                         with spaces.
 
+                                                                     *flog-%P*
+  %P                    Same as |flog-%p|, but include "--" at the start.
+                        Separates Git command arguments from paths.
+                        Still returns "--" if no path or limit is specified.
+
                                                                      *flog-%t*
   %t                    A tree for the current index. When this is used, a new
                         tree will be created for the current index using

@@ -127,7 +127,7 @@ function! flog#floggraph#format#FormatMarkLocalBranch(dict, key) abort
   return flog#floggraph#format#FormatCommitLocalBranch(a:dict, l:commit)
 endfunction
 
-function! flog#floggraph#format#FormatPath() abort
+function! flog#floggraph#format#FormatPath(separate_args) abort
   let l:state = flog#state#GetBufState()
   let l:path = l:state.opts.path
 
@@ -135,15 +135,16 @@ function! flog#floggraph#format#FormatPath() abort
     let [l:range, l:limit_path] = flog#args#SplitGitLimitArg(l:state.opts.limit)
 
     if empty(l:limit_path)
-      return ''
+      return a:separate_args ? '--' : ''
     endif
 
     let l:path = [l:limit_path]
   elseif empty(l:path)
-    return ''
+    return a:separate_args ? '--' : ''
   endif
 
-  return join(flog#shell#EscapeList(l:path), ' ')
+  let l:paths = join(flog#shell#EscapeList(l:path), ' ')
+  return a:separate_args ? '-- ' .. l:paths : l:paths
 endfunction
 
 function! flog#floggraph#format#FormatIndexTree(dict) abort
@@ -186,7 +187,9 @@ function! flog#floggraph#format#HandleCommandItem(dict, item, end) abort
   elseif a:item =~# "^%(l'."
     let l:formatted_item = flog#floggraph#format#FormatMarkLocalBranch(a:dict, a:item[4 : -2])
   elseif a:item ==# '%p'
-    let l:formatted_item = flog#floggraph#format#FormatPath()
+    let l:formatted_item = flog#floggraph#format#FormatPath(v:false)
+  elseif a:item ==# '%P'
+    let l:formatted_item = flog#floggraph#format#FormatPath(v:true)
   elseif a:item ==# '%t'
     let l:formatted_item = flog#floggraph#format#FormatIndexTree(a:dict)
   else
