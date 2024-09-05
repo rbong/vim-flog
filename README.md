@@ -15,8 +15,9 @@ Flog is a blazingly fast, stunningly beautiful, exceptionally powerful Git branc
 - Many navigation mappings
 - Commit-based marks and jump history
 - Ability to expand/collapse commit body
-- Intelligently save scroll position between updates
+- Intelligently restore cursor position between updates
 - [Fugitive](https://github.com/tpope/vim-fugitive) integration
+- Functions for integrating with your Git workflow and plugins
 - Extended graph symbol support (currently only in [Kitty](https://github.com/kovidgoyal/kitty))
 - Dynamic branch highlighting (Neovim only)
 - Automatic updates (Neovim only)
