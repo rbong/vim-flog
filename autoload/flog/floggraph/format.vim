@@ -26,6 +26,55 @@ function! flog#floggraph#format#FormatMarkHash(key) abort
   return empty(l:commit) ? '' : l:commit.hash
 endfunction
 
+function! flog#floggraph#format#FormatMarkHashRange(range) abort
+  let l:state = flog#state#GetBufState()
+
+  let l:range = split(a:range, ',')
+  if len(l:range) != 2
+    return ''
+  endif
+  let l:start_mark = l:range[0][1:]
+  let l:end_mark = l:range[1][1:]
+
+  let l:start_commit = flog#floggraph#mark#Get(l:start_mark)
+  let l:end_commit = flog#floggraph#mark#Get(l:end_mark)
+  if empty(l:start_commit) || empty(l:end_commit)
+    return ''
+  endif
+
+  let l:start_line = l:start_commit.line
+  let l:end_line = l:end_commit.line
+  let l:step = l:start_line <= l:end_line ? 1 : -1
+
+  let l:commit_index = flog#floggraph#commit#GetIndexAtLine(l:start_line)
+  if l:commit_index < 0
+    return ''
+  endif
+
+  let g:debug = [l:start_line, l:end_line, l:step, l:commit_index]
+  let l:hashes = []
+  while v:true
+    let l:commit = get(l:state.commits, l:commit_index, {})
+    if empty(l:commit)
+      break
+    endif
+    if l:step > 0 && l:commit.line > l:end_line
+      break
+    endif
+    if l:step < 0 && l:commit.line < l:end_commit.line
+      break
+    endif
+
+    call add(l:hashes, l:commit.hash)
+    let l:commit_index += l:step
+    if l:commit_index < 0
+      break
+    endif
+  endwhile
+
+  return join(l:hashes, ' ')
+endfunction
+
 function! flog#floggraph#format#FormatCommitBranch(dict, commit) abort
   let l:local_branch = ''
   let l:remote_branch = ''
@@ -124,6 +173,8 @@ function! flog#floggraph#format#HandleCommandItem(dict, item, end) abort
     let l:formatted_item = flog#floggraph#format#FormatHash(v:true)
   elseif a:item ==# '%H'
     let l:formatted_item = flog#floggraph#format#FormatHash(v:false)
+  elseif a:item =~# "^%(h'.\\+,'."
+    let l:formatted_item = flog#floggraph#format#FormatMarkHashRange(a:item[3 : -2])
   elseif a:item =~# "^%(h'."
     let l:formatted_item = flog#floggraph#format#FormatMarkHash(a:item[4 : -2])
   elseif a:item =~# '%b'

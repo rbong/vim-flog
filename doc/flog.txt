@@ -1218,8 +1218,17 @@ The following items are supported:
                                                                      *flog-%H*
   %H                    Same as %h, but do not set |flog-'!|.
 
-                                                      *flog-%(h'* *flog-%(h')*
+                                                                 *flog-%(h'x)*
   %(h'x)                The hash at the given commit mark "x".
+                        See also |flog-commit-marks|.
+
+                                                               *flog%(h'x,'y)*
+  %(h'x,'y)             The hashes in the commit mark range of "x" and "y".
+
+                        Hashes are separated by spaces.
+                        The order of the marks matters.
+                        The visual range can be selected with "%h('<,'>)".
+
                         See also |flog-commit-marks|.
 
                                                                      *flog-%b*
@@ -1227,7 +1236,7 @@ The following items are supported:
                         any. Local branches prioritized first. Useful for
                         checking out branches.
 
-                                                      *flog-%(b'* *flog-%(b')*
+                                                                 *flog-%(b'x)*
   %(b'x)                The branch at the given commit mark "x".
 
                                                                      *flog-%l*
@@ -1236,7 +1245,7 @@ The following items are supported:
                         commit is used, trim the remote name from the branch.
                         Useful for checking out commits for tracking.
 
-                                                      *flog-%(l'* *flog-%(l')*
+                                                                 *flog-%(l'x)*
   %(l'x)                The local branch at the given mark "x".
 
                                                                      *flog-%p*
