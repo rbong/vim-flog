@@ -1106,10 +1106,9 @@ lua require("flog").format({command})
 
   Example:
 >
-    flog#Format('Git show %h')
+    :exec flog#Format('Floggit show %h')
+    :call flog#Exec(flog#Format('<mods> Gsplit %h'))
 <
-
-  This can be used to format commands before passing them to |flog#Exec()|.
 
 ==============================================================================
 AUTOCOMMANDS                                               *flog-autocommands*
@@ -1196,15 +1195,16 @@ The commit jump history persists when the |:Flog| buffer updates.
 ------------------------------------------------------------------------------
 COMMAND FORMAT                                           *flog-command-format*
 
-When running commands with |flog#Format()|, a special syntax similar to
-|printf| is used to transform the command string.
+When using |flog#Format()|, a special syntax similar to |printf| is used to
+transform the string.
 
 Items prefixed by the "%" character are resolved into commit information and
 Flog options.
 
 If any items cannot be resolved, such as if the |:Flog| buffer is empty or
-the item uses an option like "-path" that was not set, commands will not be
-run.
+the item contains only an option like "-path" that was not set, returns an
+empty string. This command will do nothing if called with |:exec| or
+|flog#Exec()|.
 
 The following items are supported:
 
