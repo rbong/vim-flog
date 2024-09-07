@@ -22,9 +22,8 @@ function! flog#fugitive#GetHead() abort
   return fugitive#Head()
 endfunction
 
-function! flog#fugitive#TriggerDetection(workdir) abort
+function! flog#fugitive#SetupGitBuffer(workdir) abort
   call FugitiveDetect(a:workdir)
-  return a:workdir
 endfunction
 
 function! flog#fugitive#Complete(arg_lead, cmd_line, cursor_pos) abort

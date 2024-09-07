@@ -120,7 +120,7 @@ function! flog#floggraph#buf#Open(state) abort
   let l:bufnr = bufnr()
   call flog#state#SetGraphBufnr(a:state, l:bufnr)
 
-  call flog#fugitive#TriggerDetection(flog#state#GetWorkdir(a:state))
+  call flog#fugitive#SetupGitBuffer(flog#state#GetWorkdir(a:state))
   exec 'lcd ' . flog#fugitive#GetWorkdir()
 
   setlocal filetype=floggraph
