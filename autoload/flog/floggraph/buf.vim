@@ -121,7 +121,7 @@ function! flog#floggraph#buf#Open(state) abort
   call flog#state#SetGraphBufnr(a:state, l:bufnr)
 
   call flog#fugitive#SetupGitBuffer(flog#state#GetWorkdir(a:state))
-  exec 'lcd ' . flog#fugitive#GetWorkdir()
+  exec 'lcd ' . flog#git#GetWorkdir()
 
   setlocal filetype=floggraph
 

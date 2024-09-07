@@ -13,7 +13,7 @@ function! flog#cmd#Flog(args) abort
 
   let l:state = flog#state#Create()
 
-  let l:workdir = flog#fugitive#GetWorkdir()
+  let l:workdir = flog#git#GetWorkdir()
   call flog#state#SetWorkdir(l:state, l:workdir)
 
   let l:default_opts = flog#state#GetDefaultOpts()

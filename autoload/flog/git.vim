@@ -2,6 +2,14 @@
 " This file contains functions for working with git.
 "
 
+function! flog#git#GetWorkdir() abort
+  let l:git_dir = flog#fugitive#GetGitDir()
+  if empty(l:git_dir)
+    return ''
+  endif
+  return fnamemodify(l:git_dir, ':p:h')
+endfunction
+
 function! flog#git#HasCommitGraph() abort
   let l:path = flog#fugitive#GetGitDir()
   let l:path .= '/objects/info/commit-graph'

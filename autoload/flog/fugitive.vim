@@ -6,10 +6,6 @@ function! flog#fugitive#IsGitBuf() abort
   return FugitiveIsGitDir()
 endfunction
 
-function! flog#fugitive#GetWorkdir() abort
-  return FugitiveFind(':/')
-endfunction
-
 function! flog#fugitive#GetGitDir() abort
   return FugitiveGitDir()
 endfunction
