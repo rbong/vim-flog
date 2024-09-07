@@ -128,9 +128,11 @@ function! flog#floggraph#git#BuildLogArgs() abort
       " The -L flag only supports a single rev, use only the first rev
       let l:rev = flog#shell#Escape(l:opts.rev[0])
     else
-      " Include related refs
+      " No -L flag, use all revs
       let l:revs = l:opts.rev
+
       if l:opts.related
+        " Include related refs
         let l:revs = uniq(sort(flog#git#GetRelatedRefs(l:revs) + l:revs))
       endif
 
