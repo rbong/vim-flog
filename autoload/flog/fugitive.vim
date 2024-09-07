@@ -18,10 +18,6 @@ function! flog#fugitive#GetGitCommand() abort
   return FugitiveShellCommand()
 endfunction
 
-function! flog#fugitive#GetHead() abort
-  return fugitive#Head()
-endfunction
-
 function! flog#fugitive#SetupGitBuffer(workdir) abort
   call FugitiveDetect(a:workdir)
 endfunction

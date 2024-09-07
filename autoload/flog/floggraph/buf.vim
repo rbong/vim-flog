@@ -28,7 +28,7 @@ function! flog#floggraph#buf#UpdateStatus() abort
     let b:flog_status_summary = string(l:changes) . ' files changed'
   endif
 
-  let l:head = flog#fugitive#GetHead()
+  let l:head = flog#git#GetHeadRef()
 
   if !empty(l:head)
     let b:flog_status_summary .= ' (' . l:head . ')'
