@@ -7,53 +7,74 @@ local bufs = {}
 
 local M = {}
 
-function M.nvim_start_watching(dir)
-  local handle = uv.new_fs_event()
-  local timer = nil
+function M.get_watch_paths(dir)
+  local dirs = { dir, dir .. '/refs' }
 
-  handle:start(
-    dir,
-    {},
-    vim.schedule_wrap(
-      function (err, fname, status)
-        if timer then
+  local git_ref_subdirs = { 'bisect', 'remotes', 'heads', 'tags' }
+  for _, ref_subdir in ipairs(git_ref_subdirs) do
+    dirs[#dirs + 1] = dir .. '/refs/' .. ref_subdir
+  end
+
+  local remotes_dir = dir .. '/refs/remotes'
+  for path, type in vim.fs.dir(remotes_dir, { depth = 1 }) do
+    if type == 'directory' then
+      dirs[#dirs + 1] = remotes_dir .. '/' .. path
+    end
+  end
+
+  return dirs
+end
+
+function M.nvim_start_watching(dir)
+  local timer = nil
+  local cb = vim.schedule_wrap(
+    function (err, fname, status)
+      if timer then
+        pcall(function ()
           timer:stop()
           timer:close()
-          timer = nil
-        end
-        timer = vim.defer_fn(
-          function ()
-            if git_dirs[dir] == nil then
-              return
-            end
+        end)
+        timer = nil
+      end
 
-            local saved_win = vim.fn['flog#win#Save']()
+      timer = vim.defer_fn(
+        function ()
+          if git_dirs[dir] == nil then
+            return
+          end
 
-            local bufs = git_dirs[dir].bufs
-            for buf, is_active in pairs(bufs) do
-              if is_active then
-                local winid = vim.fn.win_findbuf(buf)[1]
-                if winid ~= nil then
-                  vim.fn.win_gotoid(winid)
-                  if vim.fn['flog#floggraph#opts#ShouldAutoUpdate']() then
-                    vim.fn['flog#floggraph#buf#Update']()
-                  end
+          local saved_win = vim.fn['flog#win#Save']()
+
+          local bufs = git_dirs[dir].bufs
+          for buf, is_active in pairs(bufs) do
+            if is_active then
+              local winid = vim.fn.win_findbuf(buf)[1]
+              if winid ~= nil then
+                vim.fn.win_gotoid(winid)
+                if vim.fn['flog#floggraph#opts#ShouldAutoUpdate']() then
+                  vim.fn['flog#floggraph#buf#Update']()
                 end
               end
             end
+          end
 
-            if not git_dirs[dir].bufs[saved_win.bufnr] then
-              vim.fn['flog#win#Restore'](saved_win)
-            end
-          end,
-          -- Defer function for 100ms to prevent rapid updates
-          100
-        )
-      end
-    )
+          if not git_dirs[dir].bufs[saved_win.bufnr] then
+            vim.fn['flog#win#Restore'](saved_win)
+          end
+        end,
+        -- Defer function for 100ms to prevent rapid updates
+        100
+      )
+    end
   )
 
-  return handle
+  local handles = {}
+  for index, dir in ipairs(M.get_watch_paths(dir)) do
+    handles[index] = uv.new_fs_event()
+    handles[index]:start(dir, {}, cb)
+  end
+
+  return handles
 end
 
 function M.nvim_stop_watching(dir)
@@ -61,13 +82,10 @@ function M.nvim_stop_watching(dir)
     return false
   end
 
-  local handle = git_dirs[dir].handle
-  if handle == nil then
-    return false
+  for _, handle in ipairs(git_dirs[dir].handles) do
+    handle:stop()
   end
-
-  git_dirs[dir].handle = nil
-  handle:stop()
+  git_dirs[dir].handles = nil
 
   return true
 end
@@ -81,7 +99,7 @@ function M.nvim_add_buf(buf, dir)
     git_dirs[dir] = {
       bufs = {},
       nbufs = 0,
-      handle = M.nvim_start_watching(dir),
+      handles = M.nvim_start_watching(dir),
     }
   elseif git_dirs[dir].bufs[buf] then
     return false
