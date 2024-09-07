@@ -121,13 +121,22 @@ function! flog#floggraph#git#BuildLogArgs() abort
   if !empty(l:opts.raw_args)
     let l:args .= ' ' . l:opts.raw_args
   endif
-  if len(l:opts.rev) >= 1
+  if len(l:opts.rev) >= 1 || (empty(l:opts.limit) && l:opts.related)
     let l:rev = ''
+
     if !empty(l:opts.limit)
+      " The -L flag only supports a single rev, use only the first rev
       let l:rev = flog#shell#Escape(l:opts.rev[0])
     else
-      let l:rev = join(flog#shell#EscapeList(l:opts.rev), ' ')
+      " Include related refs
+      let l:revs = l:opts.rev
+      if l:opts.related
+        let l:revs = uniq(sort(flog#git#GetRelatedRefs(l:revs) + l:revs))
+      endif
+
+      let l:rev = join(flog#shell#EscapeList(l:revs), ' ')
     endif
+
     let l:args .= ' ' . l:rev
   endif
 

@@ -62,6 +62,10 @@ function! flog#cmd#flog#args#Parse(current_opts, workdir, args) abort
       let a:current_opts.reflog = v:true
     elseif l:arg ==# '-no-reflog'
       let a:current_opts.reflog = v:false
+    elseif l:arg ==# '-related'
+      let a:current_opts.related = v:true
+    elseif l:arg ==# '-no-related'
+      let a:current_opts.related = v:false
     elseif l:arg ==# '-reverse'
       let a:current_opts.reverse = v:true
     elseif l:arg ==# '-no-reverse'
@@ -319,6 +323,8 @@ function! flog#cmd#flog#args#Complete(arg_lead, cmd_line, cursor_pos) abort
         \ '-raw-args=',
         \ '-reflog ',
         \ '-no-reflog ',
+        \ '-related',
+        \ '-no-related',
         \ '-rev=',
         \ '-reverse ',
         \ '-no-reverse ',

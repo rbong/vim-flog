@@ -99,6 +99,9 @@ function! flog#floggraph#buf#GetName(instance_number, opts) abort
   if len(a:opts.rev) > 1
     let l:name .= ' [rev=...]'
   endif
+  if a:opts.related && !a:opts.limit
+    let l:name .= ' [related]'
+  endif
   if len(a:opts.path) == 1
     let l:name .= ' [path=' . flog#str#Ellipsize(fnamemodify(a:opts.path[0], ':t'), 15) . ']'
   elseif len(a:opts.path) > 1

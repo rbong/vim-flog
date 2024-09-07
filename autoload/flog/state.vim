@@ -46,6 +46,7 @@ function! flog#state#GetInternalDefaultOpts() abort
         \ 'first_parent': v:false,
         \ 'merges': v:true,
         \ 'reflog': v:false,
+        \ 'related': v:false,
         \ 'reverse': v:false,
         \ 'graph': v:true,
         \ 'patch': -1,

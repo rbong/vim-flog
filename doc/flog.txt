@@ -101,6 +101,20 @@ The options shown here can be configured via |g:flog_default_opts| and
   When enabled, pass the "--reflog" argument to "git log".
   Disabled by default.
 
+:Flog -related                                                *:Flog_-related*
+:Flog -no-related                                          *:Flog_-no-related*
+
+  When enabled, pass refs related to target revisions to "git log".
+  Target revisions are set by |:Flog_-rev| and default to "HEAD".
+
+  A related ref is any ref with the same name on a different remote.
+  In the case of "HEAD", any ref name at "HEAD" is used.
+
+  When disabled, do not pass any additional refs to "git log".
+  When |:Flog_-limit| is specified, this flag is unused.
+
+  Disabled by default.
+
 :Flog -reverse                                                *:Flog_-reverse*
 :Flog -no-reverse                                          *:Flog_-no-reverse*
 

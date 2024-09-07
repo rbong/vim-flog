@@ -54,3 +54,60 @@ function! flog#git#SplitRemote(ref, remotes) abort
 
   return ['', a:ref]
 endfunction
+
+function! flog#git#GetHeadRef() abort
+  let l:cmd = flog#fugitive#GetGitCommand()
+  let l:cmd .= ' symbolic-ref --short HEAD'
+  return flog#shell#Run(l:cmd)
+endfunction
+
+function! flog#git#GetRelatedRefs(revs = []) abort
+  let l:related_refs = []
+
+  " Remove duplicates and filter
+  let l:revs = uniq(sort(filter(a:revs, '!empty(v:val)')))
+
+  " Use HEAD if empty
+  if empty(l:revs)
+    let l:revs = ['HEAD']
+  endif
+
+  " Resolve HEAD
+  let l:head_index = index(l:revs, 'HEAD')
+  if l:head_index >= 0
+    let l:head_ref = flog#git#GetHeadRef()[0]
+    if empty(l:head_ref)
+      call add(related_refs, 'HEAD')
+      call remove(l:revs, l:head_index)
+    else
+      let l:revs[l:head_index] = l:head_ref
+    endif
+  endif
+
+  " Early exit if revs are empty
+  if empty(l:revs)
+    return l:related_refs
+  endif
+
+  " Get data from Git
+  let l:remotes = flog#git#GetRemotes()
+  let l:all_refs = flog#git#GetRefs()
+
+  " Strip remote from revs
+  let l:check_revs = {}
+  for l:rev in l:revs
+    let l:check_revs[flog#git#SplitRemote(l:rev, l:remotes)[1]] = 1
+  endfor
+
+  " Find related refs
+  for l:ref in l:all_refs
+    " Strip remote from ref
+    let l:stripped_ref = flog#git#SplitRemote(l:ref, l:remotes)[1]
+    " Check if ref matches
+    if has_key(l:check_revs, l:stripped_ref)
+      call add(l:related_refs, l:ref)
+    endif
+  endfor
+
+  return l:related_refs
+endfunction
