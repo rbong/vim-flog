@@ -51,7 +51,6 @@ function! flog#floggraph#format#FormatMarkHashRange(range) abort
     return ''
   endif
 
-  let g:debug = [l:start_line, l:end_line, l:step, l:commit_index]
   let l:hashes = []
   while v:true
     let l:commit = get(l:state.commits, l:commit_index, {})
