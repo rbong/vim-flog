@@ -229,7 +229,7 @@ function! flog#cmd#flog#args#CompleteOpenCmd(arg_lead) abort
 endfunction
 
 function! flog#cmd#flog#args#CompleteAuthor(arg_lead) abort
-  if !flog#fugitive#IsGitBuf()
+  if !flog#backend#IsGitBuf()
     return []
   endif
 
@@ -256,7 +256,7 @@ function! flog#cmd#flog#args#CompleteLimit(arg_lead) abort
 endfunction
 
 function! flog#cmd#flog#args#CompleteRev(arg_lead) abort
-  if !flog#fugitive#IsGitBuf()
+  if !flog#backend#IsGitBuf()
     return []
   endif
   let [l:lead, _] = flog#args#SplitArg(a:arg_lead)

@@ -3,7 +3,7 @@
 "
 
 function! flog#git#GetWorkdir() abort
-  let l:git_dir = flog#fugitive#GetGitDir()
+  let l:git_dir = flog#backend#GetGitDir()
   if empty(l:git_dir)
     return ''
   endif
@@ -19,13 +19,13 @@ function! flog#git#GetCommand(cmd = '') abort
 endfunction
 
 function! flog#git#HasCommitGraph() abort
-  let l:path = flog#fugitive#GetGitDir()
+  let l:path = flog#backend#GetGitDir()
   let l:path .= '/objects/info/commit-graph'
   return filereadable(l:path)
 endfunction
 
 function! flog#git#WriteCommitGraph() abort
-  let l:cmd = 'Git commit-graph write '
+  let l:cmd =  flog#backend#GetUserCommand() .. ' commit-graph write '
   let l:cmd .= g:flog_write_commit_graph_args
 
   exec l:cmd

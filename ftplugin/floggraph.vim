@@ -94,7 +94,7 @@ if !hasmapto('<Plug>(FlogVSplitUnstaged)')
 endif
 
 nnoremap <buffer> <silent> <Plug>(FlogVSplitStaged) :<C-U>vertical belowright Floggit -b -s -t diff --cached<CR>
-nnoremap <buffer> <silent> <Plug>(FlogVSplitUntracked) :<C-U>exec flog#Format('silent Git add -N . \| vertical belowright Floggit -b -s -t diff \| silent Git read-tree %t')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogVSplitUntracked) :<C-U>exec flog#Format('silent Floggit -b -s add -N . \| vertical belowright Floggit -b -s -t diff \| silent Floggit -b -s read-tree %t')<CR>
 nnoremap <buffer> <silent> <Plug>(FlogVSplitUnstaged) :<C-U>vertical belowright Floggit -b -s -t diff<CR>
 
 if !hasmapto('<Plug>(FlogCloseTmpWin)')
@@ -372,7 +372,7 @@ if !hasmapto('<Plug>(FlogFixupRebase)')
   nmap <buffer> cF <Plug>(FlogFixupRebase)
 endif
 nnoremap <buffer> <silent> <Plug>(FlogFixup) :<C-U>exec flog#Format('Floggit commit --fixup=%H')<CR>
-nnoremap <buffer> <silent> <Plug>(FlogFixupRebase) :<C-U>exec flog#Format('Git commit --fixup=%H \| Floggit -c sequence.editor=true rebase --interactive --autosquash %H^')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogFixupRebase) :<C-U>exec flog#Format('Floggit -b -s commit --fixup=%H \| Floggit -c sequence.editor=true rebase --interactive --autosquash %H^')<CR>
 
 if !hasmapto('<Plug>(FlogSquash)')
   nmap <buffer> cs <Plug>(FlogSquash)
@@ -384,7 +384,7 @@ if !hasmapto('<Plug>(FlogSquashEdit)')
   nmap <buffer> cA <Plug>(FlogSquashEdit)
 endif
 nnoremap <buffer> <silent> <Plug>(FlogSquash) :<C-U>exec flog#Format('Floggit commit --no-edit --squash=%H')<CR>
-nnoremap <buffer> <silent> <Plug>(FlogSquashRebase) :<C-U>exec flog#Format('Git commit --no-edit --squash=%H \| Floggit -c sequence.editor=true rebase --interactive --autosquash %H^')<CR>
+nnoremap <buffer> <silent> <Plug>(FlogSquashRebase) :<C-U>exec flog#Format('Floggit -b -s commit --no-edit --squash=%H \| Floggit -c sequence.editor=true rebase --interactive --autosquash %H^')<CR>
 nnoremap <buffer> <silent> <Plug>(FlogSquashEdit) :<C-U>exec flog#Format('Floggit commit --edit --squash=%H')<CR>
 
 if !hasmapto('<Plug>(FlogRevert)')

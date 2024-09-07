@@ -7,7 +7,7 @@
 " The implementation of ":Flog".
 " The "floggraph/" folder contains functions for dealing with this filetype.
 function! flog#cmd#Flog(args) abort
-  if !flog#fugitive#IsGitBuf()
+  if !flog#backend#IsGitBuf()
     throw g:flog_not_a_fugitive_buffer
   endif
 

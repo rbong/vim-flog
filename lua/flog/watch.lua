@@ -135,12 +135,12 @@ end
 
 function M.nvim_register_floggraph_buf()
   vim.fn['flog#floggraph#buf#AssertFlogBuf']()
-  if (vim.fn['flog#fugitive#IsGitBuf']() or 0) == 0 then
+  if (vim.fn['flog#backend#IsGitBuf']() or 0) == 0 then
     return false
   end
 
   local buf = vim.fn.bufnr()
-  local git_dir = vim.fn['flog#fugitive#GetGitDir']()
+  local git_dir = vim.fn['flog#backend#GetGitDir']()
   return M.nvim_add_buf(buf, git_dir)
 end
 

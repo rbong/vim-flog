@@ -101,7 +101,7 @@ function! flog#cmd#floggit#args#ToGitCommand(mods, bang, parsed_args) abort
     let l:cmd .= ' '
   endif
 
-  let l:cmd .= 'Git'
+  let l:cmd .= flog#backend#GetUserCommand()
   let l:cmd .= a:bang
 
   let l:git_args = a:parsed_args.git_args
@@ -231,7 +231,7 @@ function! flog#cmd#floggit#args#Complete(arg_lead, cmd_line, cursor_pos) abort
 
   let l:cmd = flog#cmd#floggit#args#ToGitCommand('', '', l:parsed_args)
 
-  let l:fugitive_completions = flog#fugitive#Complete(
+  let l:fugitive_completions = flog#backend#Complete(
         \ flog#shell#Escape(l:split_cmd[-1]), l:cmd, len(l:cmd))
 
   " Complete subcommand args only
