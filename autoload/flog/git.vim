@@ -34,3 +34,23 @@ function! flog#git#GetRefs() abort
 
   return flog#shell#Run(l:cmd) + ['HEAD', 'FETCH_HEAD', 'ORIG_HEAD']
 endfunction
+
+function! flog#git#GetRemotes() abort
+  let l:cmd = flog#fugitive#GetGitCommand()
+  let l:cmd .= ' remote -v'
+
+  let l:remotes = flog#shell#Run(l:cmd)
+
+  return uniq(sort(map(l:remotes, 'substitute(v:val, "\t.*$", "", "")')))
+endfunction
+
+function! flog#git#SplitRemote(ref, remotes) abort
+  for l:remote in a:remotes
+    let l:len = len(l:remote)
+    if a:ref[ : l:len - 1] ==# l:remote
+      return [l:remote, a:ref[l:len + 1 : ]]
+    endif
+  endfor
+
+  return ['', a:ref]
+endfunction
