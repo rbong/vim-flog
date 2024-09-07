@@ -10,6 +10,14 @@ function! flog#git#GetWorkdir() abort
   return fnamemodify(l:git_dir, ':p:h')
 endfunction
 
+function! flog#git#GetCommand(cmd = '') abort
+  let l:cmd = 'git -C ' . flog#shell#Escape(flog#git#GetWorkdir())
+  if !empty(a:cmd)
+    let l:cmd .= ' ' .. a:cmd
+  endif
+  return l:cmd
+endfunction
+
 function! flog#git#HasCommitGraph() abort
   let l:path = flog#fugitive#GetGitDir()
   let l:path .= '/objects/info/commit-graph'
@@ -26,8 +34,7 @@ function! flog#git#WriteCommitGraph() abort
 endfunction
 
 function! flog#git#GetAuthors() abort
-  let l:cmd = flog#fugitive#GetGitCommand()
-  let l:cmd .= ' shortlog -s -n '
+  let l:cmd = flog#git#GetCommand('shortlog -s -n ')
   let l:cmd .= g:flog_get_author_args
 
   let l:result = flog#shell#Run(l:cmd)
@@ -37,15 +44,14 @@ function! flog#git#GetAuthors() abort
 endfunction
 
 function! flog#git#GetRefs() abort
-  let l:cmd = flog#fugitive#GetGitCommand()
+  let l:cmd = flog#git#GetCommand()
   let l:cmd .= ' rev-parse --symbolic --branches --tags --remotes'
 
   return flog#shell#Run(l:cmd) + ['HEAD', 'FETCH_HEAD', 'ORIG_HEAD']
 endfunction
 
 function! flog#git#GetRemotes() abort
-  let l:cmd = flog#fugitive#GetGitCommand()
-  let l:cmd .= ' remote -v'
+  let l:cmd = flog#git#GetCommand('remote -v')
 
   let l:remotes = flog#shell#Run(l:cmd)
 
@@ -64,8 +70,7 @@ function! flog#git#SplitRemote(ref, remotes) abort
 endfunction
 
 function! flog#git#GetHeadRef() abort
-  let l:cmd = flog#fugitive#GetGitCommand()
-  let l:cmd .= ' symbolic-ref --short HEAD'
+  let l:cmd = flog#git#GetCommand('symbolic-ref --short HEAD')
   return flog#shell#Run(l:cmd)[0]
 endfunction
 

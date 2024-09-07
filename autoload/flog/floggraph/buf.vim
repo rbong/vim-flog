@@ -16,8 +16,7 @@ endfunction
 function! flog#floggraph#buf#UpdateStatus() abort
   call flog#floggraph#buf#AssertFlogBuf()
 
-  let l:cmd = flog#fugitive#GetGitCommand()
-  let l:cmd .= ' status -s'
+  let l:cmd = flog#git#GetCommand('status -s')
   let l:changes = len(flog#shell#Run(l:cmd))
 
   if l:changes == 0

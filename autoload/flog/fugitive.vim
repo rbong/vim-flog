@@ -10,10 +10,6 @@ function! flog#fugitive#GetGitDir() abort
   return FugitiveGitDir()
 endfunction
 
-function! flog#fugitive#GetGitCommand() abort
-  return FugitiveShellCommand()
-endfunction
-
 function! flog#fugitive#SetupGitBuffer(workdir) abort
   call FugitiveDetect(a:workdir)
 endfunction
