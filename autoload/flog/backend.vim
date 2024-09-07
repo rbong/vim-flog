@@ -4,7 +4,7 @@
 "
 
 function! flog#backend#GetUserCommand() abort
-  return get(g:, 'flog_backend_ex_cmd', 'Git')
+  return get(g:, 'flog_backend_user_cmd', 'Git')
 endfunction
 
 function! flog#backend#IsGitBuf() abort
