@@ -6,14 +6,6 @@ function! flog#fugitive#IsGitBuf() abort
   return FugitiveIsGitDir()
 endfunction
 
-function! flog#fugitive#GetRelativePath(workdir, path) abort
-  let l:full_path = fnamemodify(a:path, ':p')
-  if stridx(l:full_path, a:workdir) == 0
-    return l:full_path[len(a:workdir) + 1 : ]
-  endif
-  return a:path
-endfunction
-
 function! flog#fugitive#GetWorkdir() abort
   return FugitiveFind(':/')
 endfunction
