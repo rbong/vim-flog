@@ -7,6 +7,10 @@ function! flog#backend#GetUserCommand() abort
   return get(g:, 'flog_backend_user_cmd', 'Git')
 endfunction
 
+function! flog#backend#GetUserSplitCommand() abort
+  return get(g:, 'flog_backen_user_split_cmd', 'Gsplit')
+endfunction
+
 function! flog#backend#IsGitBuf() abort
   let l:fn = get(g:, 'flog_backend_is_git_dir_fn', 'FugitiveIsGitDir')
   return call(l:fn, [])
