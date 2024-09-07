@@ -58,7 +58,7 @@ endfunction
 function! flog#git#GetHeadRef() abort
   let l:cmd = flog#fugitive#GetGitCommand()
   let l:cmd .= ' symbolic-ref --short HEAD'
-  return flog#shell#Run(l:cmd)
+  return flog#shell#Run(l:cmd)[0]
 endfunction
 
 function! flog#git#GetRelatedRefs(revs = []) abort
@@ -75,7 +75,7 @@ function! flog#git#GetRelatedRefs(revs = []) abort
   " Resolve HEAD
   let l:head_index = index(l:revs, 'HEAD')
   if l:head_index >= 0
-    let l:head_ref = flog#git#GetHeadRef()[0]
+    let l:head_ref = flog#git#GetHeadRef()
     if empty(l:head_ref)
       call add(related_refs, 'HEAD')
       call remove(l:revs, l:head_index)
