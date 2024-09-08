@@ -25,10 +25,15 @@ function! flog#git#HasCommitGraph() abort
 endfunction
 
 function! flog#git#WriteCommitGraph() abort
-  let l:cmd =  flog#backend#GetUserCommand() .. ' commit-graph write '
-  let l:cmd .= g:flog_write_commit_graph_args
+  let l:cmd = 'commit-graph write ' .. g:flog_write_commit_graph_args
 
-  exec l:cmd
+  if get(g:, 'flog_backend_write_commit_graph_with_user_cmd', 1)
+    let l:cmd =  flog#backend#GetUserCommand() .. ' ' .. l:cmd
+    exec l:cmd
+  else
+    let l:cmd = flog#git#GetCommand(l:cmd)
+    call flog#shell#Run(l:cmd)
+  endif
 
   return l:cmd
 endfunction
