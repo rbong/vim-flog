@@ -12,7 +12,7 @@ function! flog#backend#GetUserSplitCommand() abort
 endfunction
 
 function! flog#backend#IsGitBuf() abort
-  let l:fn = get(g:, 'flog_backend_is_git_dir_fn', 'FugitiveIsGitDir')
+  let l:fn = get(g:, 'flog_backend_is_git_buf_fn', 'FugitiveIsGitDir')
   return call(l:fn, [])
 endfunction
 
