@@ -7,7 +7,7 @@ function! flog#git#GetWorkdir() abort
   if empty(l:git_dir)
     return ''
   endif
-  return fnamemodify(l:git_dir, ':p:h')
+  return fnamemodify(l:git_dir .. '/', ':p:h:h')
 endfunction
 
 function! flog#git#GetCommand(cmd = '') abort
