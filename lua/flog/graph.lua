@@ -19,14 +19,13 @@ function M.get_graph(
     cmd,
     collapsed_commits)
   -- Resolve Vim values
-  enable_graph = enable_graph and enable_graph ~= 0
-  default_collapsed = default_collapsed and default_collapsed ~= 0
-  enable_extended_chars = enable_extended_chars and enable_extended_chars ~= 0
-  enable_extra_padding = enable_extra_padding and enable_extra_padding ~= 0
+  enable_graph = (enable_graph or 0) ~= 0
+  default_collapsed = (default_collapsed or 0) ~= 0
+  enable_extended_chars = (enable_extended_chars or 0) ~= 0
+  enable_extra_padding = (enable_extra_padding or 0) ~= 0
   local enable_dynamic_branch_hl = (
     is_nvim
-    and vim.g.flog_enable_dynamic_branch_hl
-    and vim.g.flog_enable_dynamic_branch_hl ~= 0)
+    and (vim.g.flog_enable_dynamic_branch_hl or 0) ~= 0)
   local is_vimlike = is_vim or is_nvim
 
   -- Init graph strings
@@ -764,7 +763,7 @@ function M.get_graph(
       -- Set internal state
       if enable_dynamic_branch_hl then
         local commit_suffix_line
-        if ncommit_lines > 1 and commit_collapsed and commit_collapsed ~= 0 then
+        if ncommit_lines > 1 and (commit_collapsed or 0) ~= 0 then
           commit_suffix_line = out_line + 2
         else
           commit_suffix_line = out_line + ncommit_lines
@@ -799,7 +798,7 @@ function M.get_graph(
         vim_commit.collapsed_body = commit_multiline_prefix .. commit_collapsed_body
 
         -- Draw body
-        if commit_collapsed and commit_collapsed ~= 0 then
+        if (commit_collapsed or 0) ~= 0 then
           vim_line_commits[out_line] = vim_commit_index
           vim_out[out_line] = vim_commit.collapsed_body
           out_line = out_line + 1
@@ -947,11 +946,10 @@ function M.update_graph(
     graph,
     collapsed_commits)
   -- Resolve Vim values
-  default_collapsed = default_collapsed and default_collapsed ~= 0
+  default_collapsed = (default_collapsed or 0) ~= 0
   local enable_dynamic_branch_hl = (
     is_nvim
-    and vim.g.flog_enable_dynamic_branch_hl
-    and vim.g.flog_enable_dynamic_branch_hl ~= 0)
+    and (vim.g.flog_enable_dynamic_branch_hl or 0) ~= 0)
 
   -- Init vim output
   local vim_out
@@ -991,7 +989,7 @@ function M.update_graph(
     -- Update internal state
     if enable_dynamic_branch_hl then
       local commit_suffix_line
-      if len > 1 and collapsed and collapsed ~= 0 then
+      if len > 1 and (collapsed or 0) ~= 0 then
         commit_suffix_line = out_line + 2
       else
         commit_suffix_line = out_line + len
@@ -1008,7 +1006,7 @@ function M.update_graph(
     out_line = out_line + 1
 
     if len > 1 then
-      if collapsed and collapsed ~= 0 then
+      if (collapsed or 0) ~= 0 then
         -- Add collapsed body
         vim_out[out_line] = commit.collapsed_body
         vim_line_commits[out_line] = vim_commit_index
