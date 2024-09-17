@@ -3,10 +3,14 @@
 "
 
 function! flog#shell#Escape(str) abort
-  if has('win32') || get(g:, 'flog_use_builtin_shellescape')
+  if a:str =~# '^[A-Za-z0-9_/:.-]*$'
+    return a:str
+  elseif has('win32') && &shellcmdflag !~# '^-'
+    " Escape in Windows shell
+    return '"' . s:gsub(s:gsub(a:str, '"', '""'), '\%', '"%"') . '"'
+  else
     return shellescape(a:str)
   endif
-  return escape(a:str, ' *?[]{}`$\%#"|!<();&>' . "\n\t'")
 endfunction
 
 function! flog#shell#EscapeList(list) abort
