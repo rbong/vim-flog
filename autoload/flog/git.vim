@@ -8,10 +8,10 @@ function! flog#git#GetWorkdirFrom(git_dir) abort
     return ''
   endif
 
+  let l:cmd = ['git', '--git-dir', flog#shell#Escape(a:git_dir)]
   let l:parent = fnamemodify(a:git_dir, ':h')
 
   " Check for core.worktree setting
-  let l:cmd = ['git', '--git-dir', flog#shell#Escape(a:git_dir)]
   let l:worktree = systemlist(l:cmd + ['config', '--get', 'core.worktree'])
   if empty(v:shell_error) && !empty(l:worktree)
     let l:worktree = flog#path#ResolveFrom(l:parent, l:worktree[0])
@@ -47,13 +47,19 @@ function! flog#git#GetWorkdirFrom(git_dir) abort
     endif
   endif
 
-  " Check if this is a standard git dir
-  if filereadable(a:git_dir .. '/commondir') || filereadable(a:git_dir .. '/HEAD')
-    return l:parent
+  " Check for non-standard git dir
+  if !filereadable(a:git_dir .. '/commondir') && !filereadable(a:git_dir .. '/HEAD')
+    return ''
   endif
 
-  " Non-standard work dir
-  return ''
+  " Check for non-worktree parent directory
+  call systemlist(l:cmd + ['-C', flog#shell#Escape(l:parent), 'rev-parse', '--show-toplevel'])
+  if !empty(v:shell_error)
+    return a:git_dir
+  endif
+
+  " Default work dir
+  return l:parent
 endfunction
 
 function! flog#git#GetWorkdir(git_dir = '') abort
