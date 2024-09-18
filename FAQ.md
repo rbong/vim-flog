@@ -14,7 +14,7 @@ let g:flog_write_commit_graph = 0
 Set args (defaults shown):
 
 ```
-let g:flog_write_commit_graph_args = '--reachable --progress'
+let g:flog_write_commit_graph_args = ['--reachable', '--progress']
 ```
 
 ## Why is Flog getting slower over time for me?

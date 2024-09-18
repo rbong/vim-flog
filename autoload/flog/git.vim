@@ -10,11 +10,9 @@ function! flog#git#GetWorkdir() abort
   return fnamemodify(l:git_dir .. '/', ':p:h:h')
 endfunction
 
-function! flog#git#GetCommand(cmd = '') abort
-  let l:cmd = 'git -C ' . flog#shell#Escape(flog#git#GetWorkdir())
-  if !empty(a:cmd)
-    let l:cmd .= ' ' .. a:cmd
-  endif
+function! flog#git#GetCommand(cmd = []) abort
+  let l:cmd = ['git', '-C', flog#shell#Escape(flog#git#GetWorkdir())]
+  call extend(l:cmd, a:cmd)
   return l:cmd
 endfunction
 
@@ -25,10 +23,20 @@ function! flog#git#HasCommitGraph() abort
 endfunction
 
 function! flog#git#WriteCommitGraph() abort
-  let l:cmd = 'commit-graph write ' .. g:flog_write_commit_graph_args
+  let l:cmd = ['commit-graph', 'write']
+
+  if type(g:flog_write_commit_graph_args) == v:t_string
+    call flog#deprecate#Setting(
+          \ 'let g:flog_write_commit_graph_args = "string"',
+          \ 'g:flog_write_commit_graph_args',
+          \ '["list"]'
+          \ )
+  else
+    let l:cmd += g:flog_write_commit_graph_args
+  endif
 
   if get(g:, 'flog_backend_write_commit_graph_with_user_cmd', 1)
-    let l:cmd =  flog#backend#GetUserCommand() .. ' ' .. l:cmd
+    let l:cmd = flog#backend#GetUserCommand() .. ' ' .. join(l:cmd, ' ')
     exec l:cmd
   else
     let l:cmd = flog#git#GetCommand(l:cmd)
@@ -39,8 +47,17 @@ function! flog#git#WriteCommitGraph() abort
 endfunction
 
 function! flog#git#GetAuthors() abort
-  let l:cmd = flog#git#GetCommand('shortlog -s -n ')
-  let l:cmd .= g:flog_get_author_args
+  let l:cmd = flog#git#GetCommand(['shortlog', '-s', '-n'])
+
+  if type(g:flog_get_author_args) == v:t_string
+    call flog#deprecate#Setting(
+          \ 'let g:flog_get_author_args = "string"',
+          \ 'g:flog_get_author_args',
+          \ '["list"]'
+          \ )
+  else
+    let l:cmd += g:flog_get_author_args
+  endif
 
   let l:result = flog#shell#Run(l:cmd)
 
@@ -49,15 +66,14 @@ function! flog#git#GetAuthors() abort
 endfunction
 
 function! flog#git#GetRefs() abort
-  let l:cmd = flog#git#GetCommand()
-  let l:cmd .= ' rev-parse --symbolic --branches --tags --remotes'
-
-  return flog#shell#Run(l:cmd) + ['HEAD', 'FETCH_HEAD', 'ORIG_HEAD']
+  let l:cmd = flog#git#GetCommand(
+        \ ['rev-parse', '--symbolic', '--branches', '--tags', '--remotes'])
+  let l:refs = filter(flog#shell#Run(l:cmd), '!empty(v:val)')
+  return l:refs + ['HEAD', 'FETCH_HEAD', 'ORIG_HEAD']
 endfunction
 
 function! flog#git#GetRemotes() abort
-  let l:cmd = flog#git#GetCommand('remote -v')
-
+  let l:cmd = flog#git#GetCommand(['remote', '-v'])
   let l:remotes = flog#shell#Run(l:cmd)
 
   return uniq(sort(map(l:remotes, 'substitute(v:val, "\t.*$", "", "")')))
@@ -75,7 +91,7 @@ function! flog#git#SplitRemote(ref, remotes) abort
 endfunction
 
 function! flog#git#GetHeadRef() abort
-  let l:cmd = flog#git#GetCommand('symbolic-ref --short HEAD')
+  let l:cmd = flog#git#GetCommand(['symbolic-ref', '--short', 'HEAD'])
   return flog#shell#Run(l:cmd)[0]
 endfunction
 

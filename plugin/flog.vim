@@ -18,7 +18,7 @@ if !has_key(g:, 'flog_write_commit_graph')
 endif
 
 if !has_key(g:, 'flog_write_commit_graph_args')
-  let g:flog_write_commit_graph_args = '--reachable --progress'
+  let g:flog_write_commit_graph_args = ['--reachable', '--progress']
 endif
 
 if !has_key(g:, 'flog_enable_status')
@@ -46,7 +46,7 @@ if !has_key(g:, 'flog_check_lua_version')
 endif
 
 if !has_key(g:, 'flog_get_author_args')
-  let g:flog_get_author_args = '--all --no-merges --max-count=100000'
+  let g:flog_get_author_args = ['--all', '--no-merges', '--max-count=100000']
 endif
 
 if !has_key(g:, 'flog_commit_start_token')

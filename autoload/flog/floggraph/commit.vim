@@ -37,7 +37,7 @@ function! flog#floggraph#commit#GetByRef(ref) abort
   let l:state = flog#state#GetBufState()
 
   let l:cmd = flog#git#GetCommand()
-  let l:cmd .= ' rev-parse --short ' . flog#shell#Escape(a:ref)
+  let l:cmd += ['rev-parse', '--short ', flog#shell#Escape(a:ref)]
 
   let l:result = flog#shell#Run(l:cmd)
   if empty(l:result)

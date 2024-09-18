@@ -148,7 +148,7 @@ endfunction
 
 function! flog#floggraph#format#FormatIndexTree(dict) abort
   if empty(a:dict.index_tree)
-    let l:cmd = flog#git#GetCommand('write-tree')
+    let l:cmd = flog#git#GetCommand(['write-tree'])
     let a:dict.index_tree = flog#shell#Run(l:cmd)[0]
   endif
   return a:dict.index_tree

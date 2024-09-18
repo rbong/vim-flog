@@ -943,7 +943,7 @@ g:flog_write_commit_graph_args                *g:flog_write_commit_graph_args*
   The arguments to pass to "git commit-graph write" when
   |g:flog_write_commit_graph| is enabled.
 
-  Defaults to "--reachable --progress".
+  Defaults to ["--reachable", "--progress"].
 
   See also "git commit-graph --help".
 
@@ -997,7 +997,7 @@ g:flog_get_author_args                                *g:flog_get_author_args*
 
   The arguments to use when completing authors with "git shortlog".
 
-  Defaults to "--all --no-merges --max-count=100000".
+  Defaults to ["--all", "--no-merges", "--max-count=100000"].
 
   See also "git shortlog --help".
 
