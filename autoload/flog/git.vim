@@ -2,12 +2,52 @@
 " This file contains functions for working with git.
 "
 
-function! flog#git#GetWorkdir() abort
-  let l:git_dir = flog#backend#GetGitDir()
-  if empty(l:git_dir)
+function! flog#git#GetWorkdirFrom(git_dir) abort
+  " Check for empty git dir
+  if empty(a:git_dir)
     return ''
   endif
-  return fnamemodify(l:git_dir .. '/', ':p:h:h')
+
+  let l:parent = fnamemodify(a:git_dir, ':h')
+
+  " Check for core.worktree setting
+  let l:cmd = ['git', '--git-dir', flog#shell#Escape(a:git_dir)]
+  let l:worktree = systemlist(l:cmd + ['config', '--get', 'core.worktree'])
+  if empty(v:shell_error) && !empty(l:worktree)
+    let l:worktree = flog#path#ResolveFrom(l:parent, l:worktree[0])
+    if isdirectory(l:worktree)
+      return l:worktree
+    endif
+  endif
+
+  " Check for file-based git dir
+  if filereadable(a:git_dir)
+    let l:content = readfile(a:git_dir)
+    if !empty(l:content) && l:content[0] =~# '^gitdir:'
+      let l:real_git_dir = substitute(l:content[0], '^gitdir:\s*', '', '')
+      let l:real_git_dir = flog#path#ResolveFrom(l:parent, l:real_git_dir)
+      return flog#git#GetWorkdirFrom(l:real_git_dir)
+    endif
+  endif
+
+  " Check for directory not found
+  if !isdirectory(a:git_dir)
+    return ''
+  endif
+
+  " Check if this is a standard git dir
+  if filereadable(a:git_dir .. '/commondir') || filereadable(a:git_dir .. '/HEAD')
+    return l:parent
+  endif
+
+  " Non-standard work dir
+  return ''
+endfunction
+
+function! flog#git#GetWorkdir(git_dir = '') abort
+  let l:git_dir = empty(a:git_dir) ? flog#backend#GetGitDir() : a:git_dir
+  let l:git_dir = resolve(fnamemodify(l:git_dir .. '/', ':h:p'))
+  return flog#git#GetWorkdirFrom(l:git_dir)
 endfunction
 
 function! flog#git#GetCommand(cmd = []) abort
