@@ -12,7 +12,7 @@ function! flog#git#GetWorkdirFrom(git_dir) abort
   let l:parent = fnamemodify(a:git_dir, ':h')
 
   " Check for core.worktree setting
-  let l:worktree = systemlist(l:cmd + ['config', '--get', 'core.worktree'])
+  let l:worktree = flog#shell#Systemlist(l:cmd + ['config', '--get', 'core.worktree'])
   if empty(v:shell_error) && !empty(l:worktree)
     let l:worktree = flog#path#ResolveFrom(l:parent, l:worktree[0])
     if isdirectory(l:worktree)
@@ -53,7 +53,7 @@ function! flog#git#GetWorkdirFrom(git_dir) abort
   endif
 
   " Check for non-worktree parent directory
-  call systemlist(l:cmd + ['-C', flog#shell#Escape(l:parent), 'rev-parse', '--show-toplevel'])
+  call flog#shell#Systemlist(l:cmd + ['-C', flog#shell#Escape(l:parent), 'rev-parse', '--show-toplevel'])
   if !empty(v:shell_error)
     return a:git_dir
   endif
