@@ -51,8 +51,15 @@ function! flog#git#GetWorkdir(git_dir = '') abort
 endfunction
 
 function! flog#git#GetCommand(cmd = []) abort
-  let l:cmd = ['git', '-C', flog#shell#Escape(flog#git#GetWorkdir())]
+  let l:cmd = ['git']
+
+  let l:workdir = flog#git#GetWorkdir()
+  if !empty(l:workdir)
+    let l:cmd += ['-C', flog#shell#Escape(l:workdir)]
+  endif
+
   call extend(l:cmd, a:cmd)
+
   return l:cmd
 endfunction
 
