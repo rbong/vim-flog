@@ -35,6 +35,18 @@ function! flog#git#GetWorkdirFrom(git_dir) abort
     return ''
   endif
 
+  " Check for git dir file
+  let l:gitdir_file = a:git_dir .. '/gitdir'
+  if filereadable(l:gitdir_file)
+    let l:content = readfile(l:gitdir_file)
+    if !empty(l:content)
+      let l:workdir = fnamemodify(l:content[0], ':h')
+      if l:workdir !=# '.'
+        return flog#path#ResolveFrom(l:parent, l:workdir)
+      endif
+    endif
+  endif
+
   " Check if this is a standard git dir
   if filereadable(a:git_dir .. '/commondir') || filereadable(a:git_dir .. '/HEAD')
     return l:parent
