@@ -6,6 +6,9 @@ local M = {}
 -- Some state is only used inside Neovim, it is kept inside Lua for performance reasons
 local internal_state_store = {}
 
+-- Detect Windows
+local is_windows = package.config:sub(1,1) == '\\'
+
 function M.get_graph(
     instance_number,
     is_vim,
@@ -27,6 +30,7 @@ function M.get_graph(
     is_nvim
     and (vim.g.flog_enable_dynamic_branch_hl or 0) ~= 0)
   local is_vimlike = is_vim or is_nvim
+  local strip_cr = is_windows
 
   -- Init graph strings
   local branch_str = '│ '
@@ -132,18 +136,28 @@ function M.get_graph(
 
   -- Read commits until EOF
   for hash in handle:lines() do
+    if strip_cr then
+      hash = hash:gsub('\r$', '')
+    end
+
     -- Update commit count
     ncommits = ncommits + 1
 
     -- Record commit
     last_hash_appearance[hash] = ncommits
 
-    -- Read and split parents
+    -- Read parents
+    local parents = handle:read()
+    if strip_cr then
+      parents = parents:gsub('\r$', '')
+    end
+
+    -- Split parents
     local new_parents = {}
     local nnew_parents = 0
     local existing_parent_hashes = {}
     local nexisting_parents = 0
-    for parent_hash in handle:read():gmatch('%S+') do
+    for parent_hash in parents:gmatch('%S+') do
       if not last_hash_appearance[parent_hash] then
         nnew_parents = nnew_parents + 1
         new_parents[nnew_parents] = parent_hash
@@ -156,11 +170,17 @@ function M.get_graph(
 
     -- Read refs
     local refs = handle:read()
+    if strip_cr then
+      refs = refs:gsub('\r$', '')
+    end
 
     -- Read output until EOF or start token
     local out = {}
     local nlines = 0
     for line in handle:lines() do
+      if strip_cr then
+        line = line:gsub('\r$', '')
+      end
       nlines = nlines + 1
       if line == start_token then
         break
