@@ -177,15 +177,23 @@ function M.get_graph(
     -- Read output until EOF or start token
     local out = {}
     local nlines = 0
-    for line in handle:lines() do
-      if strip_cr then
+    if strip_cr then
+      for line in handle:lines() do
+        nlines = nlines + 1
         line = line:gsub('\r$', '')
+        if line == start_token then
+          break
+        end
+        out[nlines] = line
       end
-      nlines = nlines + 1
-      if line == start_token then
-        break
+    else
+      for line in handle:lines() do
+        nlines = nlines + 1
+        if line == start_token then
+          break
+        end
+        out[nlines] = line
       end
-      out[nlines] = line
     end
 
     -- Save commit
