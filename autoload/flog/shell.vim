@@ -3,7 +3,7 @@
 "
 
 function! flog#shell#Escape(str) abort
-  if a:str =~# '^[A-Za-z0-9_/:.-]*$'
+  if a:str =~# '^[A-Za-z0-9_/:.-]\+$'
     return a:str
   elseif has('win32') && &shellcmdflag !~# '^-'
     " Escape in Windows shell
