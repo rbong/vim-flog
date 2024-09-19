@@ -7,7 +7,7 @@ function! flog#shell#Escape(str) abort
     return a:str
   elseif has('win32') && &shellcmdflag !~# '^-'
     " Escape in Windows shell
-    return '"' . s:gsub(s:gsub(a:str, '"', '""'), '\%', '"%"') . '"'
+    return '"' .. substitute(substitute(a:str, '"', '""', 'g'), '%', '"%"', 'g') .. '"'
   else
     return shellescape(a:str)
   endif
