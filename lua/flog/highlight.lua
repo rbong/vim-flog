@@ -50,7 +50,7 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
       -- Get line/col
       local start_line = vim.fn.line('w0', winid)
       local end_line = vim.fn.line('w$', winid)
-      local start_col = vim.fn.virtcol('.', 0) - wincol + 1
+      local start_col = vim.fn.virtcol('.') - wincol + 1
       local end_col = start_col + vim.fn.winwidth(0) - 1
 
       -- Get start/end branch index from screen position/size
