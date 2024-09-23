@@ -11,15 +11,6 @@ function! flog#git#GetWorkdirFrom(git_dir) abort
   let l:cmd = ['git', '--git-dir', flog#shell#Escape(a:git_dir)]
   let l:parent = fnamemodify(a:git_dir, ':h')
 
-  " Check for core.worktree setting
-  let l:worktree = flog#shell#Systemlist(l:cmd + ['config', '--get', 'core.worktree'])
-  if empty(v:shell_error) && !empty(l:worktree)
-    let l:worktree = flog#path#ResolveFrom(l:parent, l:worktree[0])
-    if isdirectory(l:worktree)
-      return l:worktree
-    endif
-  endif
-
   " Check for file-based git dir
   if filereadable(a:git_dir)
     let l:content = readfile(a:git_dir)
@@ -33,6 +24,15 @@ function! flog#git#GetWorkdirFrom(git_dir) abort
   " Check for directory not found
   if !isdirectory(a:git_dir)
     return ''
+  endif
+
+  " Check for core.worktree setting
+  let l:worktree = flog#shell#Systemlist(l:cmd + ['config', '--get', 'core.worktree'])
+  if empty(v:shell_error) && !empty(l:worktree)
+    let l:worktree = flog#path#ResolveFrom(a:git_dir, l:worktree[0])
+    if isdirectory(l:worktree)
+      return l:worktree
+    endif
   endif
 
   " Check for git dir file
