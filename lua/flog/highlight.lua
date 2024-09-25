@@ -177,14 +177,6 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
                 vim.api.nvim_buf_add_highlight(
                   buffer,
                   -1,
-                  hl_group_names[current_hl[commit.branch_index] or commit_hl_cache[commit.branch_index]],
-                  line - 1,
-                  merge_col - 1,
-                  commit_col)
-
-                vim.api.nvim_buf_add_highlight(
-                  buffer,
-                  -1,
                   hl_group_names[current_hl[commit.merge_end_branch_index] or commit_hl_cache[commit.merge_end_branch_index]],
                   line - 1,
                   commit_col,
