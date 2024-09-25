@@ -16,7 +16,10 @@ jobs:
             lua_version: "luajit-openresty"
             nvim: "false"
           - vim_type: "Neovim"
-            vim_version: "head"
+            vim_version: "v0.9.5"
+            nvim: "true"
+          - vim_type: "Neovim"
+            vim_version: "stable"
             nvim: "true"
     steps:
       - name: "checkout"
