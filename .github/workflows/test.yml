@@ -10,17 +10,13 @@ jobs:
           - vim_type: "Vim"
             vim_version: "v8.2.4212"
             lua_version: "luajit-openresty"
-            nvim: "false"
           - vim_type: "Vim"
             vim_version: "stable"
             lua_version: "luajit-openresty"
-            nvim: "false"
           - vim_type: "Neovim"
             vim_version: "v0.9.5"
-            nvim: "true"
           - vim_type: "Neovim"
             vim_version: "stable"
-            nvim: "true"
     steps:
       - name: "checkout"
         uses: "actions/checkout@v2"
@@ -37,4 +33,9 @@ jobs:
           vim_version: "${{ matrix.vim_version }}"
           vim_type: "${{ matrix.vim_type }}"
       - name: "run tests"
-        run: "NVIM=${{ matrix.nvim }} ./t/run.sh"
+        run: |
+          if [ "${{ matrix.vim_type }}" = "Neovim" ]; then
+            NVIM=true ./t/run.sh
+          else
+            NVIM=false ./t/run.sh
+          fi
