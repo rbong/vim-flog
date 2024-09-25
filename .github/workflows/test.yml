@@ -12,7 +12,7 @@ jobs:
             lua_version: "luajit-openresty"
             nvim: "false"
           - vim_type: "Vim"
-            vim_version: "v9.0.1205"
+            vim_version: "stable"
             lua_version: "luajit-openresty"
             nvim: "false"
           - vim_type: "Neovim"
