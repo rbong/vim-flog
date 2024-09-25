@@ -11,7 +11,7 @@ jobs:
             vim_version: "v8.2.4212"
             lua_version: "luajit-openresty"
           - vim_type: "Vim"
-            vim_version: "stable"
+            vim_version: "head"
             lua_version: "luajit-openresty"
           - vim_type: "Neovim"
             vim_version: "v0.9.5"
