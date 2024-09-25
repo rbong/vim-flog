@@ -21,7 +21,7 @@ function! flog#test#ShowNvimBufHl() abort
     let l:start_virtcol = virtcol([l:row + 1, l:start_col])
     let l:end_virtcol = virtcol([l:row + 1, l:details.end_col]) - 1
 
-    if l:end_virtcol > l:start_virtcol
+    if l:end_virtcol >= l:start_virtcol
       for l:virtcol in range(l:start_virtcol, l:end_virtcol)
         let l:hl_groups[l:virtcol] = l:details.hl_group
       endfor
