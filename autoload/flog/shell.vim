@@ -18,10 +18,18 @@ function! flog#shell#EscapeList(list) abort
 endfunction
 
 function! flog#shell#Systemlist(cmd) abort
+  let l:cmd = a:cmd
   if type(a:cmd) == v:t_list
-    return systemlist(join(a:cmd, ' '))
+    let l:cmd = join(l:cmd, ' ')
   endif
-  return systemlist(a:cmd)
+  if has('win32')
+    let l:result = split(system(l:cmd), '\n\r\?', 1)
+    if empty(l:result[-1])
+      return l:result[:-2]
+    endif
+    return l:result
+  endif
+  return systemlist(l:cmd)
 endfunction
 
 function! flog#shell#Run(cmd) abort
