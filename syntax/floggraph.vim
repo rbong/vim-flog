@@ -35,7 +35,7 @@ else
   " Local format
   exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . weekday_name_pattern . ' ' . month_name_pattern . ' \d{1,2}%( ' . iso_time_pattern . ')? \d{4}' . '%( |$)/'
   " Relative format
-  exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v%(\d+ %([yY]ear|[mM]onth|[wW]eek|[dD]ay|[hH]our|[mM]inute|[sS]econd)s? [aA]go)%( |$)/'
+  exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v%(\d+ %([yY]ear|[mM]onth|[wW]eek|[dD]ay|[hH]our|[mM]inute|[sS]econd)s?%(, )?)+ [aA]go%( |$)/'
   " Human formats
   exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . weekday_name_pattern . ' ' . iso_time_pattern . '%( |$)/'
   exec 'syntax match flogDate contained nextgroup=flogHash,flogAuthor,flogRef /\v' . month_name_pattern . ' \d{1,2} \d{4}' . '%( |$)/'
