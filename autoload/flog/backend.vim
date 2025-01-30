@@ -8,7 +8,7 @@ function! flog#backend#GetUserCommand() abort
 endfunction
 
 function! flog#backend#GetUserSplitCommand() abort
-  return get(g:, 'flog_backen_user_split_cmd', 'Gsplit')
+  return get(g:, 'flog_backend_user_split_cmd', 'Gsplit')
 endfunction
 
 function! flog#backend#IsGitBuf() abort
