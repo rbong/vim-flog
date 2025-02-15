@@ -170,8 +170,8 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
               local merge_col = vim.fn.virtcol2col(winid, line, 2 * commit.merge_branch_index)
               local end_merge_col = vim.fn.virtcol2col(winid, line, 2 * commit.merge_end_branch_index - 1)
 
-              -- Set highlight groups for merge
               if commit.moved_parent then
+                -- Set highlight groups for moved parent merge
                 local fork_col = vim.fn.virtcol2col(winid, line, 2 * commit.branch_index)
 
                 vim.api.nvim_buf_add_highlight(
@@ -190,6 +190,7 @@ function M.nvim_get_graph_hl_callback(buffer, instance_number)
                   fork_col - 1,
                   end_merge_col)
               else
+                -- Set highlight groups for normal merge
                 vim.api.nvim_buf_add_highlight(
                   buffer,
                   -1,
