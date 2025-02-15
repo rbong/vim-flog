@@ -64,7 +64,7 @@ endfunction
 
 function! flog#git#GetWorkdir(git_dir = '') abort
   let l:git_dir = empty(a:git_dir) ? flog#backend#GetGitDir() : a:git_dir
-  let l:git_dir = resolve(fnamemodify(l:git_dir .. '/', ':h:p'))
+  let l:git_dir = fnamemodify(l:git_dir .. '/', ':h:p')
   return flog#git#GetWorkdirFrom(l:git_dir)
 endfunction
 
