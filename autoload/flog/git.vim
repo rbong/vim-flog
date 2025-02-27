@@ -11,21 +11,6 @@ function! flog#git#GetWorkdirFrom(git_dir) abort
   let l:cmd = ['git', '--git-dir', flog#shell#Escape(a:git_dir)]
   let l:parent = fnamemodify(a:git_dir, ':h')
 
-  " Check for file-based git dir
-  if filereadable(a:git_dir)
-    let l:content = readfile(a:git_dir)
-    if !empty(l:content) && l:content[0] =~# '^gitdir:'
-      let l:real_git_dir = substitute(l:content[0], '^gitdir:\s*', '', '')
-      let l:real_git_dir = flog#path#ResolveFrom(l:parent, l:real_git_dir)
-      return flog#git#GetWorkdirFrom(l:real_git_dir)
-    endif
-  endif
-
-  " Check for directory not found
-  if !isdirectory(a:git_dir)
-    return ''
-  endif
-
   " Check for core.worktree setting
   let l:worktree = flog#shell#Systemlist(l:cmd + ['config', '--get', 'core.worktree'])
   if empty(v:shell_error) && !empty(l:worktree)
@@ -35,22 +20,25 @@ function! flog#git#GetWorkdirFrom(git_dir) abort
     endif
   endif
 
-  " Check for git dir file
-  let l:gitdir_file = a:git_dir .. '/gitdir'
-  if filereadable(l:gitdir_file)
-    let l:content = readfile(l:gitdir_file)
-    if !empty(l:content)
-      let l:workdir = fnamemodify(l:content[0], ':h')
-      if l:workdir !=# '.'
-        return flog#path#ResolveFrom(l:parent, l:workdir)
+  " Handle directory-based git dir
+  if isdirectory(a:git_dir)
+    " Check for git dir file
+    let l:gitdir_file = a:git_dir .. '/gitdir'
+    if filereadable(l:gitdir_file)
+      let l:content = readfile(l:gitdir_file)
+      if !empty(l:content)
+        let l:workdir = fnamemodify(l:content[0], ':h')
+        if l:workdir !=# '.'
+          return flog#path#ResolveFrom(l:parent, l:workdir)
+        endif
       endif
     endif
-  endif
 
-  " Check for non-standard git dir
-  if !filereadable(a:git_dir .. '/commondir') && !filereadable(a:git_dir .. '/HEAD')
-    return ''
-  endif
+    " Check for non-standard git dir
+    if !filereadable(a:git_dir .. '/commondir') && !filereadable(a:git_dir .. '/HEAD')
+      return ''
+    endif
+  end
 
   " Check for non-worktree parent directory
   call flog#shell#Systemlist(l:cmd + ['-C', flog#shell#Escape(l:parent), 'rev-parse', '--show-toplevel'])
