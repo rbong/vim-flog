@@ -33,6 +33,9 @@ These commands open Flog.
 The options shown here can be configured via |g:flog_default_opts| and
 |g:flog_permanent_default_opts|.
 
+Arguments to :Flog on the command line must be escaped if they contain spaces.
+Quotes are not supported for completion reasons.
+
 :Flog                                                                  *:Flog*
 
   Open Flog in a new tab, showing the git branch graph. This command can be
