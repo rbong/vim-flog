@@ -876,7 +876,7 @@ function M.get_graph(
 
       -- Add commit to list of commits
       vim_commits[commit_index] = vim_commit
-      vim_commits_by_hash[commit_hash] = vim_commit_index
+      vim_commits_by_hash[commit_hash] = vim_commit
     else
       -- Output using stdout
 
