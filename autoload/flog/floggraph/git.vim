@@ -88,6 +88,9 @@ function! flog#floggraph#git#BuildLogArgs() abort
   if l:opts.reflog
     let l:args .= ' --reflog'
   endif
+  if l:opts.perl_regexp
+    let l:args .= ' --perl-regexp'
+  endif
   if l:opts.reverse
     let l:args .= ' --reverse'
   endif

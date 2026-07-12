@@ -125,6 +125,13 @@ Quotes are not supported for completion reasons.
   Requires |:Flog_-no-graph|.
   Disabled by default.
 
+:Flog -perl-regexp                                        *:Flog_-perl-regexp*
+:Flog -no-perl-regexp                                  *:Flog_-no-perl-regexp*
+
+  When enabled, pass the "--perl-regexp" argument to "git log".
+  This makes patterns such as |:Flog_-search| use Perl-compatible regexps.
+  Disabled by default.
+
 :Flog -patch                                                    *:Flog_-patch*
 :Flog -no-patch                                              *:Flog_-no-patch*
 

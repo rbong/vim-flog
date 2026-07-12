@@ -70,6 +70,10 @@ function! flog#cmd#flog#args#Parse(current_opts, workdir, args) abort
       let a:current_opts.reverse = v:true
     elseif l:arg ==# '-no-reverse'
       let a:current_opts.reverse = v:false
+    elseif l:arg ==# '-perl-regexp'
+      let a:current_opts.perl_regexp = v:true
+    elseif l:arg ==# '-no-perl-regexp'
+      let a:current_opts.perl_regexp = v:false
     elseif l:arg ==# '-graph'
       let a:current_opts.graph = v:true
     elseif l:arg ==# '-no-graph'
@@ -328,6 +332,8 @@ function! flog#cmd#flog#args#Complete(arg_lead, cmd_line, cursor_pos) abort
         \ '-rev=',
         \ '-reverse ',
         \ '-no-reverse ',
+        \ '-perl-regexp ',
+        \ '-no-perl-regexp ',
         \ '-search=',
         \ '-grep=',
         \ '-skip=',

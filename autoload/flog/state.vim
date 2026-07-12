@@ -48,6 +48,7 @@ function! flog#state#GetInternalDefaultOpts() abort
         \ 'reflog': v:false,
         \ 'related': v:false,
         \ 'reverse': v:false,
+        \ 'perl_regexp': v:false,
         \ 'graph': v:true,
         \ 'patch': -1,
         \ 'skip': '',
