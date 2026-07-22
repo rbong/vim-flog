@@ -148,8 +148,14 @@ function! flog#git#SplitRemote(ref, remotes) abort
 endfunction
 
 function! flog#git#GetHeadRef() abort
-  let l:cmd = flog#git#GetCommand(['symbolic-ref', '--short', 'HEAD'])
-  return flog#shell#Run(l:cmd)[0]
+  " Use --quiet and a non-throwing run: a detached HEAD makes symbolic-ref
+  " exit non-zero, which should yield an empty ref rather than an error.
+  let l:cmd = flog#git#GetCommand(['symbolic-ref', '--quiet', '--short', 'HEAD'])
+  let l:output = flog#shell#Systemlist(l:cmd)
+  if !empty(v:shell_error) || empty(l:output)
+    return ''
+  endif
+  return l:output[0]
 endfunction
 
 function! flog#git#GetRelatedRefs(revs = []) abort
