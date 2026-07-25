@@ -148,8 +148,12 @@ function! flog#git#SplitRemote(ref, remotes) abort
 endfunction
 
 function! flog#git#GetHeadRef() abort
-  let l:cmd = flog#git#GetCommand(['symbolic-ref', '--short', 'HEAD'])
-  return flog#shell#Run(l:cmd)[0]
+  let l:cmd = flog#git#GetCommand(['symbolic-ref', '--short', '--quiet', 'HEAD'])
+  let l:output = flog#shell#Systemlist(l:cmd)
+  if empty(l:output)
+    return ''
+  endif
+  return l:output[0]
 endfunction
 
 function! flog#git#GetRelatedRefs(revs = []) abort
